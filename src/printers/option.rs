@@ -1,7 +1,7 @@
 use std::io;
 
 use crate::types::file_types::Files;
-
+#[allow(dead_code)]
 pub fn what_to_print(files: &Files) {
     let mut buf = String::new();
     println!("1: Video \n2: Audio\n3: Images \n4: Others \n-1: Exit");

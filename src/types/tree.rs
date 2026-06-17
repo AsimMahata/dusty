@@ -57,7 +57,7 @@ impl Node {
     pub fn disable_node(&mut self) {
         self.healty = false;
     }
-
+    #[allow(dead_code)]
     pub fn check_health(&self) -> bool {
         return self.healty;
     }
