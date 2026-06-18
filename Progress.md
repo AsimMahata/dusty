@@ -9,9 +9,10 @@
 
 ## Plan
 
-1.To make something which can group similar videos and
+1. To make something which can group similar videos and
 tell me every shows I have in my pc
 2. remove some pub in pub cause too much pub
+
 ---
 
 1. GOAL 1:
@@ -36,3 +37,9 @@ tell me every shows I have in my pc
 - List All Folders Top To bottom
 - Navigation Some Folder -> Some More Folder -> so on
 - Back button kind of a file explorer
+
+## 18th June
+
+- Trying to improve `check_for_shows` function
+- Thinking of using different algorithm or method
+- Word Based

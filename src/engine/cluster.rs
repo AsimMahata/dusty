@@ -1,88 +1,90 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, result};
 
 use crate::{
-    datastructures::dsu::Dsu, debug, engine::cluster, scanners::scanner::read_all_files,
+    datastructures::dsu::Dsu,
+    debug,
+    engine::{
+        cluster,
+        levenshtein::{edit_dist_string_clusters, levenshtein_distance},
+    },
+    scanners::scanner::read_all_files,
     types::file_types::Files,
+    utility::utility::strip_folder_name,
 };
 
-pub fn levenshtein_distance(s: &str, t: &str) -> i32 {
-    let n = s.len();
-    let m = t.len();
+// new word based
+// steps ::
+// get rid of folder name and extension
+// [Anime Time] Trigun (1998) (Season 01+Movie+OST) [BD] [Dual Audio] [576p][HEVC 10bit x265][AC3][Eng Sub]\\Trigun - Badlands Rumble"
+// strip by space
+// remove [] () {}
+// To, Your, Eternity, S3, -, 16, Hdrip, Sub,
 
-    let s = s.as_bytes();
-    let t = t.as_bytes();
+// Define the delimiters in one central spot
+const DELIMITERS: &[char] = &[' ', '.', '_', '"', '-'];
+const SPECIAL_CHARS: &[char] = &['[', ']', '@', '$', '&', '(', ')', '{', '}'];
 
-    let mut dp = vec![vec![0; m + 1]; n + 1];
-
-    for i in 0..=n {
-        dp[i][0] = i as i32;
+fn word_is_valid(w: &str) -> bool {
+    if w.is_empty() {
+        return false;
+    } else if w.contains(SPECIAL_CHARS) {
+        return false;
+    } else {
+        return true;
     }
-
-    for j in 0..=m {
-        dp[0][j] = j as i32;
-    }
-
-    for i in 1..=n {
-        for j in 1..=m {
-            let cost = (s[i - 1] != t[j - 1]) as i32;
-
-            dp[i][j] = (dp[i - 1][j] + 1)
-                .min(dp[i][j - 1] + 1)
-                .min(dp[i - 1][j - 1] + cost);
-        }
-    }
-
-    dp[n][m]
 }
 
-pub fn strip_folder_name(batch: &Vec<PathBuf>) -> Vec<String> {
-    let mut result: Vec<String> = Vec::new();
-    for file in batch {
-        if let Some(os_name) = file.file_stem() {
-            if let Some(name) = os_name.to_str() {
-                result.push(name.to_string());
-            }
-        }
+//TODO:: This parser is bad have to make custom which will go char by char like a automata
+pub fn parse_file_name(path: &PathBuf) -> Vec<String> {
+    path.file_stem()
+        .and_then(|stem| stem.to_str())
+        .map(|name| {
+            name.split(|c| DELIMITERS.contains(&c)) // Cleanly references the constant
+                .filter(|s| word_is_valid(s))
+                .map(String::from)
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+pub fn get_parsed_files(files: &Vec<PathBuf>) -> Vec<Vec<String>> {
+    let mut result: Vec<Vec<String>> = Vec::new();
+    for file in files {
+        result.push(parse_file_name(file));
     }
     return result;
 }
-
-pub fn check_dissimilarity(f1: &String, f2: &String) -> i32 {
-    levenshtein_distance(f1, f2)
+pub fn word_based_file_clusters(files: &Vec<PathBuf>) -> Vec<Vec<i32>> {
+    let parsed_files = get_parsed_files(files);
+    debug!(parsed_files);
+    return Vec::new();
 }
 
-pub fn check_this_batch(batch: Vec<String>) -> Vec<Vec<i32>> {
-    let mut all_dist: Vec<(i32, i32, i32)> = Vec::new();
-    let n = batch.len();
-    for i in 0..n {
-        for j in i + 1..n {
-            let file1 = batch.get(i).expect("This should not crash");
-            let file2 = batch.get(j).expect("This should not crash");
-            let dist = check_dissimilarity(file1, file2);
-            all_dist.push((dist, i as i32, j as i32));
+pub fn cluster_files(files: &Vec<PathBuf>, algo: i32) -> Vec<Vec<i32>> {
+    match algo {
+        1 => {
+            return edit_dist_string_clusters(strip_folder_name(files));
+        }
+        2 => {
+            return word_based_file_clusters(files);
+        }
+        _ => {
+            return edit_dist_string_clusters(strip_folder_name(files));
         }
     }
-    let threshold = 10;
-
-    let mut dsu: Dsu = Dsu::new(n);
-    dsu.init();
-
-    for (d, i, j) in all_dist.clone() {
-        if d < threshold {
-            dsu.union_set(i, j);
-        }
-    }
-    return dsu.get_index_clusters();
 }
+
 pub fn check_for_shows(path: &PathBuf) {
-    // fn
+    //WARN:: reading all files But only need videos
     let mut files = Files::new();
     read_all_files(&mut files, &path);
-    let mut clusters: Vec<Vec<PathBuf>> = Vec::new();
-    for (ext, batch) in files.videos {
-        // pass
-        println!("checking {:?} extension in path {:?}", ext, path);
-        let local_clusters = check_this_batch(strip_folder_name(&batch));
+
+    let mut clusters: Vec<Vec<PathBuf>> = Vec::new(); // cluster of shows
+
+    //BUG:: First Batch by extension but extension might be different optimized but wrong
+
+    for batch in files.videos.values() {
+        let local_clusters = cluster_files(&batch, 2);
         for cluster_indices in local_clusters {
             let mut v: Vec<PathBuf> = Vec::new();
             for idx in cluster_indices {

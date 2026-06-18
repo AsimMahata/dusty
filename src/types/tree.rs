@@ -81,7 +81,7 @@ impl Tree {
             root: Node::new(path),
         }
     }
-    pub fn print(&self) {
+    pub fn _print(&self) {
         println!("Tree :: \n {:#?}", self);
     }
 }
