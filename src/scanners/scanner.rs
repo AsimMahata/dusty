@@ -1,5 +1,6 @@
 #![allow(unused_imports)]
 use std::collections::HashSet;
+use std::fs::{DirEntry, ReadDir};
 use std::path::PathBuf;
 use std::{fs, path};
 
@@ -11,8 +12,13 @@ use crate::types::file_types::Files;
 use crate::types::tree::{Node, Tree};
 
 pub fn read_all_files(files: &mut Files, path: &PathBuf) {
-    println!("this is the path: {:#?}", path);
-    let entries = fs::read_dir(&path).expect(&format!("failed to read directory {:?}", path));
+    let entries = match fs::read_dir(path) {
+        Ok(entries) => entries,
+        Err(e) => {
+            println!("skipping {:?}: {}", path, e);
+            return;
+        }
+    };
 
     for entry in entries {
         let file_path = entry.expect("something wrong with this file").path();
@@ -43,11 +49,38 @@ fn get_file_type(file_path: PathBuf) -> Option<Name<'static>> {
         None => None,
     }
 }
+pub fn list_all_videos(path: &PathBuf) -> Vec<PathBuf> {
+    let mut videos: Vec<PathBuf> = Vec::new();
+    let entries = match fs::read_dir(path) {
+        Ok(entries) => entries,
+        Err(e) => {
+            println!("skipping {:?}: {}", path, e);
+            return Vec::new();
+        }
+    };
+
+    for entry in entries {
+        let file_path = entry.expect("something wrong with this file").path();
+        let is_video = mime_guess::from_path(&file_path)
+            .first()
+            .map(|g| g.type_() == mime::VIDEO)
+            .unwrap_or(false);
+        if is_video {
+            videos.push(file_path);
+        }
+    }
+    videos
+}
 
 fn dfs(node: &mut Node) {
     // pass
-    let entries = fs::read_dir(node.get_name())
-        .expect(&format!("filed to read directory {:?}", node.get_name()));
+    let entries = match fs::read_dir(node.get_name()) {
+        Ok(entries) => entries,
+        Err(e) => {
+            println!("skipping {:?}: {}", node.get_name(), e);
+            return;
+        }
+    };
     for entry in entries {
         let child = entry.expect("something wrong with this child");
         if child
@@ -82,8 +115,6 @@ fn dfs(node: &mut Node) {
 }
 
 pub fn build_file_tree(path: PathBuf) -> Tree {
-    println!("this is the path: {:#?}", path);
-    // Actual work
     let mut tree = Tree::new(path);
     dfs(&mut tree.root);
     return tree;

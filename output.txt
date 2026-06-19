@@ -1,0 +1,441 @@
+BAD_FOLDER found at "C:\\Users\\asim\\.11MediaInfo_GUI_26.01_Windows_x64_WithoutInstaller" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.antigravity" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.arduinoIDE" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.cache" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.cargo" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.chocolatey" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.codex" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.config" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.copilot" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.gemini" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.ghcp-appmod" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.ghcp-appmod-java" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.glzr" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.ipython" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.kaggle" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.lmstudio" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.matplotlib" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.nice" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.redhat" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.rustup" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.skiko" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.ssh" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.streamlit" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.vscode" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\.vscode-shared" SKIPPING 
+HIDDEN_FOLDER found at "C:\\Users\\asim\\AppData" SKIPPING 
+skipping "C:\\Users\\asim\\Application Data": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\Application Data": Access is denied. (os error 5)
+BAD_FOLDER found at "C:\\Users\\asim\\backupfolders\\dotfiles\\.config" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\backupfolders\\dotfiles\\.glzr" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\Capstone\\CAPSTONE-" SKIPPING 
+HIDDEN_FOLDER found at "C:\\Users\\asim\\Cookies" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\cp\\cses" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\Desktop\\1VSCODE" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\Desktop\\Gintama\\python" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\Desktop\\testDirNice" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\dev\\aqi-tracker" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\dev\\e-notes" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\dev\\evault" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\dev\\Freedoom" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\dev\\majetot" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\dev\\majetot1" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\dev\\nice" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\dev\\tansen" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\dev\\test" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\dev\\tgbot" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\dev\\zebar\\overline-zebar" SKIPPING 
+skipping "C:\\Users\\asim\\Documents\\My Music": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\Documents\\My Music": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\Documents\\My Pictures": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\Documents\\My Pictures": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\Documents\\My Videos": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\Documents\\My Videos": Access is denied. (os error 5)
+BAD_SIBLINGS found at "C:\\Users\\asim\\Documents\\PowerShell\\Modules\\z\\1.1.14" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\dot\\dotfiles1" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\dot\\nvim" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\Downloads\\downloads\\Freedoom" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\Downloads\\subtitle" SKIPPING 
+skipping "C:\\Users\\asim\\Local Settings": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\Local Settings": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\My Documents": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\My Documents": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\NetHood": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\NetHood": Access is denied. (os error 5)
+BAD_FOLDER found at "C:\\Users\\asim\\Obsidian\\Obsidian\\.obsidian" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\obsidianbackup\\Obsidian\\.obsidian" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\Ojass\\Testcase-Generator" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\Ojass\\testlib" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\paper\\wallpapers" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Obsidian Vault\\.obsidian" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Beta Round 13\\C. Sequence\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Global Round 1\\E. Magic Stones\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Raif Round 1 (Div. 1 + Div. 2)\\E. Carrots for Rabbits\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 1030 (Div. 2)\\D1. Red Light, Green Light (Easy version)\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 1033 (Div. 2) and CodeNite 2025\\D. Matrix game\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 1033 (Div. 2) and CodeNite 2025\\E. Lanes of Cars\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 266 (Div. 2)\\D. Increase Sequence\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 277.5 (Div. 2)\\B. BerSU Ball\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 301 (Div. 2)\\E. Infinite Inversions\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 307 (Div. 2)\\D. GukiZ and Binary Operations\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 308 (Div. 2)\\E. Vanya and Brackets\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 317 [AimFund Thanks-Round] (Div. 1)\\A. Lengthening Sticks\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 319 (Div. 1)\\B. Invariance of Tree\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 319 (Div. 1)\\C. Points on Plane\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 347 (Div. 2)\\A. Complicated GCD\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 432 (Div. 1, based on IndiaHacks Final Round 2017)\\B. Arpa and a list of numbers\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 480 (Div. 2)\\D. Perfect Groups\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 486 (Div. 3)\\E. Divisibility by 25\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 489 (Div. 2)\\D. Nastya and a Game\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 494 (Div. 3)\\E. Tree Constructing\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 498 (Div. 3)\\F. Xor-Paths\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 553 (Div. 2)\\E. Number of Components\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 655 (Div. 2)\\D. Omkar and Circle\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 667 (Div. 3)\\F. Subsequences of Length Two\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 672 (Div. 2)\\C2. Pokémon Army (hard version)\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 686 (Div. 3)\\F. Array Partition\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 700 (Div. 1)\\B2. Painting the Array II\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 717 (Div. 2)\\D. Cut\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 739 (Div. 3)\\F2. Nearest Beautiful Number (hard version)\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Codeforces Round 849 (Div. 4)\\C. Prepend and Append\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\CSES Problem Set\\Distinct Values Sum\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Educational Codeforces Round 12\\E. Beautiful Subarrays\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Educational Codeforces Round 141 (Rated for Div. 2)\\A. Make it Beautiful\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Educational Codeforces Round 17\\C. Two strings\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Educational Codeforces Round 180 (Rated for Div. 2)\\E. Tree Colorings\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Educational Codeforces Round 26\\E. Vasya's Function\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Educational Codeforces Round 3\\E. Minimum spanning tree for each edge\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Educational Codeforces Round 65 (Rated for Div. 2)\\E. Range Deleting\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Educational Codeforces Round 67 (Rated for Div. 2)\\E. Tree Painting\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Educational Codeforces Round 71 (Rated for Div. 2)\\F. Remainder Problem\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Educational Codeforces Round 83 (Rated for Div. 2)\\E. Array Shrinking\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Educational Codeforces Round 89 (Rated for Div. 2)\\E. Two Arrays\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Educational Codeforces Round 9\\D. Longest Subsequence\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Forethought Future Cup - Elimination Round\\D. Frog Jumping\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Helvetic Coding Contest 2019 online mirror (teams allowed, unrated)\\A2. Heidi Learns Hashing (Medium)\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Playrix Codescapes Cup (Codeforces Round 413, rated, Div. 1 + Div. 2)\\D. Field expansion\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Technocup 2019 - Elimination Round 3\\E. The Unbearable Lightness of Weights\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\Testing Round 11\\B. New York Hotel\\.competibest" SKIPPING 
+BAD_FOLDER found at "C:\\Users\\asim\\Pictures\\Documents\\Programming\\Competitive\\VK Cup 2018 - Wild-card Round 1\\J. Segments\\.competibest" SKIPPING 
+skipping "C:\\Users\\asim\\PrintHood": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\PrintHood": Access is denied. (os error 5)
+BAD_SIBLINGS found at "C:\\Users\\asim\\projects\\dusty" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\projects\\flipkar" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\projects\\Flow" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\projects\\funet" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\projects\\geminicli" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\projects\\pf3" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\projects\\project3Dip" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\projects\\rust\\hello" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\projects\\tokenizer_test" SKIPPING 
+BAD_SIBLINGS found at "C:\\Users\\asim\\pyenv" SKIPPING 
+skipping "C:\\Users\\asim\\Recent": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\Recent": Access is denied. (os error 5)
+BAD_SIBLINGS found at "C:\\Users\\asim\\sem6" SKIPPING 
+skipping "C:\\Users\\asim\\SendTo": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\SendTo": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\Start Menu": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\Start Menu": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\Templates": Access is denied. (os error 5)
+skipping "C:\\Users\\asim\\Templates": Access is denied. (os error 5)
+Shows {
+    list_of_shows: [
+        Show {
+            title: "202 - Everyone Looks a Little Grown up after Spring Break",
+            season: None,
+            num_of_ep: 2,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Desktop\\Gintama\\202 - Everyone Looks a Little Grown up after Spring Break.mkv",
+                "C:\\Users\\asim\\Desktop\\Gintama\\203 - Everyone Looks Pretty Grown up after Summer Break.mkv",
+            ],
+        },
+        Show {
+            title: "195 - Not Losing To The Rain",
+            season: None,
+            num_of_ep: 3,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Desktop\\Gintama\\195 - Not Losing To The Rain.mkv",
+                "C:\\Users\\asim\\Desktop\\Gintama\\196 - Not Losing To The Wind.mkv",
+                "C:\\Users\\asim\\Desktop\\Gintama\\197 - Not Losing To The Storm.mkv",
+            ],
+        },
+        Show {
+            title: "To Your Eternity S3 - 03 [HDRip] [Sub] [@Animes_Unity]",
+            season: None,
+            num_of_ep: 23,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 03 [HDRip] [Sub] [@Animes_Unity].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 04 [HDRip] [Sub] [@Animes_Unity].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 05 [HDRip] [Sub] [@Animes_Unity].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 06 [HDRip] [Sub] [@Animes_Unity].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 07 [HDRip] [Sub] [@Animes_Unity].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 08 [HDRip] [Sub] [@Animes_Unity].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 09 [HDRip] [Sub] [@Animes_Unity].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 10 [HDRip] [Sub] [@Animes_Unity].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 11 [HDRip] [Sub] (2).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 11 [HDRip] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 12 [HDRip] [Sub] (2).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 12 [HDRip] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 13 [HDRip] [Sub] (2).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 13 [HDRip] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 14 [HDRip] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 15 [HDRip] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To Your Eternity S3 - 16 [Hdrip] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To.Your.Eternity.S03E17.Invisible.Battle.1080p.AMZN.WEB-DL.English.DDP2.0-Japanese.DDP2.0.H.264-4kHdHub.Com.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To.Your.Eternity.S03E18.A.Willingness.to.Believe.1080p.AMZN.WEB-DL.English.DDP2.0-Japanese.DDP2.0.H.264-4kHdHub.Com.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To.Your.Eternity.S03E19.Clean.Water.1080p.AMZN.WEB-DL.English.DDP2.0-Japanese.DDP2.0.H.264-4kHdHub.Com.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To.Your.Eternity.S03E20.Coexist.1080p.AMZN.WEB-DL.English.DDP2.0-Japanese.DDP2.0.H.264-4kHdHub.Com.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To.Your.Eternity.S03E21.Stay.Here.1080p.AMZN.WEB-DL.English.DDP2.0-Japanese.DDP2.0.H.264-4kHdHub.Com.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\To.Your.Eternity.S03E22.To.Fushi.1080p.AMZN.WEB-DL.English.DDP2.0-Japanese.DDP2.0.H.264-4kHdHub.Com.mkv",
+            ],
+        },
+        Show {
+            title: "viewed_this_already_test [S03-E10] One Punch Man [HDRip] [Dual] @Anime_Skylines",
+            season: None,
+            num_of_ep: 21,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\viewed_this_already_test [S03-E10] One Punch Man [HDRip] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E01] One Punch Man [HDRip] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E02] One Punch Man [HDRip] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E03] One Punch Man [HDRip] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E04] One Punch Man [HDRip] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E05] One Punch Man [HDRip] [Dual] @Anime_Skylines (2).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E05] One Punch Man [HDRip] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E06] One Punch Man [1080p] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E06] One Punch Man [HDRip] [Dual] @Anime_Skylines (2).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E06] One Punch Man [HDRip] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E07] One Punch Man [1080p] [Dual] @Anime_Skylines (2).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E07] One Punch Man [1080p] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E08] One Punch Man [1080p] [Dual] @Anime_Skylines (2).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E08] One Punch Man [1080p] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E09] One Punch Man [1080p] [Dual] @Anime_Skylines (2).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E09] One Punch Man [1080p] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E10] One Punch Man [1080p] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E11] One Punch Man [1080p] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E11] One Punch Man [HDRip] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E12] One Punch Man [1080p] [Dual] @Anime_Skylines.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S03-E12] One Punch Man [HDRip] [Dual] @Anime_Skylines.mkv",
+            ],
+        },
+        Show {
+            title: "[S01] [EP-01] Always a Catch! [1080p] [SUB] @Anime_Fury",
+            season: None,
+            num_of_ep: 12,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S01] [EP-01] Always a Catch! [1080p] [SUB] @Anime_Fury.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S01] [EP-02] Always a Catch! [1080p] [SUB] @Anime_Fury.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S01] [EP-03] Always a Catch! [1080p] [SUB] @Anime_Fury.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S01] [EP-04] Always a Catch! [1080p] [SUB] @Anime_Fury.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S01] [EP-05] Always a Catch! [1080p] [SUB] @Anime_Fury.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S01] [EP-06] Always a Catch! [1080p] [SUB] @Anime_Fury.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S01] [EP-07] Always a Catch! [1080p] [SUB] @Anime_Fury.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S01] [EP-08] Always a Catch! [1080p] [SUB] @Anime_Fury.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S01] [EP-09] Always a Catch! [1080p] [SUB] @Anime_Fury.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S01] [EP-10] Always a Catch! [1080p] [SUB] @Anime_Fury.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S01] [EP-11] Always a Catch! [1080p] [SUB] @Anime_Fury.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[S01] [EP-12] Always a Catch! [1080p] [SUB] @Anime_Fury.mkv",
+            ],
+        },
+        Show {
+            title: "[SO] [01 - My Ribdiculous Reincarnation] [1080p] [Sub]",
+            season: None,
+            num_of_ep: 9,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[SO] [01 - My Ribdiculous Reincarnation] [1080p] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[SO] [02 - My Ribdiculous Reincarnation] [1080p] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[SO] [03 - My Ribdiculous Reincarnation] [1080p] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[SO] [05 - My Ribdiculous Reincarnation] [1080p] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[SO] [06 - My Ribdiculous Reincarnation] [1080p] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[SO] [07 - My Ribdiculous Reincarnation] [1080p] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[SO] [08 - My Ribdiculous Reincarnation] [1080p] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[SO] [09 - My Ribdiculous Reincarnation] [1080p] [Sub].mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\[SO] [10 - My Ribdiculous Reincarnation] [1080p] [Sub].mkv",
+            ],
+        },
+        Show {
+            title: "S1 11 - Observation Records [1080p] (2)",
+            season: None,
+            num_of_ep: 2,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S1 11 - Observation Records [1080p] (2).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S1 11 - Observation Records [1080p].mkv",
+            ],
+        },
+        Show {
+            title: "S01_E07_Jack_of_All_Trades,_Party_of_None_1080p_Sub_@Anime_Explorer",
+            season: None,
+            num_of_ep: 6,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E07_Jack_of_All_Trades,_Party_of_None_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E08_Jack_of_All_Trades,_Party_of_None_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E09_Jack_of_All_Trades,_Party_of_None_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E10_Jack_of_All_Trades,_Party_of_None_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E11_Jack_of_All_Trades,_Party_of_None_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E12_Jack_of_All_Trades,_Party_of_None_1080p_Sub_@Anime_Explorer.mkv",
+            ],
+        },
+        Show {
+            title: "S01_E01_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer",
+            season: None,
+            num_of_ep: 13,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E01_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E02_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E03_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E04_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E05_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E06_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E07_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer (2).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E07_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E08_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer (2).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E08_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E09_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer (2).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E09_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer.mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\S01_E10_An_Observation_Log_of_My_1080p_Sub_@Anime_Explorer.mkv",
+            ],
+        },
+        Show {
+            title: "[Cleo]Natsume_Yuujinchou_San_-_01_-_(10bit_BD720p_x265)",
+            season: None,
+            num_of_ep: 13,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\anime\\natusme\\[Cleo]Natsume_Yuujinchou_San_-_01_-_(10bit_BD720p_x265).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\anime\\natusme\\[Cleo]Natsume_Yuujinchou_San_-_02_-_(10bit_BD720p_x265).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\anime\\natusme\\[Cleo]Natsume_Yuujinchou_San_-_03_-_(10bit_BD720p_x265).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\anime\\natusme\\[Cleo]Natsume_Yuujinchou_San_-_04_-_(10bit_BD720p_x265).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\anime\\natusme\\[Cleo]Natsume_Yuujinchou_San_-_05_-_(10bit_BD720p_x265).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\anime\\natusme\\[Cleo]Natsume_Yuujinchou_San_-_06_-_(10bit_BD720p_x265).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\anime\\natusme\\[Cleo]Natsume_Yuujinchou_San_-_07_-_(10bit_BD720p_x265).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\anime\\natusme\\[Cleo]Natsume_Yuujinchou_San_-_08_-_(10bit_BD720p_x265).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\anime\\natusme\\[Cleo]Natsume_Yuujinchou_San_-_09_-_(10bit_BD720p_x265).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\anime\\natusme\\[Cleo]Natsume_Yuujinchou_San_-_10_-_(10bit_BD720p_x265).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\anime\\natusme\\[Cleo]Natsume_Yuujinchou_San_-_11_-_(10bit_BD720p_x265).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\anime\\natusme\\[Cleo]Natsume_Yuujinchou_San_-_12_-_(10bit_BD720p_x265).mkv",
+                "C:\\Users\\asim\\Downloads\\Telegram Desktop\\anime\\natusme\\[Cleo]Natsume_Yuujinchou_San_-_13_-_(10bit_BD720p_x265).mkv",
+            ],
+        },
+        Show {
+            title: "Blood Sweat & Tears ft. Sheryl Lee Ralph ｜ Official Music Video - League of Legends",
+            season: None,
+            num_of_ep: 2,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Blood Sweat & Tears ft. Sheryl Lee Ralph ｜ Official Music Video - League of Legends.webm",
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Imagine Dragons & JID - Enemy (from the series Arcane： League of Legends) ｜ Official Music Video.webm",
+            ],
+        },
+        Show {
+            title: "O Re Piya ｜ Full Song ｜ Aaja Nachle ｜ Madhuri Dixit ｜ Rahat Fateh Ali Khan ｜ Salim-Sulaiman, Jaideep",
+            season: None,
+            num_of_ep: 2,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\O Re Piya ｜ Full Song ｜ Aaja Nachle ｜ Madhuri Dixit ｜ Rahat Fateh Ali Khan ｜ Salim-Sulaiman, Jaideep.webm",
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\＂Mere Rashke Qamar＂ Song With Lyrics ｜ Baadshaho ｜ Ajay Devgn, Ileana, Nusrat & Rahat Fateh Ali Khan.webm",
+            ],
+        },
+        Show {
+            title: "Bea Miller - Playground  ｜ Arcane League of Legends ｜ Riot Games Music",
+            season: None,
+            num_of_ep: 5,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Bea Miller - Playground  ｜ Arcane League of Legends ｜ Riot Games Music.webm",
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Bones UK - Dirty Little Animals ｜ Arcane League of Legends ｜ Riot Games Music.webm",
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Fantastic Negrito - When Everything Went Wrong ｜ Arcane League of Legends ｜ Riot Games Music.webm",
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Paint The Town Blue (from the series Arcane League of Legends).webm",
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Ramsey - Goodbye  ｜ Arcane League of Legends ｜ Riot Games Music.webm",
+            ],
+        },
+        Show {
+            title: "Sunn Raha Hai Na Tu Aashiqui 2 (Official) Video Song  ｜ Aditya Roy Kapur, Shraddha Kapoor",
+            season: None,
+            num_of_ep: 2,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Sunn Raha Hai Na Tu Aashiqui 2 (Official) Video Song  ｜ Aditya Roy Kapur, Shraddha Kapoor.webm",
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\＂Milne Hai Mujhse Aayi Aashiqui 2＂ Full Video Song ｜ Aditya Roy Kapur, Shraddha Kapoor.webm",
+            ],
+        },
+        Show {
+            title: "Dekhte Dekhte Full Song ｜ Batti Gul Meter Chalu ｜ Atif Aslam ｜ Shahid K Shraddha K ｜ Nusrat Saab",
+            season: None,
+            num_of_ep: 2,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Dekhte Dekhte Full Song ｜ Batti Gul Meter Chalu ｜ Atif Aslam ｜ Shahid K Shraddha K ｜ Nusrat Saab.webm",
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Phir Bhi Tumko Chaahunga - Full Song ｜ Arijit Singh ｜ Arjun K & Shraddha K ｜ Mithoon, Manoj M.webm",
+            ],
+        },
+        Show {
+            title: "【original anime MV】III【hololive⧸宝鐘マリン＆こぼ・かなえる】",
+            season: None,
+            num_of_ep: 2,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\【original anime MV】III【hololive⧸宝鐘マリン＆こぼ・かなえる】.webm",
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\【original anime MV】美少女無罪♡パイレーツ【hololive⧸宝鐘マリン】.webm",
+            ],
+        },
+        Show {
+            title: "Forever ｜ Euphoria OST",
+            season: None,
+            num_of_ep: 2,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Forever ｜ Euphoria OST.webm",
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Formula ｜ Euphoria OST.webm",
+            ],
+        },
+        Show {
+            title: "Badtameez Dil Lyrics - Yeh Jawaani Hai Deewani ｜ Pritam, Benny Dayal, Shefali Alvarez",
+            season: None,
+            num_of_ep: 2,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Badtameez Dil Lyrics - Yeh Jawaani Hai Deewani ｜ Pritam, Benny Dayal, Shefali Alvarez.webm",
+                "C:\\Users\\asim\\Music\\Go-Offline\\done\\Balam Pichkari Full Song Video Yeh Jawaani Hai Deewani ｜ PRITAM ｜ Ranbir Kapoor, Deepika Padukone.webm",
+            ],
+        },
+        Show {
+            title: "Screen Recording 2026-06-11 112735",
+            season: None,
+            num_of_ep: 2,
+            start_ep: None,
+            end_ep: None,
+            list_of_ep: [
+                "C:\\Users\\asim\\Videos\\Screen Recordings\\Screen Recording 2026-06-11 112735.mp4",
+                "C:\\Users\\asim\\Videos\\Screen Recordings\\Screen Recording 2026-06-13 113930.mp4",
+            ],
+        },
+    ],
+}
+"--------------LET IT RIP---------------------"

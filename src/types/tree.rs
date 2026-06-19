@@ -11,9 +11,7 @@ pub struct Node {
 }
 
 impl Drop for Node {
-    fn drop(&mut self) {
-        println!("Dropping node: {:?}", self.name);
-    }
+    fn drop(&mut self) {}
 }
 
 impl Node {

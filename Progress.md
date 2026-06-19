@@ -43,3 +43,10 @@ tell me every shows I have in my pc
 - Trying to improve `check_for_shows` function
 - Thinking of using different algorithm or method
 - Word Based
+
+## 19th June
+
+- i think the logic is ...
+- If some video have some portion which they share and
+- if we don't count it every one of them don't form any cluster
+- that means they are related ... I can use that logic I think
