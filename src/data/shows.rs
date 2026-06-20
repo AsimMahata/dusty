@@ -4,26 +4,20 @@ use std::path::PathBuf;
 pub struct Show {
     title: String,
     season: Option<i32>,
-    num_of_ep: i32,
-    start_ep: Option<i32>,
-    end_ep: Option<i32>,
+    num_of_ep: usize,
     list_of_ep: Vec<PathBuf>,
 }
 impl Show {
     pub fn new(
         title: String,
         season: Option<i32>,
-        num_of_ep: i32,
-        start_ep: Option<i32>,
-        end_ep: Option<i32>,
+        num_of_ep: usize,
         list_of_ep: Vec<PathBuf>,
     ) -> Self {
         Self {
             title: title,
             season: season,
             num_of_ep: num_of_ep,
-            start_ep: start_ep,
-            end_ep: end_ep,
             list_of_ep: list_of_ep,
         }
     }
@@ -32,8 +26,6 @@ impl Show {
             title: String::new(),
             season: None,
             num_of_ep: 0,
-            start_ep: None,
-            end_ep: None,
             list_of_ep: Vec::new(),
         }
     }
@@ -42,6 +34,9 @@ impl Show {
     }
     pub fn get_season(&self) -> Option<i32> {
         return self.season;
+    }
+    pub fn get_number_of_ep(&self) -> usize {
+        return self.num_of_ep;
     }
 }
 

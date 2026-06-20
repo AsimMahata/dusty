@@ -4,9 +4,7 @@ use crate::debug;
 
 //BUG:: TRIGUN BUG
 const DELIMITERS: &[char] = &[' ', '.', '_', '"', '-'];
-const SPECIAL_CHARS: &[char] = &[
-    '[', ']', '@', '｜', '|', '\\', '/', '$', '&', '(', ')', '{', '}',
-];
+const SPECIAL_CHARS: &[char] = &['[', ']', '@', '｜', '|', '\\', '/', '$', '(', ')', '{', '}'];
 const NOISY_TOKENS: &[&str] = &[
     "1080p", "AMZN", "WEB", "DL", "English", "DDP2", "0", "Japanese", "H", "264", "4kHdHub", "Com",
 ];

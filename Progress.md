@@ -2,10 +2,18 @@
 
 <!--toc:start-->
 - [Progress](#progress)
+  - [Todo](#todo)
   - [Plan](#plan)
-  - [16th June](#16th-june)
+  - [20th June](#20th-june)
+  - [19th June](#19th-june)
+  - [18th June](#18th-june)
   - [17th June](#17th-june)
+  - [16th June](#16th-june)
 <!--toc:end-->
+
+## Todo
+
+- 19th June
 
 ## Plan
 
@@ -24,11 +32,23 @@ tell me every shows I have in my pc
 - If found Store In some Place
 - Display all Shows
 
-## 16th June
+## 20th June
 
-- make different section which will handle different things
-- for now video , image , audio these 3 things
-- So We will scan and according to category will send it to handlers
+- Fix The Generate Title Thing
+- Try to modulate Code and Name
+
+## 19th June
+
+- i think the logic is ...
+- If some video have some portion which they share and
+- if we don't count it every one of them don't form any cluster
+- that means they are related ... I can use that logic I think
+
+## 18th June
+
+- Trying to improve `check_for_shows` function
+- Thinking of using different algorithm or method
+- Word Based
 
 ## 17th June
 
@@ -38,15 +58,8 @@ tell me every shows I have in my pc
 - Navigation Some Folder -> Some More Folder -> so on
 - Back button kind of a file explorer
 
-## 18th June
+## 16th June
 
-- Trying to improve `check_for_shows` function
-- Thinking of using different algorithm or method
-- Word Based
-
-## 19th June
-
-- i think the logic is ...
-- If some video have some portion which they share and
-- if we don't count it every one of them don't form any cluster
-- that means they are related ... I can use that logic I think
+- make different section which will handle different things
+- for now video , image , audio these 3 things
+- So We will scan and according to category will send it to handlers
