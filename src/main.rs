@@ -8,7 +8,7 @@ mod scanners;
 mod types;
 mod utility;
 
-use crate::engine::parser::parse_file_name;
+use crate::engine::utility::parser::tokenize_file_name;
 use crate::printers::option::what_to_print;
 use crate::scanners::show_scanner::scan_for_shows_rec;
 use crate::scanners::tree_builder::build_file_tree;
@@ -29,6 +29,7 @@ macro_rules! debug {
 }
 
 fn main() {
+    let start = std::time::Instant::now();
     let path: PathBuf = PathBuf::from("C:\\Users\\asim\\Downloads\\Telegram Desktop");
     let path2: PathBuf = PathBuf::from("C:\\");
 
@@ -39,9 +40,9 @@ fn main() {
 
     // building type tree
     let _tree = build_file_tree(path);
-    // // debug!(parse_file_name(&PathBuf::from(
-    // //     "C:\\Users\\asim\\Music\\Go-Offline\\done\\Bulleya - Lyrical Video ｜ Ae Dil Hai Mushkil ｜ Amit Mishra, Shilpa Rao ｜ Pritam.webm"
-    // // )));
+    // debug!(tokenize_file_name(&PathBuf::from(
+    //     "C:\\Users\\asim\\Music\\Go-Offline\\done\\【original anime MV】美少女無罪♡パイレーツ【hololive⧸宝鐘マリン】.webm",
+    // )));
     // // debug!(parse_file_name(&PathBuf::from(
     // //     "C:\\Users\\asim\\Music\\Go-Offline\\done\\Chand Sifarish ｜ Full Song ｜ Fanaa ｜ Aamir Khan, Kajol ｜ Shaan, Kailash Kher ｜ Jatin-Lalit ｜ Prasoon.webm"
     // // )));
@@ -50,4 +51,7 @@ fn main() {
     // );
     // let guess = mime_guess::from_path(path);
     // println!("{:?}", guess.first());
+
+    let duration = start.elapsed();
+    println!("Total time: {:?}", duration);
 }

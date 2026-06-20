@@ -3,9 +3,8 @@ use std::{fs, os::windows::prelude::*, path::PathBuf};
 use crate::{
     data::shows::Shows,
     debug,
-    engine::cluster::{cluster_files, make_shows_from_clusters},
+    engine::{cluster::cluster::cluster_files, shows::maker::make_shows_from_clusters},
     scanners::{dfs::dfs_show_scanner, videos::list_all_videos},
-    utility::info::{check_for_bad_sibling, is_forbidden_folder, is_hidden},
 };
 
 pub fn scan_shows_in_dir(path: &PathBuf, shows: &mut Shows) {
