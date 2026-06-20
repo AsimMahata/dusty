@@ -10,6 +10,7 @@ mod utility;
 
 use crate::engine::utility::parser::tokenize_file_name;
 use crate::printers::option::what_to_print;
+use crate::scanners::recursive_scanner::test_all_video_cluster;
 use crate::scanners::show_scanner::scan_for_shows_rec;
 use crate::scanners::tree_builder::build_file_tree;
 use crate::types::file_types::Files;

@@ -37,8 +37,11 @@ pub fn check_for_bad_sibling(childrens: &Vec<PathBuf>) -> bool {
             .map_or(false, |s| BAD_SIBLINGS.contains(&s))
     })
 }
+pub fn is_windows_root(path: &PathBuf) -> bool {
+    return path.eq(&PathBuf::from("C:\\"));
+}
 
-pub fn get_file_type(file_path: PathBuf) -> Option<Name<'static>> {
+pub fn get_file_type(file_path: &PathBuf) -> Option<Name<'static>> {
     let guess = mime_guess::from_path(&file_path);
 
     match guess.first() {

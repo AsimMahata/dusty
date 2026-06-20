@@ -23,7 +23,7 @@ tell me every shows I have in my pc
 
 ---
 
-1. GOAL 1:
+x. GOAL 1: DONE
 
 - For this First We need All Video Files
 - Best Is Folder Wise grouping
@@ -31,6 +31,27 @@ tell me every shows I have in my pc
 - use the algorithm
 - If found Store In some Place
 - Display all Shows
+
+x. GOAL 2: DONE
+
+- see what happens if i give all videos inside my pc
+- not that good its basically same as before difference is trigun is now one .
+- takes too much time due to n increases
+
+x. GOAL 3:
+
+- List all the Project Directory in your Pc just like NEOVIDE
+- Try to incorporate it with DFS Scanner
+- One scanner Depending Upon Cases it can pass forward
+- But I think First I need to Make it modulated
+- Then Try to optimize OtherWise the code will get too messy
+- It will reduce dual DFS but at what cost
+- Not worth it I think Caching will have a better result
+- Give User A rescan button on each section
+- its better than making a single dfs do all the work
+- But will see how much it can take
+- if its possible to do multiple thing using one dfs
+- try that if not then its okay but later work
 
 ## 20th June
 
