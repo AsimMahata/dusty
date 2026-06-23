@@ -10,6 +10,7 @@ mod utility;
 
 use crate::engine::utility::parser::tokenize_file_name;
 use crate::printers::option::what_to_print;
+use crate::scanners::project::scan_all_projects;
 use crate::scanners::recursive_scanner::test_all_video_cluster;
 use crate::scanners::show_scanner::scan_for_shows_rec;
 use crate::scanners::tree_builder::build_file_tree;
@@ -18,7 +19,7 @@ use core::range;
 use std::cmp::max;
 use std::ops::{Add, Sub};
 use std::path::{self, PathBuf};
-use std::result;
+use std::{env, result};
 
 #[macro_export]
 macro_rules! debug {
@@ -29,8 +30,7 @@ macro_rules! debug {
     };
 }
 
-fn main() {
-    let start = std::time::Instant::now();
+fn run2() {
     let path: PathBuf = PathBuf::from("C:\\Users\\asim\\Downloads\\Telegram Desktop");
     let path2: PathBuf = PathBuf::from("C:\\");
 
@@ -52,7 +52,23 @@ fn main() {
     // );
     // let guess = mime_guess::from_path(path);
     // println!("{:?}", guess.first());
+}
 
+fn run1() {
+    let args: Vec<String> = env::args().collect();
+    let path = &args[1];
+    scan_for_shows_rec(&PathBuf::from(path));
+    debug!(args);
+}
+fn run3() {
+    scan_all_projects();
+}
+fn run() {
+    run3();
+}
+fn main() {
+    let start = std::time::Instant::now();
+    run();
     let duration = start.elapsed();
     println!("Total time: {:?}", duration);
 }
