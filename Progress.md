@@ -4,6 +4,7 @@
 - [Progress](#progress)
   - [Todo](#todo)
   - [Plan](#plan)
+  - [23th June](#23th-june)
   - [20th June](#20th-june)
   - [19th June](#19th-june)
   - [18th June](#18th-june)
@@ -23,35 +24,34 @@ tell me every shows I have in my pc
 
 ---
 
-x. GOAL 1: DONE
+x. GOAL 4:
 
-- For this First We need All Video Files
-- Best Is Folder Wise grouping
-- So go inside a folder
-- use the algorithm
-- If found Store In some Place
-- Display all Shows
+- Dusty Files , Files that are downloaded or introduced By user
+- Find them , Sort based on How old and How relevent
+- Files like Exe, Img, Vid, Aud, Pdfs, Size > 2mb
+- Go to Mime to see more types
+- First Do a raw scan Try to find as much as possible
+- Then according to the files I want to separate Find A logic
+- Kind Of Manual But Soon In future That Manual Pattern Finding Will work
+- Automatic and All algorithms will be customized to me
+- My File Patters
+- What to ignore What to not
+
+x. GOAL 3: DONE
+
+- Find all Projects
 
 x. GOAL 2: DONE
 
-- see what happens if i give all videos inside my pc
-- not that good its basically same as before difference is trigun is now one .
-- takes too much time due to n increases
+- Not folder wise but all video cluster
 
-x. GOAL 3:
+x. GOAL 1: DONE
 
-- List all the Project Directory in your Pc just like NEOVIDE
-- Try to incorporate it with DFS Scanner
-- One scanner Depending Upon Cases it can pass forward
-- But I think First I need to Make it modulated
-- Then Try to optimize OtherWise the code will get too messy
-- It will reduce dual DFS but at what cost
-- Not worth it I think Caching will have a better result
-- Give User A rescan button on each section
-- its better than making a single dfs do all the work
-- But will see how much it can take
-- if its possible to do multiple thing using one dfs
-- try that if not then its okay but later work
+- Display All shows
+
+## 23th June
+
+- Done Goal 3
 
 ## 20th June
 

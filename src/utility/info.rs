@@ -54,3 +54,13 @@ pub fn get_file_type(file_path: &PathBuf) -> Option<Name<'static>> {
         None => None,
     }
 }
+
+pub fn get_all_drives() -> Vec<PathBuf> {
+    let mut drives: Vec<PathBuf> = Vec::new();
+    drives.push(PathBuf::from("C:\\"));
+    return drives;
+}
+
+pub fn is_git_repo(path: &PathBuf) -> bool {
+    path.join(".git").exists()
+}

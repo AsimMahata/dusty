@@ -3,10 +3,13 @@ use std::{collections::HashSet, fs, path::PathBuf};
 use mime_guess::mime::Name;
 
 use crate::{
-    data::shows::Shows,
+    data::{project::Project, shows::Shows},
+    engine::project::maker::make_project,
     scanners::show_scanner::scan_shows_in_dir,
     types::tree::Node,
-    utility::info::{check_for_bad_sibling, get_file_type, is_forbidden_folder, is_hidden},
+    utility::info::{
+        check_for_bad_sibling, get_file_type, is_forbidden_folder, is_git_repo, is_hidden,
+    },
 };
 
 pub fn dfs_file_of_type(
@@ -152,4 +155,49 @@ pub fn dfs_tree_build(node: &mut Node) {
     node.short_circuit_children();
     // remove useless children
     node.check_disability();
+}
+
+pub fn dfs_project_scanner(path: &PathBuf, projects: &mut Vec<Project>, is_root: bool) {
+    if path
+        .file_name()
+        .and_then(|n| n.to_str())
+        .map_or(false, |s| s.starts_with('.'))
+    {
+        println!("BAD_FOLDER found at {:?} SKIPPING ", path);
+        return;
+    };
+
+    if !is_root && is_hidden(path) {
+        println!("HIDDEN_FOLDER found at {:?} SKIPPING ", path);
+        return;
+    }
+    if is_forbidden_folder(path) {
+        println!("FORBIDDEN FOLDER found at {:?} SKIPPING", path);
+        return;
+    }
+
+    if is_git_repo(path) {
+        projects.push(make_project(path));
+        return;
+    }
+    //dfs
+    let entries = match fs::read_dir(path) {
+        Ok(entries) => entries,
+        Err(e) => {
+            println!("skipping {:?}: {}", path, e);
+            return;
+        }
+    };
+
+    let mut childrens: Vec<PathBuf> = Vec::new();
+    for entry in entries {
+        let child = entry.expect("something wrong with this child").path();
+        if child.is_dir() {
+            childrens.push(child);
+        }
+    }
+
+    for child in childrens {
+        dfs_project_scanner(&child, projects, false);
+    }
 }
