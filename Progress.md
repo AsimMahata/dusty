@@ -49,6 +49,10 @@ x. GOAL 1: DONE
 
 - Display All shows
 
+## 1st July
+
+- Remove only num to fix the episode issue
+
 ## 23th June
 
 - Done Goal 3

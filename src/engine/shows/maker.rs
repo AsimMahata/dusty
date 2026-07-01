@@ -22,7 +22,7 @@ macro_rules! print_grid {
         }
     };
 }
-pub fn make_shows_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut Shows) {
+pub fn make_shows_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut Shows, dir: &PathBuf) {
     for cluster in clusters {
         if cluster.len() < 2 {
             continue;
@@ -30,7 +30,7 @@ pub fn make_shows_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut Shows)
         let title = generate_show_title(cluster);
         let season: Option<i32> = None;
         let num_of_ep: usize = cluster.len();
-        let show = Show::new(title, season, num_of_ep, cluster.clone());
+        let show = Show::new(title, season, num_of_ep, cluster.clone(), dir.clone());
         shows.insert_new_show(show);
     }
 }

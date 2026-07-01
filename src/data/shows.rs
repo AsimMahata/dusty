@@ -6,6 +6,7 @@ pub struct Show {
     season: Option<i32>,
     num_of_ep: usize,
     list_of_ep: Vec<PathBuf>,
+    dir: PathBuf,
 }
 impl Show {
     pub fn new(
@@ -13,12 +14,14 @@ impl Show {
         season: Option<i32>,
         num_of_ep: usize,
         list_of_ep: Vec<PathBuf>,
+        dir: PathBuf,
     ) -> Self {
         Self {
             title: title,
             season: season,
             num_of_ep: num_of_ep,
             list_of_ep: list_of_ep,
+            dir,
         }
     }
     pub fn default() -> Self {
@@ -27,6 +30,7 @@ impl Show {
             season: None,
             num_of_ep: 0,
             list_of_ep: Vec::new(),
+            dir: PathBuf::new(),
         }
     }
     pub fn get_title(&self) -> String {
@@ -37,6 +41,12 @@ impl Show {
     }
     pub fn get_number_of_ep(&self) -> usize {
         return self.num_of_ep;
+    }
+    pub fn get_dir(&self) -> PathBuf {
+        return self.dir.clone();
+    }
+    pub fn get_eps(&self) -> &Vec<PathBuf> {
+        return &self.list_of_ep;
     }
 }
 

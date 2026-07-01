@@ -39,7 +39,11 @@ fn is_token_valid(t: &str) -> bool {
 fn is_token_valid_for_title(t: &str) -> bool {
     if t.is_empty() {
         return false;
+    } else if t.chars().all(|c| c.is_ascii_digit()) {
+        return false;
     } else if is_noisy(&t) {
+        return false;
+    } else if t.len() <= 1 {
         return false;
     } else {
         return true;

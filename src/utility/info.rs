@@ -2,7 +2,7 @@ use std::{fs, os::windows::prelude::*, path::PathBuf};
 
 use mime_guess::mime::{self, Name};
 
-const BAD_SIBLINGS: &[&str] = &[".git", "node_modules", ".venv", "venv", ".cph"];
+const BAD_SIBLINGS: &[&str] = &[".git", "node_modules", ".venv", "venv", ".cph", "dist"];
 
 //TODO: make it custom user based with some defaults
 
@@ -16,6 +16,8 @@ pub fn get_forbidden_folders() -> Vec<PathBuf> {
         PathBuf::from("C:\\System Volume Information"),
         PathBuf::from("C:\\Users\\Default"),
         PathBuf::from("C:\\MYAPPS\\"),
+        PathBuf::from("C:\\MinGW\\"),
+        PathBuf::from("C:\\msys64\\"),
     ]
 }
 

@@ -26,7 +26,7 @@ pub fn scan_shows_in_dir(path: &PathBuf, shows: &mut Shows) {
     let videos = list_all_videos(path);
     let index_clusters = cluster_files(&videos, 2);
     let clusters = index_cluster_to_file_cluster(&index_clusters, &videos);
-    make_shows_from_clusters(&clusters, shows);
+    make_shows_from_clusters(&clusters, shows, path);
 }
 
 pub fn scan_for_shows(path: &PathBuf) {
@@ -35,8 +35,9 @@ pub fn scan_for_shows(path: &PathBuf) {
     debug!(shows);
 }
 
-pub fn scan_for_shows_rec(path: &PathBuf) {
+pub fn scan_for_shows_rec(path: &PathBuf) -> Shows {
     let mut shows: Shows = Shows::new();
     dfs_show_scanner(path, 0, &mut shows, is_windows_root(path));
     debug!(shows);
+    return shows;
 }

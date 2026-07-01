@@ -25,6 +25,6 @@ pub fn test_all_video_cluster(path: &PathBuf) {
     let list = get_all_videos_rec(path);
     let clusters = index_cluster_to_file_cluster(&cluster_files(&list, 2), &list);
     let mut shows: Shows = Shows::new();
-    make_shows_from_clusters(&clusters, &mut shows);
+    make_shows_from_clusters(&clusters, &mut shows, path);
     debug!(shows);
 }
