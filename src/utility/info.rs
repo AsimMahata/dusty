@@ -1,4 +1,4 @@
-use std::{fs, os::windows::prelude::*, path::PathBuf};
+use std::{env::home_dir, fs, os::windows::prelude::*, path::PathBuf};
 
 use mime_guess::mime::{self, Name};
 
@@ -9,6 +9,7 @@ const BAD_SIBLINGS: &[&str] = &[".git", "node_modules", ".venv", "venv", ".cph",
 pub fn get_forbidden_folders() -> Vec<PathBuf> {
     vec![
         PathBuf::from("C:\\Windows"),
+        PathBuf::from("C:\\temp"),
         PathBuf::from("C:\\Program Files"),
         PathBuf::from("C:\\Program Files (x86)"),
         PathBuf::from("C:\\ProgramData"),
@@ -18,6 +19,10 @@ pub fn get_forbidden_folders() -> Vec<PathBuf> {
         PathBuf::from("C:\\MYAPPS\\"),
         PathBuf::from("C:\\MinGW\\"),
         PathBuf::from("C:\\msys64\\"),
+        PathBuf::from("C:\\Users\\All Users"),
+        home_dir()
+            .expect("Some Error inside get is_forbidden_folder")
+            .join("AppData"),
     ]
 }
 
