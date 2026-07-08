@@ -1,34 +1,43 @@
-import { invoke } from "@tauri-apps/api/core";
-import { useEffect, useState } from "react"
+import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import { Sidebar } from "./components/Sidebar";
+import { Home } from "./components/Home";
+
+// Pages
+import { Shows } from "./pages/Shows";
+import { Projects } from "./pages/Projects";
+import { Music } from "./pages/Music";
+import { Videos } from "./pages/Videos";
+import { Images } from "./pages/Images";
+import { Misc } from "./pages/Misc";
+
 function App() {
-    const [msg, setMsg] = useState<string>("");
-    const [show, setShow] = useState<any>([]);
-    useEffect(() => {
-        async function test() {
-            let res: string = await invoke('my_custom_command');
-            let show = await invoke('scan_shows', { path: "C:\\" });
-            console.log(res);
-            console.log(show);
-            setMsg(res);
-            setShow(show);
-        }
-        test();
-    }, [])
-    return (
-        <div>
-            Hello , Asim
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-            <br />
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
 
-            {msg}
-            <br />
-            {show.map((item, index) => (
-                <pre key={index}>
-                    {JSON.stringify(item, null, 2)}
-                </pre>
-            ))}
-        </div>
-    )
+  return (
+    <div className="app-container">
+      <Sidebar 
+        isCollapsed={isSidebarCollapsed}
+        toggleSidebar={toggleSidebar}
+      />
+      
+      <main className="main-content">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/shows" element={<Shows />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/music" element={<Music />} />
+          <Route path="/videos" element={<Videos />} />
+          <Route path="/images" element={<Images />} />
+          <Route path="/misc" element={<Misc />} />
+        </Routes>
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;

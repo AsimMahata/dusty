@@ -75,15 +75,12 @@ pub fn dfs_show_scanner(path: &PathBuf, level: i32, shows: &mut Shows, is_root: 
         .and_then(|n| n.to_str())
         .map_or(false, |s| s.starts_with('.'))
     {
-        println!("BAD_FOLDER found at {:?} SKIPPING ", path);
         return;
     };
     if !is_root && is_hidden(path) {
-        println!("HIDDEN_FOLDER found at {:?} SKIPPING ", path);
         return;
     }
     if is_forbidden_folder(path) {
-        println!("FORBIDDEN FOLDER found at {:?} SKIPPING", path);
         return;
     }
 
@@ -92,8 +89,7 @@ pub fn dfs_show_scanner(path: &PathBuf, level: i32, shows: &mut Shows, is_root: 
     //dfs
     let entries = match fs::read_dir(path) {
         Ok(entries) => entries,
-        Err(e) => {
-            println!("skipping {:?}: {}", path, e);
+        _ => {
             return;
         }
     };
@@ -106,7 +102,6 @@ pub fn dfs_show_scanner(path: &PathBuf, level: i32, shows: &mut Shows, is_root: 
     }
     //Check for BAD_SIBLINGS
     if check_for_bad_sibling(&childrens) {
-        println!("BAD_SIBLINGS found at {:?} SKIPPING ", path);
         return;
     }
 
