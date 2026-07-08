@@ -5,20 +5,8 @@ import { PageLayout } from '../components/PageLayout';
 import { invoke } from '@tauri-apps/api/core';
 import { PlayCircle, Tv } from 'lucide-react';
 import { createIcon, formatSize } from '../utility/util.tsx';
+import type { ShowResult } from '../types/types.ts';
 
-
-export interface FileInfo {
-    name: string,
-    path: string,
-    size: number,
-    ext: string,
-}
-export interface ShowResult {
-    title: string,
-    num_episodes: number,
-    episodes: FileInfo[],
-    dir: string,
-}
 
 
 // Cache
@@ -38,7 +26,8 @@ export const Shows: React.FC = () => {
             subtitle: "NONE",
             icon: createIcon(Tv),
             path: show.dir,
-        }));
+            is_dir: false
+        })).sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }));
     }
 
     const fetchData = async () => {
@@ -80,21 +69,22 @@ export const Shows: React.FC = () => {
         setData(newData);
     };
 
-    const getChildrens = (item: ItemData): ItemData[] => {
+    const getChildrens = async (item: ItemData): Promise<ItemData[]> => {
         const show = cachedShowsData?.find(show => show.title === item.title);
 
         if (!show) return [];
 
-        return show.episodes.map((ep, i) => {
-            return {
+        return show.episodes
+            .map((ep, i) => ({
                 id: `${item.id}-child-${i}`,
                 title: ep.name,
                 subtitle: ep.path,
                 size: formatSize(ep.size),
                 icon: <PlayCircle size={18} />,
                 path: ep.path,
-            };
-        });
+                is_dir: ep.is_dir
+            }))
+            .sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }));
     };
 
     const openEpisode = async (ep: ItemData) => {
@@ -120,7 +110,7 @@ export const Shows: React.FC = () => {
             {selectedItem ? (
                 <ItemDetailPage
                     item={selectedItem}
-                    childrens={getChildrens(selectedItem)}
+                    getChildrens={getChildrens}
                     onBack={() => setSelectedItem(null)}
                     onClick={openEpisode}
                 />

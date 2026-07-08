@@ -3,10 +3,13 @@ pub mod dusty;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             dusty::main::scan_shows,
             dusty::main::my_custom_command,
-            dusty::main::open_file
+            dusty::main::open_file,
+            dusty::main::scan_projects,
+            dusty::main::read_dir
         ])
         .setup(|app| {
             if cfg!(debug_assertions) {

@@ -1,5 +1,5 @@
 import type { ItemData } from "../components/ItemDetailPage";
-import { File as FileIcon, Folder as FolderIcon, type LucideIcon } from "lucide-react";
+import { File as FileIcon, type LucideIcon } from "lucide-react";
 import type { FileInfo } from "../types/types";
 
 export function createIcon(Icon: LucideIcon) {
@@ -31,7 +31,7 @@ export const fileInfoToItemData = (files: FileInfo[]): ItemData[] => {
         title: file.name,
         subtitle: file.path,
         size: formatSize(file.size),
-        icon: (file.is_dir ? <FolderIcon size={18} /> : <FileIcon size={18} />),
+        icon: <FolderIcon size={18} />,
         path: file.path,
         is_dir: file.is_dir
     }));

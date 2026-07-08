@@ -1,12 +1,14 @@
 use std::path::PathBuf;
 
+use serde::Serialize;
+
 pub struct Age {
     year: usize,
     month: usize,
     day: usize,
     hour: usize,
 }
-#[derive(Debug)]
+#[derive(Serialize, Debug)]
 pub enum ProjectType {
     React,
     Python,
@@ -18,7 +20,7 @@ pub enum ProjectType {
     Unknown,
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Debug)]
 pub struct Project {
     pub title: String,
     pub path: PathBuf,

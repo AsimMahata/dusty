@@ -11,23 +11,22 @@ pub struct FileInfo {
     name: String,
     path: PathBuf,
     size: u64,
-    ext: String,
+    ext: Option<String>,
+    is_dir: bool,
 }
 
 impl FileInfo {
-    pub fn new(name: String, path: PathBuf, size: u64, ext: String, metadata: Metadata) -> Self {
+    pub fn new(name: String, path: PathBuf, size: u64, ext: Option<String>, is_dir: bool) -> Self {
         Self {
             name: name,
             path: path,
             size: size,
             ext: ext,
+            is_dir: is_dir,
         }
     }
     pub fn from_pathbuf(path: &PathBuf) -> Result<Self, Error> {
-        let metadata = metadata(path)
-            .map_err(|_| Error::new(ErrorKind::NotFound, "Couldn't find metadata"))?;
-
-        let size = metadata.len();
+        let size = metadata(path).map(|m| m.len()).unwrap_or(0);
 
         let name = path
             .file_name()
@@ -35,17 +34,19 @@ impl FileInfo {
             .ok_or_else(|| Error::new(ErrorKind::InvalidData, "Invalid file name"))?
             .to_owned();
 
-        let ext = path
+        let ext: Option<String> = path
             .extension()
             .and_then(|s| s.to_str())
-            .ok_or_else(|| Error::new(ErrorKind::InvalidData, "Invalid extension"))?
-            .to_owned();
+            .map(|s| s.to_string());
+
+        let is_dir: bool = path.is_dir();
 
         Ok(Self {
             name,
             path: path.clone(),
             size,
             ext,
+            is_dir,
         })
     }
     pub fn get_size(&self) -> u64 {

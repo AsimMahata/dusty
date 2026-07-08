@@ -2,13 +2,14 @@ use std::{fs, path::PathBuf};
 
 use mime_guess::mime;
 
+use crate::dusty::data::file::FileInfo;
 use crate::dusty::handlers::{audio, default, image, video};
 use crate::dusty::types::file_types::Files;
+
 pub fn read_all_files(files: &mut Files, path: &PathBuf) {
     let entries = match fs::read_dir(path) {
         Ok(entries) => entries,
-        Err(e) => {
-            println!("skipping {:?}: {}", path, e);
+        _ => {
             return;
         }
     };
@@ -27,4 +28,25 @@ pub fn read_all_files(files: &mut Files, path: &PathBuf) {
             _ => {}
         }
     }
+}
+
+pub fn scan_dir(dir: &PathBuf) -> Vec<FileInfo> {
+    let entries = match fs::read_dir(dir) {
+        Ok(entries) => entries,
+        Err(_) => return Vec::new(),
+    };
+
+    entries
+        .filter_map(|entry| {
+            entry
+                .ok()
+                .and_then(|e| match FileInfo::from_pathbuf(&e.path()) {
+                    Ok(info) => Some(info),
+                    Err(err) => {
+                        eprintln!("Failed to process {}: {}", e.path().display(), err);
+                        None
+                    }
+                })
+        })
+        .collect()
 }
