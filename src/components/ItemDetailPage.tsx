@@ -9,14 +9,14 @@ export interface ItemData {
     metadata?: string;
     size?: string;
     path?: string;
-    is_dir: boolean;
+    is_dir?: boolean;
 }
 
 interface ItemDetailPageProps {
     item: ItemData;
-    getChildrens: (item: ItemData) => Promise<ItemData[]>;
+    getChildrens?: (item: ItemData) => Promise<ItemData[]>;
     onBack: () => void;
-    onClick: (child: ItemData) => Promise<void>;
+    onClick?: (child: ItemData) => Promise<void>;
 }
 
 export const ItemDetailPage: React.FC<ItemDetailPageProps> = ({
@@ -33,7 +33,7 @@ export const ItemDetailPage: React.FC<ItemDetailPageProps> = ({
 
         const load = async () => {
             setLoading(true);
-            const data = await getChildrens(item);
+            const data = getChildrens ? await getChildrens(item) : [];
             if (!cancelled) {
                 setChildrens(data);
                 setLoading(false);
@@ -69,7 +69,7 @@ export const ItemDetailPage: React.FC<ItemDetailPageProps> = ({
                         <div
                             key={child.id}
                             className="list-item"
-                            onClick={() => onClick(child)}
+                            onClick={() => onClick && onClick(child)}
                         >
                             <div className="list-item-icon">
                                 {child.icon}

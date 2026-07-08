@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { CategoryPage } from '../components/CategoryPage';
-import { ItemDetailPage, type ItemData } from '../components/ItemDetailPage';
+import { type ItemData } from '../components/ItemDetailPage';
+import { FileExplorer } from '../components/FileExplorer';
 import { PageLayout } from '../components/PageLayout';
 import { invoke } from '@tauri-apps/api/core';
-import { createIcon, fileInfoToItemData } from '../utility/util';
+import { createIcon } from '../utility/util';
 import { FileCode2 } from 'lucide-react';
-import type { FileInfo, Project } from '../types/types';
+import type { Project } from '../types/types';
 
 let cachedProjectsData: { recent: ItemData[], all: ItemData[] } | null = null;
 
@@ -48,20 +49,7 @@ export const Projects: React.FC = () => {
         }
     }, []);
 
-    const getChildrens = async (item: ItemData): Promise<ItemData[]> => {
-        if (!item.path) return [];
-        try {
-            let files: FileInfo[] = await invoke('read_dir', { path: item.path });
-            return fileInfoToItemData(files);
-        } catch (err) {
-            console.error(`some error occured while reading this directory ${err}`);
-            return [];
-        }
-    };
 
-    const handleClick = async (child: ItemData) => {
-        console.log(`clicked ${child}`);
-    }
     return (
         <PageLayout
             title="Projects"
@@ -72,8 +60,12 @@ export const Projects: React.FC = () => {
             isRefreshing={isRefreshing}
             isLoading={isRefreshing && data.all.length === 0}
         >
-            {selectedItem ? (
-                <ItemDetailPage item={selectedItem} getChildrens={getChildrens} onClick={handleClick} onBack={() => setSelectedItem(null)} />
+            {selectedItem && selectedItem.path ? (
+                <FileExplorer 
+                    initialPath={selectedItem.path} 
+                    title={selectedItem.title} 
+                    onBack={() => setSelectedItem(null)} 
+                />
             ) : (
                 <CategoryPage
                     title="Projects"
