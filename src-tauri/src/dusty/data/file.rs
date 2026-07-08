@@ -1,16 +1,17 @@
 use std::{
-    fs::{Metadata, metadata},
+    fs::{metadata, Metadata},
     io::{Error, ErrorKind},
     path::{self, PathBuf},
 };
 
-#[derive(Debug, Clone)]
+use serde::Serialize;
+
+#[derive(Serialize, Debug, Clone)]
 pub struct FileInfo {
     name: String,
     path: PathBuf,
     size: u64,
     ext: String,
-    metadata: Metadata,
 }
 
 impl FileInfo {
@@ -20,7 +21,6 @@ impl FileInfo {
             path: path,
             size: size,
             ext: ext,
-            metadata: metadata,
         }
     }
     pub fn from_pathbuf(path: &PathBuf) -> Result<Self, Error> {
@@ -46,7 +46,6 @@ impl FileInfo {
             path: path.clone(),
             size,
             ext,
-            metadata,
         })
     }
     pub fn get_size(&self) -> u64 {

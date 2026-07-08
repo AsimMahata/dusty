@@ -6,6 +6,24 @@ pub fn strip_folder_name(file: &PathBuf) -> Option<String> {
         .map(|f| f.to_string())
 }
 
+pub fn get_title(p: &PathBuf) -> String {
+    if let Some(name) = get_file_name(p) {
+        return name;
+    }
+    return "ERROR_GET_TITLE".to_string();
+}
+pub fn path_buf_to_string(p: &PathBuf) -> String {
+    p.to_str()
+        .map(|s| s.to_string())
+        .unwrap_or("ERROR_PATHBUF_TO_STR".to_string())
+}
+
+pub fn get_file_name(file: &PathBuf) -> Option<String> {
+    file.file_name()
+        .and_then(|f| f.to_str())
+        .map(|f| f.to_string())
+}
+
 pub fn strip_folder_name_in_batch(batch: &Vec<PathBuf>) -> Vec<String> {
     let mut result: Vec<String> = Vec::new();
     for file in batch {

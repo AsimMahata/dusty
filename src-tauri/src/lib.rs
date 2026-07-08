@@ -5,7 +5,8 @@ pub fn run() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             dusty::main::scan_shows,
-            dusty::main::my_custom_command
+            dusty::main::my_custom_command,
+            dusty::main::open_file
         ])
         .setup(|app| {
             if cfg!(debug_assertions) {
