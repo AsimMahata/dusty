@@ -1,58 +1,70 @@
-import React, { useState, useEffect } from 'react';
-import { CategoryPage } from '../components/CategoryPage';
-import { ItemDetailPage, type ItemData } from '../components/ItemDetailPage';
+import React, { useState } from 'react';
 import { PageLayout } from '../components/PageLayout';
-import { mockData } from '../mockData';
-
-let cachedMiscData: { recent: ItemData[], all: ItemData[] } | null = null;
+import { EmptyDir } from './misc/EmptyDir';
 
 export const Misc: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedItem, setSelectedItem] = useState<ItemData | null>(null);
-  const [data, setData] = useState<{ recent: ItemData[], all: ItemData[] }>(cachedMiscData || { recent: [], all: [] });
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [activeTab, setActiveTab] = useState('empty_directories');
 
-  const fetchData = async () => {
-    setIsRefreshing(true);
-    await new Promise(resolve => setTimeout(resolve, 600));
-    
-    const newData = {
-      recent: mockData.Misc.recent,
-      all: mockData.Misc.all
-    };
-    
-    cachedMiscData = newData;
-    setData(newData);
-    setIsRefreshing(false);
+  const handleRefresh = () => {
+    setRefreshTrigger(prev => prev + 1);
   };
 
-  useEffect(() => {
-    if (!cachedMiscData) {
-      fetchData();
+  const handleRefreshingChange = (refreshing: boolean, loading: boolean) => {
+    setIsRefreshing(refreshing);
+    setIsLoading(loading);
+  };
+
+  const renderContent = () => {
+    if (activeTab === 'coming_soon') {
+      return (
+        <div style={{ display: 'flex', height: '40vh', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+          <h2>Coming Soon...</h2>
+        </div>
+      );
     }
-  }, []);
+    
+    return (
+      <EmptyDir 
+        searchQuery={searchQuery} 
+        refreshTrigger={refreshTrigger} 
+        onRefreshingChange={handleRefreshingChange} 
+      />
+    );
+  };
 
   return (
     <PageLayout 
       title="Misc" 
       searchQuery={searchQuery} 
       setSearchQuery={setSearchQuery}
-      hideSearch={!!selectedItem}
-      onRefresh={fetchData}
+      hideSearch={activeTab === 'coming_soon'}
+      onRefresh={handleRefresh}
       isRefreshing={isRefreshing}
-      isLoading={isRefreshing && data.all.length === 0}
+      isLoading={isLoading}
     >
-      {selectedItem ? (
-        <ItemDetailPage item={selectedItem} onBack={() => setSelectedItem(null)} />
-      ) : (
-        <CategoryPage 
-          title="Misc" 
-          recentItems={data.recent} 
-          allItems={data.all} 
-          searchQuery={searchQuery}
-          onCardClick={setSelectedItem}
-        />
-      )}
+      <div className="tabs-container">
+        <button 
+          className={`tab-btn ${activeTab === 'empty_directories' ? 'active' : ''}`}
+          onClick={() => setActiveTab('empty_directories')}
+        >
+          Empty Directories
+        </button>
+        {/* Always the last option */}
+        <button 
+          className={`tab-btn ${activeTab === 'coming_soon' ? 'active' : ''}`}
+          onClick={() => setActiveTab('coming_soon')}
+        >
+          Coming Soon
+        </button>
+      </div>
+
+      <div className="tab-content">
+        {renderContent()}
+      </div>
     </PageLayout>
   );
 };

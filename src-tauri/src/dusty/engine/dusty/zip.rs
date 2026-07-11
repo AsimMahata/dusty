@@ -14,23 +14,12 @@ use crate::dusty::{
 pub fn list_large_zip_files() -> Vec<FileInfo> {
     let mut list: Vec<FileInfo> = Vec::new();
     for drive in get_all_drives() {
-        list.extend(list_large_zip_files_in_drive(drive));
-    }
-    println!("List of Large Zip Files");
-    let mut sorted_files: Vec<FileInfo> = list.clone();
-    sorted_files.sort_unstable_by_key(|file| Reverse(file.get_size()));
-    dbg!(&sorted_files);
-    for file in sorted_files {
-        println!(
-            "File: {} - Size: {}",
-            file.get_name(),
-            format_size(file.get_size())
-        );
+        list.extend(list_large_zip_files_in_path(drive));
     }
     return list;
 }
 
-pub fn list_large_zip_files_in_drive(path: PathBuf) -> Vec<FileInfo> {
+pub fn list_large_zip_files_in_path(path: PathBuf) -> Vec<FileInfo> {
     let mut zips: Vec<FileInfo> = Vec::new();
     dfs_large_zip_scanner(&path, &mut zips, is_windows_root(&path));
     return zips;

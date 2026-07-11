@@ -1,5 +1,6 @@
 pub mod data;
 pub mod data_structures;
+pub mod db;
 pub mod engine;
 pub mod handlers;
 pub mod main;

@@ -44,7 +44,7 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({ title, recentItems, 
         />
       ) : (
         <div style={{ textAlign: 'center', marginTop: '48px', color: 'var(--text-muted)' }}>
-          No results found for "{searchQuery}"
+          {searchQuery ? `No results found for "${searchQuery}"` : "No results found"}
         </div>
       )}
     </div>

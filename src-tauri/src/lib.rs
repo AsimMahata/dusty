@@ -11,7 +11,9 @@ pub fn run() {
             dusty::main::read_dir,
             dusty::main::scan_music,
             dusty::main::scan_video,
-            dusty::main::scan_image
+            dusty::main::scan_image,
+            dusty::main::scan_zip,
+            dusty::main::scan_empty_dir
         ])
         .setup(|app| {
             if cfg!(debug_assertions) {

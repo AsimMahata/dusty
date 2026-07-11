@@ -5,7 +5,10 @@ use serde::Serialize;
 
 use crate::dusty::{
     data::{file::FileInfo, project::Project},
-    engine::project::scanner::scan_all_projects,
+    engine::{
+        dusty::{empty_dir::list_empty_dirs, zip::list_large_zip_files},
+        project::scanner::scan_all_projects,
+    },
     scanners::{dfs::dfs_file_of_type, files::scan_dir, show_scanner::scan_for_shows_rec},
     utility::info::is_windows_root,
 };
@@ -44,6 +47,18 @@ pub fn scan_video(path: String) -> Vec<FileInfo> {
             }
         })
         .collect()
+}
+
+// ZIP
+#[tauri::command]
+pub fn scan_zip() -> Vec<FileInfo> {
+    list_large_zip_files()
+}
+
+// EMPTY DIR
+#[tauri::command]
+pub fn scan_empty_dir() -> Vec<FileInfo> {
+    list_empty_dirs()
 }
 
 // IMAGE

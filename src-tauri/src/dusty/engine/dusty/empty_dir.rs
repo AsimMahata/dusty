@@ -2,37 +2,26 @@ use mime_guess::mime;
 use std::{fs, path::PathBuf};
 
 use crate::dusty::{
-    data::{
-        file::FileInfo,
-        image::{self, ImageDir},
-    },
-    utility::{
-        info::{
-            check_for_bad_sibling, get_all_drives, get_file_type, is_forbidden_folder, is_hidden,
-            is_windows_root,
-        },
-        utility::format_size,
+    data::file::FileInfo,
+    utility::info::{
+        check_for_bad_sibling, get_all_drives, is_forbidden_folder, is_hidden, is_windows_root,
     },
 };
 
-pub fn list_empty_dirs() -> Vec<PathBuf> {
-    let mut list: Vec<PathBuf> = Vec::new();
+pub fn list_empty_dirs() -> Vec<FileInfo> {
+    let mut list: Vec<FileInfo> = Vec::new();
     for drive in get_all_drives() {
-        list.extend(list_empty_dirs_in_drive(drive));
-    }
-    println!("List of Large Zip Files");
-    for item in &list {
-        println!("File: {:#?} - Size: {}", item, 0);
+        list.extend(list_empty_dirs_in_path(drive));
     }
     return list;
 }
 
-pub fn list_empty_dirs_in_drive(path: PathBuf) -> Vec<PathBuf> {
-    let mut empty_dirs: Vec<PathBuf> = Vec::new();
+pub fn list_empty_dirs_in_path(path: PathBuf) -> Vec<FileInfo> {
+    let mut empty_dirs: Vec<FileInfo> = Vec::new();
     dfs_empty_dir_scanner(&path, &mut empty_dirs, is_windows_root(&path));
     return empty_dirs;
 }
-pub fn dfs_empty_dir_scanner(path: &PathBuf, empty_dirs: &mut Vec<PathBuf>, is_root: bool) {
+pub fn dfs_empty_dir_scanner(path: &PathBuf, empty_dirs: &mut Vec<FileInfo>, is_root: bool) {
     if path
         .file_name()
         .and_then(|n| n.to_str())
@@ -75,6 +64,8 @@ pub fn dfs_empty_dir_scanner(path: &PathBuf, empty_dirs: &mut Vec<PathBuf>, is_r
         dfs_empty_dir_scanner(&child, empty_dirs, false);
     }
     if count == 0 {
-        empty_dirs.push(path.clone());
+        FileInfo::from_pathbuf(path)
+            .ok()
+            .map(|info| empty_dirs.push(info));
     }
 }

@@ -8,7 +8,8 @@ import {
   Music as MusicIcon, 
   Film, 
   Image as ImageIcon,
-  Menu
+  Menu,
+  Archive
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -30,6 +31,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { label: 'Music', path: '/music', icon: <MusicIcon size={20} /> },
     { label: 'Videos', path: '/videos', icon: <Film size={20} /> },
     { label: 'Images', path: '/images', icon: <ImageIcon size={20} /> },
+    { label: 'Zip', path: '/zip', icon: <Archive size={20} /> },
     { label: 'Misc', path: '/misc', icon: <Box size={20} /> },
   ];
 

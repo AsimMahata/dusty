@@ -10,6 +10,7 @@ import { Music } from "./pages/Music";
 import { Videos } from "./pages/Videos";
 import { Images } from "./pages/Images";
 import { Misc } from "./pages/Misc";
+import { Zip } from "./pages/Zip";
 
 function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -34,6 +35,7 @@ function App() {
           <Route path="/videos" element={<Videos />} />
           <Route path="/images" element={<Images />} />
           <Route path="/misc" element={<Misc />} />
+          <Route path="/zip" element={<Zip />} />
         </Routes>
       </main>
     </div>

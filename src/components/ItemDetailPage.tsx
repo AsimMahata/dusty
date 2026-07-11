@@ -59,6 +59,11 @@ export const ItemDetailPage: React.FC<ItemDetailPageProps> = ({
                         {item.subtitle} {item.metadata && `• ${item.metadata}`}
                     </div>
                 </div>
+                {!loading && (
+                    <span style={{ marginLeft: 'auto', fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>
+                        {childrens.length}
+                    </span>
+                )}
             </div>
 
             <div className="list-container">

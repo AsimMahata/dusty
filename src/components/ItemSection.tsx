@@ -15,8 +15,13 @@ export const ItemSection: React.FC<ItemSectionProps> = ({ title, icon, items, on
   return (
     <div className="category-section">
       <div className="section-title">
-        {icon}
-        {title}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {icon}
+          {title}
+        </div>
+        <span style={{ marginLeft: 'auto', fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>
+          {items.length}
+        </span>
       </div>
       <div className="grid-container">
         {items.map((item) => (
