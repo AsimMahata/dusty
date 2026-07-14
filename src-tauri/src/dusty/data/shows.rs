@@ -1,6 +1,20 @@
 use std::path::PathBuf;
 
-#[derive(Debug)]
+use serde::Serialize;
+
+use crate::dusty::data::file::FileInfo;
+
+#[derive(Serialize, Debug)]
+pub struct ShowResult {
+    pub id: String,
+    pub title: String,
+    pub num_episodes: usize,
+    pub episodes: Vec<FileInfo>,
+    pub dir: String,
+    pub is_banned: Option<bool>,
+}
+
+#[derive(Serialize, Debug)]
 pub struct Show {
     title: String,
     season: Option<i32>,
@@ -8,6 +22,7 @@ pub struct Show {
     list_of_ep: Vec<PathBuf>,
     dir: PathBuf,
 }
+
 impl Show {
     pub fn new(
         title: String,

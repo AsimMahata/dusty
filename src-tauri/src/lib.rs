@@ -1,4 +1,5 @@
 pub mod dusty;
+use crate::dusty::db::init::init_db;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -13,7 +14,9 @@ pub fn run() {
             dusty::main::scan_video,
             dusty::main::scan_image,
             dusty::main::scan_zip,
-            dusty::main::scan_empty_dir
+            dusty::main::scan_empty_dir,
+            dusty::main::ban_show,
+            dusty::main::unban_show,
         ])
         .setup(|app| {
             if cfg!(debug_assertions) {
@@ -23,6 +26,7 @@ pub fn run() {
                         .build(),
                 )?;
             }
+            init_db(app)?;
             Ok(())
         })
         .run(tauri::generate_context!())

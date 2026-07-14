@@ -2,12 +2,6 @@ use std::path::PathBuf;
 
 use serde::Serialize;
 
-pub struct Age {
-    year: usize,
-    month: usize,
-    day: usize,
-    hour: usize,
-}
 #[derive(Serialize, Debug)]
 pub enum ProjectType {
     React,

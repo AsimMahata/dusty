@@ -24,9 +24,9 @@ export const ItemSection: React.FC<ItemSectionProps> = ({ title, icon, items, on
         </span>
       </div>
       <div className="grid-container">
-        {items.map((item) => (
+        {items.map((item, index) => (
           <Card 
-            key={`${title}-${item.id}`}
+            key={`${title}-${item.id}-${index}`}
             title={item.title}
             subtitle={item.subtitle}
             icon={item.icon}

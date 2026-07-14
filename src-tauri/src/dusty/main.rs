@@ -1,16 +1,29 @@
-use std::path::{self, Path, PathBuf};
+use std::{
+    path::{self, Path, PathBuf},
+    sync::Mutex,
+};
 
 use mime_guess::mime;
+use rusqlite::Connection;
 use serde::Serialize;
 
 use crate::dusty::{
-    data::{file::FileInfo, project::Project},
+    data::{
+        file::FileInfo,
+        project::Project,
+        shows::{Show, ShowResult},
+        state::AppState,
+    },
+    db::{
+        ban::{ban_bad_item, is_banned, print_all_banned_items, unban_bad_item},
+        show::{add_shows_in_db, print_all_shows_in_db},
+    },
     engine::{
         dusty::{empty_dir::list_empty_dirs, zip::list_large_zip_files},
         project::scanner::scan_all_projects,
     },
     scanners::{dfs::dfs_file_of_type, files::scan_dir, show_scanner::scan_for_shows_rec},
-    utility::info::is_windows_root,
+    utility::{convert::show_to_show_result, info::is_windows_root, sha256_hash::get_sha256_id},
 };
 
 use tauri_plugin_opener::OpenerExt;
@@ -100,32 +113,48 @@ pub fn scan_music(path: String) -> Vec<FileInfo> {
 }
 
 // SHOW
-#[derive(Serialize, Debug)]
-pub struct ShowResult {
-    pub title: String,
-    pub num_episodes: usize,
-    pub episodes: Vec<FileInfo>,
-    pub dir: String,
+
+#[tauri::command]
+pub fn scan_shows(state: tauri::State<AppState>, path: String) -> Vec<ShowResult> {
+    let root = PathBuf::from(&path);
+    let shows = scan_for_shows_rec(&root);
+    let result: Vec<ShowResult> = shows
+        .get_list_of_shows()
+        .iter()
+        .map(|s| show_to_show_result(s))
+        .collect();
+
+    let mut db = state.db.lock().unwrap();
+    add_shows_in_db(&mut db, &result).ok();
+    print_all_shows_in_db(&mut db).ok();
+
+    result
+        .into_iter()
+        .map(|mut show| {
+            show.is_banned = Some(is_banned(&db, show.id.clone()));
+            show
+        })
+        .collect()
 }
 
 #[tauri::command]
-pub fn scan_shows(path: String) -> Vec<ShowResult> {
-    let root = PathBuf::from(&path);
-    let shows = scan_for_shows_rec(&root);
-    shows
-        .get_list_of_shows()
-        .iter()
-        .map(|s| ShowResult {
-            title: s.get_title(),
-            num_episodes: s.get_number_of_ep(),
-            episodes: s
-                .get_eps()
-                .iter()
-                .map(|p| FileInfo::from_pathbuf(p).expect("Crashed on main inside dusty"))
-                .collect(),
-            dir: s.get_dir().to_string_lossy().into_owned(),
-        })
-        .collect()
+pub fn ban_show(state: tauri::State<AppState>, show_id: String) {
+    let mut db = state.db.lock().unwrap();
+    ban_bad_item(&mut db, show_id)
+        .map_err(|e| format!("Failed to insert ban: {}", e))
+        .ok();
+
+    print_all_banned_items(&mut db).ok();
+}
+
+#[tauri::command]
+pub fn unban_show(state: tauri::State<AppState>, show_id: String) {
+    let mut db = state.db.lock().unwrap();
+    unban_bad_item(&mut db, show_id)
+        .map_err(|e| format!("Failed to delete ban: {}", e))
+        .ok();
+
+    print_all_banned_items(&mut db).ok();
 }
 
 // PROJECT

@@ -17,6 +17,7 @@ interface ItemDetailPageProps {
     getChildrens?: (item: ItemData) => Promise<ItemData[]>;
     onBack: () => void;
     onClick?: (child: ItemData) => Promise<void>;
+    renderActions?: (item: ItemData) => React.ReactNode;
 }
 
 export const ItemDetailPage: React.FC<ItemDetailPageProps> = ({
@@ -24,6 +25,7 @@ export const ItemDetailPage: React.FC<ItemDetailPageProps> = ({
     getChildrens,
     onBack,
     onClick,
+    renderActions,
 }) => {
     const [childrens, setChildrens] = useState<ItemData[]>([]);
     const [loading, setLoading] = useState(true);
@@ -65,6 +67,12 @@ export const ItemDetailPage: React.FC<ItemDetailPageProps> = ({
                     </span>
                 )}
             </div>
+
+            {renderActions && (
+                <div className="detail-actions" style={{ padding: '0 1.5rem', marginBottom: '1rem', display: 'flex', gap: '0.5rem' }}>
+                    {renderActions(item)}
+                </div>
+            )}
 
             <div className="list-container">
                 {loading ? (
