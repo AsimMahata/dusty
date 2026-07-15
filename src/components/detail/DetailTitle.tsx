@@ -5,16 +5,18 @@ interface DetailTitleProps {
     title: string;
     onEditClick?: () => void;
     canRename?: boolean;
+    color?: string;
 }
 
 export const DetailTitle: React.FC<DetailTitleProps> = ({
     title,
     onEditClick,
-    canRename
+    canRename,
+    color
 }) => {
     return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <div className="detail-title">{title}</div>
+            <div className="detail-title" style={color ? { color } : undefined}>{title}</div>
             {canRename && (
                 <button
                     onClick={onEditClick}

@@ -1,17 +1,10 @@
 import React, { useEffect } from 'react';
-
-
-export interface ContextMenuAction {
-    label: string;
-    icon?: React.ReactNode;
-    onClick: () => void;
-    separator?: boolean;
-}
+import type { ActionItem } from '../../types/types';
 
 interface ContextMenuProps {
     x: number;
     y: number;
-    actions: ContextMenuAction[];
+    actions: ActionItem[];
     onClose: () => void;
 }
 
@@ -41,8 +34,13 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
                     return <div key={idx} className="context-menu-separator" />;
                 }
                 return (
-                    <div key={idx} className="context-menu-item" onClick={() => { action.onClick(); onClose(); }}>
-                        {action.icon && <span className="context-menu-icon">{action.icon}</span>}
+                    <div 
+                        key={idx} 
+                        className="context-menu-item" 
+                        onClick={() => { action.onClick(); onClose(); }}
+                        style={action.color ? { color: action.color } : undefined}
+                    >
+                        {action.icon && <span className="context-menu-icon" style={action.color ? { color: action.color } : undefined}>{action.icon}</span>}
                         {action.label}
                     </div>
                 );

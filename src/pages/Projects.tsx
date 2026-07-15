@@ -1,3 +1,4 @@
+// Trigger HMR
 import React from 'react';
 import { CategoryPage } from '../components/category/CategoryPage';
 import { FileExplorer } from '../components/FileExplorer';
@@ -10,14 +11,12 @@ export const Projects: React.FC = () => {
     const projectTab = useProjectTab(project);
 
     return (
-        <PageLayout
-            hook={project}
-        >
+        <PageLayout hook={project} >
             {project.selectedItem && project.selectedItem.path ? (
-                <FileExplorer 
-                    initialPath={project.selectedItem.path} 
-                    title={project.selectedItem.title} 
-                    onBack={() => project.setSelectedItem(null)} 
+                <FileExplorer
+                    initialPath={project.selectedItem.path}
+                    title={project.selectedItem.title}
+                    onBack={() => project.setSelectedItem(null)}
                 />
             ) : (
                 <CategoryPage tab={projectTab} />

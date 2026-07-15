@@ -12,7 +12,17 @@ pub struct ShowResult {
     pub num_episodes: usize,
     pub episodes: Vec<FileInfo>,
     pub dir: String,
-    pub is_banned: Option<bool>,
+    pub banned: bool,
+    pub pinned: bool,
+    pub season: Option<i32>,
+    pub status: String,
+}
+
+pub struct ShowInfo {
+    pub title: String,
+    pub status: String,
+    pub banned: bool,
+    pub pinned: bool,
 }
 
 #[derive(Serialize, Debug)]

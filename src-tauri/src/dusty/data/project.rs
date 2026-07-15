@@ -1,22 +1,18 @@
-use std::path::PathBuf;
-
 use serde::Serialize;
 
 #[derive(Serialize, Debug)]
-pub enum ProjectType {
-    React,
-    Python,
-    WebDev,
-    Rust,
-    Go,
-    CPP,
-    C,
-    Unknown,
+pub struct Project {
+    pub id: String,
+    pub title: String,
+    pub path: String,
+    pub project_type: String,
+    pub pinned:bool,
+    pub status: String,
 }
 
 #[derive(Serialize, Debug)]
-pub struct Project {
-    pub title: String,
-    pub path: PathBuf,
-    pub project_type: ProjectType,
+pub struct ProjectInfo {
+    pub project_type: String,
+    pub pinned: bool,
+    pub status: String,
 }

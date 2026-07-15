@@ -3,18 +3,18 @@ import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
 import type { FileInfo } from '../../types/types';
 import { fileInfoToItemData } from '../../utility/util';
-import type { ItemData } from '../../types/types';
+import type { Item } from '../../types/types';
 import { useDefaults } from '../../contexts/defaultContext';
 
-let cachedZipData: { recent: ItemData[], all: ItemData[] } | null = null;
+let cachedZipData: { recent: Item[], all: Item[] } | null = null;
 
 export const useZip = () => {
     const { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } = useDefaults();
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
-    const [selectedItem, setSelectedItem] = useState<ItemData | null>(null);
-    const [data, setData] = useState<{ recent: ItemData[], all: ItemData[] }>(cachedZipData || { recent: [], all: [] });
+    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+    const [data, setData] = useState<{ recent: Item[], all: Item[] }>(cachedZipData || { recent: [], all: [] });
 
-    const openZip = async (z: ItemData) => {
+    const openZip = async (z: Item) => {
         const path = z.path;
         if (!path) return;
         try {

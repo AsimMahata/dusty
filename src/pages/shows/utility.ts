@@ -1,10 +1,10 @@
 import { invoke } from '@tauri-apps/api/core';
 import { formatSize } from '../../utility/util';
 import { logger } from '../../utility/logger';
-import type { ItemData } from '../../types/types';
+import type { ItemCollection, Item } from '../../types/types';
 import type { ShowResult } from '../../types/types';
 
-export const getChildrens = async (item: ItemData, shows: ShowResult[]): Promise<ItemData[]> => {
+export const getChildrens = async (item: ItemCollection, shows: ShowResult[]): Promise<Item[]> => {
     const show = shows.find(show => show.id === item.id);
     if (!show) return [];
 
@@ -20,7 +20,7 @@ export const getChildrens = async (item: ItemData, shows: ShowResult[]): Promise
         .sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }));
 };
 
-export const openEpisode = async (ep: ItemData) => {
+export const openEpisode = async (ep: Item) => {
     const path = ep.path;
     if (!path) return;
     try {

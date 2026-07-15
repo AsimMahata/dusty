@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { logger } from '../../../utility/logger';
-import type { ItemData } from '../../../types/types';
+import type { ItemCollection } from '../../../types/types';
 
 interface BanButtonProps {
-    item: ItemData;
-    onComplete: (item: ItemData) => void;
+    item: ItemCollection;
+    onComplete: (item: ItemCollection) => void;
 }
 
 export const BanButton: React.FC<BanButtonProps> = ({ item, onComplete }) => {

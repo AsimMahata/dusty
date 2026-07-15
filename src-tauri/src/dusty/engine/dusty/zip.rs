@@ -5,7 +5,8 @@ use crate::dusty::{
     scanners::dfs::dfs_file_of_type,
     utility::{
         info::{
-            check_for_bad_sibling, get_all_drives, is_forbidden_folder, is_hidden, is_windows_root,
+            check_for_bad_sibling, get_all_valid_source_path, is_forbidden_folder, is_hidden,
+            is_windows_root,
         },
         utility::format_size,
     },
@@ -13,7 +14,7 @@ use crate::dusty::{
 
 pub fn list_large_zip_files() -> Vec<FileInfo> {
     let mut list: Vec<FileInfo> = Vec::new();
-    for drive in get_all_drives() {
+    for drive in get_all_valid_source_path() {
         list.extend(list_large_zip_files_in_path(drive));
     }
     return list;

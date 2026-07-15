@@ -1,18 +1,17 @@
 import React from 'react';
 import { Card } from './Card';
-import type { ItemData } from '../../types/types';
+import type { ActionItem, BaseItem, AnyItem, ItemCollection, Item } from '../../types/types';
 
-interface ItemSectionProps {
+interface ItemSectionProps<T extends BaseItem = AnyItem> {
   title: string;
   icon: React.ReactNode;
-  items: ItemData[];
-  selectedItemId?: string | null;
-  onCardSelect?: (id: string) => void;
-  onCardClick?: (item: ItemData) => void;
+  items: T[];
+  onCardDoubleClick?: (item: T) => void;
   onTogglePin?: (id: string) => void;
+  getCardActions?: (item: T) => ActionItem[];
 }
 
-export const ItemSection: React.FC<ItemSectionProps> = ({ title, icon, items, selectedItemId, onCardSelect, onCardClick, onTogglePin }) => {
+export function ItemSection<T extends BaseItem>({ title, icon, items, onCardDoubleClick, onTogglePin, getCardActions }: ItemSectionProps<T>) {
 
   if (items.length === 0) return null;
 
@@ -28,23 +27,23 @@ export const ItemSection: React.FC<ItemSectionProps> = ({ title, icon, items, se
         </span>
       </div>
       <div className="grid-container">
-        {items.map((item, index) => (
+        {items.map((item) => (
           <Card 
-            key={`${title}-${item.id}-${index}`}
+            key={item.id}
             title={item.title}
             subtitle={item.subtitle}
             icon={item.icon}
             metadata={item.metadata}
-            size={item.size}
-            isSelected={selectedItemId === item.id}
-            isPinned={item.is_pinned}
+            size={(item as Partial<Item>).size}
+            isPinned={(item as Partial<ItemCollection>).is_pinned}
+            status={(item as Partial<ItemCollection>).status}
             onTogglePin={onTogglePin ? (e) => {
               e.stopPropagation();
               onTogglePin(item.id);
             } : undefined}
-            onClick={() => {
-              onCardSelect?.(item.id);
-              onCardClick?.(item);
+            actions={getCardActions ? getCardActions(item) : undefined}
+            onDoubleClick={() => {
+              onCardDoubleClick?.(item);
             }}
           />
         ))}

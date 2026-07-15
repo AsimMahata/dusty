@@ -3,18 +3,18 @@ import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
 import type { FileInfo } from '../../types/types';
 import { fileInfoToItemData } from '../../utility/util';
-import type { ItemData } from '../../types/types';
+import type { Item } from '../../types/types';
 import { useDefaults } from '../../contexts/defaultContext';
 
-let cachedVideosData: { recent: ItemData[], all: ItemData[] } | null = null;
+let cachedVideosData: { recent: Item[], all: Item[] } | null = null;
 
 export const useVideo = () => {
     const { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } = useDefaults();
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
-    const [selectedItem, setSelectedItem] = useState<ItemData | null>(null);
-    const [data, setData] = useState<{ recent: ItemData[], all: ItemData[] }>(cachedVideosData || { recent: [], all: [] });
+    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+    const [data, setData] = useState<{ recent: Item[], all: Item[] }>(cachedVideosData || { recent: [], all: [] });
 
-    const playVideo = async (ep: ItemData) => {
+    const playVideo = async (ep: Item) => {
         const path = ep.path;
         if (!path) return;
         try {

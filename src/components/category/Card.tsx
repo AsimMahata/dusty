@@ -1,5 +1,8 @@
 import React from 'react';
 import { Pin } from 'lucide-react';
+import { ActionMenu } from '../ui/ActionMenu';
+import type { ItemStatus, ActionItem } from '../../types/types';
+import { ITEM_STATUS_COLORS } from '../../constants/color';
 
 interface CardProps {
     title: string;
@@ -9,45 +12,39 @@ interface CardProps {
     size?: string;
     isSelected?: boolean;
     onClick?: () => void;
+    onDoubleClick?: () => void;
     isPinned?: boolean;
     onTogglePin?: (e: React.MouseEvent) => void;
+    status?: ItemStatus;
+    accentColor?: string;
+    actions?: ActionItem[];
 }
 
-export const Card: React.FC<CardProps> = ({ title, subtitle, icon, metadata, size, isSelected, onClick, isPinned, onTogglePin }) => {
+export const Card: React.FC<CardProps> = ({ title, subtitle, icon, metadata, size, isSelected, onClick, onDoubleClick, isPinned, status, accentColor, actions }) => {
+    const resolvedAccentColor = accentColor || (status && status !== 'default' ? ITEM_STATUS_COLORS[status] : undefined);
+
     return (
         <div
             className={`item-card ${isSelected ? 'selected' : ''}`}
             onClick={onClick}
+            onDoubleClick={onDoubleClick}
+            style={resolvedAccentColor ? { '--accent': resolvedAccentColor, userSelect: 'none' } as React.CSSProperties : { userSelect: 'none' }}
         >
-            {onTogglePin && (
-                <button
-                    onClick={onTogglePin}
-                    style={{
-                        position: 'absolute',
-                        top: '8px',
-                        right: '8px',
-                        background: 'transparent',
-                        border: 'none',
-                        color: isPinned ? 'var(--accent)' : 'var(--text-muted)',
-                        cursor: 'pointer',
-                        padding: '4px',
-                        borderRadius: '4px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        opacity: isPinned ? 1 : 0.5,
-                        transition: 'all 0.2s'
-                    }}
-                    title={isPinned ? "Unpin" : "Pin"}
-                >
-                    {isPinned ? <Pin size={16} fill="currentColor" /> : <Pin size={16} />}
-                </button>
-            )}
+            {
+                actions && (
+                    <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 2 }}>
+                        <ActionMenu actions={actions} />
+                    </div>
+                )
+            }
             <div className="card-icon-wrap">
                 {icon}
             </div>
             <div className="card-content">
-                <div className="card-title">{title}</div>
+                <div className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    {title}
+                    {isPinned && <Pin size={12} fill="currentColor" style={{ color: 'var(--accent)' }} />}
+                </div>
                 <div className="card-subtitle">{subtitle}</div>
                 {(metadata || size) && (
                     <div className="card-meta">

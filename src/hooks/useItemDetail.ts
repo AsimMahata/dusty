@@ -1,24 +1,31 @@
 import { useState, useEffect } from 'react';
-import type { ItemData, TabHook } from '../types/types';
-import type { ContextMenuAction } from '../components/ui/ContextMenu';
+import type { BaseItem, AnyItem, Item, TabHook, ActionItem, EpisodeStatus } from '../types/types';
 
-export const useItemDetail = (tab: TabHook) => {
+export function useItemDetail<T extends BaseItem = AnyItem>(tab: TabHook<T>) {
     const item = tab.selectedItem;
     const getChildrens = tab.getChildrens;
     const onRename = tab.handleRename;
 
-    const [childrens, setChildrens] = useState<ItemData[]>([]);
+    const [childrens, setChildrens] = useState<Item[]>([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [editValue, setEditValue] = useState("");
     const [isRenaming, setIsRenaming] = useState(false);
     const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
-    const [contextMenu, setContextMenu] = useState<{ x: number, y: number, actions: ContextMenuAction[] } | null>(null);
+    const [contextMenu, setContextMenu] = useState<{ x: number, y: number, actions: ActionItem[] } | null>(null);
 
-    const handleContextMenu = (e: React.MouseEvent, actions: ContextMenuAction[]) => {
+    const handleContextMenu = (e: React.MouseEvent, actions: ActionItem[]) => {
         e.preventDefault();
         e.stopPropagation();
         setContextMenu({ x: e.clientX, y: e.clientY, actions });
+    };
+
+    const updateChildStatus = (id: string, status: EpisodeStatus) => {
+        setChildrens(prev => prev.map(c => c.id === id ? { ...c, episode_status: status } : c));
+    };
+
+    const updateAllChildrenStatus = (status: EpisodeStatus) => {
+        setChildrens(prev => prev.map(c => ({ ...c, episode_status: status })));
     };
 
     const handleEditClick = () => {
@@ -83,6 +90,8 @@ export const useItemDetail = (tab: TabHook) => {
         handleContextMenu,
         handleEditClick,
         handleCancelEdit,
-        handleConfirmEdit
+        handleConfirmEdit,
+        updateChildStatus,
+        updateAllChildrenStatus
     };
-};
+}

@@ -62,7 +62,7 @@ pub fn get_file_type(file_path: &PathBuf) -> Option<Name<'static>> {
     }
 }
 
-pub fn get_all_drives() -> Vec<PathBuf> {
+pub fn get_all_valid_source_path() -> Vec<PathBuf> {
     let mut drives: Vec<PathBuf> = Vec::new();
     drives.push(PathBuf::from("C:\\"));
     return drives;

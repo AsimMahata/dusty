@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
-import type { ShowResult } from '../../types/types';
+import type { ShowResult, ShowStatus } from '../../types/types';
 import { logger } from '../../utility/logger';
 import { useDefaults } from '../../contexts/defaultContext';
 
@@ -38,12 +38,40 @@ export const useShow = () => {
         }
     }, []);
 
-    const updateShowStatus = (showId: string, isBanned: boolean) => {
-        const newShows = allShows.map(show =>
-            show.id === showId ? { ...show, is_banned: isBanned } : show
-        );
-        cachedAllShows = newShows;
-        setAllShows(newShows);
+    const updateBanStatus = async (showId: string, isBanned: boolean): Promise<boolean> => {
+        try {
+            await invoke('update_ban_status', { showId: showId, newBanStatus: isBanned });
+            const newShows = allShows.map(show =>
+                show.id === showId ? { ...show, is_banned: isBanned } : show
+            );
+            cachedAllShows = newShows;
+            setAllShows(newShows);
+            logger.info("SHOW_BAN_STATUS_UPDATE_SUCESS", showId, isBanned);
+            return true;
+        } catch (err) {
+            logger.error("SHOW_BAN_STATUS_UPDATE_FAILED", err);
+            return false;
+        }
+    };
+
+    const updateShowStatusOnDatabase = async (showId: string, status: ShowStatus): Promise<boolean> => {
+        return invoke('update_show_status', { showId: showId, newStatus: status });
+    }
+
+    const updateShowVisualStatus = async (showId: string, status: ShowStatus): Promise<boolean> => {
+        try {
+            await updateShowStatusOnDatabase(showId, status);
+            const newShows = allShows.map(show =>
+                show.id === showId ? { ...show, status } : show
+            );
+            cachedAllShows = newShows;
+            setAllShows(newShows);
+            logger.info("SHOW_STATUS_UPDATE_SUCESS", showId, status);
+            return true;
+        } catch (err) {
+            logger.error("SHOW_STATUS_UPDATE_FAILED", err);
+            return false;
+        }
     };
 
     const updateShowTitle = async (showId: string, newTitle: string) => {
@@ -66,13 +94,15 @@ export const useShow = () => {
         }
     };
 
-    const handleTogglePin = (showId: string) => {
-        logger.warn(`TODO: implement backend command to persist pin status for show ${showId}`);
-        const newShows = allShows.map(show =>
-            show.id === showId ? { ...show, is_pinned: !show.is_pinned } : show
-        );
-        cachedAllShows = newShows;
-        setAllShows(newShows);
+    const handleTogglePin = (id: string) => {
+        const show = allShows.find(s => s.id === id);
+        if (show) {
+            const newShows = allShows.map(s =>
+                s.id === id ? { ...s, pinnned: !s.pinnned } : s
+            );
+            cachedAllShows = newShows;
+            setAllShows(newShows);
+        }
     };
 
     const getCommonRenderedActions = () => {
@@ -88,7 +118,8 @@ export const useShow = () => {
         isItemSelected, setIsItemSelected,
         allShows,
         fetchData,
-        updateShowStatus,
+        updateShowStatus: updateBanStatus,
+        updateShowVisualStatus,
         updateShowTitle,
         handleTogglePin,
         getCommonRenderedActions

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, type ReactNode } from 'react';
-import { File, PlayCircle, Folder, Tv, FileCode2 } from "lucide-react";
+import { File, PlayCircle, Folder, Tv, FolderGit2 } from "lucide-react";
 
 interface DefualtContextType {
     DEFAULT_STARTING_PATH: string,
@@ -21,7 +21,7 @@ export const DefaultProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const DEFAULT_FOLDER_ICON = <Folder size={18} />;
     const DEFAULT_FILE_ICON = <File size={18} />;
     const DEFAULT_TV_ICON = <Tv size={24} />;
-    const DEFAULT_PROJECT_ICON = <FileCode2 size={24} />;
+    const DEFAULT_PROJECT_ICON = <FolderGit2 size={24} />;
     return (
         <DefaultContext.Provider
             value={{

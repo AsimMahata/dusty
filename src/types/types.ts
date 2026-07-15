@@ -1,31 +1,55 @@
 import type { ReactNode } from 'react';
 
-export interface ItemData {
+export interface ActionItem {
+    label: string;
+    icon?: ReactNode;
+    color?: string;
+    onClick: () => void;
+    separator?: boolean;
+}
+
+
+export type EpisodeStatus = "default" | "watched" | "unwatched";
+
+export interface BaseItem {
     id: string;
     title: string;
     subtitle: string;
     icon?: ReactNode;
     metadata?: string;
-    size?: string;
     path?: string;
     is_dir?: boolean;
-    is_pinned?: boolean;
 }
 
-export interface TabHook {
+export type ItemStatus = ShowStatus | ProjectStatus;
+
+export interface ItemCollection extends BaseItem {
+    is_pinned?: boolean;
+    status?: ItemStatus;
+}
+
+export interface Item extends BaseItem {
+    size?: string;
+    episode_status?: EpisodeStatus;
+}
+
+export type AnyItem = ItemCollection | Item;
+
+export interface TabHook<T extends BaseItem = AnyItem> {
     title?: string;
-    recentItems?: ItemData[];
-    allItems?: ItemData[];
+    recentItems?: T[];
+    allItems?: T[];
     searchQuery?: string;
-    onCardClick?: (item: ItemData) => void;
+    onCardClick?: (item: T) => void;
     handleTogglePin?: (id: string) => void;
-    selectedItem?: ItemData | null;
-    setSelectedItem?: (item: ItemData | null) => void;
-    getChildrens?: (item: ItemData) => Promise<ItemData[]>;
-    onItemClick?: (item: ItemData) => void | Promise<void>;
-    getRenderActions?: (item: ItemData) => ReactNode;
+    selectedItem?: T | null;
+    setSelectedItem?: (item: T | null) => void;
+    getChildrens?: (item: T) => Promise<Item[]>;
+    onItemClick?: (item: Item) => void | Promise<void>;
+    getRenderActions?: (item: T) => ReactNode;
     defaultIcon?: ReactNode;
-    handleRename?: (item: ItemData, newTitle: string) => Promise<void>;
+    handleRename?: (item: T, newTitle: string) => Promise<void>;
+    getCardActions?: (item: T) => ActionItem[];
 }
 
 export interface FileInfo {
@@ -35,6 +59,15 @@ export interface FileInfo {
     ext?: string,
     is_dir: boolean,
 }
+
+export type ShowStatus =
+    | "default"
+    | "watching"
+    | "completed"
+    | "planned"
+    | "on_hold"
+    | "dropped";
+
 export interface ShowResult {
     id: string,
     title: string,
@@ -42,16 +75,22 @@ export interface ShowResult {
     num_episodes: number,
     episodes: FileInfo[],
     dir: string,
-    is_banned?: boolean,
-    is_pinned?: boolean,
+    banned: boolean,
+    pinned: boolean,
+    status: ShowStatus,
+    season?: number,
 }
 
 export type ProjectType = "C/C++" | "Unknown";
 
 export interface Project {
+    id: string,
     title: string,
     path: string,
     project_type: ProjectType,
-    is_pinned?: boolean,
+    pinned: boolean,
+    status: ProjectStatus,
 }
+
+export type ProjectStatus = "default" | "working" | "completed" | "on_hold" | "dropped";
 

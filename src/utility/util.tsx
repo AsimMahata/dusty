@@ -1,4 +1,4 @@
-import type { ItemData, FileInfo } from "../types/types";
+import type { Item, FileInfo } from "../types/types";
 import { type LucideIcon } from "lucide-react";
 
 export function createIcon(Icon: LucideIcon) {
@@ -25,7 +25,7 @@ export function formatSize(size: number): string {
 }
 
 
-export const fileInfoToItemData = (files: FileInfo[], defaultFileIcon: React.ReactNode, defaultFolderIcon: React.ReactNode): ItemData[] => {
+export const fileInfoToItemData = (files: FileInfo[], defaultFileIcon: React.ReactNode, defaultFolderIcon: React.ReactNode): Item[] => {
     return files.map((file, i) => ({
         id: `${i}`,
         title: file.name,

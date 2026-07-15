@@ -18,6 +18,9 @@ pub fn show_to_show_result(s: &Show) -> ShowResult {
             .map(|p| FileInfo::from_pathbuf(p).expect("Crashed on main inside dusty"))
             .collect(),
         dir: s.get_dir().to_string_lossy().into_owned(),
-        is_banned: None,
+        banned: false,
+        pinned: false,
+        season: s.get_season(),
+        status: "default".to_string(),
     }
 }

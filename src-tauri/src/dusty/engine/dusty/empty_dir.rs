@@ -4,13 +4,14 @@ use std::{fs, path::PathBuf};
 use crate::dusty::{
     data::file::FileInfo,
     utility::info::{
-        check_for_bad_sibling, get_all_drives, is_forbidden_folder, is_hidden, is_windows_root,
+        check_for_bad_sibling, get_all_valid_source_path, is_forbidden_folder, is_hidden,
+        is_windows_root,
     },
 };
 
 pub fn list_empty_dirs() -> Vec<FileInfo> {
     let mut list: Vec<FileInfo> = Vec::new();
-    for drive in get_all_drives() {
+    for drive in get_all_valid_source_path() {
         list.extend(list_empty_dirs_in_path(drive));
     }
     return list;

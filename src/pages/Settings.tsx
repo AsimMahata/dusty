@@ -6,11 +6,19 @@ import { logger } from '../utility/logger';
 import { ConfirmationModal } from '../components/ui/ConfirmationModal';
 import { useSettings } from '../contexts/SettingsContext';
 
+
+
 export const Settings: React.FC = () => {
     const { settings, updateSettings } = useSettings();
     const [activeTab, setActiveTab] = useState<'general' | 'data'>('general');
     const [isResetting, setIsResetting] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [isResettingProjects, setIsResettingProjects] = useState(false);
+    const [showConfirmProjects, setShowConfirmProjects] = useState(false);
+    const [isResettingShows, setIsResettingShows] = useState(false);
+    const [showConfirmShows, setShowConfirmShows] = useState(false);
+
+    const isAnyResetting = isResetting || isResettingProjects || isResettingShows;
 
     const executeResetData = async () => {
         setShowConfirm(false);
@@ -29,6 +37,36 @@ export const Settings: React.FC = () => {
 
     const handleResetData = () => {
         setShowConfirm(true);
+    };
+
+    const executeResetProjects = async () => {
+        setShowConfirmProjects(false);
+        setIsResettingProjects(true);
+        try {
+            logger.info("requesting project table reset");
+            await invoke('reset_project_table');
+            alert("Project table has been successfully reset. Please restart the app or refresh pages to see changes.");
+        } catch (err) {
+            logger.error(`Failed to reset project table: ${String(err)}`);
+            alert("Failed to reset project table: " + String(err));
+        } finally {
+            setIsResettingProjects(false);
+        }
+    };
+
+    const executeResetShows = async () => {
+        setShowConfirmShows(false);
+        setIsResettingShows(true);
+        try {
+            logger.info("requesting shows table reset");
+            await invoke('reset_shows_table');
+            alert("Shows table has been successfully reset. Please restart the app or refresh pages to see changes.");
+        } catch (err) {
+            logger.error(`Failed to reset shows table: ${String(err)}`);
+            alert("Failed to reset shows table: " + String(err));
+        } finally {
+            setIsResettingShows(false);
+        }
     };
 
     return (
@@ -71,26 +109,70 @@ export const Settings: React.FC = () => {
                                 Resetting the database will clear all cached information, including all banned shows and renamed titles. The application will rescan directories from scratch on the next launch.
                             </p>
                             
-                            <button 
-                                onClick={handleResetData}
-                                disabled={isResetting}
-                                style={{
-                                    background: '#ef4444',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '0.6rem 1.2rem',
-                                    borderRadius: '6px',
-                                    fontWeight: 500,
-                                    cursor: isResetting ? 'not-allowed' : 'pointer',
-                                    opacity: isResetting ? 0.7 : 1,
-                                    transition: 'background 0.2s',
-                                    fontSize: '0.95rem'
-                                }}
-                                onMouseEnter={(e) => { if (!isResetting) e.currentTarget.style.background = '#dc2626'; }}
-                                onMouseLeave={(e) => { if (!isResetting) e.currentTarget.style.background = '#ef4444'; }}
-                            >
-                                {isResetting ? 'Resetting...' : 'Reset All Data'}
-                            </button>
+                            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                                <button 
+                                    onClick={handleResetData}
+                                    disabled={isAnyResetting}
+                                    style={{
+                                        background: '#ef4444',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.6rem 1.2rem',
+                                        borderRadius: '6px',
+                                        fontWeight: 500,
+                                        cursor: isAnyResetting ? 'not-allowed' : 'pointer',
+                                        opacity: isAnyResetting ? 0.7 : 1,
+                                        transition: 'background 0.2s',
+                                        fontSize: '0.95rem'
+                                    }}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = '#dc2626'; }}
+                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = '#ef4444'; }}
+                                >
+                                    {isResetting ? 'Resetting...' : 'Reset All Data'}
+                                </button>
+                                
+                                <button 
+                                    onClick={() => setShowConfirmProjects(true)}
+                                    disabled={isAnyResetting}
+                                    style={{
+                                        background: '#f59e0b',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.6rem 1.2rem',
+                                        borderRadius: '6px',
+                                        fontWeight: 500,
+                                        cursor: isAnyResetting ? 'not-allowed' : 'pointer',
+                                        opacity: isAnyResetting ? 0.7 : 1,
+                                        transition: 'background 0.2s',
+                                        fontSize: '0.95rem'
+                                    }}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = '#d97706'; }}
+                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = '#f59e0b'; }}
+                                >
+                                    {isResettingProjects ? 'Resetting...' : 'Reset Projects Only'}
+                                </button>
+
+                                <button 
+                                    onClick={() => setShowConfirmShows(true)}
+                                    disabled={isAnyResetting}
+                                    style={{
+                                        background: '#3b82f6',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.6rem 1.2rem',
+                                        borderRadius: '6px',
+                                        fontWeight: 500,
+                                        cursor: isAnyResetting ? 'not-allowed' : 'pointer',
+                                        opacity: isAnyResetting ? 0.7 : 1,
+                                        transition: 'background 0.2s',
+                                        fontSize: '0.95rem'
+                                    }}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = '#2563eb'; }}
+                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = '#3b82f6'; }}
+                                >
+                                    {isResettingShows ? 'Resetting...' : 'Reset Shows Only'}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -141,6 +223,28 @@ export const Settings: React.FC = () => {
                 onConfirm={executeResetData}
                 onCancel={() => setShowConfirm(false)}
                 confirmText="Yes, reset all data"
+                cancelText="Cancel"
+                isDanger={true}
+            />
+
+            <ConfirmationModal 
+                isOpen={showConfirmProjects}
+                title="Reset Projects Table"
+                message="Are you sure you want to reset the projects table? This will erase all project metadata like pin states and statuses. This cannot be undone."
+                onConfirm={executeResetProjects}
+                onCancel={() => setShowConfirmProjects(false)}
+                confirmText="Yes, reset projects"
+                cancelText="Cancel"
+                isDanger={true}
+            />
+
+            <ConfirmationModal 
+                isOpen={showConfirmShows}
+                title="Reset Shows Table"
+                message="Are you sure you want to reset the shows table? This will erase all show metadata like pin states and ban statuses. This cannot be undone."
+                onConfirm={executeResetShows}
+                onCancel={() => setShowConfirmShows(false)}
+                confirmText="Yes, reset shows"
                 cancelText="Cancel"
                 isDanger={true}
             />

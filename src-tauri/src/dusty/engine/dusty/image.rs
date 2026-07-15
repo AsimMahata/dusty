@@ -9,8 +9,8 @@ use crate::dusty::{
     },
     utility::{
         info::{
-            check_for_bad_sibling, get_all_drives, get_file_type, is_forbidden_folder, is_hidden,
-            is_windows_root,
+            check_for_bad_sibling, get_all_valid_source_path, get_file_type, is_forbidden_folder,
+            is_hidden, is_windows_root,
         },
         utility::format_size,
     },
@@ -18,7 +18,7 @@ use crate::dusty::{
 
 pub fn list_image_dirs() -> Vec<ImageDir> {
     let mut list: Vec<ImageDir> = Vec::new();
-    for drive in get_all_drives() {
+    for drive in get_all_valid_source_path() {
         list.extend(list_image_dirs_in_drive(drive));
     }
     println!("List of Large Zip Files");

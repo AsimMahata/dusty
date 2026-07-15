@@ -4,7 +4,7 @@ use rusqlite::{Connection, Result};
 use tauri::Manager;
 
 use crate::dusty::data::state::AppState;
-use crate::dusty::db::ban::create_ban_table;
+use crate::dusty::db::project::create_projects_table;
 use crate::dusty::db::show::create_shows_table;
 use crate::dusty::logger::logger;
 
@@ -19,12 +19,21 @@ pub fn init_db(app: &mut tauri::App) -> Result<(), String> {
 
     let conn = rusqlite::Connection::open(db_path).map_err(|e| e.to_string())?;
 
-    create_shows_table(&conn)?;
-    create_ban_table(&conn)?;
+    let tables: Vec<String> = initialize_tables(&conn)?;
 
     app.manage(AppState {
         db: Mutex::new(conn),
+        tables: tables,
     });
 
     Ok(())
+}
+
+pub fn initialize_tables(conn: &Connection) -> Result<Vec<String>, String> {
+    let mut tables: Vec<String> = Vec::new();
+    create_shows_table(&conn)?;
+    tables.push("shows".to_string());
+    create_projects_table(&conn)?;
+    tables.push("projects".to_string());
+    Ok(tables)
 }

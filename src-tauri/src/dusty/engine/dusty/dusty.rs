@@ -1,12 +1,11 @@
 use std::{
     fs,
-    os::windows::fs::MetadataExt,
     path::PathBuf,
     time::{Duration, SystemTime},
 };
 
 use crate::dusty::utility::info::{
-    check_for_bad_sibling, get_all_drives, is_forbidden_folder, is_hidden,
+    check_for_bad_sibling, get_all_valid_source_path, is_forbidden_folder, is_hidden,
 };
 
 pub fn list_all_dusty_files() {
@@ -15,7 +14,7 @@ pub fn list_all_dusty_files() {
 
 fn scan_all_dusty_files() -> Vec<PathBuf> {
     let mut list: Vec<PathBuf> = Vec::new();
-    for drive in get_all_drives() {
+    for drive in get_all_valid_source_path() {
         dfs_dusty_files(&mut list, &drive, true);
     }
     return list;

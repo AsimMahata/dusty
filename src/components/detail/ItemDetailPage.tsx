@@ -1,15 +1,14 @@
-import React from 'react';
 import { ContextMenu } from '../ui/ContextMenu';
 import { useItemDetail } from '../../hooks/useItemDetail';
-import type { TabHook } from '../../types/types';
+import type { TabHook, BaseItem, AnyItem } from '../../types/types';
 import { DetailHeader } from './DetailHeader';
 import { DetailList } from './DetailList';
 
-interface ItemDetailPageProps {
-    tab: TabHook;
+interface ItemDetailPageProps<T extends BaseItem = AnyItem> {
+    tab: TabHook<T>;
 }
 
-export const ItemDetailPage: React.FC<ItemDetailPageProps> = ({ tab }) => {
+export function ItemDetailPage<T extends BaseItem>({ tab }: ItemDetailPageProps<T>) {
     const item = tab.selectedItem;
     const onBack = () => tab.setSelectedItem?.(null);
     const onClick = tab.onItemClick;
@@ -28,6 +27,7 @@ export const ItemDetailPage: React.FC<ItemDetailPageProps> = ({ tab }) => {
                 detail={detail}
                 onBack={onBack}
                 canRename={!!onRename}
+                actions={tab.getCardActions ? tab.getCardActions(item) : undefined}
             />
 
             {renderActions && (

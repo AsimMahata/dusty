@@ -1,88 +1,90 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
-import type { Project } from '../../types/types';
+import type { Project, ProjectStatus } from '../../types/types';
 import { logger } from '../../utility/logger';
-import type { ItemData } from '../../types/types';
-import { useDefaults } from '../../contexts/defaultContext';
+import type { ItemCollection } from '../../types/types';
 
-let cachedProjectsData: { recent: ItemData[], all: ItemData[] } | null = null;
+let cachedAllProjects: Project[] | null = null;
 
 export const useProject = () => {
-    const { DEFAULT_PROJECT_ICON } = useDefaults();
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
-    const [selectedItem, setSelectedItem] = useState<ItemData | null>(null);
-    const [data, setData] = useState<{ recent: ItemData[], all: ItemData[] }>(cachedProjectsData || { recent: [], all: [] });
-
-    function convertIntoItemdData(projects: Project[]): ItemData[] {
-        return projects.map((project, i) => ({
-            id: `project - ${i}`,
-            title: project.title,
-            subtitle: "NONE",
-            icon: DEFAULT_PROJECT_ICON,
-            path: project.path,
-            is_dir: true,
-            is_pinned: project.is_pinned || false
-        })).sort((a, b) => {
-            if (a.is_pinned && !b.is_pinned) return -1;
-            if (!a.is_pinned && b.is_pinned) return 1;
-            return a.title.localeCompare(b.title, undefined, { numeric: true });
-        });
-    }
+    const [selectedItem, setSelectedItem] = useState<ItemCollection | null>(null);
+    const [allProjects, setAllProjects] = useState<Project[]>(cachedAllProjects || []);
 
     const fetchData = async () => {
         setIsRefreshing(true);
-        await new Promise(resolve => setTimeout(resolve, 600));
-        const projects: Project[] = await invoke('scan_projects');
-        console.log(projects);
-        let items = convertIntoItemdData(projects);
-        const newData = {
-            recent: [],
-            all: items
-        };
-
-        cachedProjectsData = newData;
-        setData(newData);
-        setIsRefreshing(false);
-        setIsLoading(false);
+        if (allProjects.length === 0) setIsLoading(true);
+        try {
+            const projects: Project[] = await invoke('scan_projects');
+            cachedAllProjects = projects;
+            setAllProjects(projects);
+            logger.info('all projects fetched', projects);
+        } catch (error) {
+            logger.error(`Failed to fetch projects: ${String(error)}`);
+        } finally {
+            setIsRefreshing(false);
+            setIsLoading(false);
+        }
     };
 
     useEffect(() => {
-        if (!cachedProjectsData) {
+        if (!cachedAllProjects) {
             fetchData();
         }
     }, []);
 
-    const handleTogglePin = (id: string) => {
-        logger.warn(`TODO: implement backend command to persist pin status for project ${id}`);
-        const newData = {
-            ...data,
-            all: data.all.map(item => 
-                item.id === id ? { ...item, is_pinned: !item.is_pinned } : item
-            ).sort((a, b) => {
-                if (a.is_pinned && !b.is_pinned) return -1;
-                if (!a.is_pinned && b.is_pinned) return 1;
-                return a.title.localeCompare(b.title, undefined, { numeric: true });
-            }),
-            recent: data.recent.map(item => 
-                item.id === id ? { ...item, is_pinned: !item.is_pinned } : item
-            )
-        };
-        cachedProjectsData = newData;
-        setData(newData);
+    const handleTogglePin = async (id: string) => {
+        try {
+            const currentPinnedStatus = allProjects.find(x => x.id === id)?.pinned || false;
+            if (currentPinnedStatus) {
+                await invoke('unpin_project', { id: id })
+            } else {
+                await invoke('pin_project', { id: id })
+            }
+            
+            const newProjects = allProjects.map(item =>
+                item.id === id ? { ...item, pinned: !item.pinned } : item
+            );
+            cachedAllProjects = newProjects;
+            setAllProjects(newProjects);
+            logger.info(`Toggled project pin for project ${id}`);
+        } catch (err) {
+            logger.error(`Failed to toggle project pin: ${String(err)}`);
+        }
+    };
+
+    const getCommonRenderedActions = (): ReactNode[] => {
+        return [];
+    };
+
+    const updateProjectProgressStatus = async (id: string, status: ProjectStatus): Promise<boolean> => {
+        try {
+            await invoke('update_project_status', { id: id, status: status });
+            const newProjects = allProjects.map(project =>
+                project.id === id ? { ...project, status: status } : project
+            );
+
+            cachedAllProjects = newProjects;
+            setAllProjects(newProjects);
+            logger.info(`Updated project progress status for project ${id}`);
+            return true;
+        } catch (err) {
+            logger.error(`Failed to update project progress status: ${String(err)}`);
+            return false;
+        }
     };
 
     return {
         title: "Projects",
         searchQuery, setSearchQuery,
         selectedItem, setSelectedItem,
-        data,
-        recentItems: data.recent,
-        allItems: data.all,
-        onCardClick: setSelectedItem,
+        allProjects,
         isRefreshing,
         isLoading,
         fetchData,
-        handleTogglePin
+        handleTogglePin,
+        getCommonRenderedActions,
+        updateProjectProgressStatus
     };
 }

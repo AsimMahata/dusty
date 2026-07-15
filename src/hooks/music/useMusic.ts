@@ -3,18 +3,18 @@ import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
 import type { FileInfo } from '../../types/types';
 import { fileInfoToItemData } from '../../utility/util';
-import type { ItemData } from '../../types/types';
+import type { Item } from '../../types/types';
 import { useDefaults } from '../../contexts/defaultContext';
 
-let cachedMusicData: { recent: ItemData[], all: ItemData[] } | null = null;
+let cachedMusicData: { recent: Item[], all: Item[] } | null = null;
 
 export const useMusic = () => {
     const { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } = useDefaults();
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
-    const [selectedItem, setSelectedItem] = useState<ItemData | null>(null);
-    const [data, setData] = useState<{ recent: ItemData[], all: ItemData[] }>(cachedMusicData || { recent: [], all: [] });
+    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+    const [data, setData] = useState<{ recent: Item[], all: Item[] }>(cachedMusicData || { recent: [], all: [] });
 
-    const playMusic = async (m: ItemData) => {
+    const playMusic = async (m: Item) => {
         const path = m.path;
         if (!path) return;
         try {

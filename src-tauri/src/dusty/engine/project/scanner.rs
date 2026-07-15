@@ -6,19 +6,21 @@ use std::{
 use crate::dusty::{
     data::project::Project,
     engine::project::maker::make_project,
-    utility::info::{get_all_drives, is_forbidden_folder, is_git_repo, is_hidden},
+    utility::info::{
+        get_all_valid_source_path, is_forbidden_folder, is_git_repo, is_hidden, is_windows_root,
+    },
 };
 
-pub fn scan_projects_in_drive(root: &PathBuf) -> Vec<Project> {
+pub fn scan_projects_in_path(source: &PathBuf) -> Vec<Project> {
     let mut projects: Vec<Project> = Vec::new();
-    dfs_project_scanner(root, &mut projects, true);
+    dfs_project_scanner(source, &mut projects, is_windows_root(source));
     return projects;
 }
 
 pub fn scan_all_projects() -> Vec<Project> {
     let mut projects: Vec<Project> = Vec::new();
-    for drive in get_all_drives() {
-        projects.extend(scan_projects_in_drive(&drive));
+    for source in get_all_valid_source_path() {
+        projects.extend(scan_projects_in_path(&source));
     }
     return projects;
 }

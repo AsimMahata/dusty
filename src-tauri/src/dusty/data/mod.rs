@@ -1,4 +1,3 @@
-pub mod bad;
 pub mod db;
 pub mod file;
 pub mod image;
