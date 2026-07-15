@@ -1,6 +1,6 @@
 import React from 'react';
 import { HardDrive, FolderSearch, Trash2 } from 'lucide-react';
-import { PageLayout } from './PageLayout';
+import { PageLayout } from './layout/PageLayout';
 
 export const Home: React.FC = () => {
   return (

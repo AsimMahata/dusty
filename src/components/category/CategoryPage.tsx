@@ -1,17 +1,22 @@
 import React from 'react';
 import { Clock, List } from 'lucide-react';
-import type { ItemData } from './ItemDetailPage';
+import type { TabHook } from '../../types/types';
 import { ItemSection } from './ItemSection';
 
 interface CategoryPageProps {
-  title: string;
-  recentItems: ItemData[];
-  allItems: ItemData[];
-  searchQuery?: string;
-  onCardClick?: (item: ItemData) => void;
+  tab: TabHook;
 }
 
-export const CategoryPage: React.FC<CategoryPageProps> = ({ title, recentItems, allItems, searchQuery = "", onCardClick }) => {
+export const CategoryPage: React.FC<CategoryPageProps> = ({ tab }) => {
+  const [selectedItemId, setSelectedItemId] = React.useState<string | null>(null);
+
+  const title = tab.title || "Unknown";
+  const recentItems = tab.recentItems || [];
+  const allItems = tab.allItems || [];
+  const searchQuery = tab.searchQuery || "";
+  const onCardClick = tab.onCardClick;
+  const onTogglePin = tab.handleTogglePin;
+
   const query = searchQuery.toLowerCase();
   
   const filteredRecent = recentItems.filter(item => 
@@ -32,7 +37,10 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({ title, recentItems, 
         title="Recent" 
         icon={<Clock size={20} />} 
         items={filteredRecent} 
+        selectedItemId={selectedItemId}
+        onCardSelect={setSelectedItemId}
         onCardClick={onCardClick} 
+        onTogglePin={onTogglePin}
       />
 
       {filteredAll.length > 0 ? (
@@ -40,7 +48,10 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({ title, recentItems, 
           title={`All ${title}`} 
           icon={<List size={20} />} 
           items={filteredAll} 
+          selectedItemId={selectedItemId}
+          onCardSelect={setSelectedItemId}
           onCardClick={onCardClick} 
+          onTogglePin={onTogglePin}
         />
       ) : (
         <div style={{ textAlign: 'center', marginTop: '48px', color: 'var(--text-muted)' }}>

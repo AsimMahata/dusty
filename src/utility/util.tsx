@@ -1,10 +1,10 @@
-import type { ItemData } from "../components/ItemDetailPage";
-import { File as FileIcon, Folder as FolderIcon, type LucideIcon } from "lucide-react";
-import type { FileInfo } from "../types/types";
+import type { ItemData, FileInfo } from "../types/types";
+import { type LucideIcon } from "lucide-react";
 
 export function createIcon(Icon: LucideIcon) {
     return (<Icon size={24} />);
 }
+
 export function formatSize(size: number): string {
     const KB = 1024;
     const MB = KB * 1024;
@@ -25,13 +25,13 @@ export function formatSize(size: number): string {
 }
 
 
-export const fileInfoToItemData = (files: FileInfo[]): ItemData[] => {
+export const fileInfoToItemData = (files: FileInfo[], defaultFileIcon: React.ReactNode, defaultFolderIcon: React.ReactNode): ItemData[] => {
     return files.map((file, i) => ({
         id: `${i}`,
         title: file.name,
         subtitle: file.path,
         size: formatSize(file.size),
-        icon: (file.is_dir ? <FolderIcon size={18} /> : <FileIcon size={18} />),
+        icon: (file.is_dir ? defaultFolderIcon : defaultFileIcon),
         path: file.path,
         is_dir: file.is_dir
     }));

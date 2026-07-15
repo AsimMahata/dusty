@@ -2,10 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::dusty::engine::{
     cluster::helper::generate_token_id,
-    utility::{
-        calculations::{get_prime_power, PrimePower},
-        math::binary_exp_with_mod,
-    },
+    utility::calculations::{get_prime_power, PrimePower},
 };
 pub fn get_hash_indices(
     tokenized_file_names: &Vec<Vec<String>>,

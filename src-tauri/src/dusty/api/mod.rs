@@ -7,3 +7,5 @@ pub mod project;
 pub mod show;
 pub mod video;
 pub mod zip;
+pub mod lab;
+pub mod settings;

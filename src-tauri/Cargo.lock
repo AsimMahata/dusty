@@ -977,6 +977,7 @@ dependencies = [
  "log",
  "mime_guess",
  "rand 0.10.2",
+ "regex",
  "rusqlite",
  "serde",
  "serde_json",

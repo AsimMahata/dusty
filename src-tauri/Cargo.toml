@@ -28,3 +28,4 @@ mime_guess = "2.0.5"
 rand = "0.10.1"
 rusqlite = { version = "0.31", features = ["bundled"] }
 sha256 = "1.6.0"
+regex = "1.13.0"

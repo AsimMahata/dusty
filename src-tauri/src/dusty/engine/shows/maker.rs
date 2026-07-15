@@ -2,9 +2,8 @@ use crate::dusty::{
     data::shows::{Show, Shows},
     engine::{
         algo::rolling_hash::get_common_token_order_using_rolling_hash,
-        utility::parser::{get_tokenized_file_names, get_tokenized_file_names_for_title_making},
+        utility::parser::get_tokenized_file_names_for_title_making,
     },
-    utility::utility::{strip_folder_name, strip_folder_name_in_batch},
 };
 use rand::rng;
 use rand::seq::SliceRandom;
@@ -28,6 +27,9 @@ pub fn make_shows_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut Shows,
             continue;
         }
         let title = generate_show_title(cluster);
+        if title.len() == 0 {
+            continue;
+        };
         let season: Option<i32> = None;
         let num_of_ep: usize = cluster.len();
         let show = Show::new(title, season, num_of_ep, cluster.clone(), dir.clone());

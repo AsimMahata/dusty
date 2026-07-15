@@ -18,6 +18,8 @@ pub fn run() {
             dusty::api::image::scan_image,
             dusty::api::zip::scan_zip,
             dusty::api::empty_dir::scan_empty_dir,
+            dusty::api::lab::tokenize,
+            dusty::api::settings::reset_database,
         ])
         .setup(|app| {
             if cfg!(debug_assertions) {
