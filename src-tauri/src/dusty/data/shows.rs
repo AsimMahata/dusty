@@ -8,6 +8,7 @@ use crate::dusty::data::file::FileInfo;
 pub struct ShowResult {
     pub id: String,
     pub title: String,
+    pub gen_title: String,
     pub num_episodes: usize,
     pub episodes: Vec<FileInfo>,
     pub dir: String,

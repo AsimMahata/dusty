@@ -1,10 +1,10 @@
+pub mod api;
 pub mod data;
 pub mod data_structures;
 pub mod db;
 pub mod engine;
 pub mod handlers;
 pub mod logger;
-pub mod main;
 pub mod scanners;
 pub mod test;
 pub mod types;

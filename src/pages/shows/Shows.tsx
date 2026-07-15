@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { PageLayout } from '../components/PageLayout';
-import { NormalShows } from './shows/NormalShows';
-import { BannedShows } from './shows/BannedShows';
+import { PageLayout } from '../../components/PageLayout';
+import { NormalShows } from './NormalShows';
+import { BannedShows } from './BannedShows';
 import { invoke } from '@tauri-apps/api/core';
-import type { ShowResult } from '../types/types';
-import { logger } from '../utility/logger';
+import type { ShowResult } from '../../types/types';
+import { logger } from '../../utility/logger';
 
 let cachedAllShows: ShowResult[] | null = null;
 
@@ -47,6 +47,30 @@ export const Shows: React.FC = () => {
         setAllShows(newShows);
     };
 
+    const updateShowTitle = async (showId: string, newTitle: string) => {
+        try {
+            logger.info('requested rename for', { id: showId, newName: newTitle });
+            const success = await invoke("rename_show", { showId, newName: newTitle });
+            if (!success) {
+                logger.error(`Failed to rename show: ${showId}, ${newTitle}`);
+                return;
+            }
+            const newShows = allShows.map(show => 
+                show.id === showId ? { ...show, title: newTitle } : show
+            );
+            cachedAllShows = newShows;
+            setAllShows(newShows);
+            logger.info('renamed show', { id: showId, newName: newTitle });
+        } catch (error) {
+            logger.error(`Failed to rename show: ${String(error)}`);
+            throw error;
+        }
+    };
+
+    const getCommonRenderedActions = () => {
+        return [];
+    }
+
     const renderContent = () => {
         if (activeTab === 'normal') {
             return (
@@ -55,6 +79,8 @@ export const Shows: React.FC = () => {
                     shows={allShows.filter(s => !s.is_banned)}
                     onItemSelected={setIsItemSelected}
                     onStatusChange={(id) => updateShowStatus(id, true)}
+                    onRename={(id, title) => updateShowTitle(id, title)}
+                    commonRenderedActions={getCommonRenderedActions()}
                 />
             );
         }
@@ -65,6 +91,8 @@ export const Shows: React.FC = () => {
                 shows={allShows.filter(s => s.is_banned)}
                 onItemSelected={setIsItemSelected}
                 onStatusChange={(id) => updateShowStatus(id, false)}
+                onRename={(id, title) => updateShowTitle(id, title)}
+                commonRenderedActions={getCommonRenderedActions()}
             />
         );
     };
@@ -87,7 +115,6 @@ export const Shows: React.FC = () => {
                     >
                         Shows
                     </button>
-                    {/* Always the last option */}
                     <button 
                         className={`tab-btn ${activeTab === 'banned' ? 'active' : ''}`}
                         onClick={() => setActiveTab('banned')}

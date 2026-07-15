@@ -6,17 +6,18 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            dusty::main::scan_shows,
-            dusty::main::open_file,
-            dusty::main::scan_projects,
-            dusty::main::read_dir,
-            dusty::main::scan_music,
-            dusty::main::scan_video,
-            dusty::main::scan_image,
-            dusty::main::scan_zip,
-            dusty::main::scan_empty_dir,
-            dusty::main::ban_show,
-            dusty::main::unban_show,
+            dusty::api::file_system::read_dir,
+            dusty::api::opener::open_file,
+            dusty::api::show::scan_shows,
+            dusty::api::show::ban_show,
+            dusty::api::show::unban_show,
+            dusty::api::show::rename_show,
+            dusty::api::project::scan_projects,
+            dusty::api::music::scan_music,
+            dusty::api::video::scan_video,
+            dusty::api::image::scan_image,
+            dusty::api::zip::scan_zip,
+            dusty::api::empty_dir::scan_empty_dir,
         ])
         .setup(|app| {
             if cfg!(debug_assertions) {

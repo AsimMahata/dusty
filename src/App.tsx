@@ -4,12 +4,12 @@ import { Sidebar } from "./components/Sidebar";
 import { Home } from "./components/Home";
 
 // Pages
-import { Shows } from "./pages/Shows";
+import { Shows } from "./pages/shows/Shows";
 import { Projects } from "./pages/Projects";
 import { Music } from "./pages/Music";
 import { Videos } from "./pages/Videos";
 import { Images } from "./pages/Images";
-import { Misc } from "./pages/Misc";
+import { Misc } from "./pages/misc/Misc";
 import { Zip } from "./pages/Zip";
 
 function App() {

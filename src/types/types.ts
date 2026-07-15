@@ -8,6 +8,7 @@ export interface FileInfo {
 export interface ShowResult {
     id: string,
     title: string,
+    get_title: string,
     num_episodes: number,
     episodes: FileInfo[],
     dir: string,

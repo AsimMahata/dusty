@@ -1,7 +1,7 @@
 use crate::dusty::{data::shows::ShowResult, logger::logger, utility::sha256_hash::get_sha256_id};
 use rusqlite::{params, Connection, Result};
 
-pub fn add_shows_in_db(db: &mut Connection, shows: &Vec<ShowResult>) -> Result<()> {
+pub fn add_shows_in_db(db: &Connection, shows: &Vec<ShowResult>) -> Result<()> {
     for show in shows {
         add_show_in_db(db, show)
             .map_err(|err| logger::error!("INSERT_SHOW_IN_DB_FAILED", err))
@@ -9,19 +9,28 @@ pub fn add_shows_in_db(db: &mut Connection, shows: &Vec<ShowResult>) -> Result<(
     }
     Ok(())
 }
-pub fn add_show_in_db(db: &mut Connection, show: &ShowResult) -> Result<()> {
+pub fn add_show_in_db(db: &Connection, show: &ShowResult) -> Result<()> {
     let sha256_hash: String = generate_sha256_for_show(show);
     add_in_show_table(db, sha256_hash, show)?;
 
     Ok(())
 }
 
-fn add_in_show_table(db: &mut Connection, id: String, show: &ShowResult) -> Result<()> {
+fn add_in_show_table(db: &Connection, id: String, show: &ShowResult) -> Result<()> {
     db.execute(
         "INSERT INTO shows (id, title, dir) VALUES (?1, ?2, ?3)",
         rusqlite::params![id, &show.title, &show.dir,],
     )?;
     Ok(())
+}
+
+pub fn get_title_from_db(db: &Connection, id: String) -> Result<String, String> {
+    db.query_row(
+        "SELECT title FROM shows WHERE id = ?1",
+        params![id],
+        |row| row.get(0),
+    )
+    .map_err(|e| format!("Failed to get title: {}", e))
 }
 
 fn generate_sha256_for_show(show: &ShowResult) -> String {
@@ -69,5 +78,13 @@ pub fn create_shows_table(conn: &Connection) -> Result<(), String> {
     )
     .map_err(|e| e.to_string())?;
 
+    Ok(())
+}
+
+pub fn rename_show_in_db(db: &Connection, id: String, new_name: String) -> Result<()> {
+    db.execute(
+        "UPDATE shows SET title = ?1 WHERE id = ?2",
+        params![new_name, id],
+    )?;
     Ok(())
 }

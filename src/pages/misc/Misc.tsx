@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { PageLayout } from '../components/PageLayout';
-import { EmptyDir } from './misc/EmptyDir';
+import { PageLayout } from '../../components/PageLayout';
+import { EmptyDir } from './EmptyDir';
 
 export const Misc: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");

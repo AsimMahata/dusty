@@ -1,80 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { invoke } from '@tauri-apps/api/core';
-import { PlayCircle, Tv } from 'lucide-react';
+import { Tv } from 'lucide-react';
 import { CategoryPage } from '../../components/CategoryPage';
 import { ItemDetailPage, type ItemData } from '../../components/ItemDetailPage';
-import { createIcon, formatSize } from '../../utility/util';
+import { createIcon } from '../../utility/util';
 import type { ShowResult } from '../../types/types';
-import { logger } from '../../utility/logger';
+import { BanButton } from './actions/BanButton';
+import { getChildrens, openEpisode } from './utility';
+import { DEFAULT_SHOW_ICON } from '../../utility/defaults';
 
 let cachedRecentItems: ItemData[] = [];
 
-const banShow = async (item: ItemData) => {
-    logger.info('requested ban for', { showId: item.id});
-    await invoke("ban_show", { showId: item.id });
-};
-
-const BanButton: React.FC<{ item: ItemData; onBan: (item: ItemData) => void }> = ({ item, onBan }) => {
-    const [isConfirming, setIsConfirming] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
-
-    useEffect(() => {
-        let timeout: NodeJS.Timeout;
-        if (isConfirming) {
-            timeout = setTimeout(() => setIsConfirming(false), 3000);
-        }
-        return () => clearTimeout(timeout);
-    }, [isConfirming]);
-
-    const handleClick = () => {
-        if (isConfirming) {
-            onBan(item);
-        } else {
-            setIsConfirming(true);
-        }
-    };
-
-    let bg = '#dc2626';
-    if (isConfirming) bg = '#991b1b';
-    else if (isHovered) bg = '#b91c1c';
-
-    return (
-        <button
-            style={{
-                padding: '0.4rem 1rem',
-                backgroundColor: bg,
-                color: 'white',
-                border: isConfirming ? '1px solid #f87171' : '1px solid transparent',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: '500',
-                fontSize: '0.9rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem',
-                minWidth: isConfirming ? '120px' : '80px',
-                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                transform: isConfirming ? 'scale(1.05)' : 'scale(1)',
-                boxShadow: isConfirming ? '0 0 15px rgba(220, 38, 38, 0.6)' : 'none',
-            }}
-            onClick={handleClick}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-        >
-            {isConfirming ? 'Are you sure?' : 'Ban'}
-        </button>
-    );
-};
+import { logger } from '../../utility/logger';
 
 interface NormalShowsProps {
     searchQuery: string;
     shows: ShowResult[];
     onItemSelected: (isSelected: boolean) => void;
     onStatusChange: (showId: string) => void;
+    onRename: (showId: string, newTitle: string) => Promise<void>;
+    commonRenderedActions: React.ReactNode[];
 }
 
-export const NormalShows: React.FC<NormalShowsProps> = ({ searchQuery, shows, onItemSelected, onStatusChange }) => {
+export const NormalShows: React.FC<NormalShowsProps> = ({ searchQuery, shows, onItemSelected, onStatusChange, onRename, commonRenderedActions }) => {
     const [selectedItem, setSelectedItem] = useState<ItemData | null>(null);
     const [recentItems, setRecentItems] = useState<ItemData[]>(cachedRecentItems);
 
@@ -99,37 +46,22 @@ export const NormalShows: React.FC<NormalShowsProps> = ({ searchQuery, shows, on
         setSelectedItem(item);
     };
 
-    const getChildrens = async (item: ItemData): Promise<ItemData[]> => {
-        const show = shows.find(show => show.title === item.title);
-        if (!show) return [];
 
-        return show.episodes
-            .map((ep, i) => ({
-                id: `${item.id}-child-${i}`,
-                title: ep.name,
-                subtitle: ep.path,
-                size: formatSize(ep.size),
-                icon: <PlayCircle size={18} />,
-                path: ep.path,
-                is_dir: ep.is_dir
-            }))
-            .sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }));
+
+    const handleRename = async (item: ItemData, newTitle: string) => {
+        await onRename(item.id, newTitle);
+        
+        setSelectedItem({ ...item, title: newTitle });
+        
+        const newRecents = recentItems.map(x => x.id === item.id ? { ...x, title: newTitle } : x);
+        setRecentItems(newRecents);
+        cachedRecentItems = newRecents;
     };
-
-    const openEpisode = async (ep: ItemData) => {
-        const path = ep.path;
-        if (!path) return;
-        try {
-            await invoke("open_file", { path: path });
-        } catch (e) {
-            logger.error(`Could not open file: ${String(e)}`);
-        }
-    }
 
     const getRenderActions = (item: ItemData): React.ReactNode[] => {
         const actions: React.ReactNode[] = [];
-        actions.push(<BanButton key="ban" item={item} onBan={async (item) => {
-            await banShow(item);
+        actions.push(...commonRenderedActions);
+        actions.push(<BanButton key="ban" item={item} onComplete={(item) => {
             const newRecents = recentItems.filter(x => x.id !== item.id);
             setRecentItems(newRecents);
             cachedRecentItems = newRecents;
@@ -143,10 +75,12 @@ export const NormalShows: React.FC<NormalShowsProps> = ({ searchQuery, shows, on
         return (
             <ItemDetailPage
                 item={selectedItem}
-                getChildrens={getChildrens}
+                getChildrens={(item) => getChildrens(item, shows)}
                 onBack={() => setSelectedItem(null)}
                 onClick={openEpisode}
                 renderActions={getRenderActions}
+                defaultIcon={DEFAULT_SHOW_ICON}
+                onRename={handleRename}
             />
         );
     }
