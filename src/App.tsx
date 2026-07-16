@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { RouteTracker } from "./contexts/DustyContext";
 import { Sidebar } from "./components/layout/Sidebar";
-import { Home } from "./components/Home";
+import { Home } from "./pages/home/Home";
 import { ROUTES } from "./constants/routes";
 
 // Pages
