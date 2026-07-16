@@ -6,6 +6,7 @@ use tauri::Manager;
 use crate::dusty::data::state::AppState;
 use crate::dusty::db::project::create_projects_table;
 use crate::dusty::db::show::create_shows_table;
+use crate::dusty::db::media::create_media_table;
 use crate::dusty::logger::logger;
 
 #[tauri::command]
@@ -35,5 +36,7 @@ pub fn initialize_tables(conn: &Connection) -> Result<Vec<String>, String> {
     tables.push("shows".to_string());
     create_projects_table(&conn)?;
     tables.push("projects".to_string());
+    create_media_table(&conn)?;
+    tables.push("media_cache".to_string());
     Ok(tables)
 }

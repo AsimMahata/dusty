@@ -2,6 +2,7 @@ pub mod empty_dir;
 pub mod file_system;
 pub mod image;
 pub mod music;
+pub mod media;
 pub mod opener;
 pub mod project;
 pub mod show;

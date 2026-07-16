@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Tab } from '../../types/types';
+import { logger } from '../../utility/logger';
 
 interface TabsOptionProps {
     isItemSelected: boolean,
@@ -18,7 +19,10 @@ export const TabsOption: React.FC<TabsOptionProps> = ({ isItemSelected, activeTa
                     <button
                         key={`tab.title-${i}`}
                         className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
-                        onClick={() => setActiveTab(tab)}
+                        onClick={() => {
+                            logger.info("CHANGE_TAB_ACTION", tab, isItemSelected);
+                            setActiveTab(tab);
+                        }}
                     >
                         {tab.title}
                     </button>

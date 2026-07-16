@@ -50,9 +50,11 @@ export interface TabHook<T extends BaseItem = AnyItem> {
     defaultIcon?: ReactNode;
     handleRename?: (item: T, newTitle: string) => Promise<void>;
     getCardActions?: (item: T) => ActionItem[];
+    goBack?: () => void;
 }
 
 export interface FileInfo {
+    id: string,
     name: string,
     path: string,
     size: number,
@@ -100,11 +102,22 @@ export type TabType =
     | "banned"
     | "media"
     | "folders"
-    | "songs"
+    | "music"
     | "images"
     | "videos";
 
 export interface Tab {
     title: string,
     type: TabType
+}
+
+export type MediaType = 'video' | 'music' | 'image';
+
+export interface MediaDir {
+    id: string,
+    path: string,
+    size?: number,
+    media: FileInfo[],
+    childs: MediaDir[],
+    type?: MediaType
 }

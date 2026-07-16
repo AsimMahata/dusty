@@ -21,6 +21,7 @@ pub fn run() {
             dusty::api::music::scan_music,
             dusty::api::video::scan_video,
             dusty::api::image::scan_image,
+            dusty::api::media::get_media_of_type,
             dusty::api::zip::scan_zip,
             dusty::api::empty_dir::scan_empty_dir,
             dusty::api::lab::tokenize,

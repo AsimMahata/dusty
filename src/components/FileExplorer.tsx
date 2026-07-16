@@ -20,9 +20,13 @@ import type { FileInfo } from '../types/types';
 import { formatSize } from '../utility/util';
 
 interface FileExplorerProps {
-    initialPath: string;
+    initialPath?: string;
+    files?: FileInfo[];
+    currentPath?: string;
     title?: string;
-    onBack: () => void;
+    onBack?: () => void;
+    onItemClick?: (file: FileInfo) => void;
+    loading?: boolean;
 }
 
 const getFileIcon = (filename: string, is_dir: boolean) => {
@@ -71,19 +75,35 @@ const getFileIcon = (filename: string, is_dir: boolean) => {
     }
 };
 
-export const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath, title, onBack }) => {
-    const [pathHistory, setPathHistory] = useState<string[]>([initialPath]);
-    const [files, setFiles] = useState<FileInfo[]>([]);
-    const [loading, setLoading] = useState(true);
+export const FileExplorer: React.FC<FileExplorerProps> = ({ 
+    initialPath, 
+    files: controlledFiles,
+    currentPath: controlledPath,
+    title, 
+    onBack,
+    onItemClick: controlledItemClick,
+    loading: controlledLoading
+}) => {
+    const [pathHistory, setPathHistory] = useState<string[]>(initialPath ? [initialPath] : []);
+    const [internalFiles, setInternalFiles] = useState<FileInfo[]>([]);
+    const [internalLoading, setInternalLoading] = useState(true);
     const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
-    const currentPath = pathHistory[pathHistory.length - 1];
+    const isControlled = controlledFiles !== undefined;
+    const currentPath = controlledPath !== undefined 
+        ? controlledPath 
+        : (pathHistory.length > 0 ? pathHistory[pathHistory.length - 1] : '');
+    
+    const files = isControlled ? controlledFiles : internalFiles;
+    const loading = controlledLoading !== undefined ? controlledLoading : internalLoading;
 
     useEffect(() => {
+        if (isControlled || !currentPath) return;
+
         let cancelled = false;
 
         const loadDir = async () => {
-            setLoading(true);
+            setInternalLoading(true);
             setSelectedFile(null);
             try {
                 const dirFiles: FileInfo[] = await invoke('read_dir', { path: currentPath });
@@ -93,13 +113,13 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath, title, 
                         if (!a.is_dir && b.is_dir) return 1;
                         return a.name.localeCompare(b.name, undefined, { numeric: true });
                     });
-                    setFiles(sortedFiles);
+                    setInternalFiles(sortedFiles);
                 }
             } catch (err) {
                 console.error(`Error reading directory ${currentPath}:`, err);
-                if (!cancelled) setFiles([]);
+                if (!cancelled) setInternalFiles([]);
             } finally {
-                if (!cancelled) setLoading(false);
+                if (!cancelled) setInternalLoading(false);
             }
         };
 
@@ -108,17 +128,22 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath, title, 
         return () => {
             cancelled = true;
         };
-    }, [currentPath]);
+    }, [currentPath, isControlled]);
 
     const handleNavigateBack = () => {
-        if (pathHistory.length > 1) {
+        if (!isControlled && pathHistory.length > 1) {
             setPathHistory((prev) => prev.slice(0, -1));
-        } else {
+        } else if (onBack) {
             onBack();
         }
     };
 
     const handleItemClick = async (file: FileInfo) => {
+        if (controlledItemClick) {
+            controlledItemClick(file);
+            return;
+        }
+
         if (file.is_dir) {
             setPathHistory((prev) => [...prev, file.path]);
         } else {
@@ -137,9 +162,11 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath, title, 
     return (
         <div className="detail-page" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <div className="detail-header">
-                <button className="back-btn" onClick={handleNavigateBack} title="Go back">
-                    <ArrowLeft size={20} />
-                </button>
+                {(!isControlled || onBack) && (
+                    <button className="back-btn" onClick={handleNavigateBack} title="Go back">
+                        <ArrowLeft size={20} />
+                    </button>
+                )}
                 <div style={{ overflow: 'hidden', flex: 1 }}>
                     <div className="detail-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <span>{title && pathHistory.length === 1 ? title : currentPath.split(/[/\\]/).filter(Boolean).pop() || 'File Explorer'}</span>
@@ -166,9 +193,11 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ initialPath, title, 
                         {currentPath}
                     </div>
                 </div>
-                <button className="back-btn" onClick={onBack} title="Close Explorer" style={{ marginLeft: 'auto' }}>
-                    <X size={20} />
-                </button>
+                {(!isControlled || onBack) && (
+                    <button className="back-btn" onClick={onBack} title="Close Explorer" style={{ marginLeft: 'auto' }}>
+                        <X size={20} />
+                    </button>
+                )}
             </div>
 
             <div className="list-container" style={{ flex: 1, overflowY: 'auto' }}>

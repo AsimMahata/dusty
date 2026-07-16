@@ -4,3 +4,4 @@ pub mod image;
 pub mod project;
 pub mod shows;
 pub mod state;
+pub mod media;

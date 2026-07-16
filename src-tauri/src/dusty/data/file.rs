@@ -1,13 +1,16 @@
 use std::{
-    fs::{metadata, Metadata},
+    fs::metadata,
     io::{Error, ErrorKind},
-    path::{self, PathBuf},
+    path::PathBuf,
 };
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Debug, Clone)]
+use crate::dusty::utility::sha256_hash::get_sha256_id;
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct FileInfo {
+    id: String,
     name: String,
     path: PathBuf,
     size: u64,
@@ -17,7 +20,9 @@ pub struct FileInfo {
 
 impl FileInfo {
     pub fn new(name: String, path: PathBuf, size: u64, ext: Option<String>, is_dir: bool) -> Self {
+        let id = get_sha256_id(path.to_string_lossy().to_string(), "file".to_string());
         Self {
+            id,
             name: name,
             path: path,
             size: size,
@@ -41,7 +46,10 @@ impl FileInfo {
 
         let is_dir: bool = path.is_dir();
 
+        let id = get_sha256_id(path.to_string_lossy().to_string(), "file".to_string());
+
         Ok(Self {
+            id,
             name,
             path: path.clone(),
             size,

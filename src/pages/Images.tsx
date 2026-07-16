@@ -1,24 +1,23 @@
 import React from 'react';
-import { CategoryPage } from '../components/category/CategoryPage';
-import { ItemDetailPage } from '../components/detail/ItemDetailPage';
+import { useMedia } from '../hooks/media/useMedia';
 import { PageLayout } from '../components/layout/PageLayout';
-import { useImage } from '../hooks/images/useImage';
-import { useImageTab } from '../hooks/images/useImageTab';
+import { TabsOption } from '../components/ui/TabsOption';
+import { MediaTab } from '../components/media/MediaTab';
 
 export const Images: React.FC = () => {
-    const image = useImage();
-    const imageTab = useImageTab(image);
-
+    const image = useMedia('Images', 'image');
 
     return (
-        <PageLayout
-            hook={image}
-        >
-            {image.selectedItem ? (
-                <ItemDetailPage tab={imageTab} />
-            ) : (
-                <CategoryPage tab={imageTab} />
-            )}
+        <PageLayout hook={image} >
+            <TabsOption
+                isItemSelected={image.isItemSelected}
+                activeTab={image.activeTab}
+                setActiveTab={image.setActiveTab}
+                tabs={image.tabs}
+            />
+            <div className="tab-content">
+                <MediaTab media={image} tabType={image.activeTab.type} />
+            </div>
         </PageLayout>
     );
 };

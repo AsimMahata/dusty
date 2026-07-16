@@ -7,7 +7,7 @@ import { Home } from "./components/Home";
 // Pages
 import { Shows } from "./pages/shows/Shows";
 import { Projects } from "./pages/Projects";
-import { Music } from "./pages/Music";
+import { Music } from "./pages/music/Music";
 import { Videos } from "./pages/Videos";
 import { Images } from "./pages/Images";
 import { Misc } from "./pages/misc/Misc";
