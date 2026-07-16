@@ -12,7 +12,7 @@ import { Music } from "./pages/music/Music";
 import { Videos } from "./pages/Videos";
 import { Images } from "./pages/Images";
 import { Misc } from "./pages/misc/Misc";
-import { Zip } from "./pages/Zip";
+import { ZipPage } from "./pages/zip/ZipPage";
 import { Lab } from "./pages/Lab";
 import { Settings } from "./pages/Settings";
 
@@ -40,7 +40,7 @@ function App() {
                     <Route path={ROUTES.VIDEOS} element={<Videos />} />
                     <Route path={ROUTES.IMAGES} element={<Images />} />
                     <Route path={ROUTES.MISC} element={<Misc />} />
-                    <Route path={ROUTES.ZIP} element={<Zip />} />
+                    <Route path={ROUTES.ZIP} element={<ZipPage />} />
                     <Route path={ROUTES.LAB} element={<Lab />} />
                     <Route path={ROUTES.SETTINGS} element={<Settings />} />
                 </Routes>

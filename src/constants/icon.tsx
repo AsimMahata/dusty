@@ -1,5 +1,5 @@
 import { 
-    Clock, List, Pin, Eye, CheckCircle, Calendar, PauseCircle, XCircle, RotateCcw, Ban, ShieldCheck, Home as HomeIcon, Tv, FolderGit2, Box, Music as MusicIcon, Film, Image as ImageIcon, Archive,
+    Clock, List, Pin, Eye, CheckCircle, Calendar, PauseCircle, XCircle, RotateCcw, Ban, ShieldCheck, Home as HomeIcon, Tv, FolderGit2, Box, Music as MusicIcon, Film, Image as ImageIcon, Archive, ShoppingBag, PackageOpen, FolderX,
     ArrowLeft, ExternalLink, X,
     Folder as LucideFolder, File as LucideFile, FileJson, FileCog, FileCode2, FileText, FileImage, FileAudio, FileVideo, FileArchive, Zap
 } from "lucide-react";
@@ -41,8 +41,10 @@ export const ICONS = {
         IMAGE: <FileImage size={18} color={COLOR_ICON_IMAGE} />,
         AUDIO: <FileAudio size={18} color={COLOR_ICON_AUDIO} />,
         VIDEO: <FileVideo size={18} color={COLOR_ICON_VIDEO} />,
-        ARCHIVE: <FileArchive size={18} color={COLOR_ICON_ARCHIVE} />,
-        DEFAULT: <LucideFile size={18} color={COLOR_ICON_DEFAULT} />,
+        ARCHIVE: <FileArchive size={20} color={COLOR_ICON_ARCHIVE} />,
+        ARCHIVE_OPEN: <PackageOpen size={20} color={COLOR_ICON_ARCHIVE} />,
+        FOLDER_EMPTY: <FolderX size={20} color={COLOR_ICON_FOLDER} />,
+        DEFAULT: <LucideFile size={20} color={COLOR_ICON_DEFAULT} />,
     },
     MEDIA_FOLDER: {
         MUSIC: <MusicIcon size={18} />,
@@ -60,6 +62,7 @@ export const NAV_VIDEOS_ICON = <Film size={20} />
 export const NAV_IMAGES_ICON = <ImageIcon size={20} />
 export const NAV_ZIP_ICON = <Archive size={20} />
 export const NAV_MISC_ICON = <Box size={20} />
+export const NAV_BAZAR_ICON = <ShoppingBag size={20} />
 
 // Action Icons (16px)
 export const PIN_ICON_16 = <Pin size={16} />

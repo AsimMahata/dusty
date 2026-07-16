@@ -1,5 +1,4 @@
 import React from 'react';
-import { Pin } from 'lucide-react';
 import { ActionMenu } from '../ui/ActionMenu';
 import type { ItemStatus, ActionItem } from '../../types/types';
 import { ITEM_STATUS_COLORS } from '../../constants/color';
@@ -25,7 +24,7 @@ export const Card: React.FC<CardProps> = ({ title, subtitle, icon, metadata, siz
 
     return (
         <div
-            className={`item-card ${isSelected ? 'selected' : ''}`}
+            className={`item-card ${isSelected ? 'selected' : ''} ${isPinned ? 'pinned' : ''}`}
             onClick={onClick}
             onDoubleClick={onDoubleClick}
             style={resolvedAccentColor ? { '--accent': resolvedAccentColor, userSelect: 'none' } as React.CSSProperties : { userSelect: 'none' }}
@@ -41,9 +40,9 @@ export const Card: React.FC<CardProps> = ({ title, subtitle, icon, metadata, siz
                 {icon}
             </div>
             <div className="card-content">
-                <div className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div className="card-title">
                     {title}
-                    {isPinned && <Pin size={12} fill="currentColor" style={{ color: 'var(--accent)' }} />}
+                    {isPinned && <span className="card-pin-dot" title="Pinned" />}
                 </div>
                 <div className="card-subtitle">{subtitle}</div>
                 {(metadata || size) && (

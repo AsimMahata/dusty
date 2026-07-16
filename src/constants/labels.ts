@@ -12,6 +12,9 @@ export const LABELS = {
     MARK_DROPPED: "Mark as Dropped",
     MARK_DEFAULT: "Mark as Default",
 
+    // General File Actions
+    OPEN: "Open",
+
     // Show Management
     BAN_SHOW: "Ban Show",
     UNBAN_SHOW: "Unban Show"

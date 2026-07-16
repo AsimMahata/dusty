@@ -27,6 +27,7 @@ export const TYPE_EMPTY_DIRECTORIES = "empty_directories";
 export const TYPE_COMING_SOON = "coming_soon";
 export const TYPE_GENERAL = "general";
 export const TYPE_DATA = "data";
+export const TYPE_BAZAR = "bazar";
 
 // Tab Objects
 

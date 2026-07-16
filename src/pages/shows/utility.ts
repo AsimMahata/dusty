@@ -1,6 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import { CMD_OPEN_FILE } from '../../constants/commands';
-import { formatSize } from '../../utility/util';
+import { formatBytes } from '../../utility/util';
 import { logger } from '../../utility/logger';
 import type { ItemCollection, Item } from '../../types/types';
 import type { ShowResult } from '../../types/types';
@@ -14,7 +14,7 @@ export const getChildrens = async (item: ItemCollection, shows: ShowResult[]): P
             id: `${item.id}-child-${i}`,
             title: ep.name,
             subtitle: ep.path,
-            size: formatSize(ep.size),
+            size: formatBytes(ep.size),
             path: ep.path,
             is_dir: ep.is_dir
         }))

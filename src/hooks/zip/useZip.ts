@@ -2,61 +2,71 @@ import { useState, useEffect } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
 import { CMD_OPEN_FILE, CMD_SCAN_ZIP } from '../../constants/commands';
+import type { Chunk } from '../../types/bazar';
 import type { FileInfo } from '../../types/types';
-import { fileInfoToItemData } from '../../utility/util';
-import type { Item } from '../../types/types';
-import { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } from '../../constants/defaults';
+import { logger } from '../../utility/logger';
 
-let cachedZipData: { recent: Item[], all: Item[] } | null = null;
+let cachedChunks: Chunk[] | null = null;
+
+const fileInfoToChunk = (file: FileInfo): Chunk => ({
+    id: file.id,
+    name: file.name,
+    path: file.path,
+    ext: file.ext,
+    size: file.size,
+    is_pinned: false,
+});
 
 export const useZip = () => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
-    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-    const [data, setData] = useState<{ recent: Item[], all: Item[] }>(cachedZipData || { recent: [], all: [] });
-
-    const openZip = async (z: Item) => {
-        const path = z.path;
-        if (!path) return;
-        try {
-            await invoke(CMD_OPEN_FILE, { path: path });
-        } catch (e) {
-            console.error(`Could not open file: ${String(e)}`);
-        }
-    }
+    const [chunks, setChunks] = useState<Chunk[]>(cachedChunks ?? []);
 
     const fetchData = async () => {
         setIsRefreshing(true);
-        await new Promise(resolve => setTimeout(resolve, 600));
-        const zips: FileInfo[] = await invoke(CMD_SCAN_ZIP);
-        const item = fileInfoToItemData(zips, DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON);
-        const newData = {
-            recent: [],
-            all: item,
-        };
-
-        cachedZipData = newData;
-        setData(newData);
-        setIsRefreshing(false);
+        if (chunks.length === 0) setIsLoading(true);
+        try {
+            const files: FileInfo[] = await invoke(CMD_SCAN_ZIP);
+            const newChunks = files.map(fileInfoToChunk);
+            cachedChunks = newChunks;
+            setChunks(newChunks);
+            logger.info('zip chunks fetched', newChunks.length);
+        } catch (err) {
+            logger.error(`Zip: failed to fetch chunks: ${String(err)}`);
+        } finally {
+            setIsRefreshing(false);
+            setIsLoading(false);
+        }
     };
 
     useEffect(() => {
-        if (!cachedZipData) {
+        if (!cachedChunks) {
             fetchData();
         }
     }, []);
 
-    useEffect(() => {
-        setIsLoading(isRefreshing && data.all.length === 0);
-    }, [isRefreshing, data.all.length, setIsLoading]);
+    const openChunk = async (chunk: Chunk) => {
+        try {
+            await invoke(CMD_OPEN_FILE, { path: chunk.path });
+        } catch (err) {
+            logger.error(`Zip: failed to open ${chunk.name}: ${String(err)}`);
+        }
+    };
+
+    const togglePin = (id: string) => {
+        const updated = chunks.map(c =>
+            c.id === id ? { ...c, is_pinned: !c.is_pinned } : c
+        );
+        cachedChunks = updated;
+        setChunks(updated);
+    };
 
     return {
-        title: "Zip",
+        title: 'Zip',
         searchQuery, setSearchQuery,
-        selectedItem, setSelectedItem,
-        data,
-        isRefreshing,
-        isLoading,
-        openZip,
-        fetchData
+        isRefreshing, isLoading,
+        fetchData,
+        chunks,
+        openChunk,
+        togglePin,
     };
 };

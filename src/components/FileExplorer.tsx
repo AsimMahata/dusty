@@ -5,10 +5,10 @@ import { COLOR_WHITE_TRANSPARENT_08 } from '../constants/color';
 import { EXPLORER } from '../styles/fileExplorerStyles';
 import { CMD_READ_DIR, CMD_OPEN_FILE } from '../constants/commands';
 import type { FileInfo } from '../types/types';
-import { formatSize } from '../utility/util';
 import { getFileIcon } from '../utility/fileExplorer/getFileIcon';
 import { sortFiles } from '../utility/fileExplorer/sortFiles';
 import { getExplorerTitle } from '../utility/fileExplorer/getExplorerTitle';
+import { formatBytes } from '../utility/util';
 
 interface FileExplorerProps {
     initialPath?: string;
@@ -160,7 +160,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
                             </div>
 
                             <div className="list-item-meta">
-                                {!file.is_dir && formatSize(file.size)}
+                                {!file.is_dir && formatBytes(file.size)}
                             </div>
                         </div>
                     ))
