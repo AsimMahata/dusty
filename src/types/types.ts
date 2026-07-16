@@ -30,6 +30,7 @@ export interface ItemCollection extends BaseItem {
 
 export interface Item extends BaseItem {
     size?: string;
+    rawSize?: number;
     episode_status?: EpisodeStatus;
 }
 

@@ -31,6 +31,7 @@ export const fileInfoToItemData = (files: FileInfo[], defaultFileIcon: React.Rea
         title: file.name,
         subtitle: file.path,
         size: formatBytes(file.size),
+        rawSize: file.size,
         icon: (file.is_dir ? defaultFolderIcon : defaultFileIcon),
         path: file.path,
         is_dir: file.is_dir

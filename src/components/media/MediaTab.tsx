@@ -5,6 +5,7 @@ import type { TabType } from '../../types/types';
 import type { useMedia } from '../../hooks/media/useMedia';
 import { useMediaTab } from '../../hooks/media/useMediaTab';
 import { MediaExplorer } from './MediaExplorer';
+import { MediaList } from './MediaList';
 
 interface MediaTabProps {
     media: ReturnType<typeof useMedia>;
@@ -35,7 +36,7 @@ export const MediaTab: React.FC<MediaTabProps> = ({ media, tabType }) => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            {tab.selectedItem ? <ItemDetailPage tab={tab} /> : <CategoryPage tab={tab} />}
+            {tab.selectedItem ? <ItemDetailPage tab={tab} /> : <MediaList tab={tab} />}
         </div>
     );
 };

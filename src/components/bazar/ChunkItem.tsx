@@ -3,35 +3,53 @@ import { ActionMenu } from '../ui/ActionMenu';
 import type { Chunk, BazarAction } from '../../types/bazar';
 import { getChunkFileIcon } from '../../utility/chunkIcon';
 import { formatBytes } from '../../utility/util';
+import type { ActionItem } from '../../types/types';
 
 interface ChunkItemProps {
-    chunk: Chunk;
-    actions: BazarAction[];
+    chunk?: Chunk;
+    actions: ActionItem[];
+    
+    name?: string;
+    icon?: React.ReactNode;
+    extLabel?: string | null;
+    sizeLabel?: string | null;
+    path?: string;
+    isPinned?: boolean;
+    onDoubleClick?: () => void;
 }
 
-export const ChunkItem: React.FC<ChunkItemProps> = ({ chunk, actions }) => {
-    const icon = getChunkFileIcon(chunk.ext);
-    const sizeLabel = chunk.size != null ? formatBytes(chunk.size) : null;
-    const extLabel = chunk.ext ? chunk.ext.toUpperCase() : null;
+export const ChunkItem: React.FC<ChunkItemProps> = ({ 
+    chunk, actions, name, icon, extLabel, sizeLabel, path, isPinned, onDoubleClick 
+}) => {
+    const finalName = name ?? chunk?.name ?? '';
+    const finalIcon = icon !== undefined ? icon : getChunkFileIcon(chunk?.ext);
+    const finalSizeLabel = sizeLabel !== undefined ? sizeLabel : (chunk?.size != null ? formatBytes(chunk.size) : null);
+    const finalExtLabel = extLabel !== undefined ? extLabel : (chunk?.ext ? chunk.ext.toUpperCase() : null);
+    const badgeExt = extLabel !== undefined ? extLabel?.toLowerCase() : chunk?.ext?.toLowerCase();
+    const finalPath = path !== undefined ? path : chunk?.path;
+    const finalPinned = isPinned !== undefined ? isPinned : chunk?.is_pinned;
 
     return (
-        <div className="chunk-item" data-pinned={chunk.is_pinned ? 'true' : undefined}>
-
+        <div 
+            className="chunk-item" 
+            data-pinned={finalPinned ? 'true' : undefined}
+            onDoubleClick={onDoubleClick}
+        >
             <div className="chunk-icon-wrap">
-                {icon}
+                {finalIcon}
             </div>
 
             <div className="chunk-body">
                 <div className="chunk-name-row">
-                    <span className="chunk-name">{chunk.name}</span>
-                    {chunk.is_pinned && <span className="chunk-pin-dot" title="Pinned" />}
+                    <span className="chunk-name">{finalName}</span>
+                    {finalPinned && <span className="chunk-pin-dot" title="Pinned" />}
                 </div>
                 <div className="chunk-meta">
-                    {extLabel && <span className="chunk-badge" data-ext={chunk.ext?.toLowerCase()}>{extLabel}</span>}
-                    {sizeLabel && <span className="chunk-meta-sep">·</span>}
-                    {sizeLabel && <span className="chunk-size">{sizeLabel}</span>}
+                    {finalExtLabel && <span className="chunk-badge" data-ext={badgeExt}>{finalExtLabel}</span>}
+                    {finalSizeLabel && <span className="chunk-meta-sep">·</span>}
+                    {finalSizeLabel && <span className="chunk-size">{finalSizeLabel}</span>}
                 </div>
-                {chunk.path && <span className="chunk-path" title={chunk.path}>{chunk.path}</span>}
+                {finalPath && <span className="chunk-path" title={finalPath}>{finalPath}</span>}
             </div>
 
             <div className="chunk-actions">
