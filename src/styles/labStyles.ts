@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { COLOR_BLUE_TRANSPARENT_20 } from '../constants/color';
+import { COLORS } from '../constants/color';
 
 export const LAB_CONTAINER: CSSProperties = {
     padding: '2rem',
@@ -67,7 +67,7 @@ export const LAB_TAGS_CONTAINER: CSSProperties = {
 };
 
 export const LAB_TAG: CSSProperties = {
-    background: COLOR_BLUE_TRANSPARENT_20,
+    background: COLORS.TRANSPARENT.BLUE_20,
     color: '#93c5fd',
     padding: '0.25rem 0.75rem',
     borderRadius: '16px',

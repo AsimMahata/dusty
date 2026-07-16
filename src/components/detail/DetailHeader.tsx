@@ -6,7 +6,7 @@ import { EditTitle } from './EditTitle';
 import { DetailTitle } from './DetailTitle';
 
 import type { useItemDetail } from '../../hooks/useItemDetail';
-import { ITEM_STATUS_COLORS } from '../../constants/color';
+import { COLORS } from '../../constants/color';
 
 interface DetailHeaderProps {
     item: AnyItem;
@@ -36,7 +36,7 @@ export const DetailHeader: React.FC<DetailHeaderProps> = ({ item, detail, onBack
                         title={item.title}
                         onEditClick={detail.handleEditClick}
                         canRename={canRename}
-                        color={(item as Partial<ItemCollection>).status && (item as Partial<ItemCollection>).status !== 'default' ? ITEM_STATUS_COLORS[(item as Partial<ItemCollection>).status!] : undefined}
+                        color={(item as Partial<ItemCollection>).status && (item as Partial<ItemCollection>).status !== 'default' ? COLORS.STATUS.ITEM[(item as Partial<ItemCollection>).status!] : undefined}
                     />
                 )}
                 <div className="detail-subtitle">
@@ -48,8 +48,8 @@ export const DetailHeader: React.FC<DetailHeaderProps> = ({ item, detail, onBack
                     <div style={{
                         padding: '2px 8px',
                         borderRadius: '12px',
-                        border: `1px solid ${ITEM_STATUS_COLORS[(item as Partial<ItemCollection>).status!]}`,
-                        color: ITEM_STATUS_COLORS[(item as Partial<ItemCollection>).status!],
+                        border: `1px solid ${COLORS.STATUS.ITEM[(item as Partial<ItemCollection>).status!]}`,
+                        color: COLORS.STATUS.ITEM[(item as Partial<ItemCollection>).status!],
                         fontSize: '0.75rem',
                         fontWeight: 'bold',
                         textTransform: 'uppercase',

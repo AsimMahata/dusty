@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { CMD_UNBAN_SHOW } from '../../../constants/commands';
-import { COLOR_UNBAN_BG, COLOR_UNBAN_CONFIRM_BG, COLOR_UNBAN_HOVER_BG, COLOR_UNBAN_CONFIRM_BORDER, COLOR_UNBAN_SHADOW } from '../../../constants/color';
+import { COLORS } from '../../../constants/color';
 import { getActionButtonStyle } from '../../../styles/buttonStyles';
 import { logger } from '../../../utility/logger';
 import type { ItemCollection } from '../../../types/types';
@@ -37,13 +37,13 @@ export const UnbanButton: React.FC<UnbanButtonProps> = ({ item, onComplete }) =>
         }
     };
 
-    let bg = COLOR_UNBAN_BG; // default green
-    if (isConfirming) bg = COLOR_UNBAN_CONFIRM_BG; // darker green
-    else if (isHovered) bg = COLOR_UNBAN_HOVER_BG; // hover green
+    let bg = COLORS.ACTION.UNBAN_BG; // default green
+    if (isConfirming) bg = COLORS.ACTION.UNBAN_CONFIRM_BG; // darker green
+    else if (isHovered) bg = COLORS.ACTION.UNBAN_HOVER_BG; // hover green
 
     return (
         <button
-            style={getActionButtonStyle(bg, isConfirming, COLOR_UNBAN_CONFIRM_BORDER, COLOR_UNBAN_SHADOW)}
+            style={getActionButtonStyle(bg, isConfirming, COLORS.ACTION.UNBAN_CONFIRM_BORDER, COLORS.ACTION.UNBAN_SHADOW)}
             onClick={handleClick}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}

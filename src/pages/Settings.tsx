@@ -7,7 +7,7 @@ import { logger } from '../utility/logger';
 import { ConfirmationModal } from '../components/ui/ConfirmationModal';
 import { useSettings } from '../contexts/SettingsContext';
 import { TYPE_GENERAL, TYPE_DATA, TITLE_GENERAL, TITLE_DATA } from '../constants/tabs';
-import { COLOR_RED, COLOR_RED_HOVER, COLOR_AMBER, COLOR_AMBER_HOVER, COLOR_BLUE, COLOR_BLUE_HOVER, COLOR_GREEN, COLOR_GREEN_HOVER } from '../constants/color';
+import { COLORS } from '../constants/color';
 import { PAGE_SECTION_PADDING, SETTINGS_SECTION_HEADER, DANGER_ZONE_CONTAINER, DANGER_ZONE_HEADER, DANGER_ZONE_TEXT, FLEX_COLUMN_GAP_24, SETTINGS_ITEM_CONTAINER, SETTINGS_ITEM_TITLE, SETTINGS_ITEM_DESC } from '../styles/layoutStyles';
 import { getSettingsButtonStyle } from '../styles/buttonStyles';
 
@@ -117,7 +117,7 @@ export const Settings: React.FC = () => {
                         </h2>
                         
                         <div style={DANGER_ZONE_CONTAINER}>
-                            <h3 style={{ ...DANGER_ZONE_HEADER, color: COLOR_RED }}>
+                            <h3 style={{ ...DANGER_ZONE_HEADER, color: COLORS.BASE.RED }}>
                                 <AlertTriangle size={20} />
                                 Danger Zone
                             </h3>
@@ -129,9 +129,9 @@ export const Settings: React.FC = () => {
                                 <button 
                                     onClick={handleResetData}
                                     disabled={isAnyResetting}
-                                    style={getSettingsButtonStyle(COLOR_RED, isAnyResetting)}
-                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_RED_HOVER; }}
-                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_RED; }}
+                                    style={getSettingsButtonStyle(COLORS.BASE.RED, isAnyResetting)}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.ACTION.RED_HOVER; }}
+                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.BASE.RED; }}
                                 >
                                     {isResetting ? 'Resetting...' : 'Reset All Data'}
                                 </button>
@@ -139,9 +139,9 @@ export const Settings: React.FC = () => {
                                 <button 
                                     onClick={() => setShowConfirmProjects(true)}
                                     disabled={isAnyResetting}
-                                    style={getSettingsButtonStyle(COLOR_AMBER, isAnyResetting)}
-                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_AMBER_HOVER; }}
-                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_AMBER; }}
+                                    style={getSettingsButtonStyle(COLORS.BASE.AMBER, isAnyResetting)}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.ACTION.AMBER_HOVER; }}
+                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.BASE.AMBER; }}
                                 >
                                     {isResettingProjects ? 'Resetting...' : 'Reset Projects Only'}
                                 </button>
@@ -149,18 +149,18 @@ export const Settings: React.FC = () => {
                                 <button 
                                     onClick={() => setShowConfirmShows(true)}
                                     disabled={isAnyResetting}
-                                    style={getSettingsButtonStyle(COLOR_BLUE, isAnyResetting)}
-                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_BLUE_HOVER; }}
-                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_BLUE; }}
+                                    style={getSettingsButtonStyle(COLORS.BASE.BLUE, isAnyResetting)}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.ACTION.BLUE_HOVER; }}
+                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.BASE.BLUE; }}
                                 >
                                     {isResettingShows ? 'Resetting...' : 'Reset Shows Only'}
                                 </button>
                                 <button 
                                     onClick={() => setShowConfirmMedia(true)}
                                     disabled={isAnyResetting}
-                                    style={getSettingsButtonStyle(COLOR_GREEN, isAnyResetting)}
-                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_GREEN_HOVER; }}
-                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_GREEN; }}
+                                    style={getSettingsButtonStyle(COLORS.BASE.GREEN, isAnyResetting)}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.ACTION.GREEN_HOVER; }}
+                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.BASE.GREEN; }}
                                 >
                                     {isResettingMedia ? 'Resetting...' : 'Reset Media Cache Only'}
                                 </button>

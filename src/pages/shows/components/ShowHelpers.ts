@@ -1,5 +1,5 @@
 import type { ShowResult, ShowStatus } from '../../../types/types';
-import { SHOW_STATUS_COLOR } from '../../../constants/color';
+import { COLORS } from '../../../constants/color';
 
 export const getDummyPosterUrl = (malNo?: string) => {
     if (!malNo) return '';
@@ -34,7 +34,7 @@ export const getDummySeasonYear = (malNo?: string) => {
 };
 
 export const getStatusColor = (status: string) => {
-    return SHOW_STATUS_COLOR[status as keyof typeof SHOW_STATUS_COLOR] || '#71717a';
+    return COLORS.STATUS.SHOW[status as keyof typeof COLORS.STATUS.SHOW] || '#71717a';
 };
 
 export const getStatusLabel = (status: ShowStatus) => {

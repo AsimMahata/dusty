@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActionMenu } from '../ui/ActionMenu';
 import type { ItemStatus, ActionItem } from '../../types/types';
-import { ITEM_STATUS_COLORS } from '../../constants/color';
+import { COLORS } from '../../constants/color';
 
 interface CardProps {
     title: string;
@@ -20,7 +20,7 @@ interface CardProps {
 }
 
 export const Card: React.FC<CardProps> = ({ title, subtitle, icon, metadata, size, isSelected, onClick, onDoubleClick, isPinned, status, accentColor, actions }) => {
-    const resolvedAccentColor = accentColor || (status && status !== 'default' ? ITEM_STATUS_COLORS[status] : undefined);
+    const resolvedAccentColor = accentColor || (status && status !== 'default' ? COLORS.STATUS.ITEM[status] : undefined);
 
     return (
         <div

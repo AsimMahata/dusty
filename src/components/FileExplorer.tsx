@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { ICONS } from '../constants/icon';
-import { COLOR_WHITE_TRANSPARENT_08 } from '../constants/color';
+import { COLORS } from '../constants/color';
 import { EXPLORER } from '../styles/fileExplorerStyles';
 import { CMD_READ_DIR, CMD_OPEN_FILE } from '../constants/commands';
 import type { FileInfo } from '../types/types';
@@ -18,6 +18,7 @@ interface FileExplorerProps {
     onBack?: () => void;
     onItemClick?: (file: FileInfo) => void;
     loading?: boolean;
+    inline?: boolean;
 }
 
 
@@ -29,7 +30,8 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
     title, 
     onBack,
     onItemClick: controlledItemClick,
-    loading: controlledLoading
+    loading: controlledLoading,
+    inline = false
 }) => {
     const [pathHistory, setPathHistory] = useState<string[]>(initialPath ? [initialPath] : []);
     const [internalFiles, setInternalFiles] = useState<FileInfo[]>([]);
@@ -103,38 +105,40 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
     };
 
     return (
-        <div className="detail-page" style={EXPLORER.CONTAINER}>
-            <div className="detail-header">
-                {(!isControlled || onBack) && (
-                    <button className="back-btn" onClick={handleNavigateBack} title="Go back">
-                        {ICONS.GENERAL.ARROW_LEFT}
-                    </button>
-                )}
-                <div style={EXPLORER.HEADER_INFO}>
-                    <div className="detail-title" style={EXPLORER.TITLE}>
-                        <span>{getExplorerTitle(title, pathHistory.length, currentPath)}</span>
-                        <button 
-                            onClick={(e) => { 
-                                e.stopPropagation(); 
-                                invoke(CMD_OPEN_FILE, { path: currentPath }).catch(console.error); 
-                            }}
-                            style={EXPLORER.REVEAL_BTN}
-                            title="Reveal in File Explorer"
-                            className="reveal-btn"
-                        >
-                            {ICONS.GENERAL.EXTERNAL_LINK}
+        <div className={inline ? "file-explorer-inline" : "detail-page"} style={inline ? { ...EXPLORER.CONTAINER, height: '100%', overflow: 'hidden' } : EXPLORER.CONTAINER}>
+            {!inline && (
+                <div className="detail-header">
+                    {(!isControlled || onBack) && (
+                        <button className="back-btn" onClick={handleNavigateBack} title="Go back">
+                            {ICONS.GENERAL.ARROW_LEFT}
                         </button>
+                    )}
+                    <div style={EXPLORER.HEADER_INFO}>
+                        <div className="detail-title" style={EXPLORER.TITLE}>
+                            <span>{getExplorerTitle(title, pathHistory.length, currentPath)}</span>
+                            <button 
+                                onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    invoke(CMD_OPEN_FILE, { path: currentPath }).catch(console.error); 
+                                }}
+                                style={EXPLORER.REVEAL_BTN}
+                                title="Reveal in File Explorer"
+                                className="reveal-btn"
+                            >
+                                {ICONS.GENERAL.EXTERNAL_LINK}
+                            </button>
+                        </div>
+                        <div className="detail-subtitle" style={EXPLORER.SUBTITLE} title={currentPath}>
+                            {currentPath}
+                        </div>
                     </div>
-                    <div className="detail-subtitle" style={EXPLORER.SUBTITLE} title={currentPath}>
-                        {currentPath}
-                    </div>
+                    {(!isControlled || onBack) && (
+                        <button className="back-btn" onClick={onBack} title="Close Explorer" style={EXPLORER.CLOSE_BTN}>
+                            {ICONS.GENERAL.X}
+                        </button>
+                    )}
                 </div>
-                {(!isControlled || onBack) && (
-                    <button className="back-btn" onClick={onBack} title="Close Explorer" style={EXPLORER.CLOSE_BTN}>
-                        {ICONS.GENERAL.X}
-                    </button>
-                )}
-            </div>
+            )}
 
             <div className="list-container" style={EXPLORER.LIST_CONTAINER}>
                 {loading ? (
@@ -148,7 +152,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
                         <div
                             key={`${file.path}-${i}`}
                             className={`list-item ${selectedFile === file.path ? 'selected' : ''}`}
-                            style={selectedFile === file.path ? { background: COLOR_WHITE_TRANSPARENT_08 } : {}}
+                            style={selectedFile === file.path ? { background: COLORS.TRANSPARENT.WHITE_08 } : {}}
                             onClick={() => handleItemClick(file)}
                         >
                             <div className="list-item-icon">

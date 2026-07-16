@@ -1,24 +1,11 @@
 import { 
     Clock, List, Pin, Eye, CheckCircle, Calendar, PauseCircle, XCircle, RotateCcw, Ban, ShieldCheck, Home as HomeIcon, Tv, FolderGit2, Box, Music as MusicIcon, Film, Image as ImageIcon, Archive, ShoppingBag, PackageOpen, FolderX,
     ArrowLeft, ExternalLink, X,
-    Folder as LucideFolder, File as LucideFile, FileJson, FileCog, FileCode2, FileText, FileImage, FileAudio, FileVideo, FileArchive, Zap
+    Folder as LucideFolder, File as LucideFile, FileJson, FileCog, FileCode2, FileText, FileImage, FileAudio, FileVideo, FileArchive, Zap,
+    Code2, Sparkles, Monitor, Server, Palette, GraduationCap, Coffee, Binary,
+    Activity, Pause, CheckCircle2, AlertTriangle, Circle, FileEdit, ArrowUpCircle, ArrowDownCircle, GitPullRequest, AlertOctagon, HelpCircle
 } from "lucide-react";
-import { 
-    COLOR_ICON_FOLDER,
-    COLOR_ICON_JSON,
-    COLOR_ICON_CONFIG,
-    COLOR_ICON_MARKDOWN,
-    COLOR_ICON_VITE,
-    COLOR_ICON_HTML,
-    COLOR_ICON_CSS,
-    COLOR_ICON_JS,
-    COLOR_ICON_TS,
-    COLOR_ICON_IMAGE,
-    COLOR_ICON_AUDIO,
-    COLOR_ICON_VIDEO,
-    COLOR_ICON_ARCHIVE,
-    COLOR_ICON_DEFAULT
-} from './color';
+import { COLORS } from './color';
 
 export const ICONS = {
     GENERAL: {
@@ -29,27 +16,57 @@ export const ICONS = {
         X: <X size={20} />,
     },
     FILE: {
-        FOLDER: <LucideFolder size={18} color={COLOR_ICON_FOLDER} className="folder-icon" />,
-        JSON: <FileJson size={18} color={COLOR_ICON_JSON} />,
-        CONFIG: <FileCog size={18} color={COLOR_ICON_CONFIG} />,
-        MARKDOWN: <FileText size={18} color={COLOR_ICON_MARKDOWN} />,
-        VITE: <Zap size={18} color={COLOR_ICON_VITE} />,
-        HTML: <FileCode2 size={18} color={COLOR_ICON_HTML} />,
-        CSS: <FileCode2 size={18} color={COLOR_ICON_CSS} />,
-        JS: <FileCode2 size={18} color={COLOR_ICON_JS} />,
-        TS: <FileCode2 size={18} color={COLOR_ICON_TS} />,
-        IMAGE: <FileImage size={18} color={COLOR_ICON_IMAGE} />,
-        AUDIO: <FileAudio size={18} color={COLOR_ICON_AUDIO} />,
-        VIDEO: <FileVideo size={18} color={COLOR_ICON_VIDEO} />,
-        ARCHIVE: <FileArchive size={20} color={COLOR_ICON_ARCHIVE} />,
-        ARCHIVE_OPEN: <PackageOpen size={20} color={COLOR_ICON_ARCHIVE} />,
-        FOLDER_EMPTY: <FolderX size={20} color={COLOR_ICON_FOLDER} />,
-        DEFAULT: <LucideFile size={20} color={COLOR_ICON_DEFAULT} />,
+        FOLDER: <LucideFolder size={18} color={COLORS.ICON.FOLDER} className="folder-icon" />,
+        JSON: <FileJson size={18} color={COLORS.ICON.JSON} />,
+        CONFIG: <FileCog size={18} color={COLORS.ICON.CONFIG} />,
+        MARKDOWN: <FileText size={18} color={COLORS.ICON.MARKDOWN} />,
+        VITE: <Zap size={18} color={COLORS.ICON.VITE} />,
+        HTML: <FileCode2 size={18} color={COLORS.ICON.HTML} />,
+        CSS: <FileCode2 size={18} color={COLORS.ICON.CSS} />,
+        JS: <FileCode2 size={18} color={COLORS.ICON.JS} />,
+        TS: <FileCode2 size={18} color={COLORS.ICON.TS} />,
+        IMAGE: <FileImage size={18} color={COLORS.ICON.IMAGE} />,
+        AUDIO: <FileAudio size={18} color={COLORS.ICON.AUDIO} />,
+        VIDEO: <FileVideo size={18} color={COLORS.ICON.VIDEO} />,
+        ARCHIVE: <FileArchive size={20} color={COLORS.ICON.ARCHIVE} />,
+        ARCHIVE_OPEN: <PackageOpen size={20} color={COLORS.ICON.ARCHIVE} />,
+        FOLDER_EMPTY: <FolderX size={20} color={COLORS.ICON.FOLDER} />,
+        DEFAULT: <LucideFile size={20} color={COLORS.ICON.DEFAULT} />,
     },
     MEDIA_FOLDER: {
         MUSIC: <MusicIcon size={18} />,
         VIDEO: <Film size={18} />,
         IMAGE: <ImageIcon size={18} />
+    },
+    PROJECT_TAGS: {
+        RUST: <Box size={14} />,
+        REACT: <Code2 size={14} />,
+        TAURI: <Sparkles size={14} />,
+        PYTHON: <FileJson size={14} />,
+        AI: <Binary size={14} />,
+        MACHINE_LEARNING: <Binary size={14} />,
+        GAME: <Coffee size={14} />,
+        DESKTOP: <Monitor size={14} />,
+        BACKEND: <Server size={14} />,
+        FRONTEND: <Palette size={14} />,
+        PERSONAL: <HomeIcon size={14} />,
+        COLLEGE: <GraduationCap size={14} />,
+        ARCHIVED: <Archive size={14} />
+    },
+    PROJECT_STATUSES: {
+        ACTIVE: <Activity size={16} />,
+        PAUSED: <Pause size={16} />,
+        COMPLETED: <CheckCircle2 size={16} />,
+        ARCHIVED: <Archive size={16} />,
+        BROKEN: <AlertTriangle size={16} />,
+        DEFAULT: <Circle size={16} />,
+        GIT_CLEAN: <CheckCircle size={16} />,
+        GIT_MODIFIED: <FileEdit size={16} />,
+        GIT_AHEAD: <ArrowUpCircle size={16} />,
+        GIT_BEHIND: <ArrowDownCircle size={16} />,
+        GIT_DIVERGED: <GitPullRequest size={16} />,
+        GIT_CONFLICT: <AlertOctagon size={16} />,
+        GIT_NONE: <HelpCircle size={16} />
     }
 };
 

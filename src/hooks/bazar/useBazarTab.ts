@@ -1,6 +1,6 @@
 import type { Chunk, BazarAction } from '../../types/bazar';
 import { PIN_ICON_16, ICONS } from '../../constants/icon';
-import { PIN_COLOR } from '../../constants/color';
+import {COLORS} from '../../constants/color';
 import { LABELS } from '../../constants/labels';
 
 // Structural interface — any hook that provides these fields can use useBazarTab.
@@ -34,7 +34,7 @@ export const useBazarTab = (source: BazarSource) => {
         {
             label: chunk.is_pinned ? LABELS.UNPIN : LABELS.PIN,
             icon: PIN_ICON_16,
-            color: PIN_COLOR,
+            color: COLORS.PIN,
             onClick: () => source.togglePin(chunk.id),
         },
     ];

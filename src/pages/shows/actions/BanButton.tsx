@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { CMD_BAN_SHOW } from '../../../constants/commands';
-import { COLOR_BAN_BG, COLOR_BAN_CONFIRM_BG, COLOR_BAN_HOVER_BG, COLOR_BAN_CONFIRM_BORDER, COLOR_BAN_SHADOW } from '../../../constants/color';
+import { COLORS } from '../../../constants/color';
 import { getActionButtonStyle } from '../../../styles/buttonStyles';
 import { logger } from '../../../utility/logger';
 import type { ItemCollection } from '../../../types/types';
@@ -37,13 +37,13 @@ export const BanButton: React.FC<BanButtonProps> = ({ item, onComplete }) => {
         }
     };
 
-    let bg = COLOR_BAN_BG;
-    if (isConfirming) bg = COLOR_BAN_CONFIRM_BG;
-    else if (isHovered) bg = COLOR_BAN_HOVER_BG;
+    let bg = COLORS.ACTION.BAN_BG;
+    if (isConfirming) bg = COLORS.ACTION.BAN_CONFIRM_BG;
+    else if (isHovered) bg = COLORS.ACTION.BAN_HOVER_BG;
 
     return (
         <button
-            style={getActionButtonStyle(bg, isConfirming, COLOR_BAN_CONFIRM_BORDER, COLOR_BAN_SHADOW)}
+            style={getActionButtonStyle(bg, isConfirming, COLORS.ACTION.BAN_CONFIRM_BORDER, COLORS.ACTION.BAN_SHADOW)}
             onClick={handleClick}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}

@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { COLOR_DANGER_BG, COLOR_DANGER_BORDER } from '../constants/color';
+import { COLORS } from '../constants/color';
 
 export const FLEX_ROW_CENTER: CSSProperties = {
     display: 'flex',
@@ -28,8 +28,8 @@ export const SETTINGS_SECTION_HEADER: CSSProperties = {
 };
 
 export const DANGER_ZONE_CONTAINER: CSSProperties = {
-    background: COLOR_DANGER_BG,
-    border: `1px solid ${COLOR_DANGER_BORDER}`,
+    background: COLORS.TRANSPARENT.DANGER_BG,
+    border: `1px solid ${COLORS.TRANSPARENT.DANGER_BORDER}`,
     borderRadius: '8px',
     padding: '1.5rem',
     maxWidth: '600px',

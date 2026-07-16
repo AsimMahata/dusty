@@ -94,9 +94,19 @@ export interface Project {
     project_type: ProjectType,
     pinned: boolean,
     status: ProjectStatus,
+    tags?: string[],
+    git_status?: string,
+    git_branch?: string,
+    cover_image?: string,
+    logo?: string,
+    last_opened?: string,
+    last_modified?: string,
+    last_scan?: string,
+    description?: string,
+    size?: string,
 }
 
-export type ProjectStatus = "default" | "working" | "completed" | "on_hold" | "dropped";
+export type ProjectStatus = "default" | "active" | "working" | "paused" | "completed" | "on_hold" | "dropped" | "archived" | "broken";
 
 
 export type TabType =
