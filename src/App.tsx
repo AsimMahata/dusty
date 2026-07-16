@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { RouteTracker } from "./contexts/DustyContext";
 import { Sidebar } from "./components/layout/Sidebar";
 import { Home } from "./components/Home";
+import { ROUTES } from "./constants/routes";
 
 // Pages
 import { Shows } from "./pages/shows/Shows";
@@ -32,16 +33,16 @@ function App() {
 
             <main className="main-content">
                 <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/shows" element={<Shows />} />
-                    <Route path="/projects" element={<Projects />} />
-                    <Route path="/music" element={<Music />} />
-                    <Route path="/videos" element={<Videos />} />
-                    <Route path="/images" element={<Images />} />
-                    <Route path="/misc" element={<Misc />} />
-                    <Route path="/zip" element={<Zip />} />
-                    <Route path="/lab" element={<Lab />} />
-                    <Route path="/settings" element={<Settings />} />
+                    <Route path={ROUTES.HOME} element={<Home />} />
+                    <Route path={ROUTES.SHOWS} element={<Shows />} />
+                    <Route path={ROUTES.PROJECTS} element={<Projects />} />
+                    <Route path={ROUTES.MUSIC} element={<Music />} />
+                    <Route path={ROUTES.VIDEOS} element={<Videos />} />
+                    <Route path={ROUTES.IMAGES} element={<Images />} />
+                    <Route path={ROUTES.MISC} element={<Misc />} />
+                    <Route path={ROUTES.ZIP} element={<Zip />} />
+                    <Route path={ROUTES.LAB} element={<Lab />} />
+                    <Route path={ROUTES.SETTINGS} element={<Settings />} />
                 </Routes>
             </main>
         </div>

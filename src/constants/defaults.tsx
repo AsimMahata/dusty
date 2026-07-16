@@ -1,9 +1,9 @@
 import { Tv, File, PlayCircle, Folder, FolderGit2 } from "lucide-react";
 
-// PATH
+// Paths
 export const DEFAULT_STARTING_PATH = "C:\\";
 
-//ICON
+// Icons
 export const DEFAULT_ICON = <File size={18} />;
 export const DEFAULT_SHOW_ICON = <PlayCircle size={18} />;
 export const DEFAULT_FOLDER_ICON = <Folder size={18} />;

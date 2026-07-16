@@ -1,23 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { 
-    ArrowLeft, 
-    Folder as FolderIcon, 
-    File as FileIcon, 
-    ExternalLink,
-    FileJson,
-    FileCog,
-    FileCode2,
-    FileText,
-    FileImage,
-    FileAudio,
-    FileVideo,
-    FileArchive,
-    Zap,
-    X
-} from 'lucide-react';
+import { ICONS } from '../constants/icon';
+import { COLOR_WHITE_TRANSPARENT_08 } from '../constants/color';
+import { EXPLORER } from '../styles/fileExplorerStyles';
+import { CMD_READ_DIR, CMD_OPEN_FILE } from '../constants/commands';
 import type { FileInfo } from '../types/types';
 import { formatSize } from '../utility/util';
+import { getFileIcon } from '../utility/fileExplorer/getFileIcon';
+import { sortFiles } from '../utility/fileExplorer/sortFiles';
+import { getExplorerTitle } from '../utility/fileExplorer/getExplorerTitle';
 
 interface FileExplorerProps {
     initialPath?: string;
@@ -29,51 +20,7 @@ interface FileExplorerProps {
     loading?: boolean;
 }
 
-const getFileIcon = (filename: string, is_dir: boolean) => {
-    if (is_dir) {
-        return <FolderIcon size={18} color="#dcb67a" className="folder-icon" />;
-    }
 
-    const ext = filename.split('.').pop()?.toLowerCase();
-    const lowerName = filename.toLowerCase();
-
-
-    if (lowerName === 'package.json' || lowerName === 'package-lock.json' || ext === 'json') {
-        return <FileJson size={18} color="#c1bd66" />;
-    }
-    if (lowerName === '.gitignore' || lowerName === '.env' || lowerName.includes('config')) {
-        return <FileCog size={18} color="#8a8a8a" />;
-    }
-    if (lowerName.includes('readme') || ext === 'md') {
-        return <FileText size={18} color="#4589b2" />;
-    }
-    if (lowerName.includes('vite')) {
-        return <Zap size={18} color="#8176ff" />;
-    }
-
-
-    switch (ext) {
-        case 'html': return <FileCode2 size={18} color="#e34c26" />;
-        case 'css': return <FileCode2 size={18} color="#264de4" />;
-        case 'js': 
-        case 'jsx': return <FileCode2 size={18} color="#f0db4f" />;
-        case 'ts': 
-        case 'tsx': return <FileCode2 size={18} color="#007acc" />;
-        case 'png':
-        case 'jpg':
-        case 'jpeg':
-        case 'svg':
-        case 'gif': return <FileImage size={18} color="#42a5f5" />;
-        case 'mp3':
-        case 'wav': return <FileAudio size={18} color="#ef5350" />;
-        case 'mp4':
-        case 'mkv': return <FileVideo size={18} color="#ab47bc" />;
-        case 'zip':
-        case 'tar':
-        case 'gz': return <FileArchive size={18} color="#ffb300" />;
-        default: return <FileIcon size={18} color="#a0a0a0" />;
-    }
-};
 
 export const FileExplorer: React.FC<FileExplorerProps> = ({ 
     initialPath, 
@@ -106,14 +53,10 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
             setInternalLoading(true);
             setSelectedFile(null);
             try {
-                const dirFiles: FileInfo[] = await invoke('read_dir', { path: currentPath });
+                const dirFiles: FileInfo[] = await invoke(CMD_READ_DIR, { path: currentPath });
                 if (!cancelled) {
-                    const sortedFiles = dirFiles.sort((a, b) => {
-                        if (a.is_dir && !b.is_dir) return -1;
-                        if (!a.is_dir && b.is_dir) return 1;
-                        return a.name.localeCompare(b.name, undefined, { numeric: true });
-                    });
-                    setInternalFiles(sortedFiles);
+                    const sorted = sortFiles(dirFiles);
+                    setInternalFiles(sorted);
                 }
             } catch (err) {
                 console.error(`Error reading directory ${currentPath}:`, err);
@@ -149,7 +92,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
         } else {
             if (selectedFile === file.path) {
                 try {
-                    await invoke('open_file', { path: file.path });
+                    await invoke(CMD_OPEN_FILE, { path: file.path });
                 } catch (err) {
                     console.error(`Failed to open file ${file.path}:`, err);
                 }
@@ -160,51 +103,44 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
     };
 
     return (
-        <div className="detail-page" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div className="detail-page" style={EXPLORER.CONTAINER}>
             <div className="detail-header">
                 {(!isControlled || onBack) && (
                     <button className="back-btn" onClick={handleNavigateBack} title="Go back">
-                        <ArrowLeft size={20} />
+                        {ICONS.GENERAL.ARROW_LEFT}
                     </button>
                 )}
-                <div style={{ overflow: 'hidden', flex: 1 }}>
-                    <div className="detail-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span>{title && pathHistory.length === 1 ? title : currentPath.split(/[/\\]/).filter(Boolean).pop() || 'File Explorer'}</span>
+                <div style={EXPLORER.HEADER_INFO}>
+                    <div className="detail-title" style={EXPLORER.TITLE}>
+                        <span>{getExplorerTitle(title, pathHistory.length, currentPath)}</span>
                         <button 
                             onClick={(e) => { 
                                 e.stopPropagation(); 
-                                invoke('open_file', { path: currentPath }).catch(console.error); 
+                                invoke(CMD_OPEN_FILE, { path: currentPath }).catch(console.error); 
                             }}
-                            style={{ 
-                                background: 'none', 
-                                border: 'none', 
-                                cursor: 'pointer', 
-                                padding: '4px', 
-                                display: 'flex', 
-                                color: 'var(--text-secondary)' 
-                            }}
+                            style={EXPLORER.REVEAL_BTN}
                             title="Reveal in File Explorer"
                             className="reveal-btn"
                         >
-                            <ExternalLink size={16} />
+                            {ICONS.GENERAL.EXTERNAL_LINK}
                         </button>
                     </div>
-                    <div className="detail-subtitle" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={currentPath}>
+                    <div className="detail-subtitle" style={EXPLORER.SUBTITLE} title={currentPath}>
                         {currentPath}
                     </div>
                 </div>
                 {(!isControlled || onBack) && (
-                    <button className="back-btn" onClick={onBack} title="Close Explorer" style={{ marginLeft: 'auto' }}>
-                        <X size={20} />
+                    <button className="back-btn" onClick={onBack} title="Close Explorer" style={EXPLORER.CLOSE_BTN}>
+                        {ICONS.GENERAL.X}
                     </button>
                 )}
             </div>
 
-            <div className="list-container" style={{ flex: 1, overflowY: 'auto' }}>
+            <div className="list-container" style={EXPLORER.LIST_CONTAINER}>
                 {loading ? (
                     <div className="loading">Loading directory...</div>
                 ) : files.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+                    <div style={EXPLORER.EMPTY_STATE}>
                         This folder is empty.
                     </div>
                 ) : (
@@ -212,7 +148,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
                         <div
                             key={`${file.path}-${i}`}
                             className={`list-item ${selectedFile === file.path ? 'selected' : ''}`}
-                            style={selectedFile === file.path ? { background: 'rgba(255, 255, 255, 0.08)' } : {}}
+                            style={selectedFile === file.path ? { background: COLOR_WHITE_TRANSPARENT_08 } : {}}
                             onClick={() => handleItemClick(file)}
                         >
                             <div className="list-item-icon">

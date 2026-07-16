@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { PageLayout } from '../components/layout/PageLayout';
 import { invoke } from '@tauri-apps/api/core';
+import { CMD_TOKENIZE } from '../constants/commands';
+import { LAB_CONTAINER, LAB_SECTION, LAB_SECTION_TITLE, LAB_INPUT_ROW, LAB_INPUT, LAB_BUTTON, LAB_RESULT_CONTAINER, LAB_RESULT_TITLE, LAB_TAGS_CONTAINER, LAB_TAG } from '../styles/labStyles';
 
 
 export const Lab: React.FC = () => {
@@ -13,7 +15,7 @@ export const Lab: React.FC = () => {
     
     setIsTokenizing(true);
     try {
-      const result: string[] = await invoke('tokenize', { input: tokenInput });
+      const result: string[] = await invoke(CMD_TOKENIZE, { input: tokenInput });
       setTokenizedResult(result);
     } catch (error) {
       console.error('Failed to tokenize:', error);
@@ -24,33 +26,33 @@ export const Lab: React.FC = () => {
 
   return (
     <PageLayout title="Experiment Zone (Lab)" hideSearch showCloseButton>
-      <div className="lab-container" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-        <section className="lab-section" style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-          <h2 style={{ marginTop: 0, marginBottom: '1rem', color: 'var(--text)' }}>Tokenize Test</h2>
-          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+      <div className="lab-container" style={LAB_CONTAINER}>
+        <section className="lab-section" style={LAB_SECTION}>
+          <h2 style={LAB_SECTION_TITLE}>Tokenize Test</h2>
+          <div style={LAB_INPUT_ROW}>
             <input 
               type="text" 
               value={tokenInput}
               onChange={(e) => setTokenInput(e.target.value)}
               placeholder="Enter a file name or string to tokenize..."
-              style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)' }}
+              style={LAB_INPUT}
               onKeyDown={(e) => e.key === 'Enter' && handleTokenize()}
             />
             <button 
               onClick={handleTokenize}
               disabled={isTokenizing}
-              style={{ padding: '0.75rem 1.5rem', borderRadius: '8px', background: 'var(--primary)', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+              style={LAB_BUTTON}
             >
               {isTokenizing ? 'Processing...' : 'Tokenize'}
             </button>
           </div>
           
           {tokenizedResult.length > 0 && (
-            <div style={{ background: 'var(--bg)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)' }}>
-              <h3 style={{ marginTop: 0, fontSize: '1rem', color: 'var(--text-muted)' }}>Result:</h3>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
+            <div style={LAB_RESULT_CONTAINER}>
+              <h3 style={LAB_RESULT_TITLE}>Result:</h3>
+              <div style={LAB_TAGS_CONTAINER}>
                 {tokenizedResult.map((token, idx) => (
-                  <span key={idx} style={{ background: 'var(--primary-dark, #3b82f640)', color: 'var(--primary-light, #93c5fd)', padding: '0.25rem 0.75rem', borderRadius: '16px', fontSize: '0.875rem' }}>
+                  <span key={idx} style={LAB_TAG}>
                     {token}
                   </span>
                 ))}

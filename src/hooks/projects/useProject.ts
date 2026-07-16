@@ -1,6 +1,7 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
+import { CMD_SCAN_PROJECTS, CMD_UPDATE_PROJECT_PIN_STATUS, CMD_UPDATE_PROJECT_STATUS } from '../../constants/commands';
 import type { Project, ProjectStatus } from '../../types/types';
 import { logger } from '../../utility/logger';
 import type { ItemCollection } from '../../types/types';
@@ -16,7 +17,7 @@ export const useProject = () => {
         setIsRefreshing(true);
         if (allProjects.length === 0) setIsLoading(true);
         try {
-            const projects: Project[] = await invoke('scan_projects');
+            const projects: Project[] = await invoke(CMD_SCAN_PROJECTS);
             cachedAllProjects = projects;
             setAllProjects(projects);
             logger.info('all projects fetched', projects);
@@ -37,7 +38,7 @@ export const useProject = () => {
     const handleTogglePin = async (id: string) => {
         try {
             const currentPinnedStatus = allProjects.find(x => x.id === id)?.pinned || false;
-            await invoke('update_project_pin_status', { id: id, pinned: !currentPinnedStatus });
+            await invoke(CMD_UPDATE_PROJECT_PIN_STATUS, { id: id, pinned: !currentPinnedStatus });
 
             const newProjects = allProjects.map(item =>
                 item.id === id ? { ...item, pinned: !item.pinned } : item
@@ -56,7 +57,7 @@ export const useProject = () => {
 
     const updateProjectProgressStatus = async (id: string, status: ProjectStatus): Promise<boolean> => {
         try {
-            await invoke('update_project_status', { id: id, status: status });
+            await invoke(CMD_UPDATE_PROJECT_STATUS, { id: id, status: status });
             const newProjects = allProjects.map(project =>
                 project.id === id ? { ...project, status: status } : project
             );

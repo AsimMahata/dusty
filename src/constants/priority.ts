@@ -1,5 +1,6 @@
 import type { ShowStatus } from "../types/types";
 
+// Status Ordering Priority (lower number = higher priority)
 export const SHOW_STATUS_PRIORITY: Record<ShowStatus, number> = {
     watching: 0,
     default: 1,

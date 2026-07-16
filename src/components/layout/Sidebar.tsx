@@ -1,16 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { 
-  Home as HomeIcon, 
-  Tv, 
-  FolderGit2, 
-  Box, 
-  Music as MusicIcon, 
-  Film, 
-  Image as ImageIcon,
-  Menu,
-  Archive
-} from 'lucide-react';
+import { Menu } from 'lucide-react';
+import { SIDEBAR_NAV_ITEMS } from '../../constants/ui';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -24,16 +15,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  const navItems = [
-    { label: 'Home', path: '/', icon: <HomeIcon size={20} /> },
-    { label: 'Shows', path: '/shows', icon: <Tv size={20} /> },
-    { label: 'Projects', path: '/projects', icon: <FolderGit2 size={20} /> },
-    { label: 'Music', path: '/music', icon: <MusicIcon size={20} /> },
-    { label: 'Videos', path: '/videos', icon: <Film size={20} /> },
-    { label: 'Images', path: '/images', icon: <ImageIcon size={20} /> },
-    { label: 'Zip', path: '/zip', icon: <Archive size={20} /> },
-    { label: 'Misc', path: '/misc', icon: <Box size={20} /> },
-  ];
+
 
   return (
     <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
@@ -50,7 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
       
       <div className="sidebar-nav">
-        {navItems.map((item) => {
+        {SIDEBAR_NAV_ITEMS.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <div 

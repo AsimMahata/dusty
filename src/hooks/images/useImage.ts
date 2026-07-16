@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
+import { CMD_OPEN_FILE, CMD_SCAN_IMAGE } from '../../constants/commands';
 import type { FileInfo } from '../../types/types';
 import { fileInfoToItemData } from '../../utility/util';
 import type { Item } from '../../types/types';
@@ -17,7 +18,7 @@ export const useImage = () => {
         const path = I.path;
         if (!path) return;
         try {
-            await invoke("open_file", { path: path });
+            await invoke(CMD_OPEN_FILE, { path: path });
         } catch (e) {
             console.error(`Could not open file: ${String(e)}`);
         }
@@ -27,7 +28,7 @@ export const useImage = () => {
         setIsRefreshing(true);
         await new Promise(resolve => setTimeout(resolve, 600));
 
-        const images: FileInfo[] = await invoke('scan_image', { path: "C:\\" });
+        const images: FileInfo[] = await invoke(CMD_SCAN_IMAGE, { path: "C:\\" });
         const item = fileInfoToItemData(images, DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON);
         const newData = {
             recent: [],

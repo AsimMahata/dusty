@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
+import { CMD_OPEN_FILE, CMD_GET_MEDIA_OF_TYPE } from '../../constants/commands';
 import type { FileInfo, Tab, MediaDir, Item } from '../../types/types';
 import { fileInfoToItemData } from '../../utility/util';
 import { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } from '../../constants/defaults';
@@ -33,7 +34,7 @@ export const useMusic = () => {
         const path = m.path;
         if (!path) return;
         try {
-            await invoke("open_file", { path: path });
+            await invoke(CMD_OPEN_FILE, { path: path });
         } catch (e) {
             console.error(`Could not open file: ${String(e)}`);
         }
@@ -48,7 +49,7 @@ export const useMusic = () => {
     const fetchData = async () => {
         setIsRefreshing(true);
         try {
-            const media: MediaDir | null = await invoke('get_media_of_type', { path: "C:\\", media_type: "music" });
+            const media: MediaDir | null = await invoke(CMD_GET_MEDIA_OF_TYPE, { path: "C:\\", media_type: "music" });
             if (media) {
                 cachedMediaDir = media;
                 setMediaDir(media);

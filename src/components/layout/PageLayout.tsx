@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDusty } from '../../contexts/DustyContext';
 import { Search, FlaskConical, Settings, RefreshCw, X } from 'lucide-react';
+import { ROUTES } from '../../constants/routes';
 
 interface PageLayoutProps {
   title?: string;
@@ -85,10 +86,10 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
           ) : (
             <>
               <span title="Lab / Experiment Zone" style={{ display: 'flex' }}>
-                <FlaskConical size={20} style={{ cursor: 'pointer' }} onClick={() => navigate('/lab')} />
+                <FlaskConical size={20} style={{ cursor: 'pointer' }} onClick={() => navigate(ROUTES.LAB)} />
               </span>
               <span title="Settings" style={{ display: 'flex' }}>
-                <Settings size={20} style={{ cursor: 'pointer' }} onClick={() => navigate('/settings')} />
+                <Settings size={20} style={{ cursor: 'pointer' }} onClick={() => navigate(ROUTES.SETTINGS)} />
               </span>
             </>
           )}

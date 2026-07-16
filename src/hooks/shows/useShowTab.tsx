@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import type { ItemCollection, ActionItem, ShowStatus, TabType } from '../../types/types';
-import { Eye, CheckCircle, Calendar, PauseCircle, XCircle, RotateCcw, Ban, ShieldCheck } from 'lucide-react';
 import type { useShow } from './useShow';
 import { getChildrens, openEpisode } from '../../pages/shows/utility';
-import { PIN_ICON_16 } from '../../constants/icon';
-import { ACTIONS_SEPARATOR, PIN_COLOR } from '../../constants/color';
+import { TITLE_SHOWS, TITLE_BANNED, TYPE_NORMAL, TYPE_BANNED } from '../../constants/tabs';
+import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE_CIRCLE_ICON_16, X_CIRCLE_ICON_16, ROTATE_CCW_ICON_16, BAN_ICON_16, SHIELD_CHECK_ICON_16 } from '../../constants/icon';
+import { ACTIONS_SEPARATOR, PIN_COLOR, ITEM_STATUS_COLORS, COLOR_ROSE_900 } from '../../constants/color';
 import { DEFAULT_SHOW_ICON, DEFAULT_TV_ICON } from '../../constants/defaults';
 import { SHOW_STATUS_PRIORITY } from '../../constants/priority';
+import { LABELS } from '../../constants/labels';
 
 let cachedRecentItems: Partial<Record<TabType, ItemCollection[]>> = {
-    normal: [],
-    banned: [],
+    [TYPE_NORMAL]: [],
+    [TYPE_BANNED]: [],
 };
 
 export const useShowTab = (show: ReturnType<typeof useShow>, tabType: TabType) => {
     const [selectedItem, setSelectedItem] = useState<ItemCollection | null>(null);
     const [recentItems, setRecentItems] = useState<ItemCollection[]>(cachedRecentItems[tabType] ?? []);
 
-    const banned = tabType === 'banned';
+    const banned = tabType === TYPE_BANNED;
     const filteredShows = show.allShows.filter(s => s.banned === banned);
 
     const allItems: ItemCollection[] = filteredShows.map((s) => ({
@@ -75,7 +76,7 @@ export const useShowTab = (show: ReturnType<typeof useShow>, tabType: TabType) =
         const actions: ActionItem[] = [];
 
         actions.push({
-            label: item.is_pinned ? 'Unpin' : 'Pin',
+            label: item.is_pinned ? LABELS.UNPIN : LABELS.PIN,
             icon: PIN_ICON_16,
             color: PIN_COLOR,
             onClick: () => show.handleTogglePin(item.id)
@@ -87,20 +88,20 @@ export const useShowTab = (show: ReturnType<typeof useShow>, tabType: TabType) =
             void show.updateShowVisualStatus(item.id, status);
         };
 
-        actions.push({ label: 'Mark as Watching', icon: <Eye size={16} />, color: '#10b981', onClick: () => updateStatus('watching') });
-        actions.push({ label: 'Mark as Completed', icon: <CheckCircle size={16} />, color: '#3b82f6', onClick: () => updateStatus('completed') });
-        actions.push({ label: 'Mark as Planned', icon: <Calendar size={16} />, color: '#a855f7', onClick: () => updateStatus('planned') });
-        actions.push({ label: 'Mark as On Hold', icon: <PauseCircle size={16} />, color: '#f97316', onClick: () => updateStatus('on_hold') });
-        actions.push({ label: 'Mark as Dropped', icon: <XCircle size={16} />, color: '#ef4444', onClick: () => updateStatus('dropped') });
-        actions.push({ label: 'Mark as Default', icon: <RotateCcw size={16} />, color: 'var(--text-muted)', onClick: () => updateStatus('default') });
+        actions.push({ label: LABELS.MARK_WATCHING, icon: EYE_ICON_16, color: ITEM_STATUS_COLORS.watching, onClick: () => updateStatus('watching') });
+        actions.push({ label: LABELS.MARK_COMPLETED, icon: CHECK_CIRCLE_ICON_16, color: ITEM_STATUS_COLORS.completed, onClick: () => updateStatus('completed') });
+        actions.push({ label: LABELS.MARK_PLANNED, icon: CALENDAR_ICON_16, color: ITEM_STATUS_COLORS.planned, onClick: () => updateStatus('planned') });
+        actions.push({ label: LABELS.MARK_ON_HOLD, icon: PAUSE_CIRCLE_ICON_16, color: ITEM_STATUS_COLORS.on_hold, onClick: () => updateStatus('on_hold') });
+        actions.push({ label: LABELS.MARK_DROPPED, icon: X_CIRCLE_ICON_16, color: ITEM_STATUS_COLORS.dropped, onClick: () => updateStatus('dropped') });
+        actions.push({ label: LABELS.MARK_DEFAULT, icon: ROTATE_CCW_ICON_16, color: 'var(--text-muted)', onClick: () => updateStatus('default') });
 
         actions.push(ACTIONS_SEPARATOR);
 
-        if (tabType === 'normal') {
+        if (tabType === TYPE_NORMAL) {
             actions.push({
-                label: 'Ban Show',
-                icon: <Ban size={16} />,
-                color: '#9f1239', // Maroon/Rose-900
+                label: LABELS.BAN_SHOW,
+                icon: BAN_ICON_16,
+                color: COLOR_ROSE_900,
                 onClick: () => {
                     const newRecents = recentItems.filter(x => x.id !== item.id);
                     setRecentItems(newRecents);
@@ -111,9 +112,9 @@ export const useShowTab = (show: ReturnType<typeof useShow>, tabType: TabType) =
             });
         } else {
             actions.push({
-                label: 'Unban Show',
-                icon: <ShieldCheck size={16} />,
-                color: '#9f1239', // Maroon/Rose-900
+                label: LABELS.UNBAN_SHOW,
+                icon: SHIELD_CHECK_ICON_16,
+                color: COLOR_ROSE_900,
                 onClick: () => {
                     const newRecents = recentItems.filter(x => x.id !== item.id);
                     setRecentItems(newRecents);
@@ -128,7 +129,7 @@ export const useShowTab = (show: ReturnType<typeof useShow>, tabType: TabType) =
     };
 
     return {
-        title: tabType === 'normal' ? 'Shows' : 'Banned Shows',
+        title: tabType === TYPE_NORMAL ? TITLE_SHOWS : TITLE_BANNED,
         selectedItem, setSelectedItem,
         recentItems,
         allItems,

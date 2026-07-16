@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
+import { CMD_OPEN_FILE, CMD_GET_MEDIA_OF_TYPE } from '../../constants/commands';
 import type { FileInfo, Tab, MediaDir, Item, MediaType } from '../../types/types';
 import { fileInfoToItemData } from '../../utility/util';
 import { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } from '../../constants/defaults';
@@ -25,7 +26,7 @@ export const useMedia = (title: string, mediaType: MediaType, defaultPath: strin
         const path = m.path;
         if (!path) return;
         try {
-            await invoke("open_file", { path });
+            await invoke(CMD_OPEN_FILE, { path });
         } catch (e) {
             console.error(`Could not open file: ${String(e)}`);
         }
@@ -44,7 +45,7 @@ export const useMedia = (title: string, mediaType: MediaType, defaultPath: strin
     const fetchData = async () => {
         setIsRefreshing(true);
         try {
-            const media: MediaDir[] = await invoke('get_media_of_type', { path: defaultPath, mediaType: mediaType });
+            const media: MediaDir[] = await invoke(CMD_GET_MEDIA_OF_TYPE, { path: defaultPath, mediaType: mediaType });
             cachedMediaDirs[mediaType] = media;
             setMediaDirs(media);
             setCurrentDirHistory([]);

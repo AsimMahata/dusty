@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { STORAGE_KEY_SETTINGS } from '../constants/storage';
 
 export interface AppSettings {
     theme: 'dark' | 'light';
@@ -22,7 +23,7 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // Try to load from localStorage
     const [settings, setSettings] = useState<AppSettings>(() => {
-        const saved = localStorage.getItem('dusk_settings');
+        const saved = localStorage.getItem(STORAGE_KEY_SETTINGS);
         if (saved) {
             try {
                 return { ...defaultSettings, ...JSON.parse(saved) };
@@ -34,8 +35,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     });
 
     useEffect(() => {
-        localStorage.setItem('dusk_settings', JSON.stringify(settings));
-        // E.g. Apply theme to document
+        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
         document.documentElement.setAttribute('data-theme', settings.theme);
     }, [settings]);
 

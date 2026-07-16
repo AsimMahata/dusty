@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
+import { CMD_BAN_SHOW } from '../../../constants/commands';
+import { COLOR_BAN_BG, COLOR_BAN_CONFIRM_BG, COLOR_BAN_HOVER_BG, COLOR_BAN_CONFIRM_BORDER, COLOR_BAN_SHADOW } from '../../../constants/color';
+import { getActionButtonStyle } from '../../../styles/buttonStyles';
 import { logger } from '../../../utility/logger';
 import type { ItemCollection } from '../../../types/types';
 
@@ -24,7 +27,7 @@ export const BanButton: React.FC<BanButtonProps> = ({ item, onComplete }) => {
         if (isConfirming) {
             try {
                 logger.info('requested ban for', { showId: item.id });
-                await invoke("ban_show", { showId: item.id });
+                await invoke(CMD_BAN_SHOW, { showId: item.id });
                 onComplete(item);
             } catch (error) {
                 logger.error(`Failed to ban show: ${String(error)}`);
@@ -34,30 +37,13 @@ export const BanButton: React.FC<BanButtonProps> = ({ item, onComplete }) => {
         }
     };
 
-    let bg = '#dc2626';
-    if (isConfirming) bg = '#991b1b';
-    else if (isHovered) bg = '#b91c1c';
+    let bg = COLOR_BAN_BG;
+    if (isConfirming) bg = COLOR_BAN_CONFIRM_BG;
+    else if (isHovered) bg = COLOR_BAN_HOVER_BG;
 
     return (
         <button
-            style={{
-                padding: '0.4rem 1rem',
-                backgroundColor: bg,
-                color: 'white',
-                border: isConfirming ? '1px solid #f87171' : '1px solid transparent',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: '500',
-                fontSize: '0.9rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem',
-                minWidth: isConfirming ? '120px' : '80px',
-                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                transform: isConfirming ? 'scale(1.05)' : 'scale(1)',
-                boxShadow: isConfirming ? '0 0 15px rgba(220, 38, 38, 0.6)' : 'none',
-            }}
+            style={getActionButtonStyle(bg, isConfirming, COLOR_BAN_CONFIRM_BORDER, COLOR_BAN_SHADOW)}
             onClick={handleClick}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}

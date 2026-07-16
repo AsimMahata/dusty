@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import { PageLayout } from '../components/layout/PageLayout';
 import { invoke } from '@tauri-apps/api/core';
+import { CMD_RESET_DATABASE, CMD_RESET_PROJECT_TABLE, CMD_RESET_SHOWS_TABLE } from '../constants/commands';
 import { Database, AlertTriangle, Settings as SettingsIcon } from 'lucide-react';
 import { logger } from '../utility/logger';
 import { ConfirmationModal } from '../components/ui/ConfirmationModal';
 import { useSettings } from '../contexts/SettingsContext';
+import { TYPE_GENERAL, TYPE_DATA, TITLE_GENERAL, TITLE_DATA } from '../constants/tabs';
+import { COLOR_RED, COLOR_RED_HOVER, COLOR_AMBER, COLOR_AMBER_HOVER, COLOR_BLUE, COLOR_BLUE_HOVER } from '../constants/color';
+import { PAGE_SECTION_PADDING, SETTINGS_SECTION_HEADER, DANGER_ZONE_CONTAINER, DANGER_ZONE_HEADER, DANGER_ZONE_TEXT, FLEX_COLUMN_GAP_24, SETTINGS_ITEM_CONTAINER, SETTINGS_ITEM_TITLE, SETTINGS_ITEM_DESC } from '../styles/layoutStyles';
+import { getSettingsButtonStyle } from '../styles/buttonStyles';
 
 
 
 export const Settings: React.FC = () => {
     const { settings, updateSettings } = useSettings();
-    const [activeTab, setActiveTab] = useState<'general' | 'data'>('general');
+    const [activeTab, setActiveTab] = useState<typeof TYPE_GENERAL | typeof TYPE_DATA>(TYPE_GENERAL);
     const [isResetting, setIsResetting] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [isResettingProjects, setIsResettingProjects] = useState(false);
@@ -25,7 +30,7 @@ export const Settings: React.FC = () => {
         setIsResetting(true);
         try {
             logger.info("requesting database reset");
-            await invoke('reset_database');
+            await invoke(CMD_RESET_DATABASE);
             alert("Database has been successfully reset. Please restart the app or refresh pages to see changes.");
         } catch (err) {
             logger.error(`Failed to reset database: ${String(err)}`);
@@ -44,7 +49,7 @@ export const Settings: React.FC = () => {
         setIsResettingProjects(true);
         try {
             logger.info("requesting project table reset");
-            await invoke('reset_project_table');
+            await invoke(CMD_RESET_PROJECT_TABLE);
             alert("Project table has been successfully reset. Please restart the app or refresh pages to see changes.");
         } catch (err) {
             logger.error(`Failed to reset project table: ${String(err)}`);
@@ -59,7 +64,7 @@ export const Settings: React.FC = () => {
         setIsResettingShows(true);
         try {
             logger.info("requesting shows table reset");
-            await invoke('reset_shows_table');
+            await invoke(CMD_RESET_SHOWS_TABLE);
             alert("Shows table has been successfully reset. Please restart the app or refresh pages to see changes.");
         } catch (err) {
             logger.error(`Failed to reset shows table: ${String(err)}`);
@@ -73,39 +78,33 @@ export const Settings: React.FC = () => {
         <PageLayout title="Settings" hideSearch showCloseButton>
             <div className="tabs-container">
                 <button 
-                    className={`tab-btn ${activeTab === 'general' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('general')}
+                    className={`tab-btn ${activeTab === TYPE_GENERAL ? 'active' : ''}`}
+                    onClick={() => setActiveTab(TYPE_GENERAL)}
                 >
-                    General
+                    {TITLE_GENERAL}
                 </button>
                 <button 
-                    className={`tab-btn ${activeTab === 'data' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('data')}
+                    className={`tab-btn ${activeTab === TYPE_DATA ? 'active' : ''}`}
+                    onClick={() => setActiveTab(TYPE_DATA)}
                 >
-                    Data
+                    {TITLE_DATA}
                 </button>
             </div>
 
             <div className="tab-content">
-                {activeTab === 'data' && (
-                    <div style={{ padding: '1rem' }}>
-                        <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem', color: 'var(--text-primary)' }}>
+                {activeTab === TYPE_DATA && (
+                    <div style={PAGE_SECTION_PADDING}>
+                        <h2 style={SETTINGS_SECTION_HEADER}>
                             <Database size={24} />
                             Data Management
                         </h2>
                         
-                        <div style={{ 
-                            background: 'rgba(239, 68, 68, 0.05)', 
-                            border: '1px solid rgba(239, 68, 68, 0.2)', 
-                            borderRadius: '8px',
-                            padding: '1.5rem',
-                            maxWidth: '600px'
-                        }}>
-                            <h3 style={{ color: '#ef4444', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.75rem', fontWeight: 600 }}>
+                        <div style={DANGER_ZONE_CONTAINER}>
+                            <h3 style={{ ...DANGER_ZONE_HEADER, color: COLOR_RED }}>
                                 <AlertTriangle size={20} />
                                 Danger Zone
                             </h3>
-                            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.95rem', lineHeight: 1.6 }}>
+                            <p style={DANGER_ZONE_TEXT}>
                                 Resetting the database will clear all cached information, including all banned shows and renamed titles. The application will rescan directories from scratch on the next launch.
                             </p>
                             
@@ -113,20 +112,9 @@ export const Settings: React.FC = () => {
                                 <button 
                                     onClick={handleResetData}
                                     disabled={isAnyResetting}
-                                    style={{
-                                        background: '#ef4444',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.6rem 1.2rem',
-                                        borderRadius: '6px',
-                                        fontWeight: 500,
-                                        cursor: isAnyResetting ? 'not-allowed' : 'pointer',
-                                        opacity: isAnyResetting ? 0.7 : 1,
-                                        transition: 'background 0.2s',
-                                        fontSize: '0.95rem'
-                                    }}
-                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = '#dc2626'; }}
-                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = '#ef4444'; }}
+                                    style={getSettingsButtonStyle(COLOR_RED, isAnyResetting)}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_RED_HOVER; }}
+                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_RED; }}
                                 >
                                     {isResetting ? 'Resetting...' : 'Reset All Data'}
                                 </button>
@@ -134,20 +122,9 @@ export const Settings: React.FC = () => {
                                 <button 
                                     onClick={() => setShowConfirmProjects(true)}
                                     disabled={isAnyResetting}
-                                    style={{
-                                        background: '#f59e0b',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.6rem 1.2rem',
-                                        borderRadius: '6px',
-                                        fontWeight: 500,
-                                        cursor: isAnyResetting ? 'not-allowed' : 'pointer',
-                                        opacity: isAnyResetting ? 0.7 : 1,
-                                        transition: 'background 0.2s',
-                                        fontSize: '0.95rem'
-                                    }}
-                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = '#d97706'; }}
-                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = '#f59e0b'; }}
+                                    style={getSettingsButtonStyle(COLOR_AMBER, isAnyResetting)}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_AMBER_HOVER; }}
+                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_AMBER; }}
                                 >
                                     {isResettingProjects ? 'Resetting...' : 'Reset Projects Only'}
                                 </button>
@@ -155,20 +132,9 @@ export const Settings: React.FC = () => {
                                 <button 
                                     onClick={() => setShowConfirmShows(true)}
                                     disabled={isAnyResetting}
-                                    style={{
-                                        background: '#3b82f6',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.6rem 1.2rem',
-                                        borderRadius: '6px',
-                                        fontWeight: 500,
-                                        cursor: isAnyResetting ? 'not-allowed' : 'pointer',
-                                        opacity: isAnyResetting ? 0.7 : 1,
-                                        transition: 'background 0.2s',
-                                        fontSize: '0.95rem'
-                                    }}
-                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = '#2563eb'; }}
-                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = '#3b82f6'; }}
+                                    style={getSettingsButtonStyle(COLOR_BLUE, isAnyResetting)}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_BLUE_HOVER; }}
+                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_BLUE; }}
                                 >
                                     {isResettingShows ? 'Resetting...' : 'Reset Shows Only'}
                                 </button>
@@ -176,18 +142,18 @@ export const Settings: React.FC = () => {
                         </div>
                     </div>
                 )}
-                {activeTab === 'general' && (
-                    <div style={{ padding: '1rem' }}>
-                        <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem', color: 'var(--text-primary)' }}>
+                {activeTab === TYPE_GENERAL && (
+                    <div style={PAGE_SECTION_PADDING}>
+                        <h2 style={SETTINGS_SECTION_HEADER}>
                             <SettingsIcon size={24} />
                             General Preferences
                         </h2>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '600px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-card)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                        <div style={{ ...FLEX_COLUMN_GAP_24, maxWidth: '600px' }}>
+                            <div style={SETTINGS_ITEM_CONTAINER}>
                                 <div>
-                                    <h4 style={{ margin: '0 0 0.25rem 0', color: 'var(--text-primary)' }}>Theme</h4>
-                                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Choose your preferred color scheme.</p>
+                                    <h4 style={SETTINGS_ITEM_TITLE}>Theme</h4>
+                                    <p style={SETTINGS_ITEM_DESC}>Choose your preferred color scheme.</p>
                                 </div>
                                 <select 
                                     value={settings.theme}
@@ -199,10 +165,10 @@ export const Settings: React.FC = () => {
                                 </select>
                             </div>
 
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-card)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                            <div style={SETTINGS_ITEM_CONTAINER}>
                                 <div>
-                                    <h4 style={{ margin: '0 0 0.25rem 0', color: 'var(--text-primary)' }}>Show Hidden Files</h4>
-                                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Display files and folders that start with a dot.</p>
+                                    <h4 style={SETTINGS_ITEM_TITLE}>Show Hidden Files</h4>
+                                    <p style={SETTINGS_ITEM_DESC}>Display files and folders that start with a dot.</p>
                                 </div>
                                 <input 
                                     type="checkbox" 

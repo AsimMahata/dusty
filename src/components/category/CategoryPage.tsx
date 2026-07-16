@@ -1,6 +1,6 @@
 import type { TabHook, BaseItem, AnyItem } from '../../types/types';
 import { ItemSection } from './ItemSection';
-import { CLOCK_ICON, LIST_ICON } from '../../constants/icon';
+import { ICONS } from '../../constants/icon';
 
 interface CategoryPageProps<T extends BaseItem = AnyItem> {
     tab: TabHook<T>;
@@ -32,7 +32,7 @@ export function CategoryPage<T extends BaseItem>({ tab }: CategoryPageProps<T>) 
         <div className="category-page">
             <ItemSection
                 title="Recent"
-                icon={CLOCK_ICON}
+                icon={ICONS.GENERAL.CLOCK}
                 items={filteredRecent}
                 onCardDoubleClick={onCardClick}
                 onTogglePin={onTogglePin}
@@ -42,7 +42,7 @@ export function CategoryPage<T extends BaseItem>({ tab }: CategoryPageProps<T>) 
             {filteredAll.length > 0 ? (
                 <ItemSection
                     title={`All ${title}`}
-                    icon={LIST_ICON}
+                    icon={ICONS.GENERAL.LIST}
                     items={filteredAll}
                     onCardDoubleClick={onCardClick}
                     onTogglePin={onTogglePin}

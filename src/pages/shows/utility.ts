@@ -1,4 +1,5 @@
 import { invoke } from '@tauri-apps/api/core';
+import { CMD_OPEN_FILE } from '../../constants/commands';
 import { formatSize } from '../../utility/util';
 import { logger } from '../../utility/logger';
 import type { ItemCollection, Item } from '../../types/types';
@@ -24,7 +25,7 @@ export const openEpisode = async (ep: Item) => {
     const path = ep.path;
     if (!path) return;
     try {
-        await invoke("open_file", { path: path });
+        await invoke(CMD_OPEN_FILE, { path: path });
     } catch (e) {
         logger.error(`Could not open file: ${String(e)}`);
     }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
+import { CMD_SCAN_SHOWS, CMD_UPDATE_BAN_STATUS, CMD_UPDATE_SHOW_STATUS, CMD_RENAME_SHOW, CMD_UPDATE_PIN_STATUS } from '../../constants/commands';
 import type { ShowResult, ShowStatus, Tab } from '../../types/types';
 import { logger } from '../../utility/logger';
 import { DEFAULT_STARTING_PATH } from '../../constants/defaults';
@@ -23,7 +24,7 @@ export const useShow = () => {
         setIsRefreshing(true);
         if (allShows.length === 0) setIsLoading(true);
         try {
-            let shows: ShowResult[] = await invoke('scan_shows', { path: DEFAULT_STARTING_PATH });
+            let shows: ShowResult[] = await invoke(CMD_SCAN_SHOWS, { path: DEFAULT_STARTING_PATH });
             cachedAllShows = shows;
             setAllShows(shows);
             logger.info('all shows fetched', shows);
@@ -43,7 +44,7 @@ export const useShow = () => {
 
     const updateBanStatus = async (showId: string, isBanned: boolean): Promise<boolean> => {
         try {
-            await invoke('update_ban_status', { showId: showId, newBanStatus: isBanned });
+            await invoke(CMD_UPDATE_BAN_STATUS, { showId: showId, newBanStatus: isBanned });
             const newShows = allShows.map(show =>
                 show.id === showId ? { ...show, banned: isBanned } : show
             );
@@ -58,7 +59,7 @@ export const useShow = () => {
     };
 
     const updateShowStatusOnDatabase = async (showId: string, status: ShowStatus): Promise<boolean> => {
-        return invoke('update_show_status', { showId: showId, newStatus: status });
+        return invoke(CMD_UPDATE_SHOW_STATUS, { showId: showId, newStatus: status });
     }
 
     const updateShowVisualStatus = async (showId: string, status: ShowStatus): Promise<boolean> => {
@@ -80,7 +81,7 @@ export const useShow = () => {
     const updateShowTitle = async (showId: string, newTitle: string) => {
         try {
             logger.info('requested rename for', { id: showId, newName: newTitle });
-            const success = await invoke("rename_show", { showId, newName: newTitle });
+            const success = await invoke(CMD_RENAME_SHOW, { showId, newName: newTitle });
             if (!success) {
                 logger.error(`Failed to rename show: ${showId}, ${newTitle}`);
                 return;
@@ -101,7 +102,7 @@ export const useShow = () => {
         const show = allShows.find(s => s.id === id);
         if (show) {
             try {
-                await invoke('update_pin_status', { showId: id, newPinStatus: !show.pinned });
+                await invoke(CMD_UPDATE_PIN_STATUS, { showId: id, newPinStatus: !show.pinned });
                 const newShows = allShows.map(s =>
                     s.id === id ? { ...s, pinned: !s.pinned } : s
                 );
