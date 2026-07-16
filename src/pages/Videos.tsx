@@ -5,7 +5,7 @@ import { TabsOption } from '../components/ui/TabsOption';
 import { MediaTab } from '../components/media/MediaTab';
 
 export const Videos: React.FC = () => {
-    const video = useMedia('Videos', 'video');
+    const video = useMedia('Video List', 'video');
 
     return (
         <PageLayout hook={video} >

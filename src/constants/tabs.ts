@@ -12,6 +12,10 @@ export const TITLE_EMPTY_DIRECTORIES = "Empty Directories";
 export const TITLE_COMING_SOON = "Coming Soon";
 export const TITLE_GENERAL = "General";
 export const TITLE_DATA = "Data";
+export const TITLE_MUSIC_FOLDERS = "Music Folders";
+export const TITLE_VIDEO_FOLDERS = "Video Folders";
+export const TITLE_IMAGE_FOLDERS = "Image Folders";
+export const TITLE_FOLDERS = "Folders";
 
 // Types
 export const TYPE_NORMAL: TabType = "normal";

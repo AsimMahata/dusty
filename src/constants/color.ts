@@ -12,7 +12,7 @@ export const COLOR_AMBER_HOVER = '#d97706';
 export const COLOR_RED = '#ef4444';
 export const COLOR_RED_HOVER = '#dc2626';
 export const COLOR_ROSE_900 = '#9f1239';
-
+export const COLOR_GREEN_HOVER = '#067952';
 // Specific Button Colors (from Ban/Unban)
 export const COLOR_BAN_BG = '#dc2626';
 export const COLOR_BAN_CONFIRM_BG = '#991b1b';

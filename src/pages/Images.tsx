@@ -5,7 +5,7 @@ import { TabsOption } from '../components/ui/TabsOption';
 import { MediaTab } from '../components/media/MediaTab';
 
 export const Images: React.FC = () => {
-    const image = useMedia('Images', 'image');
+    const image = useMedia('Image List', 'image');
 
     return (
         <PageLayout hook={image} >

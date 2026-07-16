@@ -43,6 +43,11 @@ export const ICONS = {
         VIDEO: <FileVideo size={18} color={COLOR_ICON_VIDEO} />,
         ARCHIVE: <FileArchive size={18} color={COLOR_ICON_ARCHIVE} />,
         DEFAULT: <LucideFile size={18} color={COLOR_ICON_DEFAULT} />,
+    },
+    MEDIA_FOLDER: {
+        MUSIC: <MusicIcon size={18} />,
+        VIDEO: <Film size={18} />,
+        IMAGE: <ImageIcon size={18} />
     }
 };
 

@@ -6,6 +6,10 @@ import type { FileInfo, Tab, MediaDir, Item, MediaType } from '../../types/types
 import { fileInfoToItemData } from '../../utility/util';
 import { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } from '../../constants/defaults';
 import { mediaExplorerTab, mediaListTab } from '../../constants/tabs';
+import { flattenMediaDirs } from '../../utility/media/flattenMediaDirs';
+import { getRootFolders } from '../../utility/media/getRootFolders';
+import { getMediaFolderIcon } from '../../utility/icon/getMediaFolderIcon';
+import { getExplorerTabTitle } from '../../utility/tabs/getExplorerTabTitle';
 
 // Cache for different media types
 const cachedMediaDirs: Record<string, MediaDir[]> = {};
@@ -19,8 +23,15 @@ export const useMedia = (title: string, mediaType: MediaType, defaultPath: strin
 
     const currentDir = currentDirHistory.length > 0 ? currentDirHistory[currentDirHistory.length - 1] : null;
 
-    const [activeTab, setActiveTab] = useState<Tab>(mediaExplorerTab);
-    const tabs: Tab[] = [mediaExplorerTab, mediaListTab];
+    const explorerTabTitle = getExplorerTabTitle(mediaType);
+                             
+    const explorerTab: Tab = useMemo(() => ({
+        title: explorerTabTitle,
+        type: mediaExplorerTab.type
+    }), [explorerTabTitle]);
+
+    const [activeTab, setActiveTab] = useState<Tab>(explorerTab);
+    const tabs: Tab[] = useMemo(() => [explorerTab, mediaListTab], [explorerTab]);
 
     const playMedia = async (m: Item | FileInfo) => {
         const path = m.path;
@@ -63,25 +74,15 @@ export const useMedia = (title: string, mediaType: MediaType, defaultPath: strin
     }, [mediaType]);
 
     const allMediaItems = useMemo(() => {
-        const flat: FileInfo[] = [];
-        const traverse = (dir: MediaDir) => {
-            flat.push(...dir.media);
-            dir.childs.forEach(traverse);
-        };
-        mediaDirs.forEach(traverse);
+        const flat = flattenMediaDirs(mediaDirs);
         return fileInfoToItemData(flat, DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON);
     }, [mediaDirs]);
 
     const rootFolderItems = useMemo(() => {
-        const files: FileInfo[] = mediaDirs.map(c => ({
-            id: c.id,
-            name: c.path.split(/[/\\]/).filter(Boolean).pop() || c.path,
-            path: c.path,
-            size: c.size || 0,
-            is_dir: true,
-        }));
-        return fileInfoToItemData(files, DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON);
-    }, [mediaDirs]);
+        const folderIcon = getMediaFolderIcon(mediaType);
+        const files = getRootFolders(mediaDirs);
+        return fileInfoToItemData(files, DEFAULT_FILE_ICON, folderIcon);
+    }, [mediaDirs, mediaType]);
 
     return {
         title,
@@ -101,6 +102,8 @@ export const useMedia = (title: string, mediaType: MediaType, defaultPath: strin
         isItemSelected, setIsItemSelected,
         tabs,
         activeTab, setActiveTab,
-        canGoBack: currentDirHistory.length > 0
+        canGoBack: currentDirHistory.length > 0,
+        mediaType,
+        folderIcon: getMediaFolderIcon(mediaType)
     };
 };

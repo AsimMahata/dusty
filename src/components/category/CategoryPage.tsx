@@ -42,7 +42,7 @@ export function CategoryPage<T extends BaseItem>({ tab }: CategoryPageProps<T>) 
             {filteredAll.length > 0 ? (
                 <ItemSection
                     title={`All ${title}`}
-                    icon={ICONS.GENERAL.LIST}
+                    icon={tab.defaultIcon || ICONS.GENERAL.LIST}
                     items={filteredAll}
                     onCardDoubleClick={onCardClick}
                     onTogglePin={onTogglePin}

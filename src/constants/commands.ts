@@ -20,6 +20,7 @@ export const CMD_UPDATE_PROJECT_STATUS = "update_project_status";
 export const CMD_RESET_DATABASE = "reset_database";
 export const CMD_RESET_PROJECT_TABLE = "reset_project_table";
 export const CMD_RESET_SHOWS_TABLE = "reset_shows_table";
+export const CMD_RESET_MEDIA_CACHE_TABLE = "reset_media_cache_table";
 export const CMD_TOKENIZE = "tokenize";
 
 // Media & Scanning

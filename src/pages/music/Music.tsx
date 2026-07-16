@@ -5,7 +5,7 @@ import { TabsOption } from '../../components/ui/TabsOption';
 import { MediaTab } from '../../components/media/MediaTab';
 
 export const Music: React.FC = () => {
-    const music = useMedia('Music', 'music');
+    const music = useMedia('Songs List', 'music');
 
     return (
         <PageLayout hook={music} >

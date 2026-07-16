@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { PageLayout } from '../components/layout/PageLayout';
 import { invoke } from '@tauri-apps/api/core';
-import { CMD_RESET_DATABASE, CMD_RESET_PROJECT_TABLE, CMD_RESET_SHOWS_TABLE } from '../constants/commands';
+import { CMD_RESET_DATABASE, CMD_RESET_MEDIA_CACHE_TABLE, CMD_RESET_PROJECT_TABLE, CMD_RESET_SHOWS_TABLE } from '../constants/commands';
 import { Database, AlertTriangle, Settings as SettingsIcon } from 'lucide-react';
 import { logger } from '../utility/logger';
 import { ConfirmationModal } from '../components/ui/ConfirmationModal';
 import { useSettings } from '../contexts/SettingsContext';
 import { TYPE_GENERAL, TYPE_DATA, TITLE_GENERAL, TITLE_DATA } from '../constants/tabs';
-import { COLOR_RED, COLOR_RED_HOVER, COLOR_AMBER, COLOR_AMBER_HOVER, COLOR_BLUE, COLOR_BLUE_HOVER } from '../constants/color';
+import { COLOR_RED, COLOR_RED_HOVER, COLOR_AMBER, COLOR_AMBER_HOVER, COLOR_BLUE, COLOR_BLUE_HOVER, COLOR_GREEN, COLOR_GREEN_HOVER } from '../constants/color';
 import { PAGE_SECTION_PADDING, SETTINGS_SECTION_HEADER, DANGER_ZONE_CONTAINER, DANGER_ZONE_HEADER, DANGER_ZONE_TEXT, FLEX_COLUMN_GAP_24, SETTINGS_ITEM_CONTAINER, SETTINGS_ITEM_TITLE, SETTINGS_ITEM_DESC } from '../styles/layoutStyles';
 import { getSettingsButtonStyle } from '../styles/buttonStyles';
 
@@ -20,7 +20,9 @@ export const Settings: React.FC = () => {
     const [showConfirm, setShowConfirm] = useState(false);
     const [isResettingProjects, setIsResettingProjects] = useState(false);
     const [showConfirmProjects, setShowConfirmProjects] = useState(false);
+    const [showConfirmMedia, setShowConfirmMedia] = useState(false);
     const [isResettingShows, setIsResettingShows] = useState(false);
+    const [isResettingMedia,setIsResettingMedia] = useState(false);
     const [showConfirmShows, setShowConfirmShows] = useState(false);
 
     const isAnyResetting = isResetting || isResettingProjects || isResettingShows;
@@ -73,6 +75,21 @@ export const Settings: React.FC = () => {
             setIsResettingShows(false);
         }
     };
+    const executeResetMedia = async () => {
+        setShowConfirmMedia(false);
+        setIsResettingMedia(true);
+        try {
+            logger.info("requesting media_cache table reset");
+            await invoke(CMD_RESET_MEDIA_CACHE_TABLE);
+            alert("Media cache table has been successfully reset. Please restart the app or refresh pages to see changes.");
+        } catch (err) {
+            logger.error(`Failed to reset media_cache table: ${String(err)}`);
+            alert("Failed to reset media_cache table: " + String(err));
+        } finally {
+            setIsResettingMedia(false);
+        }
+    };
+
 
     return (
         <PageLayout title="Settings" hideSearch showCloseButton>
@@ -137,6 +154,15 @@ export const Settings: React.FC = () => {
                                     onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_BLUE; }}
                                 >
                                     {isResettingShows ? 'Resetting...' : 'Reset Shows Only'}
+                                </button>
+                                <button 
+                                    onClick={() => setShowConfirmMedia(true)}
+                                    disabled={isAnyResetting}
+                                    style={getSettingsButtonStyle(COLOR_GREEN, isAnyResetting)}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_GREEN_HOVER; }}
+                                    onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLOR_GREEN; }}
+                                >
+                                    {isResettingMedia ? 'Resetting...' : 'Reset Media Cache Only'}
                                 </button>
                             </div>
                         </div>
@@ -214,6 +240,17 @@ export const Settings: React.FC = () => {
                 cancelText="Cancel"
                 isDanger={true}
             />
+            <ConfirmationModal 
+                isOpen={showConfirmMedia}
+                title="Reset Media Table"
+                message="Are you sure you want to reset the media_cache table? This will erase all media metadata like pin states and ban statuses. This cannot be undone."
+                onConfirm={executeResetMedia}
+                onCancel={() => setShowConfirmMedia(false)}
+                confirmText="Yes, reset Media"
+                cancelText="Cancel"
+                isDanger={true}
+            />
+
         </PageLayout>
     );
 };
