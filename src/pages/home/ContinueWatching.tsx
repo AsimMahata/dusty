@@ -1,38 +1,40 @@
 import React from 'react';
-import { Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Play, MoreVertical, ArrowRight } from 'lucide-react';
+import { useDusty } from '../../contexts/DustyContext';
 import { ROUTES } from '../../constants/routes';
 
 export const ContinueWatching: React.FC = () => {
   const navigate = useNavigate();
-
-  // Placeholder data
-  const items = [
-    { title: "Frieren", subtitle: "Continue from Episode 18" },
-    { title: "One Piece", subtitle: "Continue from Episode 1136" },
-    { title: "Trigun", subtitle: "Continue from Episode 2" },
-  ];
+  const { continueWatching } = useDusty();
 
   return (
-    <div className="home-section">
-      <div className="home-section-title-bar">
-        <div className="home-section-title">Continue Watching</div>
-        <div className="home-section-action" onClick={() => navigate(ROUTES.SHOWS)}>
-          View All →
-        </div>
+    <div className="home-card continue-watching-card">
+      <div className="home-card-header">
+        <span className="home-card-title">Continue Watching</span>
+        <button className="view-all-btn" onClick={() => navigate(ROUTES.SHOWS)}>
+          View All <ArrowRight size={16} />
+        </button>
       </div>
-      
-      <div className="continue-watching-list">
-        {items.map((item, i) => (
-          <div key={i} className="continue-watching-item">
-            <div className="cw-item-left">
-              <div className="cw-icon-wrapper">
-                <Play className="cw-icon" size={16} fill="currentColor" />
+
+      <div className="cw-grid">
+        {continueWatching.map(item => (
+          <div key={item.id} className="cw-item">
+            <div className="cw-image-container">
+              <img src={item.image} alt={item.title} className="cw-image" />
+              <div className="cw-play-overlay">
+                <Play size={20} fill="currentColor" />
               </div>
-              <div className="cw-item-info">
-                <div className="cw-item-title">{item.title}</div>
-                <div className="cw-item-subtitle">{item.subtitle}</div>
+              <div className="cw-progress-bar">
+                <div className="cw-progress-fill" style={{ width: `${item.progressPercent}%` }}></div>
               </div>
+            </div>
+            <div className="cw-info">
+              <div className="cw-text">
+                <span className="cw-title">{item.title}</span>
+                <span className="cw-subtitle">{item.subtitle}</span>
+              </div>
+              <button className="cw-menu-btn"><MoreVertical size={16} /></button>
             </div>
           </div>
         ))}

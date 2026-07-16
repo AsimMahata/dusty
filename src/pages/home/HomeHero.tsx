@@ -1,15 +1,19 @@
 import React from 'react';
+import { useDusty } from '../../contexts/DustyContext';
 
 export const HomeHero: React.FC = () => {
+  const { heroBanner, heroLogo } = useDusty();
   return (
     <div className="home-hero-container">
       <div className="home-hero-banner">
-        <img className="home-hero-bg" src="/banner.jpg" alt="Daily Banner" />
+        <img className="home-hero-bg" src={heroBanner} alt="Daily Banner" />
         <div className="home-hero-overlay"></div>
         <div className="home-brand-logo-container">
-          <img className="home-brand-logo" src="/icon.png" alt="Dusty Logo" />
-          <div className="home-brand-name">Dusty</div>
+          <img className="home-brand-logo" src={heroLogo} alt="Dusty Logo" />
         </div>
+      </div>
+      <div className="home-brand-tagline">
+        Your filesystem intelligence engine.
       </div>
     </div>
   );
