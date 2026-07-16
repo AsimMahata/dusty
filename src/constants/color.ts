@@ -53,6 +53,16 @@ export const COLOR_DEFAULT_ACCENT = '#6366f1';
 export const PIN_COLOR = COLOR_YELLOW;
 export const ACTIONS_SEPARATOR = { separator: true, label: '', onClick: () => { } };
 
+export const SHOW_STATUS_COLOR: Record<ItemStatus, string> = {
+    default: `var(--accent, ${COLOR_DEFAULT_ACCENT})`,
+    watching: COLOR_GREEN,
+    working: COLOR_GREEN,
+    completed: COLOR_BLUE,
+    planned: COLOR_PURPLE,
+    on_hold: COLOR_ORANGE,
+    dropped: COLOR_RED,
+};
+
 export const ITEM_STATUS_COLORS: Record<ItemStatus, string> = {
     default: `var(--accent, ${COLOR_DEFAULT_ACCENT})`,
     watching: COLOR_GREEN,

@@ -4,7 +4,7 @@ import type { useShow } from './useShow';
 import { getChildrens, openEpisode } from '../../pages/shows/utility';
 import { TITLE_SHOWS, TITLE_BANNED, TYPE_NORMAL, TYPE_BANNED } from '../../constants/tabs';
 import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE_CIRCLE_ICON_16, X_CIRCLE_ICON_16, ROTATE_CCW_ICON_16, BAN_ICON_16, SHIELD_CHECK_ICON_16 } from '../../constants/icon';
-import { ACTIONS_SEPARATOR, PIN_COLOR, ITEM_STATUS_COLORS, COLOR_ROSE_900 } from '../../constants/color';
+import { ACTIONS_SEPARATOR, PIN_COLOR, SHOW_STATUS_COLOR, COLOR_ROSE_900 } from '../../constants/color';
 import { DEFAULT_SHOW_ICON, DEFAULT_TV_ICON } from '../../constants/defaults';
 import { SHOW_STATUS_PRIORITY } from '../../constants/priority';
 import { LABELS } from '../../constants/labels';
@@ -88,11 +88,11 @@ export const useShowTab = (show: ReturnType<typeof useShow>, tabType: TabType) =
             void show.updateShowVisualStatus(item.id, status);
         };
 
-        actions.push({ label: LABELS.MARK_WATCHING, icon: EYE_ICON_16, color: ITEM_STATUS_COLORS.watching, onClick: () => updateStatus('watching') });
-        actions.push({ label: LABELS.MARK_COMPLETED, icon: CHECK_CIRCLE_ICON_16, color: ITEM_STATUS_COLORS.completed, onClick: () => updateStatus('completed') });
-        actions.push({ label: LABELS.MARK_PLANNED, icon: CALENDAR_ICON_16, color: ITEM_STATUS_COLORS.planned, onClick: () => updateStatus('planned') });
-        actions.push({ label: LABELS.MARK_ON_HOLD, icon: PAUSE_CIRCLE_ICON_16, color: ITEM_STATUS_COLORS.on_hold, onClick: () => updateStatus('on_hold') });
-        actions.push({ label: LABELS.MARK_DROPPED, icon: X_CIRCLE_ICON_16, color: ITEM_STATUS_COLORS.dropped, onClick: () => updateStatus('dropped') });
+        actions.push({ label: LABELS.MARK_WATCHING, icon: EYE_ICON_16, color: SHOW_STATUS_COLOR.watching, onClick: () => updateStatus('watching') });
+        actions.push({ label: LABELS.MARK_COMPLETED, icon: CHECK_CIRCLE_ICON_16, color: SHOW_STATUS_COLOR.completed, onClick: () => updateStatus('completed') });
+        actions.push({ label: LABELS.MARK_PLANNED, icon: CALENDAR_ICON_16, color: SHOW_STATUS_COLOR.planned, onClick: () => updateStatus('planned') });
+        actions.push({ label: LABELS.MARK_ON_HOLD, icon: PAUSE_CIRCLE_ICON_16, color: SHOW_STATUS_COLOR.on_hold, onClick: () => updateStatus('on_hold') });
+        actions.push({ label: LABELS.MARK_DROPPED, icon: X_CIRCLE_ICON_16, color: SHOW_STATUS_COLOR.dropped, onClick: () => updateStatus('dropped') });
         actions.push({ label: LABELS.MARK_DEFAULT, icon: ROTATE_CCW_ICON_16, color: 'var(--text-muted)', onClick: () => updateStatus('default') });
 
         actions.push(ACTIONS_SEPARATOR);

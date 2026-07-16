@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import type { ActionItem } from '../../types/types';
 
 interface ContextMenuProps {
@@ -22,7 +23,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
     const safeX = Math.min(x, window.innerWidth - 220);
     const safeY = Math.min(y, window.innerHeight - (actions.length * 40));
 
-    return (
+    return createPortal(
         <div
             className="context-menu"
             style={{ top: safeY, left: safeX }}
@@ -45,6 +46,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
                     </div>
                 );
             })}
-        </div>
+        </div>,
+        document.body
     );
 };

@@ -82,6 +82,7 @@ export interface ShowResult {
     pinned: boolean,
     status: ShowStatus,
     season?: number,
+    malNo?: string,
 }
 
 export type ProjectType = "C/C++" | "Unknown";

@@ -1,0 +1,54 @@
+import type { ShowResult, ShowStatus } from '../../../types/types';
+import { SHOW_STATUS_COLOR } from '../../../constants/color';
+
+export const getDummyPosterUrl = (malNo?: string) => {
+    if (!malNo) return '';
+    // return placeholder image url, maybe some dummy image service or local asset?
+    // User requested "simple dummy helper functions that return placeholder values."
+    return `https://cdn.myanimelist.net/images/anime/1120/138139l.webp`; // Just a generic URL
+};
+
+export const getDummyRating = (malNo?: string) => {
+    if (!malNo) return 0;
+    return 9.3; 
+};
+
+export const getShowBanner = (show: ShowResult) => {
+    if (!show.malNo) return '';
+    // Placeholder banner image
+    return `https://s4.anilist.co/file/anilistcdn/media/anime/banner/140270-1OSeHxy2FzXq.jpg`; // Random banner placeholder
+};
+
+export const getDummyTotalEpisodes = (show: ShowResult) => {
+    return show.num_episodes > 0 ? show.num_episodes : '?';
+};
+
+export const getDummyNextEpisode = (show: ShowResult) => {
+    // Just returning a static number for now based on mocked image
+    return show.episodes.length + 1;
+};
+
+export const getDummySeasonYear = (malNo?: string) => {
+    if (!malNo) return '';
+    return 'Spring 2023';
+};
+
+export const getStatusColor = (status: string) => {
+    return SHOW_STATUS_COLOR[status as keyof typeof SHOW_STATUS_COLOR] || '#71717a';
+};
+
+export const getStatusLabel = (status: ShowStatus) => {
+    switch (status) {
+        case 'watching': return 'Watching';
+        case 'completed': return 'Completed';
+        case 'on_hold': return 'On Hold';
+        case 'dropped': return 'Dropped';
+        case 'planned': return 'Planned';
+        default: return 'Default';
+    }
+};
+
+export const calculateProgressPercentage = (episodesWatched: number, totalEpisodes: number) => {
+    if (totalEpisodes === 0) return episodesWatched > 0 ? 100 : 0;
+    return Math.round((episodesWatched / totalEpisodes) * 100);
+};

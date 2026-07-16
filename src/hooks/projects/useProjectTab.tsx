@@ -77,7 +77,7 @@ export const useProjectTab = (project: ReturnType<typeof useProject>) => {
         actions.push({ label: LABELS.MARK_COMPLETED, icon: CHECK_CIRCLE_ICON_16, color: ITEM_STATUS_COLORS.completed, onClick: () => updateStatus('completed') });
         actions.push({ label: LABELS.MARK_ON_HOLD, icon: PAUSE_CIRCLE_ICON_16, color: ITEM_STATUS_COLORS.on_hold, onClick: () => updateStatus('on_hold') });
         actions.push({ label: LABELS.MARK_DROPPED, icon: X_CIRCLE_ICON_16, color: ITEM_STATUS_COLORS.dropped, onClick: () => updateStatus('dropped') });
-        actions.push({ label: LABELS.MARK_DEFAULT, icon: ROTATE_CCW_ICON_16, color: 'var(--text-muted)', onClick: () => updateStatus('default') });
+        actions.push({ label: LABELS.MARK_DEFAULT, icon: ROTATE_CCW_ICON_16, color: ITEM_STATUS_COLORS.default, onClick: () => updateStatus('default') });
 
         return actions;
     };
