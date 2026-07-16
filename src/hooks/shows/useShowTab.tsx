@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { ItemCollection, ActionItem, ShowStatus } from '../../types/types';
+import type { ItemCollection, ActionItem, ShowStatus, TabType } from '../../types/types';
 import { Eye, CheckCircle, Calendar, PauseCircle, XCircle, RotateCcw, Ban, ShieldCheck } from 'lucide-react';
 import type { useShow } from './useShow';
 import { getChildrens, openEpisode } from '../../pages/shows/utility';
@@ -8,14 +8,14 @@ import { ACTIONS_SEPARATOR, PIN_COLOR } from '../../constants/color';
 import { DEFAULT_SHOW_ICON, DEFAULT_TV_ICON } from '../../constants/defaults';
 import { SHOW_STATUS_PRIORITY } from '../../constants/priority';
 
-let cachedRecentItems: Record<'normal' | 'banned', ItemCollection[]> = {
+let cachedRecentItems: Partial<Record<TabType, ItemCollection[]>> = {
     normal: [],
-    banned: []
+    banned: [],
 };
 
-export const useShowTab = (show: ReturnType<typeof useShow>, tabType: 'normal' | 'banned') => {
+export const useShowTab = (show: ReturnType<typeof useShow>, tabType: TabType) => {
     const [selectedItem, setSelectedItem] = useState<ItemCollection | null>(null);
-    const [recentItems, setRecentItems] = useState<ItemCollection[]>(cachedRecentItems[tabType]);
+    const [recentItems, setRecentItems] = useState<ItemCollection[]>(cachedRecentItems[tabType] ?? []);
 
     const banned = tabType === 'banned';
     const filteredShows = show.allShows.filter(s => s.banned === banned);

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
-import type { ShowResult, ShowStatus } from '../../types/types';
+import type { ShowResult, ShowStatus, Tab } from '../../types/types';
 import { logger } from '../../utility/logger';
 import { DEFAULT_STARTING_PATH } from '../../constants/defaults';
+import { showBannedTab, showTab } from '../../constants/tabs';
 
 let cachedAllShows: ShowResult[] | null = null;
 
@@ -11,10 +12,13 @@ export const useShow = () => {
 
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
 
-    const [activeTab, setActiveTab] = useState<'normal' | 'banned'>('normal');
-    const [isItemSelected, setIsItemSelected] = useState(false);
-    const [allShows, setAllShows] = useState<ShowResult[]>(cachedAllShows || []);
+    const tabs: Tab[] = [showTab, showBannedTab];
 
+    const [activeTab, setActiveTab] = useState<Tab>(showTab);
+
+    const [isItemSelected, setIsItemSelected] = useState(false);
+
+    const [allShows, setAllShows] = useState<ShowResult[]>(cachedAllShows || []);
     const fetchData = async () => {
         setIsRefreshing(true);
         if (allShows.length === 0) setIsLoading(true);
@@ -126,6 +130,7 @@ export const useShow = () => {
         updateShowVisualStatus,
         updateShowTitle,
         handleTogglePin,
-        getCommonRenderedActions
+        getCommonRenderedActions,
+        tabs
     };
 };

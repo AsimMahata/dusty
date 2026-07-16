@@ -94,3 +94,17 @@ export interface Project {
 
 export type ProjectStatus = "default" | "working" | "completed" | "on_hold" | "dropped";
 
+
+export type TabType =
+    | "normal"
+    | "banned"
+    | "media"
+    | "folders"
+    | "songs"
+    | "images"
+    | "videos";
+
+export interface Tab {
+    title: string,
+    type: TabType
+}
