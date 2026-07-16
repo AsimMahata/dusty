@@ -37,12 +37,8 @@ export const useProject = () => {
     const handleTogglePin = async (id: string) => {
         try {
             const currentPinnedStatus = allProjects.find(x => x.id === id)?.pinned || false;
-            if (currentPinnedStatus) {
-                await invoke('unpin_project', { id: id })
-            } else {
-                await invoke('pin_project', { id: id })
-            }
-            
+            await invoke('update_project_pin_status', { id: id, pinned: !currentPinnedStatus });
+
             const newProjects = allProjects.map(item =>
                 item.id === id ? { ...item, pinned: !item.pinned } : item
             );

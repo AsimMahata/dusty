@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import type { ItemCollection, ActionItem, ShowStatus } from '../../types/types';
 import { Eye, CheckCircle, Calendar, PauseCircle, XCircle, RotateCcw, Ban, ShieldCheck } from 'lucide-react';
-
-const SHOW_STATUS_PRIORITY: Record<ShowStatus, number> = {
-    watching: 0,
-    default: 1,
-    planned: 2,
-    on_hold: 3,
-    dropped: 4,
-    completed: 5,
-};
 import type { useShow } from './useShow';
-import { useDefaults } from '../../contexts/defaultContext';
 import { getChildrens, openEpisode } from '../../pages/shows/utility';
 import { PIN_ICON_16 } from '../../constants/icon';
 import { ACTIONS_SEPARATOR, PIN_COLOR } from '../../constants/color';
+import { DEFAULT_SHOW_ICON, DEFAULT_TV_ICON } from '../../constants/defaults';
+import { SHOW_STATUS_PRIORITY } from '../../constants/priority';
 
 let cachedRecentItems: Record<'normal' | 'banned', ItemCollection[]> = {
     normal: [],
@@ -22,12 +14,11 @@ let cachedRecentItems: Record<'normal' | 'banned', ItemCollection[]> = {
 };
 
 export const useShowTab = (show: ReturnType<typeof useShow>, tabType: 'normal' | 'banned') => {
-    const { DEFAULT_TV_ICON, DEFAULT_SHOW_ICON } = useDefaults();
     const [selectedItem, setSelectedItem] = useState<ItemCollection | null>(null);
     const [recentItems, setRecentItems] = useState<ItemCollection[]>(cachedRecentItems[tabType]);
 
-    const isBanned = tabType === 'banned';
-    const filteredShows = show.allShows.filter(s => s.is_banned === isBanned);
+    const banned = tabType === 'banned';
+    const filteredShows = show.allShows.filter(s => s.banned === banned);
 
     const allItems: ItemCollection[] = filteredShows.map((s) => ({
         id: s.id,
@@ -36,7 +27,7 @@ export const useShowTab = (show: ReturnType<typeof useShow>, tabType: 'normal' |
         icon: DEFAULT_TV_ICON,
         path: s.dir,
         is_dir: false,
-        is_pinned: s.pinnned || false,
+        is_pinned: s.pinned || false,
         status: s.status || 'default'
     })).sort((a, b) => {
         if (a.is_pinned && !b.is_pinned) return -1;

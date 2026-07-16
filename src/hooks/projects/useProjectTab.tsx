@@ -4,7 +4,7 @@ import { PIN_ICON_16 } from '../../constants/icon';
 import type { ActionItem, ItemCollection, ProjectStatus } from '../../types/types';
 import type { useProject } from './useProject';
 import { Eye, CheckCircle, PauseCircle, XCircle, RotateCcw } from 'lucide-react';
-import { useDefaults } from '../../contexts/defaultContext';
+import { DEFAULT_PROJECT_ICON } from '../../constants/defaults';
 
 const PROJECT_STATUS_PRIORITY: Record<ProjectStatus, number> = {
     working: 0,
@@ -17,7 +17,6 @@ const PROJECT_STATUS_PRIORITY: Record<ProjectStatus, number> = {
 let cachedRecentItems: ItemCollection[] = [];
 
 export const useProjectTab = (project: ReturnType<typeof useProject>) => {
-    const { DEFAULT_PROJECT_ICON } = useDefaults();
     const [recentItems, setRecentItems] = useState<ItemCollection[]>(cachedRecentItems);
 
     const allItems: ItemCollection[] = project.allProjects.map((p) => ({

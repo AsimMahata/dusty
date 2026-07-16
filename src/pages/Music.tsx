@@ -10,14 +10,8 @@ export const Music: React.FC = () => {
     const musicTab = useMusicTab(music);
 
     return (
-        <PageLayout
-            hook={music}
-        >
-            {music.selectedItem ? (
-                <ItemDetailPage tab={musicTab} />
-            ) : (
-                <CategoryPage tab={musicTab} />
-            )}
+        <PageLayout hook={music} >
+            {music.selectedItem ? (<ItemDetailPage tab={musicTab} />) : (<CategoryPage tab={musicTab} />)}
         </PageLayout>
     );
 };

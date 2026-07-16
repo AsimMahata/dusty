@@ -122,26 +122,13 @@ pub fn print_all_projects_in_db(db: &Connection) -> Result<(), String> {
     Ok(())
 }
 
-pub fn pin_project_in_db(db: &Connection, id: &String) -> Result<(), String> {
+pub fn update_project_pin_status_in_db(db: &Connection, id: &String, pinned: bool) -> Result<(), String> {
     db.execute(
-        "UPDATE projects SET pinned = 1 WHERE id = ?1",
-        params![id]
+        "UPDATE projects SET pinned = ?1 WHERE id = ?2",
+        params![pinned, id]
     )
     .map_err(|err| {
-        logger::error!("PIN_PROJECT_IN_DB_FAILED", err);
-        err.to_string()
-    })?;
-
-    Ok(())
-}
-
-pub fn unpin_project_in_db(db: &Connection, id: &String) -> Result<(), String> {
-    db.execute(
-        "UPDATE projects SET pinned = 0 WHERE id = ?1",
-        params![id]
-    )
-    .map_err(|err| {
-        logger::error!("UNPIN_PROJECT_IN_DB_FAILED", err);
+        logger::error!("UPDATE_PROJECT_PIN_STATUS_IN_DB_FAILED", err);
         err.to_string()
     })?;
 

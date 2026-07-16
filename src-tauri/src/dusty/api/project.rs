@@ -3,7 +3,7 @@ use rusqlite::Connection;
 use crate::dusty::data::project::Project;
 use crate::dusty::data::state::AppState;
 use crate::dusty::db::project::{
-    add_projects_in_db, get_project_info_from_db, pin_project_in_db, print_all_projects_in_db, reset_project_table_in_db, unpin_project_in_db, update_project_status_in_db
+    add_projects_in_db, get_project_info_from_db, print_all_projects_in_db, reset_project_table_in_db, update_project_status_in_db, update_project_pin_status_in_db
     };
 use crate::dusty::engine::project::scanner::scan_all_projects;
 use crate::dusty::logger::logger;
@@ -13,7 +13,6 @@ pub fn scan_projects(state: tauri::State<AppState>) -> Vec<Project> {
     let projects: Vec<Project> = scan_all_projects();
     let db = state.db.lock().unwrap();
     add_projects_in_db(&db, &projects).map_err(|err| logger::error!("ADD_PROJECTS_IN_DB_FAILED", err)).ok();
-    print_all_projects_in_db(&db).map_err(|err| logger::error!("PRINT_ALL_PROJECTS_IN_DB_FAILED", err)).ok();
     projects
         .into_iter()
         .map(|mut p| {
@@ -28,23 +27,24 @@ pub fn scan_projects(state: tauri::State<AppState>) -> Vec<Project> {
 }
 
 #[tauri::command]
-pub fn pin_project(state: tauri::State<AppState>, id: String) -> Result<(), String> {
+pub fn update_project_pin_status(state: tauri::State<AppState>, id: String, pinned: bool) -> Result<(), String> {
     let db = state.db.lock().unwrap();
-    pin_project_in_db(&db, &id).map_err(|err| logger::error!("PIN_PROJECT_IN_DB_FAILED", err)).ok();
-    Ok(())
-}
-
-#[tauri::command]
-pub fn unpin_project(state: tauri::State<AppState>, id: String) -> Result<(), String> {
-    let db = state.db.lock().unwrap();
-    unpin_project_in_db(&db, &id).map_err(|err| logger::error!("UNPIN_PROJECT_IN_DB_FAILED", err)).ok();
+    if let Err(err) = update_project_pin_status_in_db(&db, &id, pinned) {
+        logger::error!("UPDATE_PROJECT_PIN_STATUS_FAILED", err.clone());
+        return Err(err);
+    }
+    logger::info!("UPDATE_PROJECT_PIN_STATUS_SUCCESS", id, pinned);
     Ok(())
 }
 
 #[tauri::command]
 pub fn update_project_status(state: tauri::State<AppState>, id: String, status: String) -> Result<(), String> {
     let db = state.db.lock().unwrap();
-    update_project_status_in_db(&db, &id, &status).map_err(|err| logger::error!("UPDATE_PROJECT_STATUS_IN_DB_FAILED", err)).ok();
+    if let Err(err) = update_project_status_in_db(&db, &id, &status) {
+        logger::error!("UPDATE_PROJECT_STATUS_FAILED", err.clone());
+        return Err(err);
+    }
+    logger::info!("UPDATE_PROJECT_STATUS_SUCCESS", id, status);
     Ok(())
 }
 

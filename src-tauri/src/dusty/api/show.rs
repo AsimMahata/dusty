@@ -1,7 +1,8 @@
 use crate::dusty::data::{shows::ShowResult, state::AppState};
-use crate::dusty::db::ban::{ban_show_in_db, print_all_banned_shows, unban_show_in_db};
+use crate::dusty::logger::logger;
 use crate::dusty::db::show::{
-    add_shows_in_db, print_all_shows_in_db, reset_show_table_in_db, update_ban_status_in_db, update_pin_status_in_db, update_show_status_in_db,
+    add_shows_in_db, print_all_shows_in_db, reset_show_table_in_db, update_ban_status_in_db,
+    update_pin_status_in_db, update_show_status_in_db,
 };
 use crate::dusty::db::show::{get_show_info, rename_show_in_db};
 use crate::dusty::scanners::show_scanner::scan_for_shows_rec;
@@ -20,7 +21,6 @@ pub fn scan_shows(state: tauri::State<AppState>, path: String) -> Vec<ShowResult
 
     let db = state.db.lock().unwrap();
     add_shows_in_db(&db, &result).ok();
-    print_all_shows_in_db(&db).ok();
 
     result
         .into_iter()
@@ -37,31 +37,14 @@ pub fn scan_shows(state: tauri::State<AppState>, path: String) -> Vec<ShowResult
 }
 
 #[tauri::command]
-pub fn ban_show(state: tauri::State<AppState>, show_id: String) {
-    let db = state.db.lock().unwrap();
-    ban_show_in_db(&db, show_id)
-        .map_err(|e| format!("Failed to insert ban: {}", e))
-        .ok();
-
-    print_all_banned_shows(&db).ok();
-}
-
-#[tauri::command]
-pub fn unban_show(state: tauri::State<AppState>, show_id: String) {
-    let db = state.db.lock().unwrap();
-    unban_show_in_db(&db, show_id)
-        .map_err(|e| format!("Failed to delete ban: {}", e))
-        .ok();
-
-    print_all_banned_shows(&db).ok();
-}
-
-#[tauri::command]
 pub fn rename_show(state: tauri::State<AppState>, show_id: String, new_name: String) -> bool {
     let db = state.db.lock().unwrap();
-    rename_show_in_db(&db, show_id, new_name)
-        .map_err(|e| format!("Failed to rename show: {}", e))
-        .is_ok()
+    if let Err(err) = rename_show_in_db(&db, show_id.clone(), new_name.clone()) {
+        logger::error!("RENAME_SHOW_FAILED", err);
+        return false;
+    }
+    logger::info!("RENAME_SHOW_SUCCESS", show_id, new_name);
+    true
 }
 
 #[tauri::command]
@@ -71,7 +54,12 @@ pub fn update_show_status(
     new_status: String,
 ) -> bool {
     let db = state.db.lock().unwrap();
-    update_show_status_in_db(&db, show_id, new_status).is_ok()
+    if let Err(err) = update_show_status_in_db(&db, show_id.clone(), new_status.clone()) {
+        logger::error!("UPDATE_SHOW_STATUS_FAILED", err);
+        return false;
+    }
+    logger::info!("UPDATE_SHOW_STATUS_SUCCESS", show_id, new_status);
+    true
 }
 
 #[tauri::command]
@@ -81,7 +69,12 @@ pub fn update_ban_status(
     new_ban_status: bool,
 ) -> bool {
     let db = state.db.lock().unwrap();
-    update_ban_status_in_db(&db, show_id, new_ban_status).is_ok()
+    if let Err(err) = update_ban_status_in_db(&db, show_id.clone(), new_ban_status) {
+        logger::error!("UPDATE_BAN_STATUS_FAILED", err);
+        return false;
+    }
+    logger::info!("UPDATE_BAN_STATUS_SUCCESS", show_id, new_ban_status);
+    true
 }
 
 #[tauri::command]
@@ -91,13 +84,21 @@ pub fn update_pin_status(
     new_pin_status: bool,
 ) -> bool {
     let db = state.db.lock().unwrap();
-    update_pin_status_in_db(&db, show_id, new_pin_status).is_ok()
+    if let Err(err) = update_pin_status_in_db(&db, show_id.clone(), new_pin_status) {
+        logger::error!("UPDATE_PIN_STATUS_FAILED", err);
+        return false;
+    }
+    logger::info!("UPDATE_PIN_STATUS_SUCCESS", show_id, new_pin_status);
+    true
 }
 
 #[tauri::command]
-pub fn reset_shows_table(state: tauri::State<AppState>)->Result<(),String>{
+pub fn reset_shows_table(state: tauri::State<AppState>) -> Result<(), String> {
     let db = state.db.lock().unwrap();
-    reset_show_table_in_db(&db).map_err(|e| format!("Failed to reset shows table: {}", e)).ok();
+    reset_show_table_in_db(&db)
+        .map_err(|e| format!("Failed to reset shows table: {}", e))
+        .ok();
     print_all_shows_in_db(&db).ok();
     Ok(())
 }
+

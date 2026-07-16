@@ -3,12 +3,11 @@ import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
 import type { ShowResult, ShowStatus } from '../../types/types';
 import { logger } from '../../utility/logger';
-import { useDefaults } from '../../contexts/defaultContext';
+import { DEFAULT_STARTING_PATH } from '../../constants/defaults';
 
 let cachedAllShows: ShowResult[] | null = null;
 
 export const useShow = () => {
-    const { DEFAULT_STARTING_PATH } = useDefaults();
 
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
 
@@ -42,7 +41,7 @@ export const useShow = () => {
         try {
             await invoke('update_ban_status', { showId: showId, newBanStatus: isBanned });
             const newShows = allShows.map(show =>
-                show.id === showId ? { ...show, is_banned: isBanned } : show
+                show.id === showId ? { ...show, banned: isBanned } : show
             );
             cachedAllShows = newShows;
             setAllShows(newShows);
@@ -94,14 +93,19 @@ export const useShow = () => {
         }
     };
 
-    const handleTogglePin = (id: string) => {
+    const handleTogglePin = async (id: string) => {
         const show = allShows.find(s => s.id === id);
         if (show) {
-            const newShows = allShows.map(s =>
-                s.id === id ? { ...s, pinnned: !s.pinnned } : s
-            );
-            cachedAllShows = newShows;
-            setAllShows(newShows);
+            try {
+                await invoke('update_pin_status', { showId: id, newPinStatus: !show.pinned });
+                const newShows = allShows.map(s =>
+                    s.id === id ? { ...s, pinned: !s.pinned } : s
+                );
+                cachedAllShows = newShows;
+                setAllShows(newShows);
+            } catch (err) {
+                logger.error(`Failed to toggle pin for show ${id}: ${String(err)}`);
+            }
         }
     };
 

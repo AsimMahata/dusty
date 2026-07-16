@@ -4,12 +4,11 @@ import { invoke } from '@tauri-apps/api/core';
 import type { FileInfo } from '../../types/types';
 import { fileInfoToItemData } from '../../utility/util';
 import type { AnyItem } from '../../types/types';
-import { useDefaults } from '../../contexts/defaultContext';
+import { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } from '../../constants/defaults';
 
 let cachedEmptyDirData: AnyItem[] | null = null;
 
 export const useMisc = () => {
-    const { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } = useDefaults();
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
     const [activeTab, setActiveTab] = useState('empty_directories');
     const [data, setData] = useState<AnyItem[]>(cachedEmptyDirData || []);

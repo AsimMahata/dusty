@@ -4,12 +4,11 @@ import { invoke } from '@tauri-apps/api/core';
 import type { FileInfo } from '../../types/types';
 import { fileInfoToItemData } from '../../utility/util';
 import type { Item } from '../../types/types';
-import { useDefaults } from '../../contexts/defaultContext';
+import { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } from '../../constants/defaults';
 
 let cachedImagesData: { recent: Item[], all: Item[] } | null = null;
 
 export const useImage = () => {
-    const { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } = useDefaults();
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [data, setData] = useState<{ recent: Item[], all: Item[] }>(cachedImagesData || { recent: [], all: [] });

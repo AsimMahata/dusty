@@ -1,8 +1,8 @@
 import React from 'react';
 import type { Item } from '../../types/types';
 import type { useItemDetail } from '../../hooks/useItemDetail';
-import { useDefaults } from '../../contexts/defaultContext';
 import { DetailListChild } from './DetailListChild';
+import { DEFAULT_ICON } from '../../constants/defaults';
 
 interface DetailListProps {
     detail: ReturnType<typeof useItemDetail<any>>;
@@ -11,7 +11,6 @@ interface DetailListProps {
 }
 
 export const DetailList: React.FC<DetailListProps> = ({ detail, onActionClick, defaultIcon }) => {
-    const { DEFAULT_ICON } = useDefaults();
 
     const handleChildClick = (child: Item) => {
         if (detail.selectedChildId === child.id) {

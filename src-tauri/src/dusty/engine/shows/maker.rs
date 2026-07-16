@@ -71,11 +71,9 @@ fn find_common_part(random_sample: &Vec<PathBuf>) -> String {
 
 fn extract_random_sample(cluster: &Vec<PathBuf>) -> Vec<PathBuf> {
     let n = cluster.len();
-    let mut idx: Vec<usize> = (0..n).collect();
-    idx.shuffle(&mut rng());
     let mut sample: Vec<PathBuf> = Vec::new();
     for i in 0..min(n, 3) {
-        sample.push(cluster[idx[i]].clone());
+        sample.push(cluster[i].clone());
     }
     sample
 }
