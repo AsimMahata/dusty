@@ -1,27 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { useTodo } from '../../hooks/todo/useTodo';
-import { TodoSidebar } from './components/TodoSidebar';
-import { TodoList } from './components/TodoList';
-import { TodoToolbar } from './components/TodoToolbar';
-import { TodoDialog } from './components/TodoDialog';
-import type { TodoItem } from '../../types/todo';
-import './Todo.css';
+import { TodoSidebar } from './components/sidebar/TodoSidebar';
+import { TodoList } from './components/list/TodoList';
+import { TodoToolbar } from './components/toolbar/TodoToolbar';
+import { TodoDialog } from './components/dialogs/TodoDialog';
+import { useTodoPage } from './hooks/useTodoPage';
+import './css/Todo.css';
 
 export const TodoPage: React.FC = () => {
-    const todo = useTodo();
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [editingTodo, setEditingTodo] = useState<TodoItem | null>(null);
-
-    const handleCreateNew = () => {
-        setEditingTodo(null);
-        setIsDialogOpen(true);
-    };
-
-    const handleEdit = (item: TodoItem) => {
-        setEditingTodo(item);
-        setIsDialogOpen(true);
-    };
+    const {
+        todo,
+        isDialogOpen,
+        editingTodo,
+        handleCreateNew,
+        handleEdit,
+        handleSaveDialog,
+        handleCloseDialog
+    } = useTodoPage();
 
     return (
         <PageLayout hook={todo} showCloseButton>
@@ -52,15 +47,8 @@ export const TodoPage: React.FC = () => {
             {isDialogOpen && (
                 <TodoDialog 
                     isOpen={isDialogOpen} 
-                    onClose={() => setIsDialogOpen(false)} 
-                    onSave={async (data) => {
-                        if (editingTodo) {
-                            await todo.editTodo(editingTodo.id, data);
-                        } else {
-                            await todo.addTodo(data);
-                        }
-                        setIsDialogOpen(false);
-                    }}
+                    onClose={handleCloseDialog} 
+                    onSave={handleSaveDialog}
                     initialData={editingTodo} 
                 />
             )}

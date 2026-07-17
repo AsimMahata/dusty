@@ -1,7 +1,7 @@
 import React from 'react';
-import type { TodoItem } from '../../../types/todo';
-import { TodoCard } from './TodoCard';
-import { ClipboardList } from 'lucide-react';
+import type { TodoItem } from '../../../../types/todo';
+import { TodoCard } from './card/TodoCard';
+import { TODO_CLIPBOARD_LIST_ICON } from '../../../../constants/icon';
 
 interface TodoListProps {
     todos: TodoItem[];
@@ -19,7 +19,7 @@ export const TodoList: React.FC<TodoListProps> = ({
     if (todos.length === 0) {
         return (
             <div className="todo-empty-state">
-                <ClipboardList size={48} className="todo-empty-icon" />
+                {TODO_CLIPBOARD_LIST_ICON}
                 <div>
                     <h3 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)' }}>No tasks found</h3>
                     <p style={{ margin: 0 }}>Try adjusting your filters or create a new task.</p>

@@ -13,8 +13,8 @@ import { Videos } from "./pages/videos/Videos";
 import { Images } from "./pages/images/Images";
 import { Misc } from "./pages/misc/Misc";
 import { ZipPage } from "./pages/zip/ZipPage";
-import { Lab } from "./pages/Lab";
-import { Settings } from "./pages/Settings";
+import { LabPage } from "./pages/lab/LabPage";
+import { SettingsPage } from "./pages/settings/SettingsPage";
 import { TodoPage } from "./pages/todo/TodoPage";
 
 function App() {
@@ -42,9 +42,9 @@ function App() {
                     <Route path={ROUTES.IMAGES} element={<Images />} />
                     <Route path={ROUTES.MISC} element={<Misc />} />
                     <Route path={ROUTES.ZIP} element={<ZipPage />} />
-                    <Route path={ROUTES.LAB} element={<Lab />} />
+                    <Route path={ROUTES.LAB} element={<LabPage />} />
                     <Route path={ROUTES.TODO} element={<TodoPage />} />
-                    <Route path={ROUTES.SETTINGS} element={<Settings />} />
+                    <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
                 </Routes>
             </main>
         </div>

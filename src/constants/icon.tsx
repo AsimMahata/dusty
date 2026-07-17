@@ -8,7 +8,9 @@ import {
     Check,
     Folder,
     Star, FolderOpen, Globe, MoreVertical,
-    ArrowUp, CircleDot, Terminal, Tags, Pencil, Trash2
+    ArrowUp, CircleDot, Terminal, Tags, Pencil, Trash2,
+    Tag, CheckSquare, Square, AlertCircle, ClipboardList, ListTodo, Plus, ChevronDown, ArrowDown,
+    Settings, Database
 } from "lucide-react";
 import { COLORS } from './color';
 
@@ -136,3 +138,23 @@ export const PROJECT_MENU_DELETE_ICON = <Trash2 size={16} />
 
 // UI Components
 export const SCROLL_TOP_ICON_24 = <ArrowUp size={24} />
+
+// Todo
+export const TODO_MORE_VERTICAL_ICON = <MoreVertical size={18} />
+export const TODO_CALENDAR_ICON = <Calendar size={12} />
+export const TODO_TAG_ICON = <Tag size={12} />
+export const TODO_PIN_ICON = <Pin size={14} color="var(--accent)" />
+export const TODO_CHECK_SQUARE_ICON = <CheckSquare size={20} />
+export const TODO_SQUARE_ICON = <Square size={20} />
+export const TODO_ALERT_CIRCLE_ICON = <AlertCircle size={12} />
+export const TODO_CLIPBOARD_LIST_ICON = <ClipboardList size={48} className="todo-empty-icon" />
+export const TODO_LIST_TODO_ICON = <ListTodo size={16} />
+export const TODO_PLUS_ICON = <Plus size={16} />
+export const TODO_CHEVRON_DOWN_ICON = <ChevronDown size={14} />
+export const TODO_ARROW_UP_ICON = <ArrowUp size={16} />
+export const TODO_ARROW_DOWN_ICON = <ArrowDown size={16} />
+
+// Settings
+export const SETTINGS_GENERAL_ICON = <Settings size={24} />
+export const SETTINGS_DATA_ICON = <Database size={24} />
+export const SETTINGS_DANGER_ICON = <AlertTriangle size={20} />

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import type { TodoItem, TodoPriority } from '../../../types/todo';
+import React from 'react';
+import type { TodoItem, TodoPriority } from '../../../../types/todo';
+import { useTodoDialog } from './hooks/useTodoDialog';
 
 interface TodoDialogProps {
     isOpen: boolean;
@@ -9,59 +10,16 @@ interface TodoDialogProps {
 }
 
 export const TodoDialog: React.FC<TodoDialogProps> = ({ isOpen, onClose, onSave, initialData }) => {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [priority, setPriority] = useState<TodoPriority>('Medium');
-    const [category, setCategory] = useState('');
-    const [dueDateStr, setDueDateStr] = useState('');
-
-    useEffect(() => {
-        if (initialData) {
-            setTitle(initialData.title);
-            setDescription(initialData.description || '');
-            setPriority(initialData.priority);
-            setCategory(initialData.category || '');
-            if (initialData.dueDate) {
-                const d = new Date(initialData.dueDate);
-                // Format for input type="date": YYYY-MM-DD
-                const yyyy = d.getFullYear();
-                const mm = String(d.getMonth() + 1).padStart(2, '0');
-                const dd = String(d.getDate()).padStart(2, '0');
-                setDueDateStr(`${yyyy}-${mm}-${dd}`);
-            } else {
-                setDueDateStr('');
-            }
-        } else {
-            setTitle('');
-            setDescription('');
-            setPriority('Medium');
-            setCategory('');
-            setDueDateStr('');
-        }
-    }, [initialData, isOpen]);
+    const {
+        title, setTitle,
+        description, setDescription,
+        priority, setPriority,
+        category, setCategory,
+        dueDateStr, setDueDateStr,
+        handleSave
+    } = useTodoDialog(initialData, onSave, isOpen);
 
     if (!isOpen) return null;
-
-    const handleSave = () => {
-        if (!title.trim()) return;
-
-        let dueDate: number | undefined = undefined;
-        if (dueDateStr) {
-            const d = new Date(dueDateStr);
-            d.setHours(23, 59, 59, 999);
-            dueDate = d.getTime();
-        }
-
-        onSave({
-            title: title.trim(),
-            description: description.trim() || undefined,
-            priority,
-            category: category.trim() || 'General',
-            dueDate,
-            completed: initialData ? initialData.completed : false,
-            pinned: initialData ? initialData.pinned : false,
-        });
-    };
 
     return (
         <div className="todo-dialog-overlay" onClick={onClose}>

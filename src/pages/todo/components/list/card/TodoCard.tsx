@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import type { TodoItem } from '../../../types/todo';
-import { PRIORITY_COLORS } from '../../../constants/todo';
-import { MoreVertical, Calendar, Tag, Pin, CheckSquare, Square, AlertCircle } from 'lucide-react';
-import { ContextMenu } from '../../../components/ui/ContextMenu';
+import type { TodoItem } from '../../../../../types/todo';
+import { PRIORITY_COLORS } from '../../../../../constants/todo';
+import { ContextMenu } from '../../../../../components/ui/ContextMenu';
+import { isTodoOverdue, formatTodoDate } from '../../../actions/todoInfo';
+import { getTodoCardActions } from '../../../actions/todoActions';
+import { 
+    TODO_PIN_ICON, TODO_ALERT_CIRCLE_ICON, TODO_TAG_ICON, TODO_CALENDAR_ICON, 
+    TODO_MORE_VERTICAL_ICON, TODO_CHECK_SQUARE_ICON, TODO_SQUARE_ICON 
+} from '../../../../../constants/icon';
 
 interface TodoCardProps {
     todo: TodoItem;
@@ -24,23 +29,18 @@ export const TodoCard: React.FC<TodoCardProps> = ({
         setMenuPos({ x: rect.left - 150, y: rect.bottom + 4 });
     };
 
-    const formatDate = (ts: number) => {
-        return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-    };
-
-    const isOverdue = todo.dueDate && todo.dueDate < Date.now() && !todo.completed;
-
+    const isOverdue = isTodoOverdue(todo);
     const priorityColor = PRIORITY_COLORS[todo.priority] || PRIORITY_COLORS.Medium;
 
     return (
         <div className={`todo-card ${todo.completed ? 'completed' : ''}`}>
             <div className="todo-checkbox" onClick={onToggleComplete} title="Toggle Completion">
-                {todo.completed ? <CheckSquare size={20} /> : <Square size={20} />}
+                {todo.completed ? TODO_CHECK_SQUARE_ICON : TODO_SQUARE_ICON}
             </div>
             
             <div className="todo-content">
                 <h4 className="todo-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    {todo.pinned && <Pin size={14} color="var(--accent)" />}
+                    {todo.pinned && TODO_PIN_ICON}
                     {todo.title}
                 </h4>
                 {todo.description && (
@@ -48,16 +48,16 @@ export const TodoCard: React.FC<TodoCardProps> = ({
                 )}
                 <div className="todo-badges">
                     <span className="todo-badge priority" style={{ color: priorityColor, border: `1px solid ${priorityColor}40` }}>
-                        <AlertCircle size={12} /> {todo.priority}
+                        {TODO_ALERT_CIRCLE_ICON} {todo.priority}
                     </span>
                     {todo.category && (
                         <span className="todo-badge">
-                            <Tag size={12} /> {todo.category}
+                            {TODO_TAG_ICON} {todo.category}
                         </span>
                     )}
                     {todo.dueDate && (
                         <span className="todo-badge" style={{ color: isOverdue ? 'var(--accent-red, #ef4444)' : 'inherit' }}>
-                            <Calendar size={12} /> {formatDate(todo.dueDate)}
+                            {TODO_CALENDAR_ICON} {formatTodoDate(todo.dueDate)}
                         </span>
                     )}
                 </div>
@@ -65,7 +65,7 @@ export const TodoCard: React.FC<TodoCardProps> = ({
 
             <div className="todo-actions">
                 <button className="todo-action-btn" onClick={handleMenuClick} title="More Options">
-                    <MoreVertical size={18} />
+                    {TODO_MORE_VERTICAL_ICON}
                 </button>
             </div>
 
@@ -73,13 +73,7 @@ export const TodoCard: React.FC<TodoCardProps> = ({
                 <ContextMenu 
                     x={menuPos.x} 
                     y={menuPos.y} 
-                    actions={[
-                        { label: 'Edit', onClick: onEdit },
-                        { label: todo.pinned ? 'Unpin' : 'Pin', onClick: onTogglePin },
-                        { label: todo.completed ? 'Mark Active' : 'Mark Complete', onClick: onToggleComplete },
-                        { label: 'Duplicate', onClick: onDuplicate },
-                        { label: 'Delete', onClick: onDelete, color: 'var(--accent-red, #ef4444)' }
-                    ]}
+                    actions={getTodoCardActions(todo, onEdit, onTogglePin, onToggleComplete, onDuplicate, onDelete)}
                     onClose={() => setMenuPos(null)}
                 />
             )}
