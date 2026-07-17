@@ -20,7 +20,13 @@ const BASE = {
     TEAL: '#14b8a6',
     PINK: '#ec4899',
     CYAN: '#06b6d4',
-    ZINC: '#71717a'
+    ZINC: '#71717a',
+    ROSE: '#f43f5e',
+    INDIGO: '#6366f1',
+    VIOLET: '#8b5cf6',
+    MAGENTA: '#c026d3',
+    EMERALD: '#10b981',
+    LIME: '#84cc16'
 };
 
 const DEFAULT_ACCENT = '#6366f1';

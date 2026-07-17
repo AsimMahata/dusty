@@ -30,8 +30,20 @@ export const useMedia = (title: string, mediaType: MediaType, defaultPath: strin
         type: mediaExplorerTab.type
     }), [explorerTabTitle]);
 
+    const mediaListTabTitle = useMemo(() => {
+        if (mediaType === 'music') return 'All Songs';
+        if (mediaType === 'video') return 'All Videos';
+        if (mediaType === 'image') return 'All Images';
+        return 'All Media';
+    }, [mediaType]);
+
+    const listTab: Tab = useMemo(() => ({
+        title: mediaListTabTitle,
+        type: mediaListTab.type
+    }), [mediaListTabTitle]);
+
     const [activeTab, setActiveTab] = useState<Tab>(explorerTab);
-    const tabs: Tab[] = useMemo(() => [explorerTab, mediaListTab], [explorerTab]);
+    const tabs: Tab[] = useMemo(() => [explorerTab, listTab], [explorerTab, listTab]);
 
     const playMedia = async (m: Item | FileInfo) => {
         const path = m.path;

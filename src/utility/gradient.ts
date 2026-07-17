@@ -1,5 +1,6 @@
 import { PROJECT_TAGS } from '../constants/projectTags';
 import type { TagDefinition } from '../constants/projectTags';
+import { getExtensionColor } from '../constants/mediaExtensions';
 
 export const generateTagGradient = (tags?: string[]): string => {
     if (!tags || tags.length === 0) {
@@ -17,4 +18,18 @@ export const generateTagGradient = (tags?: string[]): string => {
 
     // Linear gradient between two tags
     return `linear-gradient(135deg, ${tagColors[0]}40 0%, ${tagColors[1]}40 100%)`;
+};
+
+export const generateExtSideBarGradient = (extensions: string[], fallback: string): string => {
+    if (!extensions || extensions.length === 0) {
+        return fallback;
+    }
+
+    const colors = extensions.slice(0, 2).map(ext => getExtensionColor(ext, fallback));
+
+    if (colors.length === 1) {
+        return colors[0];
+    }
+
+    return `linear-gradient(to bottom, ${colors[0]} 0%, ${colors[1]} 100%)`;
 };

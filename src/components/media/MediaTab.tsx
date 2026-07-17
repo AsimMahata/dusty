@@ -1,5 +1,5 @@
 import React from 'react';
-import { CategoryPage } from '../category/CategoryPage';
+import { MediaSourcesPage } from './sources/MediaSourcesPage';
 import { ItemDetailPage } from '../detail/ItemDetailPage';
 import type { TabType } from '../../types/types';
 import type { useMedia } from '../../hooks/media/useMedia';
@@ -19,7 +19,7 @@ export const MediaTab: React.FC<MediaTabProps> = ({ media, tabType }) => {
         if (media.currentDirHistory.length === 0) {
             return (
                 <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                    <CategoryPage tab={tab} />
+                    <MediaSourcesPage media={media} />
                 </div>
             );
         }

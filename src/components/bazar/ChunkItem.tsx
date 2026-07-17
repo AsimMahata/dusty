@@ -3,6 +3,7 @@ import { ActionMenu } from '../ui/ActionMenu';
 import type { Chunk, BazarAction } from '../../types/bazar';
 import { getChunkFileIcon } from '../../utility/chunkIcon';
 import { formatBytes } from '../../utility/util';
+import { getExtensionColor } from '../../constants/mediaExtensions';
 import type { ActionItem } from '../../types/types';
 
 interface ChunkItemProps {
@@ -26,6 +27,7 @@ export const ChunkItem: React.FC<ChunkItemProps> = ({
     const finalSizeLabel = sizeLabel !== undefined ? sizeLabel : (chunk?.size != null ? formatBytes(chunk.size) : null);
     const finalExtLabel = extLabel !== undefined ? extLabel : (chunk?.ext ? chunk.ext.toUpperCase() : null);
     const badgeExt = extLabel !== undefined ? extLabel?.toLowerCase() : chunk?.ext?.toLowerCase();
+    const badgeColor = badgeExt ? getExtensionColor(badgeExt, 'transparent') : undefined;
     const finalPath = path !== undefined ? path : chunk?.path;
     const finalPinned = isPinned !== undefined ? isPinned : chunk?.is_pinned;
 
@@ -45,7 +47,19 @@ export const ChunkItem: React.FC<ChunkItemProps> = ({
                     {finalPinned && <span className="chunk-pin-dot" title="Pinned" />}
                 </div>
                 <div className="chunk-meta">
-                    {finalExtLabel && <span className="chunk-badge" data-ext={badgeExt}>{finalExtLabel}</span>}
+                    {finalExtLabel && (
+                        <span 
+                            className="chunk-badge" 
+                            data-ext={badgeExt}
+                            style={badgeColor && badgeColor !== 'transparent' ? {
+                                color: badgeColor,
+                                backgroundColor: `${badgeColor}15`,
+                                borderColor: `${badgeColor}30`
+                            } : undefined}
+                        >
+                            {finalExtLabel}
+                        </span>
+                    )}
                     {finalSizeLabel && <span className="chunk-meta-sep">·</span>}
                     {finalSizeLabel && <span className="chunk-size">{finalSizeLabel}</span>}
                 </div>
