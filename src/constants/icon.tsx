@@ -6,7 +6,9 @@ import {
     Activity, Pause, CheckCircle2, AlertTriangle, Circle, FileEdit, ArrowUpCircle, ArrowDownCircle, GitPullRequest, AlertOctagon, HelpCircle,
     Play,
     Check,
-    Folder
+    Folder,
+    Star, FolderOpen, Globe, MoreVertical,
+    ArrowUp, CircleDot, Terminal, Tags, Pencil, Trash2
 } from "lucide-react";
 import { COLORS } from './color';
 
@@ -105,3 +107,32 @@ export const SHOW_DEFAULT_STATUS_ICON = <div style={{ width: 6, height: 6, borde
 export const NO_EPISODE_AVAILABLE_ICON = <Folder size={48} color="var(--text-muted)" />
 export const NO_EPISODE_AVAILABLE_P_TEXT = <p>No episodes found.</p>
 export const EPISODE_PLAY_ICON_18 = <Play size={18} />
+
+// Projects
+export const PROJECT_BANNER_FOLDER_ICON = <Folder size={28} />
+export const PROJECT_PINNED_STAR_ICON_12 = <Star size={12} fill="currentColor" />
+export const PROJECT_PINNED_STAR_ICON_14 = <Star size={14} fill="currentColor" style={{ marginRight: '4px', position: 'relative', top: '2px' }}/>
+export const PROJECT_PINNED_STAR_ICON_16 = <Star size={16} fill="currentColor" />
+export const PROJECT_FALLBACK_FOLDER_ICON_48 = <Folder size={48} opacity={0.8} />
+export const PROJECT_OPEN_VSCODE_ICON = <Monitor size={18} />
+export const PROJECT_OPEN_EXPLORER_ICON = <FolderOpen size={18} />
+export const PROJECT_OPEN_GITHUB_ICON = <Globe size={18} />
+export const PROJECT_OPEN_ZAP_ICON = <Zap size={18} />
+export const PROJECT_MENU_MORE_ICON = <MoreVertical size={18} />
+export const PROJECT_BACK_ARROW_ICON = <ArrowLeft size={14} />
+export const PROJECT_CLOSE_X_ICON = <X size={14} />
+export const PROJECT_EXTERNAL_LINK_ICON = <ExternalLink size={16} />
+
+export const PROJECT_MENU_STAR_ICON = <Star size={16} fill="none" />
+export const PROJECT_MENU_STAR_FILLED_ICON = <Star size={16} fill="currentColor" />
+export const PROJECT_MENU_STATUS_ICON = <CircleDot size={16} />
+export const PROJECT_MENU_EXPLORER_ICON = <FolderOpen size={16} />
+export const PROJECT_MENU_TERMINAL_ICON = <Terminal size={16} />
+export const PROJECT_MENU_VSCODE_ICON = <Monitor size={16} />
+export const PROJECT_MENU_GITHUB_ICON = <Globe size={16} />
+export const PROJECT_MENU_TAGS_ICON = <Tags size={16} />
+export const PROJECT_MENU_RENAME_ICON = <Pencil size={16} />
+export const PROJECT_MENU_DELETE_ICON = <Trash2 size={16} />
+
+// UI Components
+export const SCROLL_TOP_ICON_24 = <ArrowUp size={24} />

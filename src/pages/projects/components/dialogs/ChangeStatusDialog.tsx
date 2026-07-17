@@ -1,6 +1,6 @@
 import React from 'react';
-import { PROJECT_STATUS, type ProjectWorkflowStatus } from '../../constants/projectStatus';
-import type { Project } from '../../types/types';
+import { PROJECT_STATUS, type ProjectWorkflowStatus } from '../../../../constants/projectStatus';
+import type { Project } from '../../../../types/types';
 import { Check } from 'lucide-react';
 
 interface ChangeStatusDialogProps {

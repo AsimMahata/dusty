@@ -4,43 +4,8 @@ import { invoke } from '@tauri-apps/api/core';
 import { CMD_SCAN_PROJECTS, CMD_UPDATE_PROJECT_PIN_STATUS, CMD_UPDATE_PROJECT_STATUS } from '../../constants/commands';
 import type { Project, ProjectStatus } from '../../types/types';
 import { logger } from '../../utility/logger';
-import type { SortOption } from '../../pages/projects/ProjectToolbar';
-
-const filterAndSortProjects = (projects: Project[], searchQuery: string, sortOption: SortOption): Project[] => {
-    const query = searchQuery.toLowerCase().trim();
-    const searchTerms = query.split(/\s+/).filter(Boolean);
-    
-    let filtered = projects;
-    if (searchTerms.length > 0) {
-        filtered = projects.filter(project => {
-            const tags = (project.tags || []).map(t => t.toLowerCase());
-            const title = project.title.toLowerCase();
-            return searchTerms.every(term => 
-                tags.some(tag => tag.includes(term)) || title.includes(term)
-            );
-        });
-    }
-
-    return [...filtered].sort((a, b) => {
-        switch (sortOption) {
-            case "alphabetical":
-                return a.title.localeCompare(b.title);
-            case "pinned":
-                if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
-                return a.title.localeCompare(b.title);
-            case "git_status":
-                return (a.git_status || "clean").localeCompare(b.git_status || "clean");
-            case "project_status":
-                return (a.status || "default").localeCompare(b.status || "default");
-            case "recently_opened":
-                return (b.last_opened ? Date.parse(b.last_opened) : 0) - (a.last_opened ? Date.parse(a.last_opened) : 0);
-            case "recently_modified":
-                return (b.last_modified ? Date.parse(b.last_modified) : 0) - (a.last_modified ? Date.parse(a.last_modified) : 0);
-            default:
-                return 0;
-        }
-    });
-};
+import { filterAndSortProjects } from '../../pages/projects/actions/filter';
+import { DEFAULT_SORT_OPTION, type SortOption } from '../../pages/projects/constants/constants';
 
 let cachedAllProjects: Project[] | null = null;
 
@@ -48,7 +13,7 @@ export const useProject = () => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
     const [selectedItem, setSelectedItem] = useState<Project | null>(null);
     const [allProjects, setAllProjects] = useState<Project[]>(cachedAllProjects || []);
-    const [sortOption, setSortOption] = useState<SortOption>("recently_opened");
+    const [sortOption, setSortOption] = useState<SortOption>(DEFAULT_SORT_OPTION);
     
     // UI states
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, project: Project } | null>(null);
@@ -113,6 +78,9 @@ export const useProject = () => {
             );
             cachedAllProjects = newProjects;
             setAllProjects(newProjects);
+            if (selectedItem?.id === id) {
+                setSelectedItem({ ...selectedItem, pinned: !currentPinnedStatus });
+            }
             logger.info(`Toggled project pin for project ${id}`);
         } catch (err) {
             logger.error(`Failed to toggle project pin: ${String(err)}`);
@@ -132,12 +100,29 @@ export const useProject = () => {
 
             cachedAllProjects = newProjects;
             setAllProjects(newProjects);
+            if (selectedItem?.id === id) {
+                setSelectedItem({ ...selectedItem, status: status });
+            }
             logger.info(`Updated project progress status for project ${id}`);
             return true;
         } catch (err) {
             logger.error(`Failed to update project progress status: ${String(err)}`);
             return false;
         }
+    };
+
+    const updateProjectTags = (id: string, tags: string[]) => {
+        if (selectedItem?.id === id) {
+            setSelectedItem({ ...selectedItem, tags: tags });
+        }
+    };
+
+    const handleRename = (project: Project) => {
+        logger.info(`TODO: Implement Rename for project: ${project.title}`);
+    };
+
+    const handleDelete = (project: Project) => {
+        logger.info(`TODO: Implement Delete for project: ${project.title}`);
     };
 
     return {
@@ -151,6 +136,9 @@ export const useProject = () => {
         handleTogglePin,
         getCommonRenderedActions,
         updateProjectProgressStatus,
+        updateProjectTags,
+        handleRename,
+        handleDelete,
         sortOption, setSortOption,
         displayProjects,
         contextMenu, setContextMenu,
@@ -159,4 +147,6 @@ export const useProject = () => {
         explorePath, explorePathHistory, 
         handleExploreItemClick, handleExploreBack, closeExplorer, startExploring
     };
-}
+};
+
+export type ProjectHook = ReturnType<typeof useProject>;
