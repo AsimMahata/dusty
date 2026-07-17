@@ -37,7 +37,7 @@ interface DustyContextType {
     // Dummy Data
     profile: UserProfile;
     systemStatus: string;
-    heroBanner: string;
+    heroBanner: string[];
     heroLogo: string;
     overviewStats: OverviewStats;
     storageInfo: StorageInfo;
@@ -53,7 +53,7 @@ export const DustyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Dummy State
     const profile = { name: 'Asim', avatar: '/icon.png' };
     const systemStatus = 'Filesystem is up to date.';
-    const heroBanner = '/banner.jpg';
+    const heroBanner = ['/banner.jpg'];
     const heroLogo = '/icon.png';
     const overviewStats = { shows: 531, projects: 35, songs: 2410, videos: 486 };
     const storageInfo = {

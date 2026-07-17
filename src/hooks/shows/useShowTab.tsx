@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import type { ItemCollection, ActionItem, ShowStatus, TabType } from '../../types/types';
+import type { ItemCollection, TabType } from '../../types/types';
 import type { useShow } from './useShow';
-import { getChildrens, openEpisode } from '../../pages/shows/utility';
+import { getChildrens, openEpisode } from '../../pages/shows/actions/utility';
 import { TITLE_SHOWS, TITLE_BANNED, TYPE_NORMAL, TYPE_BANNED } from '../../constants/tabs';
-import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE_CIRCLE_ICON_16, X_CIRCLE_ICON_16, ROTATE_CCW_ICON_16, BAN_ICON_16, SHIELD_CHECK_ICON_16 } from '../../constants/icon';
-import { COLORS, ACTIONS_SEPARATOR } from '../../constants/color';
 import { DEFAULT_SHOW_ICON, DEFAULT_TV_ICON } from '../../constants/defaults';
 import { SHOW_STATUS_PRIORITY } from '../../constants/priority';
-import { LABELS } from '../../constants/labels';
 
 let cachedRecentItems: Partial<Record<TabType, ItemCollection[]>> = {
     [TYPE_NORMAL]: [],
@@ -71,63 +68,6 @@ export const useShowTab = (show: ReturnType<typeof useShow>, tabType: TabType) =
     };
     const getChildrensForTab = (item: ItemCollection) => getChildrens(item, filteredShows);
 
-    const getCardActions = (item: ItemCollection): ActionItem[] => {
-
-        const actions: ActionItem[] = [];
-
-        actions.push({
-            label: item.is_pinned ? LABELS.UNPIN : LABELS.PIN,
-            icon: PIN_ICON_16,
-            color: COLORS.PIN,
-            onClick: () => show.handleTogglePin(item.id)
-        });
-
-        actions.push(ACTIONS_SEPARATOR);
-
-        const updateStatus = (status: ShowStatus) => {
-            void show.updateShowVisualStatus(item.id, status);
-        };
-
-        actions.push({ label: LABELS.MARK_WATCHING, icon: EYE_ICON_16, color: COLORS.STATUS.SHOW.watching, onClick: () => updateStatus('watching') });
-        actions.push({ label: LABELS.MARK_COMPLETED, icon: CHECK_CIRCLE_ICON_16, color: COLORS.STATUS.SHOW.completed, onClick: () => updateStatus('completed') });
-        actions.push({ label: LABELS.MARK_PLANNED, icon: CALENDAR_ICON_16, color: COLORS.STATUS.SHOW.planned, onClick: () => updateStatus('planned') });
-        actions.push({ label: LABELS.MARK_ON_HOLD, icon: PAUSE_CIRCLE_ICON_16, color: COLORS.STATUS.SHOW.on_hold, onClick: () => updateStatus('on_hold') });
-        actions.push({ label: LABELS.MARK_DROPPED, icon: X_CIRCLE_ICON_16, color: COLORS.STATUS.SHOW.dropped, onClick: () => updateStatus('dropped') });
-        actions.push({ label: LABELS.MARK_DEFAULT, icon: ROTATE_CCW_ICON_16, color: 'var(--text-muted)', onClick: () => updateStatus('default') });
-
-        actions.push(ACTIONS_SEPARATOR);
-
-        if (tabType === TYPE_NORMAL) {
-            actions.push({
-                label: LABELS.BAN_SHOW,
-                icon: BAN_ICON_16,
-                color: COLORS.BASE.ROSE_900,
-                onClick: () => {
-                    const newRecents = recentItems.filter(x => x.id !== item.id);
-                    setRecentItems(newRecents);
-                    cachedRecentItems[tabType] = newRecents;
-                    if (selectedItem?.id === item.id) setSelectedItem(null);
-                    show.updateShowStatus(item.id, true);
-                }
-            });
-        } else {
-            actions.push({
-                label: LABELS.UNBAN_SHOW,
-                icon: SHIELD_CHECK_ICON_16,
-                color: COLORS.BASE.ROSE_900,
-                onClick: () => {
-                    const newRecents = recentItems.filter(x => x.id !== item.id);
-                    setRecentItems(newRecents);
-                    cachedRecentItems[tabType] = newRecents;
-                    if (selectedItem?.id === item.id) setSelectedItem(null);
-                    show.updateShowStatus(item.id, false);
-                }
-            });
-        }
-
-        return actions;
-    };
-
     return {
         title: tabType === TYPE_NORMAL ? TITLE_SHOWS : TITLE_BANNED,
         selectedItem, setSelectedItem,
@@ -139,7 +79,6 @@ export const useShowTab = (show: ReturnType<typeof useShow>, tabType: TabType) =
         onCardClick,
         handleRename,
         getRenderActions,
-        getCardActions,
         defaultIcon: DEFAULT_SHOW_ICON,
         getChildrens: getChildrensForTab,
         onItemClick: openEpisode

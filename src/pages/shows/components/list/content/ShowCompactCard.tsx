@@ -1,6 +1,6 @@
 import React from 'react';
 import { Play, Check, Calendar, ListVideo, Folder, Star, Radio, Clock, Tv } from 'lucide-react';
-import { type ShowResult, type ActionItem } from '../../../types/types';
+import { type ShowResult, type ActionItem } from '../../../../../types/types';
 import { 
     getDummyRating, 
     getDummyTotalEpisodes, 
@@ -8,8 +8,8 @@ import {
     getDummySeasonYear, 
     getStatusColor,
     calculateProgressPercentage
-} from './ShowHelpers';
-import { ActionMenu } from '../../../components/ui/ActionMenu';
+} from '../../../actions/info';
+import { ActionMenu } from '../../../../../components/ui/ActionMenu';
 
 interface ShowCompactCardProps {
     show: ShowResult;
@@ -133,3 +133,4 @@ export const ShowCompactCard: React.FC<ShowCompactCardProps> = ({ show, onDouble
         </div>
     );
 };
+

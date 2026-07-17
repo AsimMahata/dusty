@@ -11,6 +11,14 @@ export interface ActionItem {
 
 export type EpisodeStatus = "default" | "watched" | "unwatched";
 
+export interface Episode {
+    id: string;
+    title: string;
+    path: string;
+    size?: string;
+    rawSize?: number;
+    episode_status?: EpisodeStatus;
+}
 export interface BaseItem {
     id: string;
     title: string;
@@ -31,7 +39,6 @@ export interface ItemCollection extends BaseItem {
 export interface Item extends BaseItem {
     size?: string;
     rawSize?: number;
-    episode_status?: EpisodeStatus;
 }
 
 export type AnyItem = ItemCollection | Item;

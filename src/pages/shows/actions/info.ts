@@ -1,5 +1,6 @@
 import type { ShowResult } from '../../../types/types';
 import { COLORS } from '../../../constants/color';
+import type { ShowMetaData } from '../constants/constants';
 
 export const getDummyPosterUrl = (malNo?: string) => {
     if (!malNo) return '';
@@ -43,3 +44,18 @@ export const calculateProgressPercentage = (episodesWatched: number, totalEpisod
     if (totalEpisodes === 0) return episodesWatched > 0 ? 100 : 0;
     return Math.round((episodesWatched / totalEpisodes) * 100);
 };
+
+
+
+export function getShowMetaData(show: ShowResult):ShowMetaData {
+    return {
+        posterUrl: getDummyPosterUrl(show.malNo),
+        bannerUrl: getShowBanner(show),
+        rating: getDummyRating(show.malNo),
+        totalEpisodes: getDummyTotalEpisodes(show),
+        nextEpisode: getDummyNextEpisode(show),
+        seasonYear: getDummySeasonYear(show.malNo),
+        progress: calculateProgressPercentage(show.episodes?.length || 0, show.num_episodes),
+        statusColor: getStatusColor(show.status)
+    };
+}

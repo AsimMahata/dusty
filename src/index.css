@@ -1131,3 +1131,12 @@ body {
     background: rgba(244, 114, 182, 0.1);
     border-color: rgba(244, 114, 182, 0.25);
 }
+.pin-dot {
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #eab308;
+    box-shadow: 0 0 6px rgba(234, 179, 8, 0.5);
+    margin-left: 0.5rem;
+}

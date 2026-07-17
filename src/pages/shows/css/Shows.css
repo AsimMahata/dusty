@@ -477,15 +477,7 @@
     text-overflow: ellipsis;
 }
 
-.show-pin-dot {
-    flex-shrink: 0;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #eab308;
-    box-shadow: 0 0 6px rgba(234, 179, 8, 0.5);
-    margin-left: 0.5rem;
-}
+
 
 .show-grid-meta {
     display: flex;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Play, Check, Calendar, ListVideo, Folder, Star, Radio, Clock, Tv } from 'lucide-react';
-import type { ShowResult, ActionItem } from '../../../types/types';
+import type { ShowResult, ActionItem } from '../../../../../types/types';
 import { 
     getDummyPosterUrl, 
     getDummyRating, 
@@ -9,8 +9,8 @@ import {
     getDummySeasonYear, 
     getStatusColor,
     calculateProgressPercentage
-} from './ShowHelpers';
-import { ActionMenu } from '../../../components/ui/ActionMenu';
+} from '../../../actions/info';
+import { ActionMenu } from '../../../../../components/ui/ActionMenu';
 
 interface ShowPosterCardProps {
     show: ShowResult;
@@ -139,3 +139,4 @@ export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onDoubleCl
         </div>
     );
 };
+

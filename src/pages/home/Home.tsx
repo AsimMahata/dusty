@@ -1,9 +1,9 @@
 import React from 'react';
-import { HomeHeader } from './HomeHeader';
-import { HomeHero } from './HomeHero';
-import { HomeOverview } from './HomeOverview';
-import { ContinueWatching } from './ContinueWatching';
-import './Home.css';
+import { HomeHeader } from './components/header/HomeHeader';
+import { HomeHero } from './components/hero/HomeHero';
+import { HomeOverview } from './components/overview/HomeOverview';
+import { ContinueWatching } from './components/continue-watching/ContinueWatching';
+import './css/Home.css';
 
 export const Home: React.FC = () => {
   return (

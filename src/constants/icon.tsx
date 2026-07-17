@@ -3,7 +3,10 @@ import {
     ArrowLeft, ExternalLink, X,
     Folder as LucideFolder, File as LucideFile, FileJson, FileCog, FileCode2, FileText, FileImage, FileAudio, FileVideo, FileArchive, Zap,
     Code2, Sparkles, Monitor, Server, Palette, GraduationCap, Coffee, Binary,
-    Activity, Pause, CheckCircle2, AlertTriangle, Circle, FileEdit, ArrowUpCircle, ArrowDownCircle, GitPullRequest, AlertOctagon, HelpCircle
+    Activity, Pause, CheckCircle2, AlertTriangle, Circle, FileEdit, ArrowUpCircle, ArrowDownCircle, GitPullRequest, AlertOctagon, HelpCircle,
+    Play,
+    Check,
+    Folder
 } from "lucide-react";
 import { COLORS } from './color';
 
@@ -91,4 +94,14 @@ export const ROTATE_CCW_ICON_16 = <RotateCcw size={16} />
 export const BAN_ICON_16 = <Ban size={16} />
 export const SHIELD_CHECK_ICON_16 = <ShieldCheck size={16} />
 
+//SHOWS
+export const SHOW_PAGE_FALLBACK_ICON = <Tv className="show-grid-fallback-icon" size={48} />
+export const SHOW_WATCHING_ICON = <Play size={12} fill="currentColor" />
+export const SHOW_COMPLETED_ICON = <Check size={12} />
+export const SHOW_PLANNED_ICON = <Clock size={12} />
+export const SHOW_DEFAULT_STATUS_ICON = <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'currentColor' }} />
 
+//Episodes
+export const NO_EPISODE_AVAILABLE_ICON = <Folder size={48} color="var(--text-muted)" />
+export const NO_EPISODE_AVAILABLE_P_TEXT = <p>No episodes found.</p>
+export const EPISODE_PLAY_ICON_18 = <Play size={18} />

@@ -1,21 +1,38 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
 import { CMD_SCAN_SHOWS, CMD_UPDATE_BAN_STATUS, CMD_UPDATE_SHOW_STATUS, CMD_RENAME_SHOW, CMD_UPDATE_PIN_STATUS } from '../../constants/commands';
-import type { ShowResult, ShowStatus, Tab } from '../../types/types';
+import type { ShowResult, ShowStatus, Tab, ActionItem, ItemCollection } from '../../types/types';
+import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY, TABS, type ShowSortMethod, type ShowTab, type ShowTabStatus } from '../../pages/shows/constants/constants';
 import { logger } from '../../utility/logger';
 import { DEFAULT_STARTING_PATH } from '../../constants/defaults';
 import { showBannedTab, showTab } from '../../constants/tabs';
+import { LABELS } from '../../constants/labels';
+import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE_CIRCLE_ICON_16, X_CIRCLE_ICON_16, ROTATE_CCW_ICON_16, BAN_ICON_16, SHIELD_CHECK_ICON_16 } from '../../constants/icon';
+import { COLORS, ACTIONS_SEPARATOR } from '../../constants/color';
+import { hashString } from '../../pages/shows/actions/hashString';
 
 let cachedAllShows: ShowResult[] | null = null;
+
+const getDefaultTab = () => {
+    return TABS[1];
+}
 
 export const useShow = () => {
 
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
 
-    const tabs: Tab[] = [showTab, showBannedTab];
-
-    const [activeTab, setActiveTab] = useState<Tab>(showTab);
+    const [activeTab, setActiveTab] = useState<ShowTab>(getDefaultTab());
+    const [activeShowTab, setActiveShowTab] = useState<ShowTabStatus>('watching');
+    const [lastWatchedMap, setLastWatchedMap] = useState<Record<string, number>>(() => {
+        try { return JSON.parse(localStorage.getItem(LOCAL_STORAGE_LAST_WATCHED) || '{}'); } 
+        catch { return {}; }
+    });
+    const [sortMethod, setSortMethod] = useState<ShowSortMethod>('last_watched');
+    const [sortAscending, setSortAscending] = useState<boolean>(false);
+    const [randomSeed, setRandomSeed] = useState<number>(Math.random());
+    const [isGridLayout, setIsGridLayout] = useState(false);
+    const [selectedShow, setSelectedShow] = useState<ShowResult | null>(null);
 
     const [isItemSelected, setIsItemSelected] = useState(false);
 
@@ -42,6 +59,12 @@ export const useShow = () => {
         }
     }, []);
 
+    const handleShowOpen = (s: ShowResult) => {
+        const newMap = { ...lastWatchedMap, [s.id]: Date.now() };
+        setLastWatchedMap(newMap);
+        localStorage.setItem(LOCAL_STORAGE_LAST_WATCHED, JSON.stringify(newMap));
+        setSelectedShow(s);
+    };
     const updateBanStatus = async (showId: string, isBanned: boolean): Promise<boolean> => {
         try {
             await invoke(CMD_UPDATE_BAN_STATUS, { showId: showId, newBanStatus: isBanned });
@@ -118,20 +141,145 @@ export const useShow = () => {
         return [];
     }
 
+    const getActionsForShow = (item: ShowResult): ActionItem[] => {
+        const actions: ActionItem[] = [];
+
+        actions.push({
+            label: item.pinned ? LABELS.UNPIN : LABELS.PIN,
+            icon: PIN_ICON_16,
+            color: COLORS.PIN,
+            onClick: () => handleTogglePin(item.id)
+        });
+
+        actions.push(ACTIONS_SEPARATOR);
+
+        const updateStatus = (status: ShowStatus) => {
+            void updateShowVisualStatus(item.id, status);
+        };
+
+        actions.push({ label: LABELS.MARK_WATCHING, icon: EYE_ICON_16, color: COLORS.STATUS.SHOW.watching, onClick: () => updateStatus('watching') });
+        actions.push({ label: LABELS.MARK_COMPLETED, icon: CHECK_CIRCLE_ICON_16, color: COLORS.STATUS.SHOW.completed, onClick: () => updateStatus('completed') });
+        actions.push({ label: LABELS.MARK_PLANNED, icon: CALENDAR_ICON_16, color: COLORS.STATUS.SHOW.planned, onClick: () => updateStatus('planned') });
+        actions.push({ label: LABELS.MARK_ON_HOLD, icon: PAUSE_CIRCLE_ICON_16, color: COLORS.STATUS.SHOW.on_hold, onClick: () => updateStatus('on_hold') });
+        actions.push({ label: LABELS.MARK_DROPPED, icon: X_CIRCLE_ICON_16, color: COLORS.STATUS.SHOW.dropped, onClick: () => updateStatus('dropped') });
+        actions.push({ label: LABELS.MARK_DEFAULT, icon: ROTATE_CCW_ICON_16, color: 'var(--text-muted)', onClick: () => updateStatus('default') });
+
+        actions.push(ACTIONS_SEPARATOR);
+
+        if (activeShowTab !== 'banned') {
+            actions.push({
+                label: LABELS.BAN_SHOW,
+                icon: BAN_ICON_16,
+                color: COLORS.BASE.ROSE_900,
+                onClick: () => {
+                    updateBanStatus(item.id, true);
+                }
+            });
+        } else {
+            actions.push({
+                label: LABELS.UNBAN_SHOW,
+                icon: SHIELD_CHECK_ICON_16,
+                color: COLORS.BASE.ROSE_900,
+                onClick: () => {
+                    updateBanStatus(item.id, false);
+                }
+            });
+        }
+
+        return actions;
+    };
+
+    const getCount = (tab: ShowTab) => {
+        if (tab.id === 'banned') return allShows.filter(s => s.banned).length;
+
+        const shows = allShows.filter(s => !s.banned);
+        if (tab.id === 'all') return shows.length;
+        return shows.filter(s => s.status === tab.id).length;
+    };
+
+    const filteredShows = useMemo(() => {
+            if (activeTab.id === 'banned') {
+                return allShows.filter(s => s.banned);
+            }
+            
+            let shows = allShows.filter(s => !s.banned);
+    
+            if (activeTab.id === 'all') {
+                return shows;
+            }
+            return shows.filter(s => s.status === activeTab.id);
+    }, [allShows, activeTab]);
+        
+      
+    const lastWatchedDep =
+    sortMethod === "last_watched" ? lastWatchedMap : null;
+
+    const sortedShows = useMemo(() => {
+        let result = [...filteredShows];
+        
+        result.sort((a, b) => {
+            if (a.pinned && !b.pinned) return -1;
+            if (!a.pinned && b.pinned) return 1;
+            
+            let cmp = 0;
+            if (sortMethod === 'last_watched') {
+                const timeA = lastWatchedMap[a.id] || 0;
+                const timeB = lastWatchedMap[b.id] || 0;
+                cmp = timeA - timeB;
+            } else if (sortMethod === 'status') {
+                const pA = STATUS_PRIORITY[a.status] || 99;
+                const pB = STATUS_PRIORITY[b.status] || 99;
+                cmp = pA - pB;
+                if (cmp === 0) cmp = a.title.localeCompare(b.title, undefined, { numeric: true });
+            } else if (sortMethod === 'random') {
+                cmp = hashString(a.id + randomSeed) - hashString(b.id + randomSeed);
+            } else {
+                cmp = a.title.localeCompare(b.title, undefined, { numeric: true });
+            }
+            
+            return sortAscending ? cmp : -cmp;
+        });
+        
+        return result;
+    }, [filteredShows, sortMethod, sortAscending, randomSeed, lastWatchedDep]);
+
+    const handleSortChange = (method: ShowSortMethod) => {
+        setSortMethod(method);
+        if (method === 'random') {
+            setRandomSeed(Math.random());
+            setSortAscending(true);
+        } else if (method === 'last_watched') {
+            setSortAscending(false);
+        } else {
+            setSortAscending(true);
+        }
+    };
+
     return {
         title: "Shows",
         searchQuery, setSearchQuery,
         isRefreshing,
         isLoading,
         activeTab, setActiveTab,
+        activeShowTab, setActiveShowTab,
         isItemSelected, setIsItemSelected,
+        selectedShow,setSelectedShow,
+        lastWatchedMap,setLastWatchedMap,handleShowOpen,
+        sortMethod,setSortMethod,
+        sortAscending,setSortAscending,
+        randomSeed,setRandomSeed,
+        isGridLayout,setIsGridLayout,
+        sortedShows,
+        handleSortChange,
         allShows,
         fetchData,
-        updateShowStatus: updateBanStatus,
+        updateBanStatus,
         updateShowVisualStatus,
         updateShowTitle,
         handleTogglePin,
         getCommonRenderedActions,
-        tabs
+        getActionsForShow,
+        getCount,
+        filteredShows
     };
 };
