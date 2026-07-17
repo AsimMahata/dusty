@@ -6,10 +6,10 @@ export const HomeHero: React.FC = () => {
   return (
     <div className="home-hero-container">
       <div className="home-hero-banner">
-        <img className="home-hero-bg" src={heroBanner} alt="Daily Banner" />
+        <img className="home-hero-bg" src={heroBanner} alt="Daily Banner" draggable={false}/>
         <div className="home-hero-overlay"></div>
         <div className="home-brand-logo-container">
-          <img className="home-brand-logo" src={heroLogo} alt="Dusty Logo" />
+          <img className="home-brand-logo" src={heroLogo} alt="Dusty Logo" draggable={false}/>
         </div>
       </div>
       <div className="home-brand-tagline">

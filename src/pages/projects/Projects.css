@@ -7,6 +7,11 @@
     overflow-y: auto;
 }
 
+/* Wrapper must not trap sticky children, so make it behave as if it doesn't exist for layout */
+.project-banner-wrapper {
+    display: contents;
+}
+
 .project-banner {
     position: relative;
     width: 100%;
@@ -15,10 +20,51 @@
     border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
-    justify-content: center;
     overflow: hidden;
-    transition: min-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
 }
+
+/* Active project panel container — sits below header */
+.active-project-panel-container {
+    position: sticky;
+    top: var(--header-height);
+    z-index: 4;
+    height: 250px;
+    pointer-events: none; /* Let clicks pass through when sliding */
+}
+
+/* Active project panel — slides down */
+@keyframes panelSlideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.active-project-panel {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    overflow: hidden;
+    pointer-events: auto; /* Restore clicks on the actual panel */
+    animation: panelSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.active-panel-content {
+    position: relative;
+    z-index: 2;
+    padding: 1.25rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 
 .project-banner-bg {
     position: absolute;
@@ -47,52 +93,117 @@
     margin: 0 auto;
 }
 
-.center-content {
-    text-align: center;
+/* Default Banner Layout */
+.default-banner-content {
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
     height: 100%;
-    gap: 0.75rem;
+    gap: 20px;
 }
 
-.center-content h1 {
-    font-size: 2rem;
-    margin: 0;
-    font-weight: 700;
-}
-
-.project-stats {
+.default-banner-top {
     display: flex;
-    gap: 2rem;
-    margin: 1rem 0;
-}
-
-.stat-item {
-    display: flex;
-    flex-direction: column;
     align-items: center;
+    gap: 20px;
 }
 
-.stat-value {
+.default-banner-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #818cf8;
+    flex-shrink: 0;
+}
+
+.default-banner-title {
     font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--accent);
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.02em;
 }
 
-.stat-label {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.default-banner-pills {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
 }
 
-.project-quote {
-    font-style: italic;
-    color: var(--text-muted);
-    max-width: 600px;
-    font-size: 1.1rem;
+.default-banner-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.default-banner-pill.pinned {
+    color: #eab308;
+    background: rgba(234, 179, 8, 0.06);
+    border-color: rgba(234, 179, 8, 0.15);
+}
+
+.pill-value {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.default-banner-pill.pinned .pill-value {
+    color: #eab308;
+}
+
+/* Status Breakdown Row */
+.default-banner-statuses {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.default-status-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+}
+
+.default-status-chip:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-chip-label {
+    font-weight: 500;
+}
+
+.status-chip-count {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
 }
 
 /* Active Project Banner */

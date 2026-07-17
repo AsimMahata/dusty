@@ -4,6 +4,7 @@ import { PROJECT_TAGS } from '../../constants/projectTags';
 import { GIT_STATUS, PROJECT_STATUS } from '../../constants/projectStatus';
 import { Folder, Star, Zap, Monitor, FolderOpen, Globe, MoreVertical } from 'lucide-react';
 import { generateTagGradient } from '../../utility/gradient';
+import { logger } from '../../utility/logger';
 
 interface ProjectCardProps {
     project: Project;
@@ -124,14 +125,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                     <button 
                         className="project-card-action-icon"
                         title="Reveal in Explorer"
-                        onClick={(e) => { e.stopPropagation(); /* TODO: Reveal */ }}
+                        onClick={(e) => { e.stopPropagation(); logger.info(`TODO: Reveal in Explorer for project: ${project.title}`); }}
                     >
                         <FolderOpen size={18} />
                     </button>
                     <button 
                         className="project-card-action-icon"
                         title="Open GitHub"
-                        onClick={(e) => { e.stopPropagation(); /* TODO: GitHub */ }}
+                        onClick={(e) => { e.stopPropagation(); logger.info(`TODO: Open GitHub for project: ${project.title}`); }}
                     >
                         <Globe size={18} />
                     </button>

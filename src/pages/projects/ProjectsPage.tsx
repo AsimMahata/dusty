@@ -10,17 +10,18 @@ import { PageLayout } from '../../components/layout/PageLayout';
 import { FileExplorer } from '../../components/FileExplorer';
 import { ArrowUp } from 'lucide-react';
 import type { Project } from '../../types/types';
+import { logger } from '../../utility/logger';
 import './Projects.css';
 
 export const ProjectsPage: React.FC = () => {
     const projectHook = useProject();
     const { 
-        allProjects, selectedItem, setSelectedItem, searchQuery, setSearchQuery,
+        selectedItem, setSelectedItem, searchQuery, setSearchQuery,
         sortOption, setSortOption, displayProjects,
         contextMenu, setContextMenu,
         changingStatusProject, setChangingStatusProject,
         editingTagsProject, setEditingTagsProject,
-        explorePath, setExplorePath,
+        explorePath,
         handleExploreItemClick
     } = projectHook;
 
@@ -58,15 +59,31 @@ export const ProjectsPage: React.FC = () => {
         });
     };
 
+    const handleRename = (project: Project) => {
+        logger.info(`TODO: Implement Rename for project: ${project.title}`);
+    };
+
+    const handleDelete = (project: Project) => {
+        logger.info(`TODO: Implement Delete for project: ${project.title}`);
+    };
+
+
     return (
-        <PageLayout title="Projects" hook={projectHook}>
+        <PageLayout 
+            title="Projects" 
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onRefresh={projectHook.fetchData}
+            isRefreshing={projectHook.isRefreshing}
+            isLoading={projectHook.isLoading}
+        >
             <ProjectBanner hook={projectHook} />
             {explorePath ? (
                 <div className="explorer-curtain-container">
                     <div className="explorer-curtain">
                         <FileExplorer 
                             currentPath={explorePath}
-                            onBack={() => setExplorePath(null)}
+                            onBack={projectHook.handleExploreBack}
                             onItemClick={handleExploreItemClick}
                             inline={true}
                         />
@@ -85,7 +102,7 @@ export const ProjectsPage: React.FC = () => {
                                 key={project.id}
                                 project={project}
                                 isSelected={selectedItem?.id === project.id}
-                                onClick={(p) => setSelectedItem(p)}
+                                onClick={(p) => setSelectedItem(selectedItem?.id === p.id ? null : p)}
                                 onThreeDotClick={handleThreeDotClick}
                                 style={{ animationDelay: `${index * 0.05}s` }}
                             />
@@ -110,8 +127,8 @@ export const ProjectsPage: React.FC = () => {
                     }}
                     onChangeStatus={(p) => setChangingStatusProject(p)}
                     onEditTags={(p) => setEditingTagsProject(p)}
-                    onRename={(p) => { /* TODO */ }}
-                    onDelete={(p) => { /* TODO */ }}
+                    onRename={handleRename}
+                    onDelete={handleDelete}
                 />
             )}
             {changingStatusProject && (

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Star, CircleDot, FolderOpen, Terminal, Monitor, Globe, Tags, Pencil, Trash2 } from 'lucide-react';
 import type { Project } from '../../types/types';
+import { logger } from '../../utility/logger';
 
 interface ProjectContextMenuProps {
     project: Project;
@@ -56,19 +57,19 @@ export const ProjectContextMenu: React.FC<ProjectContextMenuProps> = ({
                 <span>Change Status</span>
             </div>
             <div className="context-menu-separator" />
-            <div className="context-menu-item" onClick={() => { /* TODO: Reveal */ onClose(); }}>
+            <div className="context-menu-item" onClick={() => { logger.info(`TODO: Reveal in Explorer for project: ${project.title}`); onClose(); }}>
                 <span className="context-menu-icon"><FolderOpen size={16} /></span>
                 <span>Reveal in Explorer</span>
             </div>
-            <div className="context-menu-item" onClick={() => { /* TODO: Terminal */ onClose(); }}>
+            <div className="context-menu-item" onClick={() => { logger.info(`TODO: Open Terminal for project: ${project.title}`); onClose(); }}>
                 <span className="context-menu-icon"><Terminal size={16} /></span>
                 <span>Open Terminal</span>
             </div>
-            <div className="context-menu-item" onClick={() => { /* TODO: VSCode */ onClose(); }}>
+            <div className="context-menu-item" onClick={() => { logger.info(`TODO: Open VSCode for project: ${project.title}`); onClose(); }}>
                 <span className="context-menu-icon"><Monitor size={16} /></span>
                 <span>Open VSCode</span>
             </div>
-            <div className="context-menu-item" onClick={() => { /* TODO: GitHub */ onClose(); }}>
+            <div className="context-menu-item" onClick={() => { logger.info(`TODO: Open GitHub for project: ${project.title}`); onClose(); }}>
                 <span className="context-menu-icon"><Globe size={16} /></span>
                 <span>Open GitHub</span>
             </div>
