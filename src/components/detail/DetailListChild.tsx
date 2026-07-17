@@ -39,6 +39,8 @@ export const DetailListChild: React.FC<DetailListChildProps> = ({
     actions.push({ label: 'Mark as Unwatched', icon: <EyeOff size={16} />, color: '#ef4444', onClick: () => onUpdateStatus?.(child.id, 'unwatched') });
     actions.push({ label: 'Mark as Default', icon: <Circle size={16} />, color: 'var(--text-muted)', onClick: () => onUpdateStatus?.(child.id, 'default') });
 
+    const episodeStatus = (child as any).episode_status || 'default';
+
     return (
         <div
             className={`list-item ${isSelected ? 'selected' : ''}`}
@@ -52,8 +54,8 @@ export const DetailListChild: React.FC<DetailListChildProps> = ({
             <div className="list-item-content">
                 <div className="list-item-title" style={{ display: 'flex', alignItems: 'center' }}>
                     {child.title}
-                    {child.episode_status === 'watched' && <CheckCircle2 size={16} color="#10b981" style={{ marginLeft: 8 }} />}
-                    {child.episode_status === 'unwatched' && <EyeOff size={16} color="#ef4444" style={{ marginLeft: 8 }} />}
+                    {episodeStatus === 'watched' && <CheckCircle2 size={16} color="#10b981" style={{ marginLeft: 8 }} />}
+                    {episodeStatus === 'unwatched' && <EyeOff size={16} color="#ef4444" style={{ marginLeft: 8 }} />}
                 </div>
                 <div className="list-item-subtitle">{child.subtitle}</div>
             </div>

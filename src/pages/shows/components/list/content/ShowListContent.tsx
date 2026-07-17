@@ -1,5 +1,4 @@
 import React from 'react';
-import type { ShowResult, ActionItem } from '../../../../../types/types';
 import { ShowGridCard } from './ShowGridCard';
 import { ShowPosterCard } from './ShowPosterCard';
 import { ShowCompactCard } from './ShowCompactCard';

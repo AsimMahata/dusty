@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import type { TabHook, BaseItem, AnyItem } from '../../types/types';
-import { ChunkItem } from '../bazar/ChunkItem';
-import { ICONS } from '../../constants/icon';
-import { getChunkFileIcon } from '../../utility/chunkIcon';
+import type { TabHook, BaseItem, AnyItem } from '../../../../types/types';
+import { ChunkItem } from '../../../bazar/ChunkItem';
+import { ICONS } from '../../../../constants/icon';
+import { getChunkFileIcon } from '../../../../utility/chunkIcon';
+import { LABELS } from '../../constants/labels';
 
 interface MediaListProps<T extends BaseItem = AnyItem> {
     tab: TabHook<T>;
@@ -11,11 +12,11 @@ interface MediaListProps<T extends BaseItem = AnyItem> {
 export type MediaSortMode = 'name' | 'name-desc' | 'size' | 'size-asc' | 'type';
 
 const SORT_OPTIONS: { mode: MediaSortMode; label: string }[] = [
-    { mode: 'name',      label: 'A → Z' },
-    { mode: 'name-desc', label: 'Z → A' },
-    { mode: 'size',      label: 'Largest' },
-    { mode: 'size-asc',  label: 'Smallest' },
-    { mode: 'type',      label: 'Type' },
+    { mode: 'name',      label: LABELS.SORT_A_Z },
+    { mode: 'name-desc', label: LABELS.SORT_Z_A },
+    { mode: 'size',      label: LABELS.SORT_LARGEST },
+    { mode: 'size-asc',  label: LABELS.SORT_SMALLEST },
+    { mode: 'type',      label: LABELS.SORT_TYPE },
 ];
 
 export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
@@ -127,13 +128,13 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
 
     return (
         <div className="category-page">
-            {renderSection("Recent", ICONS.GENERAL.CLOCK, filteredRecent)}
+            {renderSection(LABELS.SECTION_RECENT, ICONS.GENERAL.CLOCK, filteredRecent)}
 
             {sortedAll.length > 0 ? (
                 renderSection(`All ${title}`, tab.defaultIcon || ICONS.GENERAL.LIST, sortedAll, true)
             ) : (
                 <div style={{ textAlign: 'center', marginTop: '48px', color: 'var(--text-muted)' }}>
-                    {searchQuery ? `No results found for "${searchQuery}"` : "No results found"}
+                    {searchQuery ? `No results found for "${searchQuery}"` : LABELS.NO_RESULTS}
                 </div>
             )}
         </div>

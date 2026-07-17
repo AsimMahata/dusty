@@ -1,0 +1,9 @@
+.music-page-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.music-content-container {
+    animation: fadeIn 0.3s ease-out;
+}

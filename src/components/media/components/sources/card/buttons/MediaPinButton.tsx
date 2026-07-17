@@ -1,6 +1,6 @@
 import React from 'react';
 import { Star } from 'lucide-react';
-import './MediaSources.css';
+import '../../../../css/MediaSources.css';
 
 interface MediaPinButtonProps {
     isPinned: boolean;

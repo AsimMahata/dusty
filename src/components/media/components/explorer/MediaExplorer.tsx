@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import type { FileInfo, MediaDir } from '../../types/types';
-import { FileExplorer } from '../FileExplorer';
+import type { FileInfo, MediaDir } from '../../../../types/types';
+import { FileExplorer } from '../../../FileExplorer';
 
 interface MediaExplorerProps {
     currentDir: MediaDir | null;

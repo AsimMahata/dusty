@@ -1,11 +1,11 @@
 import React from 'react';
-import type { MediaType } from '../../../types/types';
-import { getExtensionColor } from '../../../constants/mediaExtensions';
-import './MediaSources.css';
+import type { MediaSourceCategory } from '../../../../constants/constants';
+import { getExtensionColor } from '../../../../../../constants/mediaExtensions';
+import '../../../../css/MediaSources.css';
 
 interface MediaMediaTagProps {
     extension: string;
-    mediaType: MediaType;
+    mediaType: MediaSourceCategory;
 }
 
 export const MediaMediaTag: React.FC<MediaMediaTagProps> = ({ extension, mediaType }) => {

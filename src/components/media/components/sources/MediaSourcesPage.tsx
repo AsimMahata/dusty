@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import type { Item, MediaDir } from '../../../types/types';
-import type { useMedia } from '../../../hooks/media/useMedia';
+import type { MediaDir } from '../../../../types/types';
+import type { useMedia } from '../../../../hooks/media/useMedia';
 import { MediaSourceSortBar, type MediaSortMethod } from './MediaSourceSortBar';
-import { MediaSourceGrid } from './MediaSourceGrid';
-import './MediaSources.css';
+import { MediaSourceGrid } from './grid/MediaSourceGrid';
+import type { MediaSourceItem } from '../../constants/constants';
+import { LABELS } from '../../constants/labels';
+import '../../css/MediaSources.css';
 
 interface MediaSourcesPageProps {
     media: ReturnType<typeof useMedia>;
@@ -30,7 +32,7 @@ export const MediaSourcesPage: React.FC<MediaSourcesPageProps> = ({ media }) => 
     // Here we'll just keep it in state for the session or assume user handles it if added later.
     const [pinnedMap, setPinnedMap] = useState<Record<string, boolean>>({});
 
-    const handlePinToggle = (item: Item) => {
+    const handlePinToggle = (item: MediaSourceItem) => {
         setPinnedMap(prev => ({
             ...prev,
             [item.id]: !prev[item.id]
@@ -47,7 +49,7 @@ export const MediaSourcesPage: React.FC<MediaSourcesPageProps> = ({ media }) => 
         }
     };
 
-    const handleOpen = (item: Item) => {
+    const handleOpen = (item: MediaSourceItem) => {
         const childDir = media.mediaDirs.find(c => c.path === item.path);
         if (childDir) {
             media.handleFolderClick(childDir);
@@ -56,12 +58,12 @@ export const MediaSourcesPage: React.FC<MediaSourcesPageProps> = ({ media }) => 
 
     const query = (media.searchQuery || "").toLowerCase();
     
-    const allItems = media.rootFolderItems || [];
+    const allItems = (media.rootFolderItems || []) as unknown as MediaSourceItem[];
     
     const filteredItems = useMemo(() => {
         return allItems.filter(item => 
             item.title.toLowerCase().includes(query) ||
-            item.subtitle.toLowerCase().includes(query)
+            item.subtitle?.toLowerCase().includes(query)
         );
     }, [allItems, query]);
 
@@ -112,7 +114,7 @@ export const MediaSourcesPage: React.FC<MediaSourcesPageProps> = ({ media }) => 
         <div className="media-sources-container" data-media-type={media.mediaType}>
             <div className="media-sources-header">
                 <div className="media-sources-title">
-                    Sources <span className="media-sources-count">{sortedItems.length}</span>
+                    {LABELS.SOURCES} <span className="media-sources-count">{sortedItems.length}</span>
                 </div>
                 <MediaSourceSortBar 
                     sortMethod={sortMethod}
@@ -133,7 +135,7 @@ export const MediaSourcesPage: React.FC<MediaSourcesPageProps> = ({ media }) => 
                 />
             ) : (
                 <div style={{ textAlign: 'center', marginTop: '48px', color: 'var(--text-muted)' }}>
-                    {query ? `No sources found for "${query}"` : "No sources found"}
+                    {query ? `No sources found for "${query}"` : LABELS.NO_SOURCES}
                 </div>
             )}
         </div>

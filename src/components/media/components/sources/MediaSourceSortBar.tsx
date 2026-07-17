@@ -1,7 +1,8 @@
 import React from 'react';
-import { ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
-import { ContextMenu } from '../../ui/ContextMenu';
-import './MediaSources.css';
+import { SORT_DROPDOWN_ICON, SORT_ASC_ICON, SORT_DESC_ICON } from '../../constants/icons';
+import { LABELS } from '../../constants/labels';
+import { ContextMenu } from '../../../ui/ContextMenu';
+import '../../css/MediaSources.css';
 
 export type MediaSortMethod = 'title' | 'updated' | 'random';
 
@@ -22,9 +23,9 @@ export const MediaSourceSortBar: React.FC<MediaSourceSortBarProps> = ({
 
     const getSortLabel = () => {
         switch (sortMethod) {
-            case 'title': return 'Title';
-            case 'updated': return 'Updated Date';
-            case 'random': return 'Random';
+            case 'title': return LABELS.SORT_TITLE;
+            case 'updated': return LABELS.SORT_UPDATED;
+            case 'random': return LABELS.SORT_RANDOM;
         }
     };
 
@@ -42,7 +43,7 @@ export const MediaSourceSortBar: React.FC<MediaSourceSortBarProps> = ({
                     }
                 }}
             >
-                <span style={{ color: 'var(--text-muted)' }}>Sort by:</span> {getSortLabel()} <ChevronDown size={14} />
+                <span style={{ color: 'var(--text-muted)' }}>Sort by:</span> {getSortLabel()} {SORT_DROPDOWN_ICON}
             </button>
             <button 
                 className="media-sort-btn icon-only"
@@ -50,16 +51,16 @@ export const MediaSourceSortBar: React.FC<MediaSourceSortBarProps> = ({
                 disabled={sortMethod === 'random'}
                 title={sortMethod === 'random' ? 'Cannot reverse random' : 'Reverse Order'}
             >
-                {sortAscending ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
+                {sortAscending ? SORT_ASC_ICON : SORT_DESC_ICON}
             </button>
             {menuPos && (
                 <ContextMenu 
                     x={menuPos.x} 
                     y={menuPos.y} 
                     actions={[
-                        { label: 'Title', onClick: () => { onSortChange('title'); setMenuPos(null); } },
-                        { label: 'Updated Date', onClick: () => { onSortChange('updated'); setMenuPos(null); } },
-                        { label: 'Random', onClick: () => { onSortChange('random'); setMenuPos(null); } }
+                        { label: LABELS.SORT_TITLE, onClick: () => { onSortChange('title'); setMenuPos(null); } },
+                        { label: LABELS.SORT_UPDATED, onClick: () => { onSortChange('updated'); setMenuPos(null); } },
+                        { label: LABELS.SORT_RANDOM, onClick: () => { onSortChange('random'); setMenuPos(null); } }
                     ]} 
                     onClose={() => setMenuPos(null)} 
                 />

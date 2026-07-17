@@ -7,10 +7,10 @@ import { ROUTES } from "./constants/routes";
 
 // Pages
 import { Shows } from "./pages/shows/Shows";
-import { Projects } from "./pages/Projects";
+import { ProjectsPage } from "./pages/projects/ProjectsPage";
 import { Music } from "./pages/music/Music";
-import { Videos } from "./pages/Videos";
-import { Images } from "./pages/Images";
+import { Videos } from "./pages/videos/Videos";
+import { Images } from "./pages/images/Images";
 import { Misc } from "./pages/misc/Misc";
 import { ZipPage } from "./pages/zip/ZipPage";
 import { Lab } from "./pages/Lab";
@@ -36,7 +36,7 @@ function App() {
                 <Routes>
                     <Route path={ROUTES.HOME} element={<Home />} />
                     <Route path={ROUTES.SHOWS} element={<Shows />} />
-                    <Route path={ROUTES.PROJECTS} element={<Projects />} />
+                    <Route path={ROUTES.PROJECTS} element={<ProjectsPage />} />
                     <Route path={ROUTES.MUSIC} element={<Music />} />
                     <Route path={ROUTES.VIDEOS} element={<Videos />} />
                     <Route path={ROUTES.IMAGES} element={<Images />} />

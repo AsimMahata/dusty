@@ -1,15 +1,15 @@
 import React from 'react';
-import type { Item, MediaType } from '../../../types/types';
-import { MediaSourceCard } from './MediaSourceCard';
-import './MediaSources.css';
+import type { MediaSourceItem, MediaSourceCategory } from '../../../constants/constants';
+import { MediaSourceCard } from '../card/MediaSourceCard';
+import '../../../css/MediaSources.css';
 
 interface MediaSourceGridProps {
-    items: Item[];
-    mediaType: MediaType;
+    items: MediaSourceItem[];
+    mediaType: MediaSourceCategory;
     extensionsMap: Record<string, string[]>;
     pinnedMap: Record<string, boolean>;
-    onOpen: (item: Item) => void;
-    onPinToggle: (item: Item) => void;
+    onOpen: (item: MediaSourceItem) => void;
+    onPinToggle: (item: MediaSourceItem) => void;
 }
 
 export const MediaSourceGrid: React.FC<MediaSourceGridProps> = ({

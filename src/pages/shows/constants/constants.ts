@@ -1,4 +1,4 @@
-import { type ShowStatus, type Tab } from '../../../types/types';
+import { type ShowStatus } from '../../../types/types';
 
 export type ShowTabStatus = 'all' | ShowStatus | 'banned';
 

@@ -3,7 +3,6 @@ import { ChevronLeft, Tv, Play, Check, Star, Calendar, Radio } from 'lucide-reac
 import { ActionMenu } from '../../../../components/ui/ActionMenu';
 import { getShowMetaData } from '../../actions/info';
 import type { ActionItem, ShowResult } from '../../../../types/types';
-import type { useShow } from '../../../../hooks/shows/useShow';
 
 interface ShowDetailHeroProps {
     show: ShowResult;

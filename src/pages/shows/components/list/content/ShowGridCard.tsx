@@ -1,12 +1,6 @@
 import React from 'react';
-import { Play, Check, Star, Tv } from 'lucide-react';
 import { type ShowResult, type ActionItem } from '../../../../../types/types';
 import { 
-    getDummyPosterUrl, 
-    getDummyRating, 
-    getDummyTotalEpisodes,
-    getStatusColor,
-    calculateProgressPercentage,
     getShowMetaData
 } from '../../../actions/info';
 import { ShowMetaData } from './ShowMetaData';

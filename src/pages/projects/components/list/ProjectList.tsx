@@ -9,7 +9,7 @@ interface ProjectListProps {
 }
 
 export const ProjectList: React.FC<ProjectListProps> = ({ projectHook }) => {
-    const { displayProjects, selectedItem, setSelectedItem, contextMenu, setContextMenu } = projectHook;
+    const { displayProjects, selectedItem, setSelectedItem, setContextMenu } = projectHook;
 
     const handleThreeDotClick = (e: React.MouseEvent, project: Project) => {
         e.stopPropagation();

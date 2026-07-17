@@ -1,0 +1,9 @@
+.videos-page-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.video-content-container {
+    animation: fadeIn 0.3s ease-out;
+}
