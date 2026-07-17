@@ -1,5 +1,4 @@
 import React from 'react';
-import type { Project } from '../../types/types';
 
 export type SortOption = 
     | "recently_opened"

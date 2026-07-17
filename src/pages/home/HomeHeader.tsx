@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FlaskConical, Settings } from 'lucide-react';
+import { FlaskConical, Settings, ListTodo } from 'lucide-react';
 import { ROUTES } from '../../constants/routes';
 import { useDusty } from '../../contexts/DustyContext';
 
@@ -34,6 +34,9 @@ export const HomeHeader: React.FC = () => {
         <div className="home-header-actions">
           <button className="home-action-btn" onClick={() => navigate(ROUTES.LAB)}>
             <FlaskConical size={16} /> Experiment
+          </button>
+          <button className="home-action-btn" onClick={() => navigate(ROUTES.TODO)}>
+            <ListTodo size={16} /> Todo
           </button>
           <button className="home-action-btn" onClick={() => navigate(ROUTES.SETTINGS)}>
             <Settings size={16} /> Settings

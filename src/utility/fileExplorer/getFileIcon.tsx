@@ -38,5 +38,5 @@ export const getFileIcon = (filename: string, is_dir: boolean) => {
     }
 
     const color = ext ? getExtensionColor(ext) : undefined;
-    return color ? React.cloneElement(icon as React.ReactElement, { color }) : icon;
+    return color ? React.cloneElement(icon as React.ReactElement<any>, { color }) : icon;
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Play, Check, ChevronLeft, Calendar, ListVideo, Folder, Star, Radio, Clock, Tv } from 'lucide-react';
+import { Play, Check, ChevronLeft, Calendar, Folder, Star, Radio, Tv } from 'lucide-react';
 import type { ShowResult, ActionItem, Item } from '../../../types/types';
 import { 
     getDummyPosterUrl, 

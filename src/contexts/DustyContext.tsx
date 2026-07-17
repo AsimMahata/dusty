@@ -117,7 +117,7 @@ export const RouteTracker: React.FC = () => {
     const { setLastOpenedPage } = useDusty();
 
     useEffect(() => {
-        if (location.pathname !== '/settings' && location.pathname !== '/lab') {
+        if (location.pathname !== '/settings' && location.pathname !== '/lab' && location.pathname !== '/todo') {
             setLastOpenedPage(location.pathname);
         }
     }, [location.pathname, setLastOpenedPage]);

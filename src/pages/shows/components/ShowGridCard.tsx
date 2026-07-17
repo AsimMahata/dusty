@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Check, Pin, Star, Tv } from 'lucide-react';
+import { Play, Check, Star, Tv } from 'lucide-react';
 import { type ShowResult, type ActionItem } from '../../../types/types';
 import { 
     getDummyPosterUrl, 

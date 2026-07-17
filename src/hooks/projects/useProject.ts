@@ -4,7 +4,6 @@ import { invoke } from '@tauri-apps/api/core';
 import { CMD_SCAN_PROJECTS, CMD_UPDATE_PROJECT_PIN_STATUS, CMD_UPDATE_PROJECT_STATUS } from '../../constants/commands';
 import type { Project, ProjectStatus } from '../../types/types';
 import { logger } from '../../utility/logger';
-import type { ItemCollection } from '../../types/types';
 import type { SortOption } from '../../pages/projects/ProjectToolbar';
 
 const filterAndSortProjects = (projects: Project[], searchQuery: string, sortOption: SortOption): Project[] => {

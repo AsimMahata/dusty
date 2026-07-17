@@ -1,6 +1,6 @@
 import React from 'react';
-import { Play, Check, MoreVertical, Pin, Calendar, ListVideo, Folder, Star, Radio, Clock, Tv } from 'lucide-react';
-import type { ShowResult, ShowStatus, ActionItem } from '../../../types/types';
+import { Play, Check, Calendar, ListVideo, Folder, Star, Radio, Clock, Tv } from 'lucide-react';
+import type { ShowResult, ActionItem } from '../../../types/types';
 import { 
     getDummyPosterUrl, 
     getDummyRating, 

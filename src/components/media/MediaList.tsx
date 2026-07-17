@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import type { TabHook, BaseItem, AnyItem } from '../../types/types';
-import { MEDIA_EXT_COLORS } from '../../constants/mediaExtensions';
 import { ChunkItem } from '../bazar/ChunkItem';
 import { ICONS } from '../../constants/icon';
 import { getChunkFileIcon } from '../../utility/chunkIcon';
@@ -25,7 +24,6 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
     const allItems = tab.allItems || [];
     const searchQuery = tab.searchQuery || "";
     const onCardClick = tab.onCardClick;
-    const onTogglePin = tab.handleTogglePin;
     const getCardActions = tab.getCardActions;
 
     const [sortMode, setSortMode] = useState<MediaSortMode>('name');

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import type { Item, MediaDir, MediaType } from '../../../types/types';
+import type { Item, MediaDir } from '../../../types/types';
 import type { useMedia } from '../../../hooks/media/useMedia';
 import { MediaSourceSortBar, type MediaSortMethod } from './MediaSourceSortBar';
 import { MediaSourceGrid } from './MediaSourceGrid';

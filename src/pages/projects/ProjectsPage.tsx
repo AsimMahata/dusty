@@ -94,6 +94,8 @@ export const ProjectsPage: React.FC = () => {
                     <ProjectToolbar 
                         sortOption={sortOption} 
                         setSortOption={setSortOption} 
+                        searchQuery={searchQuery} 
+                        setSearchQuery={setSearchQuery}
                     />
                     
                     <div className="projects-grid">

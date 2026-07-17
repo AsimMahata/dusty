@@ -13,7 +13,7 @@ interface ProjectBannerProps {
 }
 
 export const ProjectBanner: React.FC<ProjectBannerProps> = ({ hook }) => {
-    const { selectedItem, allProjects, setSelectedItem, setEditingTagsProject } = hook;
+    const { selectedItem, allProjects } = hook;
 
     const pinnedCount = allProjects.filter(p => p.pinned).length;
 

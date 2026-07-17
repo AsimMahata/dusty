@@ -9,5 +9,6 @@ export const ROUTES = {
     MISC: "/misc",
     ZIP: "/zip",
     LAB: "/lab",
+    TODO: "/todo",
     SETTINGS: "/settings"
 } as const;

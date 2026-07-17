@@ -15,6 +15,7 @@ import { Misc } from "./pages/misc/Misc";
 import { ZipPage } from "./pages/zip/ZipPage";
 import { Lab } from "./pages/Lab";
 import { Settings } from "./pages/Settings";
+import { TodoPage } from "./pages/todo/TodoPage";
 
 function App() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -42,6 +43,7 @@ function App() {
                     <Route path={ROUTES.MISC} element={<Misc />} />
                     <Route path={ROUTES.ZIP} element={<ZipPage />} />
                     <Route path={ROUTES.LAB} element={<Lab />} />
+                    <Route path={ROUTES.TODO} element={<TodoPage />} />
                     <Route path={ROUTES.SETTINGS} element={<Settings />} />
                 </Routes>
             </main>

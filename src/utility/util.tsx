@@ -1,5 +1,5 @@
+import React from 'react';
 import type { Item, FileInfo } from "../types/types";
-import { type LucideIcon } from "lucide-react";
 
 
 

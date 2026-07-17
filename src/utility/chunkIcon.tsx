@@ -22,5 +22,5 @@ export const getChunkFileIcon = (ext?: string): React.ReactNode => {
     else if (['toml', 'ini', 'cfg', 'yaml', 'yml'].includes(lower)) icon = ICONS.FILE.CONFIG;
 
     const color = ext ? getExtensionColor(ext) : undefined;
-    return color ? React.cloneElement(icon as React.ReactElement, { color }) : icon;
+    return color ? React.cloneElement(icon as React.ReactElement<any>, { color }) : icon;
 };

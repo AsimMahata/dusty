@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActionMenu } from '../ui/ActionMenu';
-import type { Chunk, BazarAction } from '../../types/bazar';
+import type { Chunk } from '../../types/bazar';
 import { getChunkFileIcon } from '../../utility/chunkIcon';
 import { formatBytes } from '../../utility/util';
 import { getExtensionColor } from '../../constants/mediaExtensions';

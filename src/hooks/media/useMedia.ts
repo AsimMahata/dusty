@@ -23,7 +23,7 @@ export const useMedia = (title: string, mediaType: MediaType, defaultPath: strin
 
     const currentDir = currentDirHistory.length > 0 ? currentDirHistory[currentDirHistory.length - 1] : null;
 
-    const explorerTabTitle = getExplorerTabTitle(mediaType);
+    const explorerTabTitle = getExplorerTabTitle();
                              
     const explorerTab: Tab = useMemo(() => ({
         title: explorerTabTitle,

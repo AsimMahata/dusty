@@ -1,4 +1,4 @@
-import type { ShowResult, ShowStatus } from '../../../types/types';
+import type { ShowResult } from '../../../types/types';
 import { COLORS } from '../../../constants/color';
 
 export const getDummyPosterUrl = (malNo?: string) => {

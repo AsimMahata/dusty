@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Check, MoreVertical, Pin, Calendar, ListVideo, Folder, Star, Radio, Clock, Tv } from 'lucide-react';
+import { Play, Check, Calendar, ListVideo, Folder, Star, Radio, Clock, Tv } from 'lucide-react';
 import { type ShowResult, type ActionItem } from '../../../types/types';
 import { 
     getDummyRating, 

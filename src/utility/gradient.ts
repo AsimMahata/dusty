@@ -1,5 +1,5 @@
 import { PROJECT_TAGS } from '../constants/projectTags';
-import type { TagDefinition } from '../constants/projectTags';
+
 import { getExtensionColor } from '../constants/mediaExtensions';
 
 export const generateTagGradient = (tags?: string[]): string => {

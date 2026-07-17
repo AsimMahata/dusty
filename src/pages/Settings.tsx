@@ -130,7 +130,7 @@ export const Settings: React.FC = () => {
                                     onClick={handleResetData}
                                     disabled={isAnyResetting}
                                     style={getSettingsButtonStyle(COLORS.BASE.RED, isAnyResetting)}
-                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.ACTION.RED_HOVER; }}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.BASE.RED_HOVER; }}
                                     onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.BASE.RED; }}
                                 >
                                     {isResetting ? 'Resetting...' : 'Reset All Data'}
@@ -140,7 +140,7 @@ export const Settings: React.FC = () => {
                                     onClick={() => setShowConfirmProjects(true)}
                                     disabled={isAnyResetting}
                                     style={getSettingsButtonStyle(COLORS.BASE.AMBER, isAnyResetting)}
-                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.ACTION.AMBER_HOVER; }}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.BASE.AMBER_HOVER; }}
                                     onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.BASE.AMBER; }}
                                 >
                                     {isResettingProjects ? 'Resetting...' : 'Reset Projects Only'}
@@ -150,7 +150,7 @@ export const Settings: React.FC = () => {
                                     onClick={() => setShowConfirmShows(true)}
                                     disabled={isAnyResetting}
                                     style={getSettingsButtonStyle(COLORS.BASE.BLUE, isAnyResetting)}
-                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.ACTION.BLUE_HOVER; }}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.BASE.BLUE_HOVER; }}
                                     onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.BASE.BLUE; }}
                                 >
                                     {isResettingShows ? 'Resetting...' : 'Reset Shows Only'}
@@ -159,7 +159,7 @@ export const Settings: React.FC = () => {
                                     onClick={() => setShowConfirmMedia(true)}
                                     disabled={isAnyResetting}
                                     style={getSettingsButtonStyle(COLORS.BASE.GREEN, isAnyResetting)}
-                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.ACTION.GREEN_HOVER; }}
+                                    onMouseEnter={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.BASE.GREEN_HOVER; }}
                                     onMouseLeave={(e) => { if (!isAnyResetting) e.currentTarget.style.background = COLORS.BASE.GREEN; }}
                                 >
                                     {isResettingMedia ? 'Resetting...' : 'Reset Media Cache Only'}
