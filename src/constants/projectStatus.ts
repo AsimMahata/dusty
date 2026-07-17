@@ -3,9 +3,9 @@ import { ICONS } from './icon';
 import { COLORS } from './color';
 
 export type ProjectWorkflowStatus = "active" | "paused" | "completed" | "archived" | "broken" | "default";
-export type GitStatusValue = "clean" | "modified" | "ahead" | "behind" | "diverged" | "conflict" | "none";
+type GitStatusValue = "clean" | "modified" | "ahead" | "behind" | "diverged" | "conflict" | "none";
 
-export interface StatusDefinition {
+interface StatusDefinition {
     id: string;
     label: string;
     icon: React.ReactNode;

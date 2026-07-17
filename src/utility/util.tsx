@@ -1,9 +1,7 @@
 import type { Item, FileInfo } from "../types/types";
 import { type LucideIcon } from "lucide-react";
 
-export function createIcon(Icon: LucideIcon) {
-    return (<Icon size={24} />);
-}
+
 
 export function formatBytes(bytes: number): string {
     const KB = 1024;

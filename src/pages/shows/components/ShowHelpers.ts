@@ -37,16 +37,7 @@ export const getStatusColor = (status: string) => {
     return COLORS.STATUS.SHOW[status as keyof typeof COLORS.STATUS.SHOW] || '#71717a';
 };
 
-export const getStatusLabel = (status: ShowStatus) => {
-    switch (status) {
-        case 'watching': return 'Watching';
-        case 'completed': return 'Completed';
-        case 'on_hold': return 'On Hold';
-        case 'dropped': return 'Dropped';
-        case 'planned': return 'Planned';
-        default: return 'Default';
-    }
-};
+
 
 export const calculateProgressPercentage = (episodesWatched: number, totalEpisodes: number) => {
     if (totalEpisodes === 0) return episodesWatched > 0 ? 100 : 0;

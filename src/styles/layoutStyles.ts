@@ -1,12 +1,12 @@
 import type { CSSProperties } from 'react';
 import { COLORS } from '../constants/color';
 
-export const FLEX_ROW_CENTER: CSSProperties = {
+const FLEX_ROW_CENTER: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
 };
 
-export const FLEX_ROW_CENTER_GAP_8: CSSProperties = {
+const FLEX_ROW_CENTER_GAP_8: CSSProperties = {
     ...FLEX_ROW_CENTER,
     gap: '8px',
 };

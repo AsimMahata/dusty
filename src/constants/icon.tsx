@@ -1,5 +1,5 @@
 import { 
-    Clock, List, Pin, Eye, CheckCircle, Calendar, PauseCircle, XCircle, RotateCcw, Ban, ShieldCheck, Home as HomeIcon, Tv, FolderGit2, Box, Music as MusicIcon, Film, Image as ImageIcon, Archive, ShoppingBag, PackageOpen, FolderX,
+    Clock, List, Pin, Eye, CheckCircle, Calendar, PauseCircle, XCircle, RotateCcw, Ban, ShieldCheck, Home as HomeIcon, Tv, FolderGit2, Box, Music as MusicIcon, Film, Image as ImageIcon, Archive, PackageOpen, FolderX,
     ArrowLeft, ExternalLink, X,
     Folder as LucideFolder, File as LucideFile, FileJson, FileCog, FileCode2, FileText, FileImage, FileAudio, FileVideo, FileArchive, Zap,
     Code2, Sparkles, Monitor, Server, Palette, GraduationCap, Coffee, Binary,
@@ -79,7 +79,6 @@ export const NAV_VIDEOS_ICON = <Film size={20} />
 export const NAV_IMAGES_ICON = <ImageIcon size={20} />
 export const NAV_ZIP_ICON = <Archive size={20} />
 export const NAV_MISC_ICON = <Box size={20} />
-export const NAV_BAZAR_ICON = <ShoppingBag size={20} />
 
 // Action Icons (16px)
 export const PIN_ICON_16 = <Pin size={16} />
@@ -92,5 +91,4 @@ export const ROTATE_CCW_ICON_16 = <RotateCcw size={16} />
 export const BAN_ICON_16 = <Ban size={16} />
 export const SHIELD_CHECK_ICON_16 = <ShieldCheck size={16} />
 
-// Micro Icons (12px)
-export const PIN_ICON_12 = <Pin size={12} />
+

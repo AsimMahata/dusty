@@ -3,11 +3,8 @@ import type { Tab, TabType } from "../types/types"
 // Titles
 export const TITLE_SHOWS = "Shows";
 export const TITLE_BANNED = "Banned Shows";
-export const TITLE_MUSIC_DIR = "Music Dir";
-export const TITLE_SONGS = "Songs";
-export const TITLE_EXPLORER = "Explorer";
-export const TITLE_MEDIA_LIST = "Media List";
-export const TITLE_PROJECTS = "Projects";
+const TITLE_EXPLORER = "Explorer";
+const TITLE_MEDIA_LIST = "Media List";
 export const TITLE_EMPTY_DIRECTORIES = "Empty Directories";
 export const TITLE_COMING_SOON = "Coming Soon";
 export const TITLE_GENERAL = "General";
@@ -20,14 +17,12 @@ export const TITLE_FOLDERS = "Folders";
 // Types
 export const TYPE_NORMAL: TabType = "normal";
 export const TYPE_BANNED: TabType = "banned";
-export const TYPE_MEDIA: TabType = "media";
-export const TYPE_MUSIC: TabType = "music";
-export const TYPE_FOLDERS: TabType = "folders";
+const TYPE_MEDIA: TabType = "media";
+const TYPE_FOLDERS: TabType = "folders";
 export const TYPE_EMPTY_DIRECTORIES = "empty_directories";
 export const TYPE_COMING_SOON = "coming_soon";
 export const TYPE_GENERAL = "general";
 export const TYPE_DATA = "data";
-export const TYPE_BAZAR = "bazar";
 
 // Tab Objects
 
@@ -40,14 +35,7 @@ export const showBannedTab: Tab = {
     type: TYPE_BANNED
 }
 
-export const musicDirTab: Tab = {
-    title: TITLE_MUSIC_DIR,
-    type: TYPE_MEDIA
-}
-export const musicTab: Tab = {
-    title: TITLE_SONGS,
-    type: TYPE_MUSIC
-}
+
 export const mediaExplorerTab: Tab = {
     title: TITLE_EXPLORER,
     type: TYPE_FOLDERS

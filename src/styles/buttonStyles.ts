@@ -14,25 +14,7 @@ const ACTION_BUTTON_BASE_STYLE: CSSProperties = {
     transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
 };
 
-export function getActionButtonStyle(
-    bg: string,
-    isConfirming: boolean,
-    borderColor: string,
-    boxShadowColor: string
-): CSSProperties {
-    return {
-        ...ACTION_BUTTON_BASE_STYLE,
-        backgroundColor: bg,
-        border: isConfirming
-            ? `1px solid ${borderColor}`
-            : "1px solid transparent",
-        minWidth: isConfirming ? "120px" : "80px",
-        transform: isConfirming ? "scale(1.05)" : "scale(1)",
-        boxShadow: isConfirming
-            ? `0 0 15px ${boxShadowColor}`
-            : "none",
-    };
-}
+
 
 const SETTINGS_BUTTON_BASE_STYLE: CSSProperties = {
     color: 'white',

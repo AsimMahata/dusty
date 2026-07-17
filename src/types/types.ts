@@ -85,7 +85,7 @@ export interface ShowResult {
     malNo?: string,
 }
 
-export type ProjectType = "C/C++" | "Unknown";
+type ProjectType = "C/C++" | "Unknown";
 
 export interface Project {
     id: string,

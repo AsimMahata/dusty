@@ -1,4 +1,4 @@
-export class Logger {
+class Logger {
     private formatMessage(level: string, message: string, ...args: any[]): string {
         const timestamp = new Date().toISOString();
         let formattedArgs = '';
