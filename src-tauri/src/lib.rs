@@ -25,6 +25,7 @@ pub fn run() {
             dusty::api::zip::scan_zip,
             dusty::api::empty_dir::scan_empty_dir,
             dusty::api::lab::tokenize,
+            dusty::api::lab::get_all_table_data,
             dusty::api::settings::reset_database,
             dusty::api::mal::get_anime_info_from_mal,
             dusty::api::mal::update_anime_info_in_mal_cache,

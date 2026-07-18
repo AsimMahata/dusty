@@ -1,6 +1,7 @@
 import React from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { TokenizeTest } from './components/TokenizeTest';
+import { DatabaseViewer } from './components/DatabaseViewer';
 import './css/Lab.css';
 
 export const LabPage: React.FC = () => {
@@ -8,6 +9,7 @@ export const LabPage: React.FC = () => {
         <PageLayout title="Experiment Zone (Lab)" hideSearch showCloseButton>
             <div className="lab-container">
                 <TokenizeTest />
+                <DatabaseViewer />
             </div>
         </PageLayout>
     );

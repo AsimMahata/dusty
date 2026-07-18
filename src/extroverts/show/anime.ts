@@ -13,7 +13,7 @@ export async function getSeasonalAnimeAPI(): Promise<AnimeData[] | null> {
         }
         const json = await res.json();
         const data = json?.data || null;
-        logger.info(`SEASONAL_ANIME_FROM_API_SUCESS`,data);
+        logger.info(`SEASONAL_ANIME_FROM_API_SUCESS`,data.length,data);
         const animeList: AnimeData[] = data.map((animePayLoad: any) => {
             const animeData: AnimeData = {
                 title: animePayLoad.title_english || animePayLoad.title,
@@ -24,7 +24,8 @@ export async function getSeasonalAnimeAPI(): Promise<AnimeData[] | null> {
             };
             return animeData;
         });
-        logger.info('SEASONAL_ANIME_API_PARSED',animeList);
+        
+        logger.info('SEASONAL_ANIME_API_PARSED',animeList.length,animeList);
         return animeList;
     } catch (err) {
         logger.error(`SEASONAL_ANIME_FROM_API_FAILED`, err);
