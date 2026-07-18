@@ -1,22 +1,23 @@
 use std::path::PathBuf;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::dusty::data::file::FileInfo;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ShowResult {
     pub id: String,
     pub title: String,
     pub gen_title: String,
-    pub num_episodes: usize,
+    pub num_episodes: Option<usize>,
     pub episodes: Vec<FileInfo>,
-    pub dir: String,
+    pub dir: Option<String>,
     pub banned: bool,
     pub pinned: bool,
     pub season: Option<i32>,
     pub status: String,
     pub mal_id: Option<i32>,
+    pub seasonal: bool,
 }
 
 pub struct ShowInfo {
@@ -25,6 +26,7 @@ pub struct ShowInfo {
     pub banned: bool,
     pub pinned: bool,
     pub mal_id: Option<i32>,
+    pub seasonal: bool,
 }
 
 #[derive(Serialize, Debug)]

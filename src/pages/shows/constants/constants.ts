@@ -1,6 +1,6 @@
 import { type ShowStatus } from '../../../types/types';
 
-export type ShowTabStatus = 'all' | ShowStatus | 'banned';
+export type ShowTabStatus = 'all' | ShowStatus | 'banned' | 'seasonal';
 
 export interface ShowTab {
     id: ShowTabStatus,
@@ -16,12 +16,13 @@ export const ALL = 'all'
 
 export const TABS: ShowTab[] = [
     { id: 'all', label: 'All Shows' },
+    {id: 'seasonal', label: 'Seasonal'},
     { id: 'watching', label: 'Watching' },
     { id: 'completed', label: 'Completed' },
     { id: 'on_hold', label: 'On Hold' },
     { id: 'planned', label: 'Planned' },
     { id: 'dropped', label: 'Dropped' },
-    { id: 'banned', label: 'Banned' }
+    { id: 'banned', label: 'Banned' },
 ];
 
 export const STATUS_PRIORITY: Record<string, number> = {

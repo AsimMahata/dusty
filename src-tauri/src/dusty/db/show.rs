@@ -51,6 +51,7 @@ pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo, String> {
                 banned: row.get(2)?,
                 pinned: row.get(3)?,
                 mal_id: row.get(4)?,
+                seasonal:false
             })
         },
     )

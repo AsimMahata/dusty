@@ -24,6 +24,23 @@ export const getGeneralPreferencesList = (
             type: 'checkbox',
             value: settings.showHiddenFiles,
             onChange: (v: boolean) => updateSettings({ showHiddenFiles: v })
+        },
+        {
+            id: 'add-seasonal-anime',
+            title: 'Add Seasonal Anime',
+            desc: 'Fetch and add the latest seasonal anime to your library.',
+            type: 'button',
+            buttonText: 'Add Anime',
+            buttonClass: 'settings-button-blue',
+            onClick: () => {
+                return import('../../../introverts/show/anime').then(async ({ addSeasonalAnime }) => {
+                    const success = await addSeasonalAnime();
+                    return success;
+                }).catch(e => {
+                    console.error('Failed to invoke addSeasonalAnime', e);
+                    return false;
+                });
+            }
         }
     ];
 };

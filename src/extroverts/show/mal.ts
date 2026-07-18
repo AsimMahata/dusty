@@ -2,9 +2,12 @@ import { invoke } from "@tauri-apps/api/core";
 import { CMD_MAL_GET_INFO } from "../../ambiverts/show/mal";
 import { logger } from "../../utility/logger";
 
+
+export const API_BASE = 'https://api.tenrai.org/v1';
+
 export async function getAnimeInfoFromMalApi(id: number): Promise<string | null> {
     try {
-        const res = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
+        const res = await fetch(`${API_BASE}/anime/${id}`);
         if (!res.ok) {
             throw new Error(`Failed to fetch anime info for malId=${id}`);
         }

@@ -11,17 +11,18 @@ pub fn show_to_show_result(s: &Show) -> ShowResult {
         id: get_sha256_id(s.get_dir().to_string_lossy().into_owned(), s.get_title()),
         title: s.get_title(),
         gen_title: s.get_title(),
-        num_episodes: s.get_number_of_ep(),
+        num_episodes: Some(s.get_number_of_ep()),
         episodes: s
             .get_eps()
             .iter()
             .map(|p| FileInfo::from_pathbuf(p).expect("Crashed on main inside dusty"))
             .collect(),
-        dir: s.get_dir().to_string_lossy().into_owned(),
+        dir: Some(s.get_dir().to_str().unwrap().to_string()),
         banned: false,
         pinned: false,
         season: s.get_season(),
         status: "default".to_string(),
         mal_id:None,
+        seasonal:false,
     }
 }

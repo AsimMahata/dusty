@@ -1,16 +1,37 @@
+use rusqlite::Connection;
+
+use crate::dusty::data::shows::Show;
 use crate::dusty::data::{shows::ShowResult, state::AppState};
+use crate::dusty::db::show_cache::get_all_shows_from_show_cache_in_db;
 use crate::dusty::logger::logger;
 use crate::dusty::db::show::{
     add_shows_in_db, print_all_shows_in_db, reset_show_table_in_db, update_ban_status_in_db, update_mal_id_in_db, update_pin_status_in_db, update_show_status_in_db,
 };
 use crate::dusty::db::show::{get_show_info, rename_show_in_db};
-use crate::dusty::scanners::show_scanner::scan_for_shows_rec;
+use crate::dusty::scanners::show_scanner::{scan_for_shows_rec, scan_for_shows_with_seasons};
 use crate::dusty::utility::convert::show_to_show_result;
 use std::path::PathBuf;
 
-#[tauri::command]
-pub fn scan_shows(state: tauri::State<AppState>, path: String) -> Vec<ShowResult> {
-    let root = PathBuf::from(&path);
+ 
+
+
+pub fn scan_show_new(db:&Connection,root:&PathBuf)->Vec<ShowResult>{
+    let cached_shows = get_all_shows_from_show_cache_in_db(&db);
+    match cached_shows {
+        Ok(shows)=>{
+            shows
+        },
+        Err(_)=>{
+            let shows:Vec<ShowResult> = scan_for_shows_with_seasons(&db,&root);
+            add_shows_in_db(&db, &shows).ok();
+            shows
+        }
+    }
+    
+    
+}
+
+pub fn scan_show_old(db:&Connection,root:&PathBuf)->Vec<ShowResult>{
     let shows = scan_for_shows_rec(&root);
     let result: Vec<ShowResult> = shows
         .get_list_of_shows()
@@ -18,7 +39,7 @@ pub fn scan_shows(state: tauri::State<AppState>, path: String) -> Vec<ShowResult
         .map(|s| show_to_show_result(s))
         .collect();
 
-    let db = state.db.lock().unwrap();
+
     add_shows_in_db(&db, &result).ok();
 
     result
@@ -34,6 +55,14 @@ pub fn scan_shows(state: tauri::State<AppState>, path: String) -> Vec<ShowResult
             show
         })
         .collect()
+}
+
+#[tauri::command]
+pub fn scan_shows(state: tauri::State<AppState>, path: String) -> Vec<ShowResult> {
+   let db = state.db.lock().unwrap();
+   let root = PathBuf::from(&path);
+//    scan_show_old(&db,&root)
+    scan_show_new(&db,&root)
 }
 
 #[tauri::command]

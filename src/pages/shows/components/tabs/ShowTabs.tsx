@@ -13,7 +13,7 @@ export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook }) => {
         <div className="show-tabs-container">
             {TABS.map(tab => {
                 const count = getCount(tab);
-                if (count === 0 && tab.id !== 'all' && tab.id !== 'watching') return null;
+                if (count === 0 && tab.id !== 'all' && tab.id !== 'watching' && tab.id !== 'seasonal') return null;
                 
                 return (
                     <div 

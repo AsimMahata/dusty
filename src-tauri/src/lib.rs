@@ -30,6 +30,8 @@ pub fn run() {
             dusty::api::mal::update_anime_info_in_mal_cache,
             dusty::api::mal::add_anime_info_to_mal_cache,
             dusty::api::mal::reset_mal_cache,
+            dusty::api::anime::get_seasonal_anime_with_info,
+            dusty::api::anime::add_seasonal_anime_to_db,
         ])
         .setup(|app| {
             if cfg!(debug_assertions) {

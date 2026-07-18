@@ -222,7 +222,7 @@ export const useShow = () => {
 
     const getCount = (tab: ShowTab) => {
         if (tab.id === 'banned') return allShows.filter(s => s.banned).length;
-
+        if( tab.id === 'seasonal') return allShows.filter(s => s.seasonal).length;
         const shows = allShows.filter(s => !s.banned);
         if (tab.id === 'all') return shows.length;
         return shows.filter(s => s.status === tab.id).length;
@@ -234,6 +234,10 @@ export const useShow = () => {
             }
             
             let shows = allShows.filter(s => !s.banned);
+
+            if (activeTab.id === 'seasonal') {
+                return shows.filter(s => s.seasonal);
+            }
     
             if (activeTab.id === 'all') {
                 return shows;
