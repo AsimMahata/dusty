@@ -12,15 +12,20 @@ export const Shows: React.FC = () => {
     const renderCount = useRef(0);
     renderCount.current++;
     console.log(`[Shows] rendered: ${renderCount.current}`);
-
     const showHook = useShow();
-    const [isAddAnimeOpen, setIsAddAnimeOpen] = useState(false);
+    const { isAddAnimeOpen, setIsAddAnimeOpen, addAnimeQuery, addAnimeTargetShowId, handleOpenAddAnime } = showHook;
 
     if (showHook.selectedShow) {
         return (
             <PageLayout hook={showHook} hideSearch={true}>
                 <ShowDetailPage showHook={showHook} />
                 <EditMalNumberModal showHook={showHook} />
+                {isAddAnimeOpen && <AddAnimeModal 
+                    onClose={() => setIsAddAnimeOpen(false)} 
+                    initialQuery={addAnimeQuery} 
+                    targetShowId={addAnimeTargetShowId}
+                    onLinkSuccess={() => showHook.fetchData()}
+                />}
             </PageLayout>
         );
     }
@@ -28,11 +33,16 @@ export const Shows: React.FC = () => {
     return (
         <PageLayout hook={showHook} hideSearch={false}>
             <div className="show-page-container">
-                <ShowTabs showHook={showHook} onAddAnime={() => setIsAddAnimeOpen(true)} />
+                <ShowTabs showHook={showHook} onAddAnime={() => handleOpenAddAnime('')} />
                 <ShowList showHook={showHook} />
             </div>
             <EditMalNumberModal showHook={showHook} />
-            {isAddAnimeOpen && <AddAnimeModal onClose={() => setIsAddAnimeOpen(false)} />}
+            {isAddAnimeOpen && <AddAnimeModal 
+                onClose={() => setIsAddAnimeOpen(false)} 
+                initialQuery={addAnimeQuery}
+                targetShowId={addAnimeTargetShowId}
+                onLinkSuccess={() => showHook.fetchData()}
+            />}
         </PageLayout>
     );
 };

@@ -3,6 +3,7 @@ export const LABELS = {
     PIN: "Pin",
     UNPIN: "Unpin",
     EDIT_MAL_ID: "Edit MAL ID",
+    SEARCH_IN_MAL: "Search in MAL",
 
     // Status Updates
     MARK_WATCHING: "Mark as Watching",

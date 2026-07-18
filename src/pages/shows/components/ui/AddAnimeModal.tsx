@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { invoke } from '@tauri-apps/api/core';
+import { CMD_UPDATE_MAL_ID } from '../../../../constants/commands';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Plus, Check } from 'lucide-react';
 import type { AnimeData } from '../../../../introverts/show/anime';
 import { searchAnime } from '../../../../introverts/show/anime';
@@ -6,15 +8,25 @@ import { addSeasonalAnimeDB } from '../../../../ambiverts/show/anime';
 
 interface AddAnimeModalProps {
     onClose: () => void;
+    initialQuery?: string;
+    targetShowId?: string;
+    onLinkSuccess?: (showId: string, malId: number) => void;
 }
 
-export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose }) => {
-    const [searchQuery, setSearchQuery] = useState('');
+export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQuery = '', targetShowId, onLinkSuccess }) => {
+    const [searchQuery, setSearchQuery] = useState(initialQuery);
     const [searchResults, setSearchResults] = useState<AnimeData[]>([]);
     const [selectedAnime, setSelectedAnime] = useState<AnimeData[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
     const [statusMessage, setStatusMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, []);
 
     useEffect(() => {
         const handler = setTimeout(async () => {
@@ -60,11 +72,37 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose }) => {
         }
     };
 
+    const handleLinkToMAL = async (anime: AnimeData) => {
+        if (!targetShowId) return;
+        setIsSubmitting(true);
+        setStatusMessage(null);
+
+        // Add to DB first so it is cached
+        await addSeasonalAnimeDB([anime]);
+        
+        try {
+            await invoke(CMD_UPDATE_MAL_ID, {
+                id: targetShowId,
+                malId: anime.mal_id
+            });
+            setStatusMessage({ type: 'success', text: 'Linked successfully!' });
+            if (onLinkSuccess) {
+                onLinkSuccess(targetShowId, anime.mal_id);
+            }
+            setTimeout(() => {
+                onClose();
+            }, 1500);
+        } catch (error) {
+            setStatusMessage({ type: 'error', text: 'Failed to link show.' });
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <div className="add-anime-modal-overlay" onClick={onClose}>
             <div className="add-anime-modal-content" onClick={e => e.stopPropagation()}>
                 <div className="add-anime-modal-header">
-                    <h2>Add Anime</h2>
+                    <h2>{targetShowId ? 'Link Anime to MAL' : 'Add Anime'}</h2>
                     <button className="add-anime-close-btn" onClick={onClose}>
                         <X size={20} />
                     </button>
@@ -73,6 +111,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose }) => {
                 <div className="add-anime-modal-body">
                     <div className="add-anime-search-container">
                         <input 
+                            ref={inputRef}
                             type="text" 
                             placeholder="Search for anime..." 
                             className="add-anime-search-input" 
@@ -92,16 +131,34 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose }) => {
                                 const isSelected = selectedAnime.some(a => a.mal_id === anime.mal_id);
                                 return (
                                     <div key={anime.mal_id} className={`add-anime-item ${isSelected ? 'selected' : ''}`}>
-                                        <div className="add-anime-info">
-                                            <span className="add-anime-title">{anime.title}</span>
-                                            <span className="add-anime-episodes">{anime.num_episodes ? `${anime.num_episodes} Episodes` : 'Unknown Episodes'}</span>
+                                        <div className="add-anime-info-container">
+                                            {anime.image_url ? (
+                                                <img src={anime.image_url} alt={anime.title} className="add-anime-banner" />
+                                            ) : (
+                                                <div className="add-anime-banner"></div>
+                                            )}
+                                            <div className="add-anime-info">
+                                                <span className="add-anime-title">{anime.title}</span>
+                                                <span className="add-anime-episodes">{anime.num_episodes ? `${anime.num_episodes} Episodes` : 'Unknown Episodes'}</span>
+                                            </div>
                                         </div>
-                                        <button 
-                                            className={`add-anime-add-btn ${isSelected ? 'selected' : ''}`}
-                                            onClick={() => toggleSelection(anime)}
-                                        >
-                                            {isSelected ? <Check size={18} /> : <Plus size={18} />}
-                                        </button>
+                                        {targetShowId ? (
+                                            <button 
+                                                className="add-anime-add-btn"
+                                                onClick={() => handleLinkToMAL(anime)}
+                                                disabled={isSubmitting}
+                                                style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                                            >
+                                                This is it!
+                                            </button>
+                                        ) : (
+                                            <button 
+                                                className={`add-anime-add-btn ${isSelected ? 'selected' : ''}`}
+                                                onClick={() => toggleSelection(anime)}
+                                            >
+                                                {isSelected ? <Check size={18} /> : <Plus size={18} />}
+                                            </button>
+                                        )}
                                     </div>
                                 );
                             })
@@ -126,13 +183,15 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose }) => {
                             {statusMessage.text}
                         </div>
                     )}
-                    <button 
-                        className="add-anime-submit-btn" 
-                        onClick={handleSubmit} 
-                        disabled={selectedAnime.length === 0 || isSubmitting}
-                    >
-                        {isSubmitting ? 'Adding...' : `Add Selected (${selectedAnime.length})`}
-                    </button>
+                    {!targetShowId && (
+                        <button 
+                            className="add-anime-submit-btn" 
+                            onClick={handleSubmit} 
+                            disabled={selectedAnime.length === 0 || isSubmitting}
+                        >
+                            {isSubmitting ? 'Adding...' : `Add Selected (${selectedAnime.length})`}
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

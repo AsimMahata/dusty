@@ -20,7 +20,8 @@ export async function getSeasonalAnimeAPI(): Promise<AnimeData[] | null> {
                 mal_id: animePayLoad.mal_id,
                 num_episodes: animePayLoad.episodes,
                 season: findSeason(animePayLoad.title) || 1,
-                seasonal: true,
+                airing: animePayLoad.airing || false,
+                image_url: animePayLoad.images?.jpg?.image_url || animePayLoad.images?.webp?.image_url,
             };
             return animeData;
         });
@@ -53,7 +54,8 @@ export async function searchAnimeAPI(query: string): Promise<AnimeData[] | null>
                 mal_id: animePayLoad.mal_id,
                 num_episodes: animePayLoad.episodes,
                 season: findSeason(animePayLoad.title) || 1,
-                seasonal: false,
+                airing: animePayLoad.airing || false,
+                image_url: animePayLoad.images?.jpg?.image_url || animePayLoad.images?.webp?.image_url,
             };
             return animeData;
         });

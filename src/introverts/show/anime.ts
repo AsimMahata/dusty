@@ -9,7 +9,8 @@ export interface AnimeData {
     mal_id: number;
     num_episodes: number | null;
     season: number | null;
-    seasonal: boolean;
+    airing: boolean;
+    image_url?: string;
 }
 
 export async function addSeasonalAnime(): Promise<boolean> {

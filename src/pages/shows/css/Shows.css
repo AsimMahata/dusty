@@ -587,8 +587,10 @@
     border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
     border-radius: 12px;
     width: 90%;
-    max-width: 500px;
-    max-height: 80vh;
+    max-width: 700px;
+    height: 70vh;
+    min-height: 500px;
+    max-height: 800px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
@@ -633,7 +635,8 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    overflow-y: auto;
+    overflow: hidden;
+    flex: 1;
 }
 
 .add-anime-search-container {
@@ -678,6 +681,23 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 0.5rem; /* For scrollbar */
+}
+/* Custom Scrollbar for list */
+.add-anime-list::-webkit-scrollbar {
+    width: 6px;
+}
+.add-anime-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.add-anime-list::-webkit-scrollbar-thumb {
+    background: var(--bg-tertiary, #2a2a35);
+    border-radius: 3px;
+}
+.add-anime-list::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted, #52525b);
 }
 
 .add-anime-item {
@@ -693,6 +713,20 @@
 
 .add-anime-item:hover {
     border-color: var(--accent-color-transparent, rgba(99, 102, 241, 0.5));
+}
+
+.add-anime-info-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.add-anime-banner {
+    width: 48px;
+    height: 68px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: var(--bg-tertiary, #2a2a35);
 }
 
 .add-anime-info {

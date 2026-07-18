@@ -39,7 +39,7 @@ export const SHOW_STATUS_ON_HOLD = 'on_hold'
 export const SHOW_STATUS_PLANNED = 'planned'
 export const SHOW_STATUS_DROPPED = 'dropped'
 
-export type ShowSortMethod = 'title' | 'last_watched' | 'status' | 'random';
+export type ShowSortMethod = 'title' | 'last_watched' | 'status' | 'random' | 'malId';
 
 export const LOCAL_STORAGE_LAST_WATCHED = 'dusk_last_watched';
 
@@ -47,7 +47,8 @@ export const SORT_OPTIONS: { id: ShowSortMethod, label: string }[] = [
     { id: 'title', label: 'Title' },
     { id: 'status', label: 'Status Priority' },
     { id: 'last_watched', label: 'Last Watched' },
-    { id: 'random', label: 'Random' }
+    { id: 'random', label: 'Random' },
+    { id: 'malId', label: 'MAL ID' }
 ];
 export const DEFAULT_SORT_METHOD: ShowSortMethod = 'title';
 export const DEFAULT_SORT_ASCENDING: boolean = false;

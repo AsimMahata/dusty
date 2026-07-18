@@ -10,7 +10,7 @@ import {
     Star, FolderOpen, Globe, MoreVertical,
     ArrowUp, CircleDot, Terminal, Tags, Pencil, Trash2,
     Tag, CheckSquare, Square, AlertCircle, ClipboardList, ListTodo, Plus, ChevronDown, ArrowDown,
-    Settings, Database
+    Settings, Database, Search
 } from "lucide-react";
 import { COLORS } from './color';
 
@@ -98,6 +98,7 @@ export const X_CIRCLE_ICON_16 = <XCircle size={16} />
 export const ROTATE_CCW_ICON_16 = <RotateCcw size={16} />
 export const BAN_ICON_16 = <Ban size={16} />
 export const SHIELD_CHECK_ICON_16 = <ShieldCheck size={16} />
+export const SEARCH_ICON_16 = <Search size={16} />
 
 //SHOWS
 export const SHOW_PAGE_FALLBACK_ICON = <Tv className="show-grid-fallback-icon" size={48} />

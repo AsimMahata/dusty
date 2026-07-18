@@ -90,8 +90,7 @@ export interface ShowResult {
     status: ShowStatus,
     season?: number,
     mal_id?: number,
-    seasonal?:boolean,
-    max_coupling?:number,
+    airing?:boolean,
 }
 
 type ProjectType = "C/C++" | "Unknown";

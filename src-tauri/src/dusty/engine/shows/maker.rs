@@ -110,7 +110,7 @@ pub fn make_show_results_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut
             pinned: false,
             status: "default".to_string(),
             mal_id: None,
-            seasonal: false,
+            airing: false,
             episodes: cluster
                 .clone()
                 .into_iter()
@@ -152,7 +152,7 @@ pub fn make_shows_with_available_anime_titles(
         let pinned = false;
         let mal_id = Some(anime.mal_id);
         let season = anime.season;
-        let seasonal = anime.seasonal;
+        let airing = anime.airing;
         let status = "default".to_string();
         let dir = Some(String::new());
 
@@ -179,7 +179,7 @@ pub fn make_shows_with_available_anime_titles(
                 season,
                 status,
                 mal_id,
-                seasonal,
+                airing,
             });
         }
     }

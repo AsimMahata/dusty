@@ -9,7 +9,7 @@ pub fn create_anime_table(db: &Connection) -> Result<(), String> {
         title TEXT NOT NULL,
         num_episodes INTEGER,
         season INTEGER,
-        seasonal BOOLEAN
+        airing BOOLEAN DEFAULT 0
     )",
         [],
     )
@@ -17,14 +17,15 @@ pub fn create_anime_table(db: &Connection) -> Result<(), String> {
         logger::error!("CREATE_TABLE_ANIME_FAILED", err);
         err.to_string()
     })?;
+    let _ = db.execute("ALTER TABLE anime ADD COLUMN airing BOOLEAN DEFAULT 0", []);
     Ok(())
 }
 
-pub fn add_to_anime_in_db(db: &Connection, mal_id: i32, title: String,num_episodes:Option<u32>,season:Option<i32>,seasonal:bool) -> Result<(), String> {
+pub fn add_to_anime_in_db(db: &Connection, mal_id: i32, title: String,num_episodes:Option<u32>,season:Option<i32>, airing:bool) -> Result<(), String> {
     let anime_id = get_sha256_id(title.clone(),mal_id.to_string());
     db.execute(
-        "INSERT INTO anime (id, mal_id, title, num_episodes, season, seasonal) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
-        params![anime_id, mal_id, title, num_episodes, season, seasonal],
+        "INSERT INTO anime (id, mal_id, title, num_episodes, season, airing) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+        params![anime_id, mal_id, title, num_episodes, season, airing],
     )
     .map_err(|err| {
         logger::error!("INSERT_INTO_MAL_CACHE_FAILED", err);
@@ -34,7 +35,7 @@ pub fn add_to_anime_in_db(db: &Connection, mal_id: i32, title: String,num_episod
 }
 
 pub fn get_all_anime_titles_in_db(db: &Connection) -> Result<Vec<Anime>, String> {
-    let mut stmt = db.prepare("SELECT mal_id, title, num_episodes, season, seasonal FROM anime").map_err(|err| {
+    let mut stmt = db.prepare("SELECT mal_id, title, num_episodes, season, airing FROM anime").map_err(|err| {
         logger::error!("GET_ALL_ANIME_TITLES_FAILED", err);
         err.to_string()
     })?;
@@ -45,7 +46,7 @@ pub fn get_all_anime_titles_in_db(db: &Connection) -> Result<Vec<Anime>, String>
             title: row.get(1)?,
             num_episodes: row.get(2)?,
             season: row.get(3)?,
-            seasonal: row.get(4)?,
+            airing: row.get(4).unwrap_or(false),
         })
     }).map_err(|err| {
         logger::error!("GET_ALL_ANIME_TITLES_FAILED", err);
@@ -81,5 +82,5 @@ pub struct Anime{
     pub mal_id:i32,
     pub num_episodes:Option<usize>,
     pub season:Option<i32>,
-    pub seasonal:bool,
+    pub airing:bool,
 }

@@ -11,6 +11,7 @@ import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE
 import { COLORS, ACTIONS_SEPARATOR } from '../../constants/color';
 import { hashString } from '../../pages/shows/actions/hashString';
 import { useMal } from './useMal';
+import { SEARCH_ICON_16 } from '../../constants/icon';
 
 let cachedAllShows: ShowResult[] | null = null;
 
@@ -33,8 +34,17 @@ export const useShow = () => {
     const [randomSeed, setRandomSeed] = useState<number>(Math.random());
     const [isGridLayout, setIsGridLayout] = useState(false);
     const [selectedShow, setSelectedShow] = useState<ShowResult | null>(null);
-
     const [isItemSelected, setIsItemSelected] = useState(false);
+
+    const [isAddAnimeOpen, setIsAddAnimeOpen] = useState(false);
+    const [addAnimeQuery, setAddAnimeQuery] = useState('');
+    const [addAnimeTargetShowId, setAddAnimeTargetShowId] = useState<string | undefined>(undefined);
+
+    const handleOpenAddAnime = (query: string = '', targetShowId?: string) => {
+        setAddAnimeQuery(query);
+        setAddAnimeTargetShowId(targetShowId);
+        setIsAddAnimeOpen(true);
+    };
 
     const [allShows, setAllShows] = useState<ShowResult[]>(cachedAllShows || []);
     const fetchData = async () => {
@@ -182,6 +192,15 @@ export const useShow = () => {
             }
         });
 
+        actions.push({
+            label: LABELS.SEARCH_IN_MAL,
+            icon: SEARCH_ICON_16,
+            color: COLORS.BASE.BLUE,
+            onClick: () => {
+                handleOpenAddAnime(show.title, show.id);
+            }
+        });
+
         actions.push(ACTIONS_SEPARATOR);
 
         const updateStatus = (status: ShowStatus) => {
@@ -222,28 +241,37 @@ export const useShow = () => {
 
     const getCount = (tab: ShowTab) => {
         if (tab.id === 'banned') return allShows.filter(s => s.banned).length;
-        if( tab.id === 'seasonal') return allShows.filter(s => s.seasonal).length;
+        if( tab.id === 'seasonal') return allShows.filter(s => s.airing).length;
         const shows = allShows.filter(s => !s.banned);
         if (tab.id === 'all') return shows.length;
         return shows.filter(s => s.status === tab.id).length;
     };
 
     const filteredShows = useMemo(() => {
-            if (activeTab.id === 'banned') {
-                return allShows.filter(s => s.banned);
-            }
-            
-            let shows = allShows.filter(s => !s.banned);
+        let baseShows = allShows;
+
+        if (activeTab.id === 'banned') {
+            baseShows = baseShows.filter(s => s.banned);
+        } else {
+            baseShows = baseShows.filter(s => !s.banned);
 
             if (activeTab.id === 'seasonal') {
-                return shows.filter(s => s.seasonal);
+                baseShows = baseShows.filter(s => s.airing);
+            } else if (activeTab.id !== 'all') {
+                baseShows = baseShows.filter(s => s.status === activeTab.id);
             }
-    
-            if (activeTab.id === 'all') {
-                return shows;
-            }
-            return shows.filter(s => s.status === activeTab.id);
-    }, [allShows, activeTab]);
+        }
+
+        if (searchQuery && searchQuery.trim().length > 0) {
+            const query = searchQuery.toLowerCase();
+            baseShows = baseShows.filter(s => 
+                s.title.toLowerCase().includes(query) || 
+                (s.get_title && s.get_title.toLowerCase().includes(query))
+            );
+        }
+
+        return baseShows;
+    }, [allShows, activeTab, searchQuery]);
         
       
     const lastWatchedDep =
@@ -268,6 +296,11 @@ export const useShow = () => {
                 if (cmp === 0) cmp = a.title.localeCompare(b.title, undefined, { numeric: true });
             } else if (sortMethod === 'random') {
                 cmp = hashString(a.id + randomSeed) - hashString(b.id + randomSeed);
+            } else if (sortMethod === 'malId') {
+                const malA = a.mal_id || 0;
+                const malB = b.mal_id || 0;
+                cmp = malA - malB;
+                if (cmp === 0) cmp = a.title.localeCompare(b.title, undefined, { numeric: true });
             } else {
                 cmp = a.title.localeCompare(b.title, undefined, { numeric: true });
             }
@@ -283,7 +316,7 @@ export const useShow = () => {
         if (method === 'random') {
             setRandomSeed(Math.random());
             setSortAscending(true);
-        } else if (method === 'last_watched') {
+        } else if (method === 'last_watched' || method === 'malId') {
             setSortAscending(false);
         } else {
             setSortAscending(true);
@@ -323,5 +356,11 @@ export const useShow = () => {
         currentEditShow,
         malNumber,
         setMalNumber,
+        isAddAnimeOpen,
+        setIsAddAnimeOpen,
+        addAnimeQuery,
+        setAddAnimeQuery,
+        addAnimeTargetShowId,
+        handleOpenAddAnime,
     };
 };

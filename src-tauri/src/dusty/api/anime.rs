@@ -9,7 +9,7 @@ pub struct AnimeData {
     pub mal_id: i32,
     pub num_episodes: Option<u32>,
     pub season: Option<i32>,
-    pub seasonal: bool,
+    pub airing: bool,
 }
 
 #[tauri::command]
@@ -17,12 +17,12 @@ pub fn get_seasonal_anime_with_info(state: tauri::State<AppState>) -> Vec<AnimeD
     let db = state.db.lock().unwrap();
     let anime_list = get_all_anime_titles_in_db(&db).unwrap_or_default();
     
-    anime_list.into_iter().filter(|a| a.seasonal).map(|a| AnimeData {
+    anime_list.into_iter().filter(|a| a.airing).map(|a| AnimeData {
         title: a.title,
         mal_id: a.mal_id,
         num_episodes: a.num_episodes.map(|n| n as u32),
         season: a.season,
-        seasonal: a.seasonal,
+        airing: a.airing,
     }).collect()
 }
 
@@ -32,7 +32,7 @@ pub fn add_seasonal_anime_to_db(state: tauri::State<AppState>, data: Vec<AnimeDa
     let mut success = true;
     logger::info!("ADDING_SEASONAL_ANIME", data);
     for anime in data {
-        if let Err(e) = add_to_anime_in_db(&db, anime.mal_id, anime.title.clone(), anime.num_episodes, anime.season, anime.seasonal) {
+        if let Err(e) = add_to_anime_in_db(&db, anime.mal_id, anime.title.clone(), anime.num_episodes, anime.season, anime.airing) {
             logger::error!("FAILED_TO_ADD_SEASONAL_ANIME", e);
             success = false;
         }else{
