@@ -10,10 +10,10 @@ interface AddAnimeModalProps {
     onClose: () => void;
     initialQuery?: string;
     targetShowId?: string;
-    onLinkSuccess?: (showId: string, malId: number) => void;
+    onLinkAction?: (showId: string, malId: number) => Promise<boolean>;
 }
 
-export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQuery = '', targetShowId, onLinkSuccess }) => {
+export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQuery = '', targetShowId, onLinkAction }) => {
     const [searchQuery, setSearchQuery] = useState(initialQuery);
     const [searchResults, setSearchResults] = useState<AnimeData[]>([]);
     const [selectedAnime, setSelectedAnime] = useState<AnimeData[]>([]);
@@ -73,7 +73,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
     };
 
     const handleLinkToMAL = async (anime: AnimeData) => {
-        if (!targetShowId) return;
+        if (!targetShowId || !onLinkAction) return;
         setIsSubmitting(true);
         setStatusMessage(null);
 
@@ -81,17 +81,16 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
         await addSeasonalAnimeDB([anime]);
         
         try {
-            await invoke(CMD_UPDATE_MAL_ID, {
-                id: targetShowId,
-                malId: anime.mal_id
-            });
-            setStatusMessage({ type: 'success', text: 'Linked successfully!' });
-            if (onLinkSuccess) {
-                onLinkSuccess(targetShowId, anime.mal_id);
+            const success = await onLinkAction(targetShowId, anime.mal_id);
+            if (success) {
+                setStatusMessage({ type: 'success', text: 'Linked successfully!' });
+                setTimeout(() => {
+                    onClose();
+                }, 1500);
+            } else {
+                setStatusMessage({ type: 'error', text: 'Failed to link show.' });
+                setIsSubmitting(false);
             }
-            setTimeout(() => {
-                onClose();
-            }, 1500);
         } catch (error) {
             setStatusMessage({ type: 'error', text: 'Failed to link show.' });
             setIsSubmitting(false);

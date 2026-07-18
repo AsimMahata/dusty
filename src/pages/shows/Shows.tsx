@@ -24,7 +24,7 @@ export const Shows: React.FC = () => {
                     onClose={() => setIsAddAnimeOpen(false)} 
                     initialQuery={addAnimeQuery} 
                     targetShowId={addAnimeTargetShowId}
-                    onLinkSuccess={() => showHook.fetchData()}
+                    onLinkAction={showHook.updateMalIdForShow}
                 />}
             </PageLayout>
         );
@@ -41,7 +41,7 @@ export const Shows: React.FC = () => {
                 onClose={() => setIsAddAnimeOpen(false)} 
                 initialQuery={addAnimeQuery}
                 targetShowId={addAnimeTargetShowId}
-                onLinkSuccess={() => showHook.fetchData()}
+                onLinkAction={showHook.updateMalIdForShow}
             />}
         </PageLayout>
     );

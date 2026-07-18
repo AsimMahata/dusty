@@ -157,6 +157,9 @@ pub fn make_shows_with_available_anime_titles(
         let dir = Some(String::new());
 
         for (i, video) in videos.iter().enumerate() {
+            if vis[i] {
+                continue;
+            }
             let file_name = video.file_name().unwrap().to_str().unwrap().to_string();
             let match_value = check_for_match(title.to_string(), file_name);
             if match_value > 0.5 {

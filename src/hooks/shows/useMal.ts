@@ -18,22 +18,27 @@ export const useMal = ({ allShows, updateShowInState }: UseMalProps) => {
     const handleEditMalId = (show: ShowResult) => {
         setShowEditMalId(true);
         setCurrentEditShow(show);
-        setMalNumber(show.malId || null);
+        setMalNumber(show.mal_id || null);
+    }
+    
+    const updateMalIdForShow = async (showId: string, newMalId: number): Promise<boolean> => {
+        try {
+            await invoke(CMD_UPDATE_MAL_ID, {
+                id: showId,
+                malId: newMalId
+            });
+            logger.info("MAL ID updated successfully", { id: showId, newMalId });
+            updateShowInState(showId, { mal_id: newMalId });
+            return true;
+        } catch (err) {
+            logger.error(`Failed to update mal id for show ${showId}: ${String(err)}`);
+            return false;
+        }
     }
     
     const handleSaveMalId = async () => {
         if (currentEditShow && malNumber) {
-            try {
-                await invoke(CMD_UPDATE_MAL_ID, {
-                    id: currentEditShow.id,
-                    malId: malNumber
-                });
-                logger.info("MAL ID updated successfully", { id: currentEditShow.id, newMalId: malNumber });
-            } catch (err) {
-                logger.error(`Failed to update mal id for show ${currentEditShow.id}: ${String(err)}`);
-                return;
-            }
-            updateShowInState(currentEditShow.id, { malId: malNumber });
+            await updateMalIdForShow(currentEditShow.id, malNumber);
         }
         setShowEditMalId(false);
         setCurrentEditShow(null);
@@ -54,5 +59,6 @@ export const useMal = ({ allShows, updateShowInState }: UseMalProps) => {
         handleEditMalId,
         handleSaveMalId,
         handleCancelEditMalId,
+        updateMalIdForShow,
     };
 };

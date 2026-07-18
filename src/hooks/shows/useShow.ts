@@ -14,6 +14,7 @@ import { useMal } from './useMal';
 import { SEARCH_ICON_16 } from '../../constants/icon';
 
 let cachedAllShows: ShowResult[] | null = null;
+let fetchPromise: Promise<ShowResult[]> | null = null;
 
 const getDefaultTab = () => {
     return TABS[1];
@@ -49,15 +50,30 @@ export const useShow = () => {
     const [allShows, setAllShows] = useState<ShowResult[]>(cachedAllShows || []);
     const fetchData = async () => {
         setIsRefreshing(true);
+        
+        if (fetchPromise) {
+            try {
+                const shows = await fetchPromise;
+                setAllShows(shows);
+            } finally {
+                setIsRefreshing(false);
+            }
+            return;
+        }
+        
         if (allShows.length === 0) setIsLoading(true);
+        
+        fetchPromise = invoke(CMD_SCAN_SHOWS, { path: DEFAULT_STARTING_PATH });
+        
         try {
-            let shows: ShowResult[] = await invoke(CMD_SCAN_SHOWS, { path: DEFAULT_STARTING_PATH });
+            let shows: ShowResult[] = await fetchPromise;
             cachedAllShows = shows;
             setAllShows(shows);
             logger.info('all shows fetched', shows);
         } catch (error) {
             logger.error(`Failed to fetch shows: ${String(error)}`);
         } finally {
+            fetchPromise = null;
             setIsRefreshing(false);
             setIsLoading(false);
         }
@@ -169,6 +185,7 @@ export const useShow = () => {
         handleEditMalId,
         handleSaveMalId,
         handleCancelEditMalId,
+        updateMalIdForShow,
     } = malHook;
 
     const getActionsForShow = (show: ShowResult): ActionItem[] => {
@@ -362,5 +379,6 @@ export const useShow = () => {
         setAddAnimeQuery,
         addAnimeTargetShowId,
         handleOpenAddAnime,
+        updateMalIdForShow,
     };
 };
