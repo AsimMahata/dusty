@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import { getSeasonalAnimeAPI } from "../../extroverts/show/anime";
+import { getSeasonalAnimeAPI, searchAnimeAPI } from "../../extroverts/show/anime";
 import { addSeasonalAnimeDB, getSeasonalAnimeFromDB } from "../../ambiverts/show/anime";
 
 
@@ -30,6 +30,18 @@ export async function addSeasonalAnime(): Promise<boolean> {
     } catch (e) {
         logger.error(`addSeasonalAnime error: ${e}`);
         return false;
+}
+}
+    
+export async function searchAnime(query: string): Promise<AnimeData[]> {
+    if (!query || query.trim().length < 3) {
+        return [];
+    }
+    try {
+        const results = await searchAnimeAPI(query);
+        return results || [];
+    } catch (e) {
+        logger.error(`searchAnime error: ${e}`);
+        return [];
     }
 }
-

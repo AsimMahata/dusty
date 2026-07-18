@@ -34,6 +34,37 @@ export async function getSeasonalAnimeAPI(): Promise<AnimeData[] | null> {
 
 }
 
+export async function searchAnimeAPI(query: string): Promise<AnimeData[] | null> {
+    try {
+        const res = await fetch(`https://api.tenrai.org/v1/anime?q=${encodeURIComponent(query)}&limit=15`);
+        if (!res.ok) {
+            logger.error(`SEARCH_ANIME_FROM_API_FAILED`, res);
+            return null;
+        }
+        const json = await res.json();
+        const data = json?.data || null;
+        logger.info(`SEARCH_ANIME_FROM_API_SUCCESS`, data?.length);
+        
+        if (!data) return [];
+        
+        const animeList: AnimeData[] = data.map((animePayLoad: any) => {
+            const animeData: AnimeData = {
+                title: animePayLoad.title_english || animePayLoad.title,
+                mal_id: animePayLoad.mal_id,
+                num_episodes: animePayLoad.episodes,
+                season: findSeason(animePayLoad.title) || 1,
+                seasonal: false,
+            };
+            return animeData;
+        });
+        
+        return animeList;
+    } catch (err) {
+        logger.error(`SEARCH_ANIME_FROM_API_FAILED`, err);
+        return null;
+    }
+}
+
 export function findSeason(title: string): number | null {
     const lowerTitle = title.toLowerCase();
 
