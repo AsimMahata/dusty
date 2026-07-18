@@ -13,6 +13,7 @@ pub fn run() {
             dusty::api::show::update_show_status,
             dusty::api::show::update_ban_status,
             dusty::api::show::update_pin_status,
+            dusty::api::show::update_mal_id,
             dusty::api::show::reset_shows_table,
             dusty::api::project::scan_projects,
             dusty::api::project::update_project_pin_status,
@@ -25,6 +26,10 @@ pub fn run() {
             dusty::api::empty_dir::scan_empty_dir,
             dusty::api::lab::tokenize,
             dusty::api::settings::reset_database,
+            dusty::api::mal::get_anime_info_from_mal,
+            dusty::api::mal::update_anime_info_in_mal_cache,
+            dusty::api::mal::add_anime_info_to_mal_cache,
+            dusty::api::mal::reset_mal_cache,
         ])
         .setup(|app| {
             if cfg!(debug_assertions) {

@@ -1,8 +1,7 @@
 use crate::dusty::data::{shows::ShowResult, state::AppState};
 use crate::dusty::logger::logger;
 use crate::dusty::db::show::{
-    add_shows_in_db, print_all_shows_in_db, reset_show_table_in_db, update_ban_status_in_db,
-    update_pin_status_in_db, update_show_status_in_db,
+    add_shows_in_db, print_all_shows_in_db, reset_show_table_in_db, update_ban_status_in_db, update_mal_id_in_db, update_pin_status_in_db, update_show_status_in_db,
 };
 use crate::dusty::db::show::{get_show_info, rename_show_in_db};
 use crate::dusty::scanners::show_scanner::scan_for_shows_rec;
@@ -30,6 +29,7 @@ pub fn scan_shows(state: tauri::State<AppState>, path: String) -> Vec<ShowResult
                 show.status = info.status;
                 show.banned = info.banned;
                 show.pinned = info.pinned;
+                show.mal_id = info.mal_id;
             }
             show
         })
@@ -102,3 +102,9 @@ pub fn reset_shows_table(state: tauri::State<AppState>) -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+pub fn update_mal_id(state: tauri::State<AppState>,id:String,mal_id:i32)->Result<(),String>{
+    let db = state.db.lock().unwrap();
+    update_mal_id_in_db(&db,id,mal_id).map_err(|e| format!("Failed to update mal id in db: {}", e)).ok();
+    Ok(())
+}

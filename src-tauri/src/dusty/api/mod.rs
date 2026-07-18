@@ -10,3 +10,4 @@ pub mod video;
 pub mod zip;
 pub mod lab;
 pub mod settings;
+pub mod mal;

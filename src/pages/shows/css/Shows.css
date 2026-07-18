@@ -512,3 +512,34 @@
     color: #eab308;
     fill: #eab308;
 }
+
+/* Edit MAL ID Modal */
+.mal-id-input {
+    width: 100%;
+    padding: 10px 14px;
+    margin-bottom: 20px;
+    background: var(--bg-main, #0a0a0c);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    border-radius: 8px;
+    color: var(--text-primary, #f4f4f5);
+    font-size: 1rem;
+    font-family: var(--font-family);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mal-id-input:focus {
+    border-color: var(--accent, #6366f1);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.mal-id-input::placeholder {
+    color: var(--text-muted, #52525b);
+}
+
+/* Hide number input spinner */
+.mal-id-input::-webkit-outer-spin-button,
+.mal-id-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

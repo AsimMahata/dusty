@@ -89,7 +89,7 @@ export interface ShowResult {
     pinned: boolean,
     status: ShowStatus,
     season?: number,
-    malNo?: string,
+    mal_id?: number,
 }
 
 type ProjectType = "C/C++" | "Unknown";

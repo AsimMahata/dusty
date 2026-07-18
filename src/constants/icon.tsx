@@ -1,7 +1,7 @@
 import { 
     Clock, List, Pin, Eye, CheckCircle, Calendar, PauseCircle, XCircle, RotateCcw, Ban, ShieldCheck, Home as HomeIcon, Tv, FolderGit2, Box, Music as MusicIcon, Film, Image as ImageIcon, Archive, PackageOpen, FolderX,
     ArrowLeft, ExternalLink, X,
-    Folder as LucideFolder, File as LucideFile, FileJson, FileCog, FileCode2, FileText, FileImage, FileAudio, FileVideo, FileArchive, Zap,
+    Folder as LucideFolder, File as LucideFile, FileJson, FileCog, FileCode2, FileText, FileImage, FileAudio, FileVideo, FileArchive, Zap, Edit,
     Code2, Sparkles, Monitor, Server, Palette, GraduationCap, Coffee, Binary,
     Activity, Pause, CheckCircle2, AlertTriangle, Circle, FileEdit, ArrowUpCircle, ArrowDownCircle, GitPullRequest, AlertOctagon, HelpCircle,
     Play,
@@ -21,6 +21,7 @@ export const ICONS = {
         ARROW_LEFT: <ArrowLeft size={20} />,
         EXTERNAL_LINK: <ExternalLink size={16} />,
         X: <X size={20} />,
+        EDIT: <Edit size={20} />,
     },
     FILE: {
         FOLDER: <LucideFolder size={18} color={COLORS.ICON.FOLDER} className="folder-icon" />,

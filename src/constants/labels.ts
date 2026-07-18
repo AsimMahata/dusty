@@ -2,6 +2,7 @@ export const LABELS = {
     // General Actions
     PIN: "Pin",
     UNPIN: "Unpin",
+    EDIT_MAL_ID: "Edit MAL ID",
 
     // Status Updates
     MARK_WATCHING: "Mark as Watching",

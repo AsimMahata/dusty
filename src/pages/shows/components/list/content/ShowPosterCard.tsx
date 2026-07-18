@@ -1,15 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Play, Check, Calendar, ListVideo, Folder, Star, Radio, Clock, Tv } from 'lucide-react';
 import type { ShowResult, ActionItem } from '../../../../../types/types';
-import { 
-    getDummyPosterUrl, 
-    getDummyRating, 
-    getDummyTotalEpisodes, 
-    getDummyNextEpisode, 
-    getDummySeasonYear, 
-    getStatusColor,
-    calculateProgressPercentage
-} from '../../../actions/info';
+import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../../introverts/show/mal';
+import type { ShowMetaData } from '../../../constants/constants';
 import { ActionMenu } from '../../../../../components/ui/ActionMenu';
 
 interface ShowPosterCardProps {
@@ -20,13 +13,27 @@ interface ShowPosterCardProps {
 
 export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onDoubleClick, actions }) => {
     
-    const posterUrl = getDummyPosterUrl(show.malNo);
-    const rating = getDummyRating(show.malNo);
-    const totalEpisodes = getDummyTotalEpisodes(show);
-    const nextEpisode = getDummyNextEpisode(show);
-    const seasonYear = getDummySeasonYear(show.malNo);
-    const progress = calculateProgressPercentage(show.episodes?.length || 0, show.num_episodes);
-    const statusColor = getStatusColor(show.status);
+    const [meta, setMeta] = useState<ShowMetaData | null>(null);
+
+    useEffect(() => {
+        let mounted = true;
+        getShowMetaData(show).then(data => {
+            if (mounted) setMeta(data);
+        });
+        return () => { mounted = false; };
+    }, [show]);
+
+    const { posterUrl, rating, totalEpisodes, nextEpisode, seasonYear, progress, statusColor } = useMemo(() => {
+        return {
+            posterUrl: meta?.posterUrl || '',
+            rating: typeof meta?.rating === 'number' ? meta.rating : 0,
+            totalEpisodes: meta?.totalEpisodes || show.num_episodes,
+            nextEpisode: meta ? meta.nextEpisode : getNextEpisode(show),
+            seasonYear: meta?.seasonYear || '',
+            progress: meta ? meta.progress : calculateProgressPercentage(show.episodes?.length || 0, show.num_episodes),
+            statusColor: meta ? meta.statusColor : getStatusColor(show.status),
+        };
+    }, [meta, show]);
 
     const isWatching = show.status === 'watching';
     const isCompleted = show.status === 'completed';

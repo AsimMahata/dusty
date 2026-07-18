@@ -23,8 +23,9 @@ export const ShowListContent: React.FC<ShowListContentProps> = ({ showHook }) =>
                         />
                     );
                 }
-
-                if (item.malNo) {
+                
+                if (item.mal_id) {
+                    console.log(`item that has mal id is ${item.title} and its mal id is ${item.mal_id}`)
                     return (
                         <ShowPosterCard 
                             key={item.id} 

@@ -27,10 +27,10 @@ pub fn add_show_in_db(db: &Connection, show: &ShowResult) -> Result<(), String> 
 fn add_in_show_table(db: &Connection, show: &ShowResult) -> Result<()> {
     db.execute(
         "
-        INSERT INTO shows (id, title, dir, status, banned, pinned)
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+        INSERT INTO shows (id, title, dir, status, banned, pinned, mal_id)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
         ",
-        params![&show.id, &show.title, &show.dir, "default", false, false,],
+        params![&show.id, &show.title, &show.dir, "default", false, false,show.mal_id],
     )?;
 
     Ok(())
@@ -39,7 +39,7 @@ fn add_in_show_table(db: &Connection, show: &ShowResult) -> Result<()> {
 pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo, String> {
     db.query_row(
         "
-        SELECT title, status, banned, pinned
+        SELECT title, status, banned, pinned, mal_id
         FROM shows
         WHERE id = ?1
         ",
@@ -50,6 +50,7 @@ pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo, String> {
                 status: row.get(1)?,
                 banned: row.get(2)?,
                 pinned: row.get(3)?,
+                mal_id: row.get(4)?,
             })
         },
     )
@@ -61,7 +62,7 @@ pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo, String> {
 
 pub fn print_all_shows_in_db(db: &Connection) -> Result<(), String> {
     let mut stmt = db
-        .prepare("SELECT id, title, dir, status, banned, pinned FROM shows")
+        .prepare("SELECT id, title, dir, status, banned, pinned, mal_id FROM shows")
         .map_err(|err| {
             logger::error!("PREPARE_PRINT_SHOWS_FAILED", err);
             err.to_string()
@@ -76,6 +77,7 @@ pub fn print_all_shows_in_db(db: &Connection) -> Result<(), String> {
                 row.get::<_, String>(3)?,
                 row.get::<_, bool>(4)?,
                 row.get::<_, bool>(5)?,
+                row.get::<_, i32>(6)?,
             ))
         })
         .map_err(|err| {
@@ -86,7 +88,7 @@ pub fn print_all_shows_in_db(db: &Connection) -> Result<(), String> {
     println!("=== Shows ===");
 
     for row in rows {
-        let (id, title, dir, status, banned, pinned) = row.map_err(|err| {
+        let (id, title, dir, status, banned, pinned,mal_id) = row.map_err(|err| {
             logger::error!("READ_PRINT_SHOWS_FAILED", err);
             err.to_string()
         })?;
@@ -97,6 +99,7 @@ pub fn print_all_shows_in_db(db: &Connection) -> Result<(), String> {
         println!("Status    : {}", status);
         println!("Is Banned : {}", banned);
         println!("Is Pinned : {}", pinned);
+        println!("Mal ID    : {}", mal_id);
         println!("-------------------------");
     }
 
@@ -112,7 +115,8 @@ pub fn create_shows_table(conn: &Connection) -> Result<(), String> {
             dir TEXT NOT NULL,
             status TEXT NOT NULL DEFAULT 'default',
             banned INTEGER NOT NULL DEFAULT 0,
-            pinned INTEGER NOT NULL DEFAULT 0
+            pinned INTEGER NOT NULL DEFAULT 0,
+            mal_id INTEGER DEFAULT NULL
         )
         ",
         [],
@@ -122,6 +126,14 @@ pub fn create_shows_table(conn: &Connection) -> Result<(), String> {
         err.to_string()
     })?;
 
+    Ok(())
+}
+
+pub fn update_mal_id_in_db(db: &Connection,id:String,mal_id:i32)->Result<(),String>{
+    db.execute("UPDATE shows SET mal_id = ?1 WHERE id = ?2",params![mal_id,id]).map_err(|err|{
+        logger::error!("UPDATE_MAL_ID_FAILED", err);
+        err.to_string()
+    })?;
     Ok(())
 }
 

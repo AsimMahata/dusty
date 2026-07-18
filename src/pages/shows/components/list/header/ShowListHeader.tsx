@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { TABS, SORT_OPTIONS, DEFAULT_SORT_METHOD } from '../../../constants/constants';
 import type { useShow } from '../../../../../hooks/shows/useShow';
@@ -12,10 +12,18 @@ interface ShowListHeaderProps {
 export const ShowListHeader: React.FC<ShowListHeaderProps> = ({ showHook }) => {
     const { activeTab, getCount, isGridLayout, setIsGridLayout } = showHook;
 
+    const headerLabel = useMemo(() => {
+        return TABS.find(t => t.id === activeTab?.id)?.label || 'Shows';
+    }, [activeTab]);
+
+    const showCount = useMemo(() => {
+        return getCount(activeTab);
+    }, [activeTab, getCount]);
+
     return (
         <div className="show-list-header">
             <div className="show-list-title">
-                {TABS.find(t => t.id === activeTab?.id)?.label} ({getCount(activeTab)})
+                {headerLabel} ({showCount})
             </div>
             <div className="show-list-actions">
                 <SortOptions 

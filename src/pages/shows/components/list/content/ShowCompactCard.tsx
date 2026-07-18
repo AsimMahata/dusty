@@ -1,14 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Play, Check, Calendar, ListVideo, Folder, Star, Radio, Clock, Tv } from 'lucide-react';
 import { type ShowResult, type ActionItem } from '../../../../../types/types';
-import { 
-    getDummyRating, 
-    getDummyTotalEpisodes, 
-    getDummyNextEpisode, 
-    getDummySeasonYear, 
-    getStatusColor,
-    calculateProgressPercentage
-} from '../../../actions/info';
+import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../../introverts/show/mal';
+import type { ShowMetaData } from '../../../constants/constants';
 import { ActionMenu } from '../../../../../components/ui/ActionMenu';
 
 interface ShowCompactCardProps {
@@ -19,12 +13,26 @@ interface ShowCompactCardProps {
 
 export const ShowCompactCard: React.FC<ShowCompactCardProps> = ({ show, onDoubleClick, actions }) => {
     
-    const rating = getDummyRating(show.malNo);
-    const totalEpisodes = getDummyTotalEpisodes(show);
-    const nextEpisode = getDummyNextEpisode(show);
-    const seasonYear = getDummySeasonYear(show.malNo);
-    const progress = calculateProgressPercentage(show.episodes?.length || 0, show.num_episodes);
-    const statusColor = getStatusColor(show.status);
+    const [meta, setMeta] = useState<ShowMetaData | null>(null);
+
+    useEffect(() => {
+        let mounted = true;
+        getShowMetaData(show).then(data => {
+            if (mounted) setMeta(data);
+        });
+        return () => { mounted = false; };
+    }, [show]);
+
+    const { rating, totalEpisodes, nextEpisode, seasonYear, progress, statusColor } = useMemo(() => {
+        return {
+            rating: typeof meta?.rating === 'number' ? meta.rating : 0,
+            totalEpisodes: meta?.totalEpisodes || show.num_episodes,
+            nextEpisode: meta ? meta.nextEpisode : getNextEpisode(show),
+            seasonYear: meta?.seasonYear || '',
+            progress: meta ? meta.progress : calculateProgressPercentage(show.episodes?.length || 0, show.num_episodes),
+            statusColor: meta ? meta.statusColor : getStatusColor(show.status),
+        };
+    }, [meta, show]);
 
     const isWatching = show.status === 'watching';
     const isCompleted = show.status === 'completed';

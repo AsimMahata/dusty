@@ -16,6 +16,7 @@ pub struct ShowResult {
     pub pinned: bool,
     pub season: Option<i32>,
     pub status: String,
+    pub mal_id: Option<i32>,
 }
 
 pub struct ShowInfo {
@@ -23,6 +24,7 @@ pub struct ShowInfo {
     pub status: String,
     pub banned: bool,
     pub pinned: bool,
+    pub mal_id: Option<i32>,
 }
 
 #[derive(Serialize, Debug)]

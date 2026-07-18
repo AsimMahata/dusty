@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ChevronLeft, Tv, Play, Check, Star, Calendar, Radio } from 'lucide-react';
 import { ActionMenu } from '../../../../components/ui/ActionMenu';
-import { getShowMetaData } from '../../actions/info';
+import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../introverts/show/mal';
+import type { ShowMetaData } from '../../constants/constants';
 import type { ActionItem, ShowResult } from '../../../../types/types';
 
 interface ShowDetailHeroProps {
@@ -11,7 +12,28 @@ interface ShowDetailHeroProps {
 }
 
 export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActionsForShow, onBack }) => {
-    const { bannerUrl, posterUrl, rating, totalEpisodes, nextEpisode, seasonYear, progress, statusColor} = getShowMetaData(show);
+    const [meta, setMeta] = useState<ShowMetaData | null>(null);
+
+    useEffect(() => {
+        let mounted = true;
+        getShowMetaData(show).then(data => {
+            if (mounted) setMeta(data);
+        });
+        return () => { mounted = false; };
+    }, [show]);
+
+    const { bannerUrl, posterUrl, rating, totalEpisodes, nextEpisode, seasonYear, progress, statusColor } = useMemo(() => {
+        return {
+            bannerUrl: meta?.bannerUrl || '',
+            posterUrl: meta?.posterUrl || '',
+            rating: typeof meta?.rating === 'number' ? meta.rating : 0,
+            totalEpisodes: meta?.totalEpisodes || show.num_episodes,
+            nextEpisode: meta ? meta.nextEpisode : getNextEpisode(show),
+            seasonYear: meta?.seasonYear || '',
+            progress: meta ? meta.progress : calculateProgressPercentage(show.episodes?.length || 0, show.num_episodes),
+            statusColor: meta ? meta.statusColor : getStatusColor(show.status),
+        };
+    }, [meta, show]);
 
     const isWatching = show.status === 'watching';
     const isCompleted = show.status === 'completed';

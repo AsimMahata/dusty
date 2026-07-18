@@ -1,15 +1,16 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
-import { CMD_SCAN_SHOWS, CMD_UPDATE_BAN_STATUS, CMD_UPDATE_SHOW_STATUS, CMD_RENAME_SHOW, CMD_UPDATE_PIN_STATUS } from '../../constants/commands';
+import { CMD_SCAN_SHOWS, CMD_UPDATE_BAN_STATUS, CMD_UPDATE_SHOW_STATUS, CMD_RENAME_SHOW, CMD_UPDATE_PIN_STATUS, CMD_UPDATE_MAL_ID } from '../../constants/commands';
 import type { ShowResult, ShowStatus, ActionItem } from '../../types/types';
 import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY, TABS, type ShowSortMethod, type ShowTab, type ShowTabStatus } from '../../pages/shows/constants/constants';
 import { logger } from '../../utility/logger';
 import { DEFAULT_STARTING_PATH } from '../../constants/defaults';
 import { LABELS } from '../../constants/labels';
-import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE_CIRCLE_ICON_16, X_CIRCLE_ICON_16, ROTATE_CCW_ICON_16, BAN_ICON_16, SHIELD_CHECK_ICON_16 } from '../../constants/icon';
+import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE_CIRCLE_ICON_16, X_CIRCLE_ICON_16, ROTATE_CCW_ICON_16, BAN_ICON_16, SHIELD_CHECK_ICON_16, ICONS } from '../../constants/icon';
 import { COLORS, ACTIONS_SEPARATOR } from '../../constants/color';
 import { hashString } from '../../pages/shows/actions/hashString';
+import { useMal } from './useMal';
 
 let cachedAllShows: ShowResult[] | null = null;
 
@@ -57,6 +58,7 @@ export const useShow = () => {
             fetchData();
         }
     }, []);
+
 
     const handleShowOpen = (s: ShowResult) => {
         const newMap = { ...lastWatchedMap, [s.id]: Date.now() };
@@ -139,21 +141,51 @@ export const useShow = () => {
     const getCommonRenderedActions = () => {
         return [];
     }
+    
+    const malHook = useMal({
+        allShows,
+        updateShowInState: (showId, updates) => {
+            const newShows = allShows.map(s => s.id === showId ? { ...s, ...updates } : s);
+            cachedAllShows = newShows;
+            setAllShows(newShows);
+        }
+    });
 
-    const getActionsForShow = (item: ShowResult): ActionItem[] => {
+    const {
+        showEditMalId,
+        currentEditShow,
+        malNumber,
+        setMalNumber,
+        handleEditMalId,
+        handleSaveMalId,
+        handleCancelEditMalId,
+    } = malHook;
+
+    const getActionsForShow = (show: ShowResult): ActionItem[] => {
         const actions: ActionItem[] = [];
 
         actions.push({
-            label: item.pinned ? LABELS.UNPIN : LABELS.PIN,
+            label: show.pinned ? LABELS.UNPIN : LABELS.PIN,
             icon: PIN_ICON_16,
             color: COLORS.PIN,
-            onClick: () => handleTogglePin(item.id)
+            onClick: () => handleTogglePin(show.id)
+        });
+
+        actions.push(ACTIONS_SEPARATOR);
+
+        actions.push({
+            label: LABELS.EDIT_MAL_ID,
+            icon: ICONS.GENERAL.EDIT,
+            color: COLORS.BASE.BLUE,
+            onClick: () => {
+                handleEditMalId(show);
+            }
         });
 
         actions.push(ACTIONS_SEPARATOR);
 
         const updateStatus = (status: ShowStatus) => {
-            void updateShowVisualStatus(item.id, status);
+            void updateShowVisualStatus(show.id, status);
         };
 
         actions.push({ label: LABELS.MARK_WATCHING, icon: EYE_ICON_16, color: COLORS.STATUS.SHOW.watching, onClick: () => updateStatus('watching') });
@@ -171,7 +203,7 @@ export const useShow = () => {
                 icon: BAN_ICON_16,
                 color: COLORS.BASE.ROSE_900,
                 onClick: () => {
-                    updateBanStatus(item.id, true);
+                    updateBanStatus(show.id, true);
                 }
             });
         } else {
@@ -180,7 +212,7 @@ export const useShow = () => {
                 icon: SHIELD_CHECK_ICON_16,
                 color: COLORS.BASE.ROSE_900,
                 onClick: () => {
-                    updateBanStatus(item.id, false);
+                    updateBanStatus(show.id, false);
                 }
             });
         }
@@ -279,6 +311,13 @@ export const useShow = () => {
         getCommonRenderedActions,
         getActionsForShow,
         getCount,
-        filteredShows
+        filteredShows,
+        handleEditMalId,
+        handleSaveMalId,
+        handleCancelEditMalId,
+        showEditMalId,
+        currentEditShow,
+        malNumber,
+        setMalNumber,
     };
 };
