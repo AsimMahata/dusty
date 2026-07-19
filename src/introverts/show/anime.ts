@@ -1,4 +1,3 @@
-import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
 import { getSeasonalAnimeAPI, searchAnimeAPI } from "../../extroverts/show/anime";
 import { addSeasonalAnimeDB, getSeasonalAnimeFromDB } from "../../ambiverts/show/anime";

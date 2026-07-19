@@ -12,7 +12,7 @@ use crate::dusty::db::media::create_media_table;
 use crate::dusty::logger::logger;
 
 #[tauri::command]
-pub fn init_db(app: &mut tauri::App) -> Result<(), String> {
+pub fn init_db_and_os(app: &mut tauri::App) -> Result<(), String> {
     let app_data_dir = app.path().app_local_data_dir().map_err(|e| e.to_string())?;
     let db_dir = app_data_dir.join("database");
     std::fs::create_dir_all(&db_dir).map_err(|e| e.to_string())?;
@@ -27,6 +27,7 @@ pub fn init_db(app: &mut tauri::App) -> Result<(), String> {
     app.manage(AppState {
         db: Mutex::new(conn),
         tables: tables,
+        os: std::env::consts::OS.to_string(),
     });
 
     Ok(())

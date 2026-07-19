@@ -17,7 +17,7 @@ use std::path::PathBuf;
 
 pub fn scan_show_new(db:&Connection,root:&PathBuf)->Vec<ShowResult>{
     let cached_shows = get_all_shows_from_show_cache_in_db(&db);
-    match cached_shows {
+   let shows =  match cached_shows {
         Ok(shows)=>{
             shows
         },
@@ -26,9 +26,21 @@ pub fn scan_show_new(db:&Connection,root:&PathBuf)->Vec<ShowResult>{
             add_shows_in_db(&db, &shows).ok();
             shows
         }
-    }
+    };
+
     
     
+    shows.into_iter().map(|mut show| {
+        if let Ok(info) = get_show_info(&db, &show.id) {
+            show.title = info.title;
+            show.status = info.status;
+            show.banned = info.banned;
+            show.pinned = info.pinned;
+            show.mal_id = info.mal_id;
+            show.airing = info.airing;
+        }
+        show
+    }).collect()
 }
 
 pub fn scan_show_old(db:&Connection,root:&PathBuf)->Vec<ShowResult>{
@@ -51,6 +63,7 @@ pub fn scan_show_old(db:&Connection,root:&PathBuf)->Vec<ShowResult>{
                 show.banned = info.banned;
                 show.pinned = info.pinned;
                 show.mal_id = info.mal_id;
+                show.airing = info.airing;
             }
             show
         })

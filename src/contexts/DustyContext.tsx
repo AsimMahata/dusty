@@ -1,5 +1,45 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { invoke } from '@tauri-apps/api/core';
+import { CMD_GET_SYSTEM_INFO } from '../constants/commands';
+import { logger } from '../utility/logger';
+
+export interface DiskInfo {
+    name: string;
+    kind: string;
+    file_system: string;
+    total_space: number;
+    available_space: number;
+    is_removable: boolean;
+}
+
+export interface CpuInfo {
+    name: string;
+    cpu_usage: number;
+    frequency: number;
+}
+
+export interface ProcessInfo {
+    pid: string;
+    name: string;
+    memory: number;
+    cpu_usage: number;
+}
+
+export interface SystemInfoData {
+    username: string | null;
+    os_version: string | null;
+    hostname: string | null;
+    uptime: number;
+    total_memory: number;
+    used_memory: number;
+    total_swap: number;
+    used_swap: number;
+    cpus: CpuInfo[];
+    disks: DiskInfo[];
+    processes: ProcessInfo[];
+}
+
 
 export interface MediaItem {
   id: string;
@@ -12,6 +52,7 @@ export interface MediaItem {
 export interface StorageInfo {
   used: string;
   free: string;
+  total: string;
   segments: {
     color: 'green' | 'yellow' | 'orange';
     percent: number;
@@ -41,6 +82,7 @@ interface DustyContextType {
     heroLogo: string;
     overviewStats: OverviewStats;
     storageInfo: StorageInfo;
+    systemData: SystemInfoData | null;
     continueWatching: MediaItem[];
     watchEpisode: (showTitle: string, episodeTitle: string, image?: string) => void;
 }
@@ -50,21 +92,76 @@ const DustyContext = createContext<DustyContextType | undefined>(undefined);
 export const DustyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [lastOpenedPage, setLastOpenedPage] = useState<string>('/');
     
-    // Dummy State
-    const profile = { name: 'Asim', avatar: '/icon.png' };
+    // Dynamic State
+    const [profile, setProfile] = useState<UserProfile>({ name: 'User', avatar: '/icon.png' });
+    const [systemData, setSystemData] = useState<SystemInfoData | null>(null);
+    
+    const [storageInfo, setStorageInfo] = useState<StorageInfo>({
+        used: '0 B',
+        free: '0 B',
+        total: '0 B',
+        segments: [
+            { color: 'green', percent: 0 },
+            { color: 'yellow', percent: 0 },
+            { color: 'orange', percent: 0 },
+        ],
+    });
+    
+    useEffect(() => {
+        const fetchSystemInfo = async () => {
+            try {
+                const info = await invoke<SystemInfoData>(CMD_GET_SYSTEM_INFO);
+                setSystemData(info);
+                
+                if (info && info.username) {
+                    const rawName = info.username as string;
+                    const formattedName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+                    setProfile(prev => ({ ...prev, name: formattedName }));
+                }
+
+                // Compute Storage Info from all disks
+                if (info && info.disks) {
+                    let totalDiskSpace = 0;
+                    let availableDiskSpace = 0;
+                    for (const disk of info.disks) {
+                        totalDiskSpace += disk.total_space;
+                        availableDiskSpace += disk.available_space;
+                    }
+                    const usedDiskSpace = totalDiskSpace - availableDiskSpace;
+
+                    const formatBytes = (bytes: number) => {
+                        if (bytes === 0) return '0 B';
+                        const k = 1024;
+                        const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+                        const i = Math.floor(Math.log(bytes) / Math.log(k));
+                        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+                    };
+
+                    const usedPercent = totalDiskSpace > 0 ? (usedDiskSpace / totalDiskSpace) * 100 : 0;
+                    
+                    setStorageInfo({
+                        used: formatBytes(usedDiskSpace),
+                        free: formatBytes(availableDiskSpace),
+                        total: formatBytes(totalDiskSpace),
+                        segments: [
+                            { color: 'green', percent: Math.min(usedPercent, 50) },
+                            { color: 'yellow', percent: Math.max(0, Math.min(usedPercent - 50, 30)) },
+                            { color: 'orange', percent: Math.max(0, usedPercent - 80) },
+                        ]
+                    });
+                }
+
+            } catch (err) {
+                logger.error("Failed to get system info", err);
+            }
+        };
+        fetchSystemInfo();
+    }, []);
+
     const systemStatus = 'Filesystem is up to date.';
     const heroBanner = ['/banner.jpg'];
     const heroLogo = '/icon.png';
     const overviewStats = { shows: 531, projects: 35, songs: 2410, videos: 486 };
-    const storageInfo = {
-        used: '1.2 TB',
-        free: '600 GB',
-        segments: [
-            { color: 'green' as const, percent: 45 },
-            { color: 'yellow' as const, percent: 25 },
-            { color: 'orange' as const, percent: 10 },
-        ],
-    };
     
     const [continueWatching, setContinueWatching] = useState<MediaItem[]>([
         { id: '1', title: 'Frieren', subtitle: 'Episode 18', progressPercent: 60, image: '/banner.jpg' },
@@ -96,7 +193,7 @@ export const DustyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return (
         <DustyContext.Provider value={{ 
             lastOpenedPage, setLastOpenedPage,
-            profile, systemStatus, heroBanner, heroLogo, overviewStats, storageInfo, continueWatching, watchEpisode
+            profile, systemStatus, heroBanner, heroLogo, overviewStats, storageInfo, systemData, continueWatching, watchEpisode
         }}>
             {children}
         </DustyContext.Provider>

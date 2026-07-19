@@ -4,6 +4,7 @@ import { RouteTracker } from "./contexts/DustyContext";
 import { Sidebar } from "./components/layout/Sidebar";
 import { Home } from "./pages/home/Home";
 import { ROUTES } from "./constants/routes";
+import { Toaster } from "react-hot-toast";
 
 // Pages
 import { Shows } from "./pages/shows/Shows";
@@ -27,6 +28,17 @@ function App() {
     return (
         <div className="app-container">
             <RouteTracker />
+            <Toaster 
+                position="top-center" 
+                toastOptions={{
+                    style: {
+                        background: 'var(--bg-card)',
+                        color: 'var(--text-primary)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '8px'
+                    }
+                }}
+            />
             <Sidebar
                 isCollapsed={isSidebarCollapsed}
                 toggleSidebar={toggleSidebar}

@@ -1,5 +1,3 @@
-import { invoke } from "@tauri-apps/api/core";
-import { CMD_MAL_GET_INFO } from "../../ambiverts/show/mal";
 import { logger } from "../../utility/logger";
 
 

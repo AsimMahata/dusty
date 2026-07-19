@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
-import { CMD_SCAN_SHOWS, CMD_UPDATE_BAN_STATUS, CMD_UPDATE_SHOW_STATUS, CMD_RENAME_SHOW, CMD_UPDATE_PIN_STATUS, CMD_UPDATE_MAL_ID } from '../../constants/commands';
+import { CMD_SCAN_SHOWS, CMD_UPDATE_BAN_STATUS, CMD_UPDATE_SHOW_STATUS, CMD_RENAME_SHOW, CMD_UPDATE_PIN_STATUS } from '../../constants/commands';
 import type { ShowResult, ShowStatus, ActionItem } from '../../types/types';
 import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY, TABS, type ShowSortMethod, type ShowTab, type ShowTabStatus } from '../../pages/shows/constants/constants';
 import { logger } from '../../utility/logger';
@@ -169,7 +169,6 @@ export const useShow = () => {
     }
     
     const malHook = useMal({
-        allShows,
         updateShowInState: (showId, updates) => {
             const newShows = allShows.map(s => s.id === showId ? { ...s, ...updates } : s);
             cachedAllShows = newShows;

@@ -16,8 +16,8 @@ export const Storage: React.FC = () => {
           ))}
         </div>
         <div className="storage-labels">
-          <span className="storage-used"><strong>{storageInfo.used}</strong> Used</span>
-          <span className="storage-free">{storageInfo.free}</span>
+          <span className="storage-used"><strong>{storageInfo.used}</strong> / {storageInfo.total} Used</span>
+          <span className="storage-free">{storageInfo.free} Free</span>
         </div>
       </div>
     </div>

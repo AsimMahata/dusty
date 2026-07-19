@@ -25,11 +25,6 @@ pub fn get_coupling_value_between_anime_title_and_file_name(anime_title:String,f
     let max_window_size = 10;
     get_coupling_vec_using_rolling_hash(&mut coupling, &parsed_files, &token_id, max_window_size);
     let common:String = get_common_token_order_using_rolling_hash(&parsed_files);
-    if coupling[0][1] > 0.5 {
-        logger::info!("THRESHOLD_VALUE_REACHED: {:#?}",coupling[0][1]);
-        logger::info!("FILES: {:#?}",&parsed_files);
-        logger::info!("COMMON: {:#?}",common);
-    }
     let common_tokens_count = common.split(" ").count();
     if common_tokens_count == 0 {
         return 0.0;

@@ -1,5 +1,3 @@
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_UPDATE_MAL_ID } from '../../../../constants/commands';
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Plus, Check } from 'lucide-react';
 import type { AnimeData } from '../../../../introverts/show/anime';
@@ -142,14 +140,22 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
                                             </div>
                                         </div>
                                         {targetShowId ? (
-                                            <button 
-                                                className="add-anime-add-btn"
-                                                onClick={() => handleLinkToMAL(anime)}
-                                                disabled={isSubmitting}
-                                                style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
-                                            >
-                                                This is it!
-                                            </button>
+                                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                                <button 
+                                                    className={`add-anime-add-btn ${isSelected ? 'selected' : ''}`}
+                                                    onClick={() => toggleSelection(anime)}
+                                                >
+                                                    {isSelected ? <Check size={18} /> : <Plus size={18} />}
+                                                </button>
+                                                <button 
+                                                    className="add-anime-add-btn"
+                                                    onClick={() => handleLinkToMAL(anime)}
+                                                    disabled={isSubmitting}
+                                                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                                                >
+                                                    This is it!
+                                                </button>
+                                            </div>
                                         ) : (
                                             <button 
                                                 className={`add-anime-add-btn ${isSelected ? 'selected' : ''}`}
@@ -182,7 +188,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
                             {statusMessage.text}
                         </div>
                     )}
-                    {!targetShowId && (
+                    {(!targetShowId || selectedAnime.length > 0) && (
                         <button 
                             className="add-anime-submit-btn" 
                             onClick={handleSubmit} 

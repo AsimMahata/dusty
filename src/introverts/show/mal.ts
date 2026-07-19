@@ -11,7 +11,7 @@ export async function getAnimeInfoFromMal(id: number | null): Promise<string | n
     if (!id) {
         return null;
     }
-    let result = await getAnimeInfoFromMalDB(id);
+    let result: string | null = await getAnimeInfoFromMalDB(id);
     if (!result) {
         try{
             result = await getAnimeInfoFromMalApi(id);
@@ -50,7 +50,10 @@ export const getNextEpisode = (show: ShowResult) => {
 export async function getShowMetaData(show: ShowResult):Promise<ShowMetaData> {
     let result = null;
     try{
-        result = JSON.parse(await getAnimeInfoFromMal(show.mal_id));
+        const malInfo = await getAnimeInfoFromMal(show.mal_id ?? null);
+        if (malInfo) {
+            result = JSON.parse(malInfo);
+        }
     }catch(err){
         logger.error("MAL_INFO_PARSING_ERROR",err);
     }

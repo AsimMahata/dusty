@@ -1,5 +1,4 @@
 import React from 'react';
-import type { ShowResult } from '../../../../types/types';
 import { useShow } from '../../../../hooks/shows/useShow';
 
 interface EditMalNumberModalProps {
@@ -33,7 +32,7 @@ export const EditMalNumberModal: React.FC<EditMalNumberModalProps> = ({
                     value={malNumber ?? ''}
                     onChange={(e) => {
                         const val = e.target.value;
-                        showHook.setMalNumber(val === '' ? null : Number(val));
+                        setMalNumber(val === '' ? null : Number(val));
                     }}
                     onKeyDown={handleKeyDown}
                     placeholder="e.g. 21"

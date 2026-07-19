@@ -28,3 +28,11 @@ export const CMD_SCAN_ZIP = "scan_zip";
 
 export const CMD_SCAN_EMPTY_DIR = "scan_empty_dir";
 export const CMD_GET_MEDIA_OF_TYPE = "get_media_of_type";
+
+// Tables
+export const CMD_GET_ALL_TABLES = "get_all_tables";
+export const CMD_RESET_TABLE = "reset_table";
+export const CMD_RESYNC_TABLE = "resync_table";
+
+// System
+export const CMD_GET_SYSTEM_INFO = "get_system_info";

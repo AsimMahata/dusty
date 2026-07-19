@@ -1,5 +1,5 @@
 pub mod dusty;
-use crate::dusty::db::init::init_db;
+use crate::dusty::db::init::init_db_and_os;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -33,6 +33,10 @@ pub fn run() {
             dusty::api::mal::reset_mal_cache,
             dusty::api::anime::get_seasonal_anime_with_info,
             dusty::api::anime::add_seasonal_anime_to_db,
+            dusty::api::table::get_all_tables,
+            dusty::api::table::reset_table,
+            dusty::api::table::resync_table,
+            dusty::api::system::get_system_info,
         ])
         .setup(|app| {
             if cfg!(debug_assertions) {
@@ -42,7 +46,7 @@ pub fn run() {
                         .build(),
                 )?;
             }
-            init_db(app)?;
+            init_db_and_os(app)?;
             Ok(())
         })
         .run(tauri::generate_context!())

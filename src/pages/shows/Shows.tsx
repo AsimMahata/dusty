@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { useShow } from '../../hooks/shows/useShow';
 import { ShowDetailPage } from './components/detail/ShowDetailPage';
