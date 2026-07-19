@@ -4,7 +4,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { CMD_OPEN_FILE } from '../../constants/commands';
 import type { FileInfo, Tab, MediaDir, Item, MediaType } from '../../types/types';
 import { fileInfoToItemData } from '../../utility/util';
-import { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON, DEFAULT_STARTING_PATH } from '../../constants/defaults';
+import { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON, DEFAULT_STARTING_PATHS } from '../../constants/defaults';
 import { mediaExplorerTab, mediaListTab } from '../../constants/tabs';
 import { getRootFolders } from '../../utility/media/getRootFolders';
 import { getMediaFolderIcon } from '../../utility/icon/getMediaFolderIcon';
@@ -13,7 +13,7 @@ import { fetchFlatMedia, fetchMediaTree } from '../../introverts/media/scan';
 
 // Cache removed in favor of backend cache
 
-export const useMedia = (title: string, mediaType: MediaType, defaultPath: string = DEFAULT_STARTING_PATH) => {
+export const useMedia = (title: string, mediaType: MediaType, defaultPaths: string[] = DEFAULT_STARTING_PATHS) => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
     const [isItemSelected, setIsItemSelected] = useState<boolean>(false);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
@@ -69,8 +69,8 @@ export const useMedia = (title: string, mediaType: MediaType, defaultPath: strin
         setIsRefreshing(true);
         try {
             const [mediaTree, flat] = await Promise.all([
-                fetchMediaTree(mediaType, defaultPath, sync),
-                fetchFlatMedia(mediaType, defaultPath, sync)
+                fetchMediaTree(mediaType, defaultPaths, sync),
+                fetchFlatMedia(mediaType, defaultPaths, sync)
             ]);
             setMediaDirs(mediaTree);
             setFlatMedia(flat);

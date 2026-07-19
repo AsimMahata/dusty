@@ -5,7 +5,7 @@ import { CMD_SCAN_SHOWS, CMD_UPDATE_BAN_STATUS, CMD_UPDATE_SHOW_STATUS, CMD_RENA
 import type { ShowResult, ShowStatus, ActionItem } from '../../types/types';
 import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY, TABS, type ShowSortMethod, type ShowTab } from '../../pages/shows/constants/constants';
 import { logger } from '../../utility/logger';
-import { DEFAULT_STARTING_PATH } from '../../constants/defaults';
+import { DEFAULT_STARTING_PATHS } from '../../constants/defaults';
 import { LABELS } from '../../constants/labels';
 import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE_CIRCLE_ICON_16, X_CIRCLE_ICON_16, ROTATE_CCW_ICON_16, BAN_ICON_16, SHIELD_CHECK_ICON_16, ICONS } from '../../constants/icon';
 import { COLORS, ACTIONS_SEPARATOR } from '../../constants/color';
@@ -54,9 +54,19 @@ export const useShow = () => {
         
         try {
             const command = sync ? CMD_SYNC_SCAN_SHOWS : CMD_SCAN_SHOWS;
-            const shows: ShowResult[] = await invoke(command, { path: DEFAULT_STARTING_PATH });
-            setAllShows(shows);
-            logger.info('all shows fetched', shows);
+            let allFetchedShows: ShowResult[] = [];
+            for (const path of DEFAULT_STARTING_PATHS) {
+                try {
+                    const shows: ShowResult[] = await invoke(command, { path });
+                    allFetchedShows = [...allFetchedShows, ...shows];
+                } catch (err) {
+                    logger.error(`Failed to fetch shows from ${path}: ${String(err)}`);
+                }
+            }
+            // Remove exact duplicates if they somehow exist across drives
+            const uniqueShows = Array.from(new Map(allFetchedShows.map(item => [item.id, item])).values());
+            setAllShows(uniqueShows);
+            logger.info('all shows fetched', uniqueShows);
         } catch (error) {
             logger.error(`Failed to fetch shows: ${String(error)}`);
         } finally {

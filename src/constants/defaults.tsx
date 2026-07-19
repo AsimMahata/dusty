@@ -2,7 +2,7 @@ import { Tv, File, PlayCircle, Folder } from "lucide-react";
 
 // Paths
 const isWindows = typeof navigator !== 'undefined' && navigator.userAgent.toLowerCase().includes("windows");
-export const DEFAULT_STARTING_PATH = isWindows ? "C:\\" : "/";
+export const DEFAULT_STARTING_PATHS = isWindows ? ["C:\\", "D:\\"] : ["/"];
 
 // Icons
 export const DEFAULT_ICON = <File size={18} />;

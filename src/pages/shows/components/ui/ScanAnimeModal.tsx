@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Check } from 'lucide-react';
-import type { AnimeData } from '../../../../introverts/show/anime';
 import { scanShowsForAnime, type ScannedAnimeData } from '../../../../introverts/show/anime';
 import { addSeasonalAnimeDB } from '../../../../ambiverts/show/anime';
 import type { ShowResult } from '../../../../types/types';
