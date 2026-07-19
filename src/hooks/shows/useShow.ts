@@ -11,6 +11,7 @@ import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE
 import { COLORS, ACTIONS_SEPARATOR } from '../../constants/color';
 import { hashString } from '../../pages/shows/actions/hashString';
 import { useMal } from './useMal';
+import { useImdb } from './useImdb';
 import { SEARCH_ICON_16 } from '../../constants/icon';
 
 // Cache removed to rely on backend SQLite caching
@@ -44,6 +45,16 @@ export const useShow = () => {
         setAddAnimeQuery(query);
         setAddAnimeTargetShowId(targetShowId);
         setIsAddAnimeOpen(true);
+    };
+
+    const [isAddShowOpen, setIsAddShowOpen] = useState(false);
+    const [addShowQuery, setAddShowQuery] = useState('');
+    const [addShowTargetShowId, setAddShowTargetShowId] = useState<string | undefined>(undefined);
+
+    const handleOpenAddShow = (query: string = '', targetShowId?: string) => {
+        setAddShowQuery(query);
+        setAddShowTargetShowId(targetShowId);
+        setIsAddShowOpen(true);
     };
 
     const [allShows, setAllShows] = useState<ShowResult[]>([]);
@@ -176,6 +187,24 @@ export const useShow = () => {
         updateMalIdForShow,
     } = malHook;
 
+    const imdbHook = useImdb({
+        updateShowInState: (showId, updates) => {
+            const newShows = allShows.map(s => s.id === showId ? { ...s, ...updates } : s);
+            setAllShows(newShows);
+        }
+    });
+
+    const {
+        showEditImdbId,
+        currentEditShowImdb,
+        imdbId,
+        setImdbId,
+        handleEditImdbId,
+        handleSaveImdbId,
+        handleCancelEditImdbId,
+        updateImdbIdForShow,
+    } = imdbHook;
+
     const getActionsForShow = (show: ShowResult): ActionItem[] => {
         const actions: ActionItem[] = [];
 
@@ -203,6 +232,26 @@ export const useShow = () => {
             color: COLORS.BASE.BLUE,
             onClick: () => {
                 handleOpenAddAnime(show.title, show.id);
+            }
+        });
+
+        actions.push(ACTIONS_SEPARATOR);
+
+        actions.push({
+            label: 'Edit IMDB ID',
+            icon: ICONS.GENERAL.EDIT,
+            color: COLORS.BASE.ORANGE,
+            onClick: () => {
+                handleEditImdbId(show);
+            }
+        });
+
+        actions.push({
+            label: 'Search in IMDB',
+            icon: SEARCH_ICON_16,
+            color: COLORS.BASE.ORANGE,
+            onClick: () => {
+                handleOpenAddShow(show.title, show.id);
             }
         });
 
@@ -369,5 +418,19 @@ export const useShow = () => {
         addAnimeTargetShowId,
         handleOpenAddAnime,
         updateMalIdForShow,
+        isAddShowOpen,
+        setIsAddShowOpen,
+        addShowQuery,
+        setAddShowQuery,
+        addShowTargetShowId,
+        handleOpenAddShow,
+        handleEditImdbId,
+        handleSaveImdbId,
+        handleCancelEditImdbId,
+        showEditImdbId,
+        currentEditShowImdb,
+        imdbId,
+        setImdbId,
+        updateImdbIdForShow,
     };
 };

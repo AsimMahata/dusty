@@ -5,9 +5,10 @@ import { useShow } from '../../../../hooks/shows/useShow';
 interface ShowTabsProps {
     showHook: ReturnType<typeof useShow>;
     onAddAnime?: () => void;
+    onAddShow?: () => void;
 }
 
-export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime }) => {
+export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime, onAddShow }) => {
     const { activeTab, setActiveTab, getCount } = showHook;
     
     return (
@@ -36,6 +37,11 @@ export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime }) => {
                     <button className="open-add-anime-btn" onClick={onAddAnime}>
                         Add Anime
                     </button>
+                    {onAddShow && (
+                        <button className="open-add-show-btn" onClick={onAddShow}>
+                            Add Show
+                        </button>
+                    )}
                 </div>
             )}
         </div>

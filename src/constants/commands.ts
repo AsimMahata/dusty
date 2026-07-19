@@ -12,6 +12,7 @@ export const CMD_UPDATE_SHOW_STATUS = "update_show_status";
 export const CMD_RENAME_SHOW = "rename_show";
 export const CMD_UPDATE_PIN_STATUS = "update_pin_status";
 export const CMD_UPDATE_MAL_ID = "update_mal_id";
+export const CMD_UPDATE_IMDB_ID = "update_imdb_id";
 
 // Projects
 export const CMD_SCAN_PROJECTS = "scan_projects";

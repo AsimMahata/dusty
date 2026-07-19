@@ -37,6 +37,23 @@
     transform: translateY(-1px);
 }
 
+.open-add-show-btn {
+    background: #f97316;
+    color: #ffffff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.open-add-show-btn:hover {
+    background: #ea580c; /* slightly darker orange */
+    transform: translateY(-1px);
+}
+
 .show-tab-item {
     padding: 1rem 0;
     cursor: pointer;

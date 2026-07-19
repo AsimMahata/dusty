@@ -90,6 +90,7 @@ export interface ShowResult {
     status: ShowStatus,
     season?: number,
     mal_id?: number,
+    imdb_id?: string,
     airing?:boolean,
 }
 
