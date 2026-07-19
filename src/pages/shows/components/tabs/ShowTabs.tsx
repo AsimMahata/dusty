@@ -29,9 +29,14 @@ export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime }) => {
                 })}
             </div>
             {onAddAnime && (
-                <button className="open-add-anime-btn" onClick={onAddAnime}>
-                    Add Anime
-                </button>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button className="open-add-anime-btn" onClick={() => showHook.setIsScanAnimeOpen(true)}>
+                        Scan for Anime
+                    </button>
+                    <button className="open-add-anime-btn" onClick={onAddAnime}>
+                        Add Anime
+                    </button>
+                </div>
             )}
         </div>
     );

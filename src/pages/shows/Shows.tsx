@@ -6,6 +6,7 @@ import { ShowTabs } from './components/tabs/ShowTabs';
 import { ShowList } from './components/list/ShowList';
 import { EditMalNumberModal } from './components/ui/EditMalNumberModal';
 import { AddAnimeModal } from './components/ui/AddAnimeModal';
+import { ScanAnimeModal } from './components/ui/ScanAnimeModal';
 import './css/Shows.css';
 
 export const Shows: React.FC = () => {
@@ -13,7 +14,7 @@ export const Shows: React.FC = () => {
     renderCount.current++;
     console.log(`[Shows] rendered: ${renderCount.current}`);
     const showHook = useShow();
-    const { isAddAnimeOpen, setIsAddAnimeOpen, addAnimeQuery, addAnimeTargetShowId, handleOpenAddAnime } = showHook;
+    const { isAddAnimeOpen, setIsAddAnimeOpen, addAnimeQuery, addAnimeTargetShowId, handleOpenAddAnime, isScanAnimeOpen, setIsScanAnimeOpen, allShows } = showHook;
 
     if (showHook.selectedShow) {
         return (
@@ -25,6 +26,10 @@ export const Shows: React.FC = () => {
                     initialQuery={addAnimeQuery} 
                     targetShowId={addAnimeTargetShowId}
                     onLinkAction={showHook.updateMalIdForShow}
+                />}
+                {isScanAnimeOpen && <ScanAnimeModal
+                    onClose={() => setIsScanAnimeOpen(false)}
+                    shows={allShows.filter(s => !s.banned)}
                 />}
             </PageLayout>
         );
@@ -42,6 +47,10 @@ export const Shows: React.FC = () => {
                 initialQuery={addAnimeQuery}
                 targetShowId={addAnimeTargetShowId}
                 onLinkAction={showHook.updateMalIdForShow}
+            />}
+            {isScanAnimeOpen && <ScanAnimeModal
+                onClose={() => setIsScanAnimeOpen(false)}
+                shows={allShows.filter(s => !s.banned)}
             />}
         </PageLayout>
     );

@@ -27,6 +27,20 @@ pub fn get_seasonal_anime_with_info(state: tauri::State<AppState>) -> Vec<AnimeD
 }
 
 #[tauri::command]
+pub fn get_all_anime_from_db(state: tauri::State<AppState>) -> Vec<AnimeData> {
+    let db = state.db.lock().unwrap();
+    let anime_list = get_all_anime_titles_in_db(&db).unwrap_or_default();
+    
+    anime_list.into_iter().map(|a| AnimeData {
+        title: a.title,
+        mal_id: a.mal_id,
+        num_episodes: a.num_episodes.map(|n| n as u32),
+        season: a.season,
+        airing: a.airing,
+    }).collect()
+}
+
+#[tauri::command]
 pub fn add_seasonal_anime_to_db(state: tauri::State<AppState>, data: Vec<AnimeData>) -> bool {
     let db = state.db.lock().unwrap();
     let mut success = true;

@@ -2,8 +2,17 @@ import { invoke } from "@tauri-apps/api/core";
 import type { AnimeData } from "../../introverts/show/anime";
 import { logger } from "../../utility/logger";
 export const CMD_ADD_SEASONAL_ANIME = 'add_seasonal_anime_to_db';
+export const CMD_GET_ALL_ANIME = 'get_all_anime_from_db';
 
-
+export async function getAllAnimeFromDB():Promise<AnimeData[]>{
+    try {
+        let anime_list: AnimeData[] = await invoke(CMD_GET_ALL_ANIME);
+        return anime_list;
+    } catch (error) {
+        logger.error(`getAllAnimeFromDB error: ${error}`);
+        return [];
+    }
+}
 export async function addSeasonalAnimeDB(data:AnimeData[]):Promise<boolean>{
     try {
     logger.info('Successfully fetched seasonal anime from API.');

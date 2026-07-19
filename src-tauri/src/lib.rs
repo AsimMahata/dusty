@@ -34,6 +34,7 @@ pub fn run() {
             dusty::api::mal::add_anime_info_to_mal_cache,
             dusty::api::mal::reset_mal_cache,
             dusty::api::anime::get_seasonal_anime_with_info,
+            dusty::api::anime::get_all_anime_from_db,
             dusty::api::anime::add_seasonal_anime_to_db,
             dusty::api::table::get_all_tables,
             dusty::api::table::reset_table,

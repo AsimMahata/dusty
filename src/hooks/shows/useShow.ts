@@ -36,6 +36,7 @@ export const useShow = () => {
     const [isItemSelected, setIsItemSelected] = useState(false);
 
     const [isAddAnimeOpen, setIsAddAnimeOpen] = useState(false);
+    const [isScanAnimeOpen, setIsScanAnimeOpen] = useState(false);
     const [addAnimeQuery, setAddAnimeQuery] = useState('');
     const [addAnimeTargetShowId, setAddAnimeTargetShowId] = useState<string | undefined>(undefined);
 
@@ -351,6 +352,8 @@ export const useShow = () => {
         setMalNumber,
         isAddAnimeOpen,
         setIsAddAnimeOpen,
+        isScanAnimeOpen,
+        setIsScanAnimeOpen,
         addAnimeQuery,
         setAddAnimeQuery,
         addAnimeTargetShowId,
