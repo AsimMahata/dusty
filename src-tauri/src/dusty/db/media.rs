@@ -1,8 +1,6 @@
 use std::collections::HashMap;
 
-use crate::dusty::{
-    data::media::MediaDir, logger::logger, utility::sha256_hash::get_sha256_id,
-};
+use crate::dusty::{data::media::MediaDir, logger::logger, utility::sha256_hash::get_sha256_id};
 use rusqlite::{params, Connection, Result};
 use serde_json;
 
@@ -26,8 +24,13 @@ pub fn create_media_table(conn: &Connection) -> Result<(), String> {
     Ok(())
 }
 
-pub fn save_media_to_db(db: &Connection, source: &str, media_type: &str, data: &Vec<MediaDir>) -> Result<(), String> {
-    let id = get_sha256_id(source.to_string(),media_type.to_string());
+pub fn save_media_to_db(
+    db: &Connection,
+    source: &str,
+    media_type: &str,
+    data: &Vec<MediaDir>,
+) -> Result<(), String> {
+    let id = get_sha256_id(source.to_string(), media_type.to_string());
     let json_data = serde_json::to_string(data).map_err(|e| e.to_string())?;
 
     db.execute(
@@ -38,16 +41,19 @@ pub fn save_media_to_db(db: &Connection, source: &str, media_type: &str, data: &
         params![id, source, media_type, json_data],
     )
     .map_err(|err| {
-        logger::error!("SAVE_MEDIA_TO_DB_FAILED", err);
         err.to_string()
     })?;
 
     Ok(())
 }
 
-pub fn get_media_from_db(db: &Connection, source: &str, media_type: &str) -> Result<Option<Vec<MediaDir>>, String> {
-    let id = get_sha256_id(source.to_string(),media_type.to_string());
-    
+pub fn get_media_from_db(
+    db: &Connection,
+    source: &str,
+    media_type: &str,
+) -> Result<Option<Vec<MediaDir>>, String> {
+    let id = get_sha256_id(source.to_string(), media_type.to_string());
+
     let result = db.query_row(
         "SELECT data FROM media_cache WHERE id = ?1",
         params![id],
@@ -59,9 +65,10 @@ pub fn get_media_from_db(db: &Connection, source: &str, media_type: &str) -> Res
 
     match result {
         Ok(json_data) => {
-            let media_dirs: Vec<MediaDir> = serde_json::from_str(&json_data).map_err(|e| e.to_string())?;
+            let media_dirs: Vec<MediaDir> =
+                serde_json::from_str(&json_data).map_err(|e| e.to_string())?;
             Ok(Some(media_dirs))
-        },
+        }
         Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
         Err(err) => {
             logger::error!("GET_MEDIA_FROM_DB_FAILED", err);
@@ -70,10 +77,14 @@ pub fn get_media_from_db(db: &Connection, source: &str, media_type: &str) -> Res
     }
 }
 
-pub fn sync_media_to_db(db: &Connection, source: &str, media_type: &str, new_media_dirs: &Vec<MediaDir>) -> Result<(), String> {
-    
+pub fn sync_media_to_db(
+    db: &Connection,
+    source: &str,
+    media_type: &str,
+    new_media_dirs: &Vec<MediaDir>,
+) -> Result<(), String> {
     let existing_data = get_media_from_db(db, source, media_type)?;
-    
+
     let mut all_media_dirs = if let Some(dirs) = existing_data {
         dirs
     } else {
@@ -96,10 +107,12 @@ pub fn sync_media_to_db(db: &Connection, source: &str, media_type: &str, new_med
 }
 
 pub fn reset_media_cache_table_in_db(db: &Connection) -> Result<(), String> {
-    db.execute("DROP TABLE IF EXISTS media_cache", []).map_err(|err| {
-        logger::error!("RESET_MEDIA_CACHE_TABLE_FAILED", err);
-        err.to_string()
-    })?;
+    db.execute("DROP TABLE IF EXISTS media_cache", [])
+        .map_err(|err| {
+            logger::error!("RESET_MEDIA_CACHE_TABLE_FAILED", err);
+            err.to_string()
+        })?;
     create_media_table(db)?;
     Ok(())
 }
+

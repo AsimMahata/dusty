@@ -1,8 +1,8 @@
 import React from 'react';
-import { useDusty } from '../../../../contexts/DustyContext';
+import { useHomeContext } from '../../contexts/HomeContext';
 
 export const Quote: React.FC = () => {
-  const { systemStatus } = useDusty();
+  const { systemStatus } = useHomeContext();
 
   return (
     <div className="home-quote">

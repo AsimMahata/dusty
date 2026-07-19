@@ -1,12 +1,12 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct Project {
     pub id: String,
     pub title: String,
     pub path: String,
     pub project_type: String,
-    pub pinned:bool,
+    pub pinned: bool,
     pub status: String,
 }
 

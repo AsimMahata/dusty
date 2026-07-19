@@ -9,6 +9,7 @@ pub fn run() {
             dusty::api::file_system::read_dir,
             dusty::api::opener::open_file,
             dusty::api::show::scan_shows,
+            dusty::api::show::sync_scan_shows,
             dusty::api::show::rename_show,
             dusty::api::show::update_show_status,
             dusty::api::show::update_ban_status,
@@ -16,6 +17,7 @@ pub fn run() {
             dusty::api::show::update_mal_id,
             dusty::api::show::reset_shows_table,
             dusty::api::project::scan_projects,
+            dusty::api::project::sync_scan_projects,
             dusty::api::project::update_project_pin_status,
             dusty::api::project::update_project_status,
             dusty::api::project::reset_project_table,
@@ -37,6 +39,14 @@ pub fn run() {
             dusty::api::table::reset_table,
             dusty::api::table::resync_table,
             dusty::api::system::get_system_info,
+            dusty::api::overview::get_stats,
+            dusty::api::music::scan_music,
+            dusty::api::music::sync_scan_music,
+            dusty::api::music::scan_music_cached,
+            dusty::api::image::scan_image,
+            dusty::api::image::sync_scan_image,
+            dusty::api::video::scan_video,
+            dusty::api::video::sync_scan_video,
         ])
         .setup(|app| {
             if cfg!(debug_assertions) {

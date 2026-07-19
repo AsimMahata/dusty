@@ -1,17 +1,21 @@
 use rusqlite::{params, Connection};
 
-use crate::dusty::{data::project::{Project, ProjectInfo}, logger::logger};
+use crate::dusty::{
+    data::project::{Project, ProjectInfo},
+    logger::logger,
+};
 
 pub fn get_project_info_from_db(db: &Connection, id: &String) -> Result<ProjectInfo, String> {
-     db.query_row(
+    db.query_row(
         "SELECT project_type, pinned, status FROM projects WHERE id = ?1",
         params![id],
-        |row| 
+        |row| {
             Ok(ProjectInfo {
                 project_type: row.get(0)?,
                 pinned: row.get(1)?,
                 status: row.get(2)?,
             })
+        },
     )
     .map_err(|err| {
         logger::error!("GET_SHOW_INFO_FAILED", err);
@@ -21,12 +25,10 @@ pub fn get_project_info_from_db(db: &Connection, id: &String) -> Result<ProjectI
 
 pub fn add_projects_in_db(db: &Connection, projects: &Vec<Project>) -> Result<(), String> {
     for project in projects {
-        add_project_in_db(db, &project)
-            .map_err(|err| logger::error!("INSERT_PROJECT_IN_DB_FAILED", err))
-            .ok();
+        add_project_in_db(db, &project).ok();
     }
 
-    Ok(())  
+    Ok(())
 }
 
 fn add_in_projects_table(db: &Connection, project: &Project) -> rusqlite::Result<()> {
@@ -35,20 +37,57 @@ fn add_in_projects_table(db: &Connection, project: &Project) -> rusqlite::Result
         INSERT INTO projects (id, title, path, project_type, pinned, status)
         VALUES (?1, ?2, ?3, ?4, ?5, ?6)
         ",
-        params![project.id, &project.title, &project.path, &project.project_type, &project.pinned, &project.status]
+        params![
+            project.id,
+            &project.title,
+            &project.path,
+            &project.project_type,
+            &project.pinned,
+            &project.status
+        ],
     )?;
 
     Ok(())
 }
+fn add_in_project_cache_table(db: &Connection, project: &Project) -> rusqlite::Result<()> {
+    let data = serde_json::to_string(project).unwrap_or_default();
+    db.execute(
+        "
+        INSERT OR REPLACE INTO project_cache (id,data)
+        VALUES (?1, ?2)
+        ",
+        params![project.id, data],
+    )?;
 
+    Ok(())
+}
+pub fn get_project_cache_from_db(db: &Connection) -> Result<Vec<Project>, String> {
+    let mut stmt = db.prepare("SELECT data FROM project_cache").map_err(|e| e.to_string())?;
+
+    let iter = stmt.query_map([], |row| {
+        let data: String = row.get(0)?;
+        Ok(data)
+    }).map_err(|e| e.to_string())?;
+
+    let mut projects = Vec::new();
+    for row in iter {
+        if let Ok(data) = row {
+            if let Ok(project) = serde_json::from_str::<Project>(&data) {
+                projects.push(project);
+            }
+        }
+    }
+
+    Ok(projects)
+}
 
 pub fn add_project_in_db(db: &Connection, project: &Project) -> Result<(), String> {
-
     add_in_projects_table(db, project).map_err(|err| {
-        logger::error!("INSERT_PROJECT_IN_DB_FAILED", err);
         err.to_string()
     })?;
-
+    add_in_project_cache_table(db, project).map_err(|err| {
+        err.to_string()
+    })?;
     Ok(())
 }
 
@@ -64,7 +103,21 @@ pub fn create_projects_table(db: &Connection) -> Result<(), String> {
             status TEXT NOT NULL DEFAULT 'default'
         )
         ",
-        []
+        [],
+    )
+    .map_err(|err| {
+        logger::error!("CREATE_PROJECTS_TABLE_FAILED", err);
+        err.to_string()
+    })?;
+
+    db.execute(
+        "
+        CREATE TABLE IF NOT EXISTS project_cache (
+            id TEXT PRIMARY KEY,
+            data TEXT NOT NULL
+        )
+        ",
+        [],
     )
     .map_err(|err| {
         logger::error!("CREATE_PROJECTS_TABLE_FAILED", err);
@@ -73,10 +126,6 @@ pub fn create_projects_table(db: &Connection) -> Result<(), String> {
 
     Ok(())
 }
-
-
-
-
 
 pub fn print_all_projects_in_db(db: &Connection) -> Result<(), String> {
     let mut stmt = db
@@ -122,10 +171,14 @@ pub fn print_all_projects_in_db(db: &Connection) -> Result<(), String> {
     Ok(())
 }
 
-pub fn update_project_pin_status_in_db(db: &Connection, id: &String, pinned: bool) -> Result<(), String> {
+pub fn update_project_pin_status_in_db(
+    db: &Connection,
+    id: &String,
+    pinned: bool,
+) -> Result<(), String> {
     db.execute(
         "UPDATE projects SET pinned = ?1 WHERE id = ?2",
-        params![pinned, id]
+        params![pinned, id],
     )
     .map_err(|err| {
         logger::error!("UPDATE_PROJECT_PIN_STATUS_IN_DB_FAILED", err);
@@ -135,10 +188,14 @@ pub fn update_project_pin_status_in_db(db: &Connection, id: &String, pinned: boo
     Ok(())
 }
 
-pub fn update_project_status_in_db(db: &Connection, id: &String, status: &String) -> Result<(), String> {
+pub fn update_project_status_in_db(
+    db: &Connection,
+    id: &String,
+    status: &String,
+) -> Result<(), String> {
     db.execute(
         "UPDATE projects SET status = ?1 WHERE id = ?2",
-        params![status, id]
+        params![status, id],
     )
     .map_err(|err| {
         logger::error!("UPDATE_PROJECT_STATUS_IN_DB_FAILED", err);
@@ -149,14 +206,16 @@ pub fn update_project_status_in_db(db: &Connection, id: &String, status: &String
 }
 
 pub fn reset_project_table_in_db(db: &Connection) -> Result<(), String> {
-    db.execute(
-        "DROP TABLE IF EXISTS projects",
-        []
-    )
-    .map_err(|err| {
-        logger::error!("RESET_PROJECT_TABLE_IN_DB_FAILED", err);
-        err.to_string()
-    })?;
+    db.execute("DROP TABLE IF EXISTS projects", [])
+        .map_err(|err| {
+            logger::error!("RESET_PROJECT_TABLE_IN_DB_FAILED", err);
+            err.to_string()
+        })?;
+    db.execute("DROP TABLE IF EXISTS project_cache", [])
+        .map_err(|err| {
+            logger::error!("RESET_PROJECT_TABLE_IN_DB_FAILED", err);
+            err.to_string()
+        })?;
 
     create_projects_table(db).map_err(|err| {
         logger::error!("CREATE_PROJECTS_TABLE_IN_DB_FAILED", err);

@@ -28,7 +28,6 @@ pub fn add_to_anime_in_db(db: &Connection, mal_id: i32, title: String,num_episod
         params![anime_id, mal_id, title, num_episodes, season, airing],
     )
     .map_err(|err| {
-        logger::error!("INSERT_INTO_MAL_CACHE_FAILED", err);
         err.to_string()
     })?;
     Ok(())

@@ -5,6 +5,8 @@ export const CMD_READ_DIR = "read_dir";
 // Shows
 
 export const CMD_SCAN_SHOWS = "scan_shows";
+export const CMD_SYNC_SCAN_SHOWS = "sync_scan_shows";
+
 export const CMD_UPDATE_BAN_STATUS = "update_ban_status";
 export const CMD_UPDATE_SHOW_STATUS = "update_show_status";
 export const CMD_RENAME_SHOW = "rename_show";
@@ -13,6 +15,7 @@ export const CMD_UPDATE_MAL_ID = "update_mal_id";
 
 // Projects
 export const CMD_SCAN_PROJECTS = "scan_projects";
+export const CMD_SYNC_SCAN_PROJECTS = "sync_scan_projects";
 export const CMD_UPDATE_PROJECT_PIN_STATUS = "update_project_pin_status";
 export const CMD_UPDATE_PROJECT_STATUS = "update_project_status";
 
@@ -28,6 +31,13 @@ export const CMD_SCAN_ZIP = "scan_zip";
 
 export const CMD_SCAN_EMPTY_DIR = "scan_empty_dir";
 export const CMD_GET_MEDIA_OF_TYPE = "get_media_of_type";
+export const CMD_SYNC_MEDIA_DATABASE = "sync_media_database";
+export const CMD_SCAN_VIDEO = "scan_video";
+export const CMD_SYNC_SCAN_VIDEO = "sync_scan_video";
+export const CMD_SCAN_MUSIC = "scan_music";
+export const CMD_SYNC_SCAN_MUSIC = "sync_scan_music";
+export const CMD_SCAN_IMAGE = "scan_image";
+export const CMD_SYNC_SCAN_IMAGE = "sync_scan_image";
 
 // Tables
 export const CMD_GET_ALL_TABLES = "get_all_tables";
@@ -36,3 +46,4 @@ export const CMD_RESYNC_TABLE = "resync_table";
 
 // System
 export const CMD_GET_SYSTEM_INFO = "get_system_info";
+export const CMD_GET_STATS = "get_stats";

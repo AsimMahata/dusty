@@ -9,6 +9,7 @@ use crate::dusty::db::mal::create_mal_cache_table;
 use crate::dusty::db::project::create_projects_table;
 use crate::dusty::db::show::create_shows_table;
 use crate::dusty::db::media::create_media_table;
+use crate::dusty::db::show_cache::create_show_cache_table;
 use crate::dusty::logger::logger;
 
 #[tauri::command]
@@ -37,8 +38,11 @@ pub fn initialize_tables(conn: &Connection) -> Result<Vec<String>, String> {
     let mut tables: Vec<String> = Vec::new();
     create_shows_table(&conn)?;
     tables.push("shows".to_string());
+    create_show_cache_table(&conn)?;
+    tables.push("show_cache".to_string());
     create_projects_table(&conn)?;
     tables.push("projects".to_string());
+    tables.push("project_cache".to_string());
     create_media_table(&conn)?;
     tables.push("media_cache".to_string());
     create_mal_cache_table(&conn)?;

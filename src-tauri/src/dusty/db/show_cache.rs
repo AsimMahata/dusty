@@ -13,16 +13,13 @@ pub fn create_show_cache_table(db:&Connection) ->Result<(),String>{
 }
 
 pub fn add_to_show_cache_in_db(db:&Connection,id:String,data:String)->Result<(),String>{
-    let id = get_sha256_id("show".to_string(),id.clone());
     db.execute("INSERT INTO show_cache (id, data) VALUES (?1, ?2)",params![id,data]).map_err(|err|{
-        logger::error!("INSERT_INTO_SHOW_CACHE_FAILED", err);
         err.to_string()
     })?;
     Ok(())
 }
 
 pub fn get_from_show_cache_in_db(db:&Connection,id:String)->Result<Option<String>,String>{
-    let id = get_sha256_id("show".to_string(),id);
     let mut stmt = db.prepare("SELECT data FROM show_cache WHERE id = ?1").map_err(|err|{
         logger::error!("PREPARE_GET_FROM_SHOW_CACHE_FAILED", err);
         err.to_string()
@@ -39,26 +36,28 @@ pub fn get_from_show_cache_in_db(db:&Connection,id:String)->Result<Option<String
 }
 
 pub fn get_all_shows_from_show_cache_in_db(db:&Connection)->Result<Vec<ShowResult>,String>{
-    let result:Result<String,rusqlite::Error> = db.query_row(
-        "SELECT data FROM show_cache",
-        params![],
-        |row| {
-            let data: String = row.get(0)?;
-            Ok(data)
-        },
-    );
+    let mut stmt = db.prepare("SELECT data FROM show_cache").map_err(|err| err.to_string())?;
+    
+    let show_iter = stmt.query_map([], |row| {
+        let data: String = row.get(0)?;
+        Ok(data)
+    }).map_err(|err| {
+        logger::error!("GET_ALL_SHOWS_FROM_DB_FAILED", err);
+        err.to_string()
+    })?;
 
-    match result {
-        Ok(json_data) => {
-            let shows: Vec<ShowResult> = serde_json::from_str(&json_data).map_err(|e| e.to_string())?;
-            Ok(shows)
-        },
-        Err(rusqlite::Error::QueryReturnedNoRows) => Ok(Vec::new()),
-        Err(err) => {
-            logger::error!("GET_MEDIA_FROM_DB_FAILED", err);
-            Err(err.to_string())
+    let mut shows = Vec::new();
+    for data_result in show_iter {
+        if let Ok(json_data) = data_result {
+            if let Ok(show) = serde_json::from_str::<ShowResult>(&json_data) {
+                shows.push(show);
+            } else {
+                logger::error!("PARSE_SHOW_RESULT_FAILED", "Failed to parse a row in show_cache");
+            }
         }
     }
+
+    Ok(shows)
 }
 
 

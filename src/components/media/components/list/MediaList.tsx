@@ -8,7 +8,7 @@ import { LABELS } from '../../constants/labels';
 interface MediaListProps<T extends BaseItem = AnyItem> {
     tab: TabHook<T>;
 }
-
+export const VISIBLE_COUNT = 60;
 export type MediaSortMode = 'name' | 'name-desc' | 'size' | 'size-asc' | 'type';
 
 const SORT_OPTIONS: { mode: MediaSortMode; label: string }[] = [
@@ -28,8 +28,14 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
     const getCardActions = tab.getCardActions;
 
     const [sortMode, setSortMode] = useState<MediaSortMode>('name');
+    const [visibleCount, setVisibleCount] = useState(50);
 
     const query = searchQuery.toLowerCase();
+
+    // Reset visible count when data or search changes
+    React.useEffect(() => {
+        setVisibleCount(VISIBLE_COUNT);
+    }, [allItems, query, sortMode]);
 
     const filterItems = (items: T[]) => items.filter(item =>
         item.title.toLowerCase().includes(query) ||
@@ -63,6 +69,16 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
     const filteredRecent = filterItems(recentItems);
     const filteredAll = filterItems(allItems);
     const sortedAll = sortItems(filteredAll, sortMode);
+
+    // Progressive rendering chunker
+    React.useEffect(() => {
+        if (visibleCount < sortedAll.length) {
+            const timer = setTimeout(() => {
+                setVisibleCount(prev => prev + VISIBLE_COUNT);
+            }, 10);
+            return () => clearTimeout(timer);
+        }
+    }, [visibleCount, sortedAll.length]);
 
     const renderSection = (sectionTitle: string, icon: React.ReactNode, items: T[], showSortBar: boolean = false) => {
         if (items.length === 0) return null;
@@ -131,7 +147,7 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
             {renderSection(LABELS.SECTION_RECENT, ICONS.GENERAL.CLOCK, filteredRecent)}
 
             {sortedAll.length > 0 ? (
-                renderSection(`All ${title}`, tab.defaultIcon || ICONS.GENERAL.LIST, sortedAll, true)
+                renderSection(`All ${title}`, tab.defaultIcon || ICONS.GENERAL.LIST, sortedAll.slice(0, visibleCount), true)
             ) : (
                 <div style={{ textAlign: 'center', marginTop: '48px', color: 'var(--text-muted)' }}>
                     {searchQuery ? `No results found for "${searchQuery}"` : LABELS.NO_RESULTS}

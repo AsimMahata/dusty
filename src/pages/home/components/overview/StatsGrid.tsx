@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Tv, Folder, Music, Film } from 'lucide-react';
-import { useDusty } from '../../../../contexts/DustyContext';
+import { useHomeContext } from '../../contexts/HomeContext';
 import { ROUTES } from '../../../../constants/routes';
 import { StatBox } from './StatBox';
 
 export const StatsGrid: React.FC = () => {
   const navigate = useNavigate();
-  const { overviewStats } = useDusty();
+  const { overviewStats } = useHomeContext();
 
   const getAllDisplayableStats = () => [
     {

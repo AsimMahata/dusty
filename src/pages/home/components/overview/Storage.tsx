@@ -1,8 +1,8 @@
 import React from 'react';
-import { useDusty } from '../../../../contexts/DustyContext';
+import { useHomeContext } from '../../contexts/HomeContext';
 
 export const Storage: React.FC = () => {
-  const { storageInfo } = useDusty();
+  const { storageInfo } = useHomeContext();
   
   return (
     <div className="home-card storage-card">

@@ -1,18 +1,18 @@
 import { useState, useEffect, useMemo, type ReactNode } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
-import { CMD_SCAN_PROJECTS, CMD_UPDATE_PROJECT_PIN_STATUS, CMD_UPDATE_PROJECT_STATUS } from '../../constants/commands';
+import { CMD_SCAN_PROJECTS, CMD_SYNC_SCAN_PROJECTS, CMD_UPDATE_PROJECT_PIN_STATUS, CMD_UPDATE_PROJECT_STATUS } from '../../constants/commands';
 import type { Project, ProjectStatus } from '../../types/types';
 import { logger } from '../../utility/logger';
 import { filterAndSortProjects } from '../../pages/projects/actions/filter';
 import { DEFAULT_SORT_OPTION, type SortOption } from '../../pages/projects/constants/constants';
 
-let cachedAllProjects: Project[] | null = null;
+// Cache removed to rely on backend SQLite caching
 
 export const useProject = () => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
     const [selectedItem, setSelectedItem] = useState<Project | null>(null);
-    const [allProjects, setAllProjects] = useState<Project[]>(cachedAllProjects || []);
+    const [allProjects, setAllProjects] = useState<Project[]>([]);
     const [sortOption, setSortOption] = useState<SortOption>(DEFAULT_SORT_OPTION);
     
     // UI states
@@ -46,12 +46,12 @@ export const useProject = () => {
         return filterAndSortProjects(allProjects, searchQuery || "", sortOption);
     }, [allProjects, searchQuery, sortOption]);
 
-    const fetchData = async () => {
+    const fetchData = async (sync: boolean = false) => {
         setIsRefreshing(true);
         if (allProjects.length === 0) setIsLoading(true);
         try {
-            const projects: Project[] = await invoke(CMD_SCAN_PROJECTS);
-            cachedAllProjects = projects;
+            const command = sync ? CMD_SYNC_SCAN_PROJECTS : CMD_SCAN_PROJECTS;
+            const projects: Project[] = await invoke(command);
             setAllProjects(projects);
             logger.info('all projects fetched', projects);
         } catch (error) {
@@ -63,9 +63,7 @@ export const useProject = () => {
     };
 
     useEffect(() => {
-        if (!cachedAllProjects) {
-            fetchData();
-        }
+        fetchData();
     }, []);
 
     const handleTogglePin = async (id: string) => {
@@ -76,7 +74,6 @@ export const useProject = () => {
             const newProjects = allProjects.map(item =>
                 item.id === id ? { ...item, pinned: !item.pinned } : item
             );
-            cachedAllProjects = newProjects;
             setAllProjects(newProjects);
             if (selectedItem?.id === id) {
                 setSelectedItem({ ...selectedItem, pinned: !currentPinnedStatus });
@@ -98,7 +95,6 @@ export const useProject = () => {
                 project.id === id ? { ...project, status: status } : project
             );
 
-            cachedAllProjects = newProjects;
             setAllProjects(newProjects);
             if (selectedItem?.id === id) {
                 setSelectedItem({ ...selectedItem, status: status });

@@ -12,7 +12,7 @@ interface PageLayoutProps {
     setSearchQuery: (val: string) => void;
     isRefreshing: boolean;
     isLoading?: boolean;
-    fetchData: () => void;
+    fetchData: (sync?: boolean) => void;
     selectedItem?: any;
     isItemSelected?: boolean;
   };
@@ -68,7 +68,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
           )}
           {onRefresh && (
             <button 
-              onClick={onRefresh} 
+              onClick={() => onRefresh(true)} 
               title="Refresh Data"
               style={{ background: 'transparent', border: 'none', color: 'inherit', display: 'flex' }}
             >

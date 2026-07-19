@@ -1,8 +1,8 @@
 import React from 'react';
-import { useDusty } from '../../../../contexts/DustyContext';
+import { useHomeContext } from '../../contexts/HomeContext';
 
 export const Greeting: React.FC = () => {
-  const { profile } = useDusty();
+  const { profile } = useHomeContext();
 
   const getGreeting = () => {
     const hour = new Date().getHours();

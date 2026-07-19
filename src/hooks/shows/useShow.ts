@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
-import { CMD_SCAN_SHOWS, CMD_UPDATE_BAN_STATUS, CMD_UPDATE_SHOW_STATUS, CMD_RENAME_SHOW, CMD_UPDATE_PIN_STATUS } from '../../constants/commands';
+import { CMD_SCAN_SHOWS, CMD_UPDATE_BAN_STATUS, CMD_UPDATE_SHOW_STATUS, CMD_RENAME_SHOW, CMD_UPDATE_PIN_STATUS, CMD_SYNC_SCAN_SHOWS } from '../../constants/commands';
 import type { ShowResult, ShowStatus, ActionItem } from '../../types/types';
 import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY, TABS, type ShowSortMethod, type ShowTab, type ShowTabStatus } from '../../pages/shows/constants/constants';
 import { logger } from '../../utility/logger';
@@ -13,8 +13,7 @@ import { hashString } from '../../pages/shows/actions/hashString';
 import { useMal } from './useMal';
 import { SEARCH_ICON_16 } from '../../constants/icon';
 
-let cachedAllShows: ShowResult[] | null = null;
-let fetchPromise: Promise<ShowResult[]> | null = null;
+// Cache removed to rely on backend SQLite caching
 
 const getDefaultTab = () => {
     return TABS[1];
@@ -25,7 +24,6 @@ export const useShow = () => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
 
     const [activeTab, setActiveTab] = useState<ShowTab>(getDefaultTab());
-    const [activeShowTab, setActiveShowTab] = useState<ShowTabStatus>('watching');
     const [lastWatchedMap, setLastWatchedMap] = useState<Record<string, number>>(() => {
         try { return JSON.parse(localStorage.getItem(LOCAL_STORAGE_LAST_WATCHED) || '{}'); } 
         catch { return {}; }
@@ -47,42 +45,27 @@ export const useShow = () => {
         setIsAddAnimeOpen(true);
     };
 
-    const [allShows, setAllShows] = useState<ShowResult[]>(cachedAllShows || []);
-    const fetchData = async () => {
+    const [allShows, setAllShows] = useState<ShowResult[]>([]);
+    
+    const fetchData = async (sync: boolean = false) => {
         setIsRefreshing(true);
-        
-        if (fetchPromise) {
-            try {
-                const shows = await fetchPromise;
-                setAllShows(shows);
-            } finally {
-                setIsRefreshing(false);
-            }
-            return;
-        }
-        
         if (allShows.length === 0) setIsLoading(true);
         
-        fetchPromise = invoke(CMD_SCAN_SHOWS, { path: DEFAULT_STARTING_PATH });
-        
         try {
-            let shows: ShowResult[] = await fetchPromise;
-            cachedAllShows = shows;
+            const command = sync ? CMD_SYNC_SCAN_SHOWS : CMD_SCAN_SHOWS;
+            const shows: ShowResult[] = await invoke(command, { path: DEFAULT_STARTING_PATH });
             setAllShows(shows);
             logger.info('all shows fetched', shows);
         } catch (error) {
             logger.error(`Failed to fetch shows: ${String(error)}`);
         } finally {
-            fetchPromise = null;
             setIsRefreshing(false);
             setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        if (!cachedAllShows) {
-            fetchData();
-        }
+        fetchData();
     }, []);
 
 
@@ -98,7 +81,6 @@ export const useShow = () => {
             const newShows = allShows.map(show =>
                 show.id === showId ? { ...show, banned: isBanned } : show
             );
-            cachedAllShows = newShows;
             setAllShows(newShows);
             logger.info("SHOW_BAN_STATUS_UPDATE_SUCESS", showId, isBanned);
             return true;
@@ -118,7 +100,6 @@ export const useShow = () => {
             const newShows = allShows.map(show =>
                 show.id === showId ? { ...show, status } : show
             );
-            cachedAllShows = newShows;
             setAllShows(newShows);
             logger.info("SHOW_STATUS_UPDATE_SUCESS", showId, status);
             return true;
@@ -139,7 +120,6 @@ export const useShow = () => {
             const newShows = allShows.map(show =>
                 show.id === showId ? { ...show, title: newTitle } : show
             );
-            cachedAllShows = newShows;
             setAllShows(newShows);
             logger.info('renamed show', { id: showId, newName: newTitle });
         } catch (error) {
@@ -156,7 +136,6 @@ export const useShow = () => {
                 const newShows = allShows.map(s =>
                     s.id === id ? { ...s, pinned: !s.pinned } : s
                 );
-                cachedAllShows = newShows;
                 setAllShows(newShows);
             } catch (err) {
                 logger.error(`Failed to toggle pin for show ${id}: ${String(err)}`);
@@ -171,7 +150,6 @@ export const useShow = () => {
     const malHook = useMal({
         updateShowInState: (showId, updates) => {
             const newShows = allShows.map(s => s.id === showId ? { ...s, ...updates } : s);
-            cachedAllShows = newShows;
             setAllShows(newShows);
         }
     });
@@ -232,7 +210,7 @@ export const useShow = () => {
 
         actions.push(ACTIONS_SEPARATOR);
 
-        if (activeShowTab !== 'banned') {
+        if (!show.banned) {
             actions.push({
                 label: LABELS.BAN_SHOW,
                 icon: BAN_ICON_16,
@@ -345,7 +323,6 @@ export const useShow = () => {
         isRefreshing,
         isLoading,
         activeTab, setActiveTab,
-        activeShowTab, setActiveShowTab,
         isItemSelected, setIsItemSelected,
         selectedShow,setSelectedShow,
         lastWatchedMap,setLastWatchedMap,handleShowOpen,

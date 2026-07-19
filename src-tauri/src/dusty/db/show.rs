@@ -1,15 +1,12 @@
 use crate::dusty::{
-    data::shows::{ShowInfo, ShowResult},
-    logger::logger,
-    utility::sha256_hash::get_sha256_id,
+    data::shows::{ShowInfo, ShowResult}, db::show_cache::add_to_show_cache_in_db, logger::logger, utility::sha256_hash::get_sha256_id,
 };
 use rusqlite::{params, Connection, Result};
 
 pub fn add_shows_in_db(db: &Connection, shows: &Vec<ShowResult>) -> Result<()> {
     for show in shows {
-        add_show_in_db(db, show)
-            .map_err(|err| logger::error!("INSERT_SHOW_IN_DB_FAILED", err))
-            .ok();
+        add_show_in_db(db, show).ok();
+        add_to_show_cache_in_db(db, show.id.clone(), serde_json::to_string(show).unwrap()).ok();
     }
 
     Ok(())
@@ -17,7 +14,6 @@ pub fn add_shows_in_db(db: &Connection, shows: &Vec<ShowResult>) -> Result<()> {
 
 pub fn add_show_in_db(db: &Connection, show: &ShowResult) -> Result<(), String> {
     add_in_show_table(db, show).map_err(|err| {
-        logger::error!("INSERT_SHOW_IN_DB_FAILED", err);
         err.to_string()
     })?;
 

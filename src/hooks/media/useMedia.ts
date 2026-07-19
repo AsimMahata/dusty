@@ -6,19 +6,19 @@ import type { FileInfo, Tab, MediaDir, Item, MediaType } from '../../types/types
 import { fileInfoToItemData } from '../../utility/util';
 import { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } from '../../constants/defaults';
 import { mediaExplorerTab, mediaListTab } from '../../constants/tabs';
-import { flattenMediaDirs } from '../../utility/media/flattenMediaDirs';
 import { getRootFolders } from '../../utility/media/getRootFolders';
 import { getMediaFolderIcon } from '../../utility/icon/getMediaFolderIcon';
 import { getExplorerTabTitle } from '../../utility/tabs/getExplorerTabTitle';
+import { fetchFlatMedia, fetchMediaTree } from '../../introverts/media/scan';
 
-// Cache for different media types
-const cachedMediaDirs: Record<string, MediaDir[]> = {};
+// Cache removed in favor of backend cache
 
 export const useMedia = (title: string, mediaType: MediaType, defaultPath: string = "C:\\") => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
     const [isItemSelected, setIsItemSelected] = useState<boolean>(false);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-    const [mediaDirs, setMediaDirs] = useState<MediaDir[]>(cachedMediaDirs[mediaType] || []);
+    const [mediaDirs, setMediaDirs] = useState<MediaDir[]>([]);
+    const [flatMedia, setFlatMedia] = useState<FileInfo[]>([]);
     const [currentDirHistory, setCurrentDirHistory] = useState<MediaDir[]>([]);
 
     const currentDir = currentDirHistory.length > 0 ? currentDirHistory[currentDirHistory.length - 1] : null;
@@ -65,12 +65,15 @@ export const useMedia = (title: string, mediaType: MediaType, defaultPath: strin
         }
     };
 
-    const fetchData = async () => {
+    const fetchData = async (sync: boolean = false) => {
         setIsRefreshing(true);
         try {
-            const media: MediaDir[] = await invoke(CMD_GET_MEDIA_OF_TYPE, { path: defaultPath, mediaType: mediaType });
-            cachedMediaDirs[mediaType] = media;
-            setMediaDirs(media);
+            const [mediaTree, flat] = await Promise.all([
+                fetchMediaTree(mediaType, defaultPath, sync),
+                fetchFlatMedia(mediaType, defaultPath, sync)
+            ]);
+            setMediaDirs(mediaTree);
+            setFlatMedia(flat);
             setCurrentDirHistory([]);
         } catch (e) {
             console.error("Failed to fetch media", e);
@@ -80,15 +83,12 @@ export const useMedia = (title: string, mediaType: MediaType, defaultPath: strin
     };
 
     useEffect(() => {
-        if (!cachedMediaDirs[mediaType]) {
-            fetchData();
-        }
+        fetchData();
     }, [mediaType]);
 
     const allMediaItems = useMemo(() => {
-        const flat = flattenMediaDirs(mediaDirs);
-        return fileInfoToItemData(flat, DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON);
-    }, [mediaDirs]);
+        return fileInfoToItemData(flatMedia, DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON);
+    }, [flatMedia]);
 
     const rootFolderItems = useMemo(() => {
         const folderIcon = getMediaFolderIcon(mediaType);

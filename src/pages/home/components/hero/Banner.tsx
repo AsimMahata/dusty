@@ -1,8 +1,8 @@
 import React from 'react';
-import { useDusty } from '../../../../contexts/DustyContext';
+import { useHomeContext } from '../../contexts/HomeContext';
 
 export const Banner: React.FC = () => {
-  const { heroBanner, heroLogo } = useDusty();
+  const { heroBanner, heroLogo } = useHomeContext();
   
   const getDailyBanner = () => {
     if (!heroBanner || heroBanner.length === 0) return '';

@@ -1,10 +1,10 @@
 import React from 'react';
-import { useDusty } from '../../../../contexts/DustyContext';
+import { useHomeContext } from '../../contexts/HomeContext';
 import { CWHeader } from './CWHeader';
 import { CWItem } from './CWItem';
 
 export const ContinueWatching: React.FC = () => {
-  const { continueWatching } = useDusty();
+  const { continueWatching } = useHomeContext();
 
   return (
     <div className="home-card continue-watching-card">

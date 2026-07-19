@@ -1,18 +1,9 @@
-use std::{cmp::Reverse, fs, path::PathBuf};
-use mime_guess::mime::{self, Name};
+use mime_guess::mime::Name;
+use std::{fs, path::PathBuf};
 
 use crate::dusty::{
-    data::{
-        file::FileInfo,
-        media::MediaDir,
-    },
-    utility::{
-        info::{
-            check_for_bad_sibling, get_all_valid_source_path, get_file_type, is_forbidden_folder,
-            is_hidden, is_windows_root,
-        },
-        utility::format_size,
-    },
+    data::{file::FileInfo, media::MediaDir},
+    utility::info::{check_for_bad_sibling, get_file_type, is_forbidden_folder, is_hidden},
 };
 
 pub fn dfs_media_dir_scanner(
@@ -69,12 +60,17 @@ pub fn dfs_media_dir_scanner(
     }
 
     for child in childrens {
-        valid_child.extend(dfs_media_dir_scanner(&child, media_dirs, false, media_type_name.clone()));
+        valid_child.extend(dfs_media_dir_scanner(
+            &child,
+            media_dirs,
+            false,
+            media_type_name.clone(),
+        ));
     }
     if has_media || valid_child.len() > 2 {
         let mut dir = MediaDir::new(
             path.to_string_lossy().to_string(),
-            Some(media_type_name.as_str().to_string())
+            Some(media_type_name.as_str().to_string()),
         );
         for child_dir in &valid_child {
             dir.childs.push(child_dir.clone());

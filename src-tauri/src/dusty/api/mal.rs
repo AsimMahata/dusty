@@ -1,6 +1,5 @@
 use crate::dusty::data::state::AppState;
 use crate::dusty::db::mal::{add_to_mal_cache_in_db, get_from_mal_cache_in_db, reset_mal_cache_table_in_db, update_in_mal_cache_in_db};
-use crate::dusty::logger::logger;
 
 #[tauri::command]
 pub fn get_anime_info_from_mal(state: tauri::State<AppState>, id: i32) -> Result<String, String> {

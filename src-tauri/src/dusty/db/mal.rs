@@ -15,7 +15,6 @@ pub fn create_mal_cache_table(db:&Connection) ->Result<(),String>{
 pub fn add_to_mal_cache_in_db(db:&Connection,id:String,data:String)->Result<(),String>{
     let id = get_sha256_id("mal".to_string(),id.clone());
     db.execute("INSERT INTO mal_cache (id, data) VALUES (?1, ?2)",params![id,data]).map_err(|err|{
-        logger::error!("INSERT_INTO_MAL_CACHE_FAILED", err);
         err.to_string()
     })?;
     Ok(())
