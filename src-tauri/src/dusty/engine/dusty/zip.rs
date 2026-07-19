@@ -6,7 +6,7 @@ use crate::dusty::{
     utility::{
         info::{
             check_for_bad_sibling, get_all_valid_source_path, is_forbidden_folder, is_hidden,
-            is_windows_root,
+            is_root,
         },
         utility::format_size,
     },
@@ -22,7 +22,7 @@ pub fn list_large_zip_files() -> Vec<FileInfo> {
 
 pub fn list_large_zip_files_in_path(path: PathBuf) -> Vec<FileInfo> {
     let mut zips: Vec<FileInfo> = Vec::new();
-    dfs_large_zip_scanner(&path, &mut zips, is_windows_root(&path));
+    dfs_large_zip_scanner(&path, &mut zips, is_root(&path));
     return zips;
 }
 

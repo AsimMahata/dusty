@@ -19,7 +19,7 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({ actions, icon }) => {
         setMenuPos({ x: e.clientX, y: e.clientY });
     };
 
-    const handleMouseEnter = (e: React.MouseEvent) => {
+    const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.currentTarget.style.color = 'var(--text-primary)';
         const x = e.clientX;
         const y = e.clientY;
@@ -38,7 +38,7 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({ actions, icon }) => {
         }, 500);
     };
 
-    const handleMouseLeave = (e: React.MouseEvent) => {
+    const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.currentTarget.style.color = 'var(--text-muted)';
         if (hoverTimeoutRef.current) {
             window.clearTimeout(hoverTimeoutRef.current);

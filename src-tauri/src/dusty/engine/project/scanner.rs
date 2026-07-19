@@ -7,13 +7,13 @@ use crate::dusty::{
     data::project::Project,
     engine::project::maker::make_project,
     utility::info::{
-        get_all_valid_source_path, is_forbidden_folder, is_git_repo, is_hidden, is_windows_root,
+        get_all_valid_source_path, is_forbidden_folder, is_git_repo, is_hidden, is_root,
     },
 };
 
 pub fn scan_projects_in_path(source: &PathBuf) -> Vec<Project> {
     let mut projects: Vec<Project> = Vec::new();
-    dfs_project_scanner(source, &mut projects, is_windows_root(source));
+    dfs_project_scanner(source, &mut projects, is_root(source));
     return projects;
 }
 

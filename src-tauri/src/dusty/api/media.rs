@@ -4,7 +4,7 @@ use crate::dusty::{
         get_media_from_db, reset_media_cache_table_in_db, save_media_to_db, sync_media_to_db,
     },
     scanners::media::dfs_media_dir_scanner,
-    utility::info::is_windows_root,
+    utility::info::is_root,
 };
 use mime_guess::mime;
 use std::path::PathBuf;
@@ -35,7 +35,7 @@ pub fn get_media_of_type(
     };
 
     let mut media_dirs = Vec::new();
-    dfs_media_dir_scanner(&root, &mut media_dirs, is_windows_root(&root), mime_type);
+    dfs_media_dir_scanner(&root, &mut media_dirs, is_root(&root), mime_type);
 
     let _ = save_media_to_db(&db, &path, &media_type, &media_dirs);
     Ok(media_dirs)
@@ -57,7 +57,7 @@ pub fn sync_media_database(
     };
 
     let mut media_dirs = Vec::new();
-    dfs_media_dir_scanner(&root, &mut media_dirs, is_windows_root(&root), mime_type);
+    dfs_media_dir_scanner(&root, &mut media_dirs, is_root(&root), mime_type);
 
     sync_media_to_db(&db, &path, &media_type, &media_dirs).ok();
     Ok(media_dirs)

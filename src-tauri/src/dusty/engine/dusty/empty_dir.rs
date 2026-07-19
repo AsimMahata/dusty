@@ -5,7 +5,7 @@ use crate::dusty::{
     data::file::FileInfo,
     utility::info::{
         check_for_bad_sibling, get_all_valid_source_path, is_forbidden_folder, is_hidden,
-        is_windows_root,
+        is_root,
     },
 };
 
@@ -19,7 +19,7 @@ pub fn list_empty_dirs() -> Vec<FileInfo> {
 
 pub fn list_empty_dirs_in_path(path: PathBuf) -> Vec<FileInfo> {
     let mut empty_dirs: Vec<FileInfo> = Vec::new();
-    dfs_empty_dir_scanner(&path, &mut empty_dirs, is_windows_root(&path));
+    dfs_empty_dir_scanner(&path, &mut empty_dirs, is_root(&path));
     return empty_dirs;
 }
 pub fn dfs_empty_dir_scanner(path: &PathBuf, empty_dirs: &mut Vec<FileInfo>, is_root: bool) {

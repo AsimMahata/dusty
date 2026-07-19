@@ -62,7 +62,10 @@ fn put_into_basket(show: &Show) {
     }
 }
 pub fn interface_put_in_basket() {
+    #[cfg(target_os = "windows")]
     let path2: PathBuf = PathBuf::from("C:\\");
+    #[cfg(target_os = "linux")]
+    let path2: PathBuf = PathBuf::from("/");
     let shows: Shows = scan_for_shows_rec(&path2);
     for show in shows.get_list_of_shows() {
         if check_for_other_sibling_show(show, &shows) == false {

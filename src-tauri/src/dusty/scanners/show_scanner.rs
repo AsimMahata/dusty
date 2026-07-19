@@ -4,7 +4,7 @@ use mime_guess::mime;
 use rusqlite::Connection;
 
 use crate::dusty::{
-    data::{file::FileInfo, shows::{ShowResult, Shows}}, db::anime::{Anime, get_all_anime_titles_in_db}, engine::{cluster::cluster::cluster_files, shows::maker::{generate_show_title, make_show_results_from_clusters, make_shows_from_clusters, make_shows_with_available_anime_titles}}, handlers::anime::get_all_anime_titles, scanners::{dfs::{dfs_file_of_type, dfs_show_scanner}, videos::list_all_videos}, utility::{info::is_windows_root, sha256_hash::{self, get_sha256_id}},
+    data::{file::FileInfo, shows::{ShowResult, Shows}}, db::anime::{Anime, get_all_anime_titles_in_db}, engine::{cluster::cluster::cluster_files, shows::maker::{generate_show_title, make_show_results_from_clusters, make_shows_from_clusters, make_shows_with_available_anime_titles}}, handlers::anime::get_all_anime_titles, scanners::{dfs::{dfs_file_of_type, dfs_show_scanner}, videos::list_all_videos}, utility::{info::is_root, sha256_hash::{self, get_sha256_id}},
 };
 
 
@@ -21,13 +21,13 @@ pub fn scan_for_shows(path: &PathBuf) {
 
 pub fn scan_for_shows_rec(path: &PathBuf) -> Shows {
     let mut shows: Shows = Shows::new();
-    dfs_show_scanner(path, 0, &mut shows, is_windows_root(path));
+    dfs_show_scanner(path, 0, &mut shows, is_root(path));
     return shows;
 }
 
 pub fn scan_for_shows_with_seasons(db:&Connection,root:&PathBuf) -> Vec<ShowResult>{
     let mut videos:Vec<PathBuf> = Vec::new();
-    dfs_file_of_type(&root, mime::VIDEO, &mut videos, is_windows_root(&root));
+    dfs_file_of_type(&root, mime::VIDEO, &mut videos, is_root(&root));
     let titles:Vec<Anime> = get_all_anime_titles(db);
     let mut clusters:Vec<Vec<PathBuf>> = Vec::new();
     if titles.len() == 0 {

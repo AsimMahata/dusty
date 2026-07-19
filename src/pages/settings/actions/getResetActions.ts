@@ -1,4 +1,4 @@
-import { CMD_RESET_DATABASE, CMD_RESET_MEDIA_CACHE_TABLE, CMD_RESET_PROJECT_TABLE, CMD_RESET_SHOWS_TABLE } from '../../../constants/commands';
+import { CMD_RESET_DATABASE } from '../../../constants/commands';
 
 export interface ResetActionConfig {
     id: string;

@@ -2,7 +2,7 @@ use crate::dusty::data::file::FileInfo;
 use crate::dusty::data::state::AppState;
 use crate::dusty::logger::logger;
 use crate::dusty::scanners::dfs::dfs_file_of_type;
-use crate::dusty::utility::info::is_windows_root;
+use crate::dusty::utility::info::is_root;
 use crate::dusty::utility::sha256_hash::get_sha256_id;
 use mime_guess::mime;
 use rusqlite::{params, Connection};
@@ -35,7 +35,7 @@ pub fn scan_video_using_cache(
         }
     }
     let mut list = Vec::new();
-    dfs_file_of_type(&root, mime::VIDEO, &mut list, is_windows_root(&root));
+    dfs_file_of_type(&root, mime::VIDEO, &mut list, is_root(&root));
     logger::info!("media found", list.len());
 
     let file_info_list = list
