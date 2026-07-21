@@ -9,3 +9,12 @@ export const PROJECT_SORT_OPTIONS: { id: SortOption, label: string }[] = [
 ];
 
 export const DEFAULT_SORT_OPTION: SortOption = "project_status";
+
+export const PROJECT_ACTION_LABELS = {
+    SCAN_TAGS: "Scan for Tags",
+    SCANNING_TAGS: "Scanning...",
+    SCANNED_TAGS: "Scan Result",
+    SAVE: "Save",
+    CANCEL: "Cancel",
+    SEARCH_TAGS_PLACEHOLDER: "Search tags...",
+} as const;

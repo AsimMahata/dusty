@@ -1,15 +1,15 @@
 use rusqlite::Connection;
 
-use crate::dusty::api::project;
-use crate::dusty::data::project::Project;
+use crate::dusty::data::project::{Project, Tag};
 use crate::dusty::data::state::AppState;
 use crate::dusty::db::project::{
     add_projects_in_db, get_project_cache_from_db, get_project_info_from_db,
     reset_project_table_in_db, update_project_pin_status_in_db, update_project_status_in_db,
+    update_project_tags_in_db,
 };
 use crate::dusty::engine::project::scanner::scan_all_projects;
+use crate::dusty::engine::project::tag_scanner::scan_tags;
 use crate::dusty::logger::logger;
-
 
 pub fn sanitize_projects(db: &Connection, projects: Vec<Project>) -> Vec<Project> {
     projects
@@ -19,6 +19,8 @@ pub fn sanitize_projects(db: &Connection, projects: Vec<Project>) -> Vec<Project
                 p.project_type = info.project_type;
                 p.pinned = info.pinned;
                 p.status = info.status;
+                p.tags = info.tags;
+                p.project_type = Some(p.get_framework());
             }
             p
         })
@@ -91,6 +93,20 @@ pub fn update_project_status(
 }
 
 #[tauri::command]
+pub fn update_project_tags(
+    state: tauri::State<AppState>,
+    id: String,
+    tags: Vec<String>,
+) -> Result<(), String> {
+    let db = state.db.lock().unwrap();
+    let tags = tags
+        .iter()
+        .filter_map(|tag| Tag::from_string(tag))
+        .collect();
+    update_project_tags_in_db(&db, &id, &tags)
+}
+
+#[tauri::command]
 pub fn reset_project_table(state: tauri::State<AppState>) -> Result<(), String> {
     let db = state.db.lock().unwrap();
     reset_project_table_in_db(&db)
@@ -98,3 +114,10 @@ pub fn reset_project_table(state: tauri::State<AppState>) -> Result<(), String> 
         .ok();
     Ok(())
 }
+
+#[tauri::command]
+pub fn scan_project_tags(project: Project) -> Result<Vec<Tag>, String> {
+    let tags = scan_tags(&project);
+    Ok(tags)
+}
+

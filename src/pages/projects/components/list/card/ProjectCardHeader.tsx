@@ -9,7 +9,8 @@ interface ProjectCardHeaderProps {
 }
 
 export const ProjectCardHeader: React.FC<ProjectCardHeaderProps> = ({ project, onThreeDotClick }) => {
-    const gitStatus = GIT_STATUS.getDefinition(project.git_status);
+    //BUG:: fix this thing 
+    const gitStatus = GIT_STATUS.getDefinition('none');
     const projectStatus = PROJECT_STATUS.getDefinition(project.status);
 
     return (
@@ -18,15 +19,15 @@ export const ProjectCardHeader: React.FC<ProjectCardHeaderProps> = ({ project, o
                 {project.title}
             </h3>
             <div className="project-card-header-actions">
-                <span 
-                    className="project-card-project-status" 
+                <span
+                    className="project-card-project-status"
                     title={`Project Status: ${projectStatus.label}`}
                     style={{ color: projectStatus.color }}
                 >
                     {projectStatus.icon}
                 </span>
-                <span 
-                    className="project-card-git-status" 
+                <span
+                    className="project-card-git-status"
                     title={`Git Status: ${gitStatus.label}`}
                     style={{ color: gitStatus.color }}
                 >

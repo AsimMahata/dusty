@@ -59,7 +59,8 @@ export const ICONS = {
         FRONTEND: <Palette size={14} />,
         PERSONAL: <HomeIcon size={14} />,
         COLLEGE: <GraduationCap size={14} />,
-        ARCHIVED: <Archive size={14} />
+        ARCHIVED: <Archive size={14} />,
+        VITE: <Zap size={14} />
     },
     PROJECT_STATUSES: {
         ACTIVE: <Activity size={16} />,

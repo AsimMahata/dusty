@@ -1,4 +1,4 @@
-use std::{collections::HashSet, path::PathBuf, process::Child};
+use std::{collections::HashSet, path::PathBuf};
 
 use mime_guess::mime::Name;
 

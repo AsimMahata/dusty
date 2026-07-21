@@ -54,7 +54,7 @@ export const getProjectContextMenuItems = (
         { separator: true },
         {
             icon: PROJECT_MENU_TAGS_ICON,
-            label: "Edit Tags",
+            label: project.tags && project.tags.length > 0 ? "Edit Tags" : "Scan Tags",
             onClick: () => { onEditTags(project); onClose(); }
         },
         {

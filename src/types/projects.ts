@@ -1,6 +1,26 @@
 import type { useProject } from "../hooks/projects/useProject";
 
-export type ProjectType = "C/C++" | "Unknown";
+export type Framework =
+    | "React"
+    | "Next.js"
+    | "Vue"
+    | "Angular"
+    | "Svelte"
+    | "Astro"
+    | "SolidJS"
+    | "Tauri"
+    | "Electron"
+    | "Flutter"
+    | "Django"
+    | "Flask"
+    | "FastAPI"
+    | "Spring Boot"
+    | "Express"
+    | "NestJS"
+    | "Rails"
+    | "Laravel"
+    | ".NET"
+    | "Unknown";
 
 export type ProjectWorkflowStatus = "active" | "paused" | "completed" | "archived" | "broken" | "default";
 
@@ -27,7 +47,7 @@ export interface GitInfo {
     git_repo_name?: string;
     git_repo_path?: string;
 
-    git_head_commit?: string;
+    git_head_commit?:string;
     git_head_message?: string;
     git_last_commit_date?: string;
 }
@@ -36,7 +56,7 @@ export interface Project {
     id: string,
     title: string,
     path: string,
-    project_type: ProjectType,
+    project_type?: Framework,
     pinned: boolean,
     status: ProjectStatus,
     tags?: string[],
@@ -76,7 +96,6 @@ export type SortOption =
     | "git_status"
     | "project_status"
     | "creation_date";
-
 
 
 

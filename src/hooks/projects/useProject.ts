@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, type ReactNode } from 'react';
 import { useCommon } from '../useCommon';
-import { getProjectsFromBackend, updateProjectPinStatusOnBackend, updateProjectStatusOnBackend } from '../../personalities/ambiverts/projects';
+import { getProjectsFromBackend, updateProjectPinStatusOnBackend, updateProjectStatusOnBackend, updateProjectTagsOnBackend } from '../../personalities/ambiverts/projects';
 import { openFileInExplorer } from '../../personalities/introverts/filesystem/filesystem';
 import { logger } from '../../utility/logger';
 import { filterAndSortProjects } from '../../pages/projects/actions/filter';
@@ -128,9 +128,20 @@ export const useProject = () => {
         }
     };
 
-    const updateProjectTags = (id: string, tags: string[]) => {
+    const updateProjectTags = async (id: string, tags: string[]): Promise<boolean> => {
+        try {
+            await updateProjectTagsOnBackend(id, tags);
+            setAllProjects(projects => projects.map(project =>
+                project.id === id ? { ...project, tags } : project
+            ));
         if (selectedItem?.id === id) {
             setSelectedItem({ ...selectedItem, tags: tags });
+        }
+            logger.info(`Updated project tags for project ${id}`);
+            return true;
+        } catch (err) {
+            logger.error(`Failed to update project tags: ${String(err)}`);
+            return false;
         }
     };
 

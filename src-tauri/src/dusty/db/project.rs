@@ -1,19 +1,27 @@
 use rusqlite::{params, Connection};
 
 use crate::dusty::{
-    data::project::{Project, ProjectInfo},
+    data::project::{Framework, Project, ProjectInfo, Tag},
     logger::logger,
 };
 
 pub fn get_project_info_from_db(db: &Connection, id: &String) -> Result<ProjectInfo, String> {
     db.query_row(
-        "SELECT project_type, pinned, status FROM projects WHERE id = ?1",
+        "SELECT project_type, pinned, status, tags FROM projects WHERE id = ?1",
         params![id],
         |row| {
+            let tags_json: String = row.get(3)?;
+            let tags = serde_json::from_str::<Vec<String>>(&tags_json)
+                .unwrap_or_default()
+                .iter()
+                .filter_map(|tag| Tag::from_string(tag))
+                .collect();
+            let project_type: String = row.get(0)?;
             Ok(ProjectInfo {
-                project_type: row.get(0)?,
+                project_type: Some(Framework::from_value(&project_type)),
                 pinned: row.get(1)?,
                 status: row.get(2)?,
+                tags,
             })
         },
     )
@@ -34,16 +42,17 @@ pub fn add_projects_in_db(db: &Connection, projects: &Vec<Project>) -> Result<()
 fn add_in_projects_table(db: &Connection, project: &Project) -> rusqlite::Result<()> {
     db.execute(
         "
-        INSERT INTO projects (id, title, path, project_type, pinned, status)
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+        INSERT INTO projects (id, title, path, project_type, pinned, status, tags)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
         ",
         params![
             project.id,
             &project.title,
             &project.path,
-            &project.project_type,
+            project.project_type.clone().unwrap_or_default().to_string(),
             &project.pinned,
-            &project.status
+            &project.status,
+            serde_json::to_string(&project.tags).unwrap_or_else(|_| "[]".to_string())
         ],
     )?;
 
@@ -100,7 +109,8 @@ pub fn create_projects_table(db: &Connection) -> Result<(), String> {
             path TEXT NOT NULL,
             project_type TEXT NOT NULL DEFAULT 'Unknown',
             pinned BOOLEAN NOT NULL DEFAULT 0,
-            status TEXT NOT NULL DEFAULT 'default'
+            status TEXT NOT NULL DEFAULT 'default',
+            tags TEXT NOT NULL DEFAULT '[]'
         )
         ",
         [],
@@ -109,6 +119,18 @@ pub fn create_projects_table(db: &Connection) -> Result<(), String> {
         logger::error!("CREATE_PROJECTS_TABLE_FAILED", err);
         err.to_string()
     })?;
+
+    let mut columns = db.prepare("PRAGMA table_info(projects)").map_err(|err| err.to_string())?;
+    let has_tags_column = columns
+        .query_map([], |row| row.get::<_, String>(1))
+        .map_err(|err| err.to_string())?
+        .filter_map(Result::ok)
+        .any(|column| column == "tags");
+
+    if !has_tags_column {
+        db.execute("ALTER TABLE projects ADD COLUMN tags TEXT NOT NULL DEFAULT '[]'", [])
+            .map_err(|err| err.to_string())?;
+    }
 
     db.execute(
         "
@@ -201,6 +223,24 @@ pub fn update_project_status_in_db(
     )
     .map_err(|err| {
         logger::error!("UPDATE_PROJECT_STATUS_IN_DB_FAILED", err);
+        err.to_string()
+    })?;
+
+    Ok(())
+}
+
+pub fn update_project_tags_in_db(
+    db: &Connection,
+    id: &String,
+    tags: &Vec<Tag>,
+) -> Result<(), String> {
+    let tags_json = serde_json::to_string(tags).map_err(|err| err.to_string())?;
+    db.execute(
+        "UPDATE projects SET tags = ?1 WHERE id = ?2",
+        params![tags_json, id],
+    )
+    .map_err(|err| {
+        logger::error!("UPDATE_PROJECT_TAGS_IN_DB_FAILED", err);
         err.to_string()
     })?;
 

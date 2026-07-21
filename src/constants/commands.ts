@@ -21,6 +21,8 @@ export const CMD_SCAN_PROJECTS = "scan_projects";
 export const CMD_SYNC_SCAN_PROJECTS = "sync_scan_projects";
 export const CMD_UPDATE_PROJECT_PIN_STATUS = "update_project_pin_status";
 export const CMD_UPDATE_PROJECT_STATUS = "update_project_status";
+export const CMD_UPDATE_PROJECT_TAGS = "update_project_tags";
+export const CMD_SCAN_PROJECT_TAGS = "scan_project_tags";
 
 // Database & System
 export const CMD_RESET_DATABASE = "reset_database";

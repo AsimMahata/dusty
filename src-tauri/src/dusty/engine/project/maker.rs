@@ -14,9 +14,18 @@ pub fn make_project(path: &PathBuf) -> Project {
         id: make_project_id_sha256(&path_str, &title),
         title: title,
         path: path_str,
-        project_type: "Unknown".to_string(),
+        project_type: None,
         pinned: false,
         status: "default".to_string(),
+        tags: Vec::new(),
+        cover_image: None,
+        logo: None,
+        last_opened: None,
+        last_modified: None,
+        last_scan: None,
+        description: None,
+        size: None,
+        git_info: None,
     };
     return p;
 }

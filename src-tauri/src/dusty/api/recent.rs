@@ -20,3 +20,4 @@ pub fn reset_recent_episodes_table(state:tauri::State<AppState>)->Result<(),Stri
     let db = state.db.lock().unwrap();
     reset_recent_episodes_table_in_db(&db)
 }
+

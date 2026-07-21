@@ -4,7 +4,9 @@ import {
     CMD_SCAN_PROJECTS, 
     CMD_SYNC_SCAN_PROJECTS, 
     CMD_UPDATE_PROJECT_PIN_STATUS, 
-    CMD_UPDATE_PROJECT_STATUS 
+    CMD_UPDATE_PROJECT_STATUS,
+    CMD_UPDATE_PROJECT_TAGS,
+    CMD_SCAN_PROJECT_TAGS
 } from '../../constants/commands';
 import type { Project, ProjectStatus } from "../../types/projects";
 
@@ -34,6 +36,27 @@ export const updateProjectStatusOnBackend = async (id: string, status: ProjectSt
         return true;
     } catch (err) {
         logger.error(`Failed to update project progress status on backend: ${String(err)}`);
+        throw err;
+    }
+};
+
+export const updateProjectTagsOnBackend = async (id: string, tags: string[]): Promise<boolean> => {
+    try {
+        await invoke(CMD_UPDATE_PROJECT_TAGS, { id, tags });
+        return true;
+    } catch (err) {
+        logger.error(`Failed to update project tags: ${String(err)}`);
+        throw err;
+    }
+};
+
+export const scanProjectTagsOnBackend = async (project: Project): Promise<string[]> => {
+    try {
+        const tags:string[] = await invoke(CMD_SCAN_PROJECT_TAGS, { project });
+        logger.info(`Project tags: ${JSON.stringify(tags,null,2)}`);
+        return tags;
+    } catch (err) {
+        logger.error(`Failed to scan project tags: ${String(err)}`);
         throw err;
     }
 };

@@ -51,10 +51,7 @@ export const ProjectDialogManager: React.FC<ProjectDialogManagerProps> = ({ proj
                 <EditTagsDialog
                     project={editingTagsProject}
                     onClose={() => setEditingTagsProject(null)}
-                    onSave={(newTags) => {
-                        updateProjectTags(editingTagsProject.id, newTags);
-                        setEditingTagsProject(null);
-                    }}
+                    onSave={(newTags) => updateProjectTags(editingTagsProject.id, newTags)}
                 />
             )}
         </>

@@ -49,7 +49,9 @@ export const ProjectDetailActions: React.FC<ProjectDetailActionsProps> = ({
             <button className="project-btn primary" onClick={() => startExploring(selectedItem.path)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '90px' }}>Open</button>
             <button className="project-btn vscode" onClick={() => void openInVsCode(selectedItem.path)}>VSCode</button>
             <button className="project-btn github" onClick={() => openProjectGithub(gitInfo)}>GitHub</button>
-            <button className="project-btn tags" onClick={() => setEditingTagsProject(selectedItem)}>Edit Tags</button>
+            <button className="project-btn tags" onClick={() => setEditingTagsProject(selectedItem)}>
+                {selectedItem.tags && selectedItem.tags.length > 0 ? "Edit Tags" : "Scan Tags"}
+            </button>
             <button className="project-btn" onClick={() => setSelectedItem(null)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 'auto', width: '90px' }}>Close</button>
         </div>
     );
