@@ -1,6 +1,9 @@
 use std::process::Command;
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
 use tauri::AppHandle;
 use tauri_plugin_opener::OpenerExt;
+use which::which;
 
 use crate::dusty::logger::logger;
 
@@ -20,37 +23,33 @@ pub fn open_url(app: AppHandle, url: String) -> Result<(), String> {
 
 #[tauri::command]
 pub fn open_in_vs_code(path: String) -> Result<(), String> {
+    // 1. Use the `which` crate to cleanly find the executable without spawning a process
+    let mut code_path = which("code")
+        .map_err(|_| "VS Code CLI ('code') is not available. Please install the 'code' command or add it to PATH.".to_string())?;
+
+    // 2. On Windows, `which` usually finds `.../bin/code.cmd`
+    // We can navigate up from `bin/code.cmd` to find the actual `Code.exe`
+    // This allows us to bypass `cmd.exe` and batch scripts entirely!
     #[cfg(target_os = "windows")]
-    let check_cmd = "where";
-    #[cfg(not(target_os = "windows"))]
-    let check_cmd = "which";
-
-    let output = Command::new(check_cmd)
-        .arg("code")
-        .output()
-        .map_err(|e| format!("Failed to locate 'code': {}", e))?;
-
-    if !output.status.success() {
-        return Err(
-            "VS Code CLI ('code') is not available. Please install the 'code' command or add it to PATH."
-                .to_string(),
-        );
+    if code_path.extension().and_then(|s| s.to_str()) == Some("cmd") {
+        if let Some(parent) = code_path.parent().and_then(|p| p.parent()) {
+            let exe_path = parent.join("Code.exe");
+            if exe_path.exists() {
+                code_path = exe_path;
+            }
+        }
     }
-    logger::debug!("VS_CODE_LOCATION", output);
 
-    // On Windows, the 'code' CLI is typically a batch script (code.cmd)
-    // so we must execute it via cmd.exe to prevent 'os error 193'
+    logger::debug!("VS_CODE_LOCATION", code_path.to_string_lossy().to_string());
+
+    let mut cmd = Command::new(&code_path);
+    cmd.arg(&path);
+    
+    // We still keep this flag in case it falls back to the .cmd script for any reason
     #[cfg(target_os = "windows")]
-    Command::new("cmd")
-        .args(["/C", "code", &path])
-        .spawn()
-        .map_err(|e| format!("Failed to launch VS Code: {}", e))?;
+    cmd.creation_flags(0x08000000);
 
-    #[cfg(not(target_os = "windows"))]
-    Command::new("code")
-        .arg(&path)
-        .spawn()
-        .map_err(|e| format!("Failed to launch VS Code: {}", e))?;
+    cmd.spawn().map_err(|e| format!("Failed to launch VS Code: {}", e))?;
 
     Ok(())
 }

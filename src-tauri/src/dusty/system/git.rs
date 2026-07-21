@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
-use std::process::Command;
+use git2::{Repository, StatusOptions};
+use chrono::{FixedOffset, TimeZone};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct GitInfo {
@@ -25,208 +26,119 @@ pub struct GitInfo {
 }
 
 pub fn get_git_info_sys(path: &String) -> GitInfo {
-    GitInfo {
-        git_branch: get_git_branch(path),
-        git_status: get_git_status(path),
-        git_is_dirty: get_git_is_dirty(path),
+    let mut info = GitInfo::default();
 
-        git_ahead: get_git_ahead(path),
-        git_behind: get_git_behind(path),
-
-        git_modified_count: get_git_modified_count(path),
-        git_staged_count: get_git_staged_count(path),
-        git_untracked_count: get_git_untracked_count(path),
-        git_conflicted_count: get_git_conflicted_count(path),
-
-        git_remote_url: get_git_remote_url(path),
-        git_repo_name: get_git_repo_name(path),
-        git_repo_path: get_git_repo_path(path),
-
-        git_head_commit: get_git_head_commit(path),
-        git_head_message: get_git_head_message(path),
-        git_last_commit_date: get_git_last_commit_date(path),
-    }
-}
-
-fn git(path: &String, args: &[&str]) -> Option<String> {
-    let output = Command::new("git")
-        .args(args)
-        .current_dir(path)
-        .output()
-        .ok()?;
-
-    if !output.status.success() {
-        return None;
-    }
-
-    let output = String::from_utf8(output.stdout).ok()?;
-    let output = output.trim();
-
-    if output.is_empty() {
-        None
-    } else {
-        Some(output.to_string())
-    }
-}
-
-fn get_git_branch(path: &String) -> Option<String> {
-    git(path, &["branch", "--show-current"])
-}
-
-fn get_git_status(path: &String) -> Option<String> {
-    let status = Command::new("git")
-        .args(["status", "--porcelain", "--branch"])
-        .current_dir(path)
-        .output()
-        .ok()?;
-
-    if !status.status.success() {
-        return Some("none".to_string());
-    }
-
-    let output = String::from_utf8(status.stdout).ok()?;
-
-    let mut ahead = false;
-    let mut behind = false;
-    let mut modified = false;
-    let mut conflict = false;
-
-    for line in output.lines() {
-        if line.starts_with("##") {
-            ahead = line.contains("ahead");
-            behind = line.contains("behind");
-            continue;
+    let repo = match Repository::discover(path) {
+        Ok(repo) => repo,
+        Err(_) => {
+            info.git_status = Some("none".to_string());
+            info.git_is_dirty = Some(false);
+            return info;
         }
+    };
 
-        if line.starts_with("UU")
-            || line.starts_with("AA")
-            || line.starts_with("DD")
-            || line.starts_with("AU")
-            || line.starts_with("UA")
-            || line.starts_with("DU")
-            || line.starts_with("UD")
-        {
-            conflict = true;
-        } else {
-            modified = true;
+    if let Some(workdir) = repo.workdir() {
+        info.git_repo_path = Some(workdir.to_string_lossy().to_string());
+    }
+
+    if let Ok(head) = repo.head() {
+        if head.is_branch() {
+            if let Ok(name) = head.shorthand() {
+                info.git_branch = Some(name.to_string());
+            }
+        }
+        
+        if let Ok(commit) = head.peel_to_commit() {
+            info.git_head_commit = Some(commit.id().to_string());
+            info.git_head_message = commit.message().ok().map(|m| m.trim().to_string());
+            
+            let time = commit.time();
+            if let Some(offset) = FixedOffset::east_opt(time.offset_minutes() * 60) {
+                if let Some(dt) = offset.timestamp_opt(time.seconds(), 0).single() {
+                    info.git_last_commit_date = Some(dt.format("%Y-%m-%d %H:%M:%S %z").to_string());
+                }
+            }
         }
     }
 
-    let status = if conflict {
+    let mut modified = 0;
+    let mut staged = 0;
+    let mut untracked = 0;
+    let mut conflicted = 0;
+
+    let mut opts = StatusOptions::new();
+    opts.include_untracked(true).recurse_untracked_dirs(true);
+
+    if let Ok(statuses) = repo.statuses(Some(&mut opts)) {
+        for entry in statuses.iter() {
+            let status = entry.status();
+            if status.contains(git2::Status::CONFLICTED) {
+                conflicted += 1;
+            } else {
+                if status.intersects(git2::Status::WT_MODIFIED | git2::Status::WT_DELETED | git2::Status::WT_TYPECHANGE | git2::Status::WT_RENAMED) {
+                    modified += 1;
+                }
+                if status.intersects(git2::Status::INDEX_NEW | git2::Status::INDEX_MODIFIED | git2::Status::INDEX_DELETED | git2::Status::INDEX_RENAMED | git2::Status::INDEX_TYPECHANGE) {
+                    staged += 1;
+                }
+                if status.contains(git2::Status::WT_NEW) {
+                    untracked += 1;
+                }
+            }
+        }
+    }
+
+    info.git_modified_count = Some(modified);
+    info.git_staged_count = Some(staged);
+    info.git_untracked_count = Some(untracked);
+    info.git_conflicted_count = Some(conflicted);
+
+    let mut ahead = 0;
+    let mut behind = 0;
+    
+    if let Ok(head) = repo.head() {
+        if head.is_branch() {
+            let branch = git2::Branch::wrap(head);
+            if let Ok(upstream) = branch.upstream() {
+                if let (Some(local_oid), Some(upstream_oid)) = (branch.get().target(), upstream.get().target()) {
+                    if let Ok((a, b)) = repo.graph_ahead_behind(local_oid, upstream_oid) {
+                        ahead = a as u32;
+                        behind = b as u32;
+                    }
+                }
+            }
+        }
+    }
+    
+    info.git_ahead = Some(ahead);
+    info.git_behind = Some(behind);
+
+    let status_str = if conflicted > 0 {
         "conflict"
-    } else if ahead && behind {
+    } else if ahead > 0 && behind > 0 {
         "diverged"
-    } else if ahead {
+    } else if ahead > 0 {
         "ahead"
-    } else if behind {
+    } else if behind > 0 {
         "behind"
-    } else if modified {
+    } else if modified > 0 || staged > 0 || untracked > 0 {
         "modified"
     } else {
         "clean"
     };
 
-    Some(status.to_string())
-}
+    info.git_status = Some(status_str.to_string());
+    info.git_is_dirty = Some(status_str != "clean");
 
-fn get_git_is_dirty(path: &String) -> Option<bool> {
-    Some(get_git_status(path).is_some())
-}
+    if let Ok(remote) = repo.find_remote("origin") {
+        if let Ok(url) = remote.url() {
+            info.git_remote_url = Some(url.to_string());
+            let parts: Vec<&str> = url.split('/').collect();
+            if let Some(last) = parts.last() {
+                info.git_repo_name = Some(last.trim_end_matches(".git").to_string());
+            }
+        }
+    }
 
-fn get_git_ahead(path: &String) -> Option<u32> {
-    let counts = git(
-        path,
-        &["rev-list", "--left-right", "--count", "@{upstream}...HEAD"],
-    )?;
-
-    let mut split = counts.split_whitespace();
-    split.next()?.parse().ok()
-}
-
-fn get_git_behind(path: &String) -> Option<u32> {
-    let counts = git(
-        path,
-        &["rev-list", "--left-right", "--count", "@{upstream}...HEAD"],
-    )?;
-
-    let mut split = counts.split_whitespace();
-    split.next()?;
-    split.next()?.parse().ok()
-}
-
-fn get_git_modified_count(path: &String) -> Option<u32> {
-    let status = git(path, &["status", "--porcelain"])?;
-    Some(
-        status
-            .lines()
-            .filter(|l| {
-                let c = l.chars().next().unwrap_or(' ');
-                c == 'M'
-            })
-            .count() as u32,
-    )
-}
-
-fn get_git_staged_count(path: &String) -> Option<u32> {
-    let status = git(path, &["status", "--porcelain"])?;
-    Some(
-        status
-            .lines()
-            .filter(|l| {
-                let c = l.chars().next().unwrap_or(' ');
-                c != ' ' && c != '?'
-            })
-            .count() as u32,
-    )
-}
-
-fn get_git_untracked_count(path: &String) -> Option<u32> {
-    let status = git(path, &["status", "--porcelain"])?;
-    Some(status.lines().filter(|l| l.starts_with("??")).count() as u32)
-}
-
-fn get_git_conflicted_count(path: &String) -> Option<u32> {
-    let status = git(path, &["status", "--porcelain"])?;
-    Some(
-        status
-            .lines()
-            .filter(|l| {
-                let s = l.as_bytes();
-                s.len() >= 2
-                    && ((s[0] == b'U')
-                        || (s[1] == b'U')
-                        || (s[0] == b'A' && s[1] == b'A')
-                        || (s[0] == b'D' && s[1] == b'D'))
-            })
-            .count() as u32,
-    )
-}
-
-fn get_git_remote_url(path: &String) -> Option<String> {
-    git(path, &["remote", "get-url", "origin"])
-}
-
-fn get_git_repo_name(path: &String) -> Option<String> {
-    let remote = get_git_remote_url(path)?;
-
-    remote
-        .split('/')
-        .last()
-        .map(|s| s.trim_end_matches(".git").to_string())
-}
-
-fn get_git_repo_path(path: &String) -> Option<String> {
-    git(path, &["rev-parse", "--show-toplevel"])
-}
-
-fn get_git_head_commit(path: &String) -> Option<String> {
-    git(path, &["rev-parse", "HEAD"])
-}
-
-fn get_git_head_message(path: &String) -> Option<String> {
-    git(path, &["log", "-1", "--pretty=%s"])
-}
-
-fn get_git_last_commit_date(path: &String) -> Option<String> {
-    git(path, &["log", "-1", "--date=iso", "--pretty=%cd"])
+    info
 }
