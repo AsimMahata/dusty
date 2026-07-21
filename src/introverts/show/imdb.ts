@@ -15,14 +15,13 @@ export async function searchShow(query: string): Promise<ShowData[]> {
     try {
         const results = await searchShowAPI(query);
         if (!results || !Array.isArray(results)) return [];
+        logger.info(`SEARCH_SHOW_FROM_API_RESULT`, results);
         return results.map((item: any) => {
-            const show = item.show;
-            const yearStr = show.premiered ? show.premiered.split('-')[0] : null;
             return {
-                title: show.name,
-                imdb_id: show.externals?.imdb || show.id.toString(), // fallback to tvmaze id if imdb missing
-                year: yearStr ? parseInt(yearStr, 10) : null,
-                image_url: show.image?.medium || ''
+                title: item["#TITLE"],
+                imdb_id: item["#IMDB_ID"],
+                year: item["#YEAR"] ? parseInt(item["#YEAR"].toString(), 10) : null,
+                image_url: item["#IMG_POSTER"] || ''
             };
         });
     } catch (e) {

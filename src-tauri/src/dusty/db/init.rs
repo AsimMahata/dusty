@@ -6,9 +6,9 @@ use tauri::Manager;
 use crate::dusty::data::state::AppState;
 use crate::dusty::db::anime::create_anime_table;
 use crate::dusty::db::mal::create_mal_cache_table;
+use crate::dusty::db::media::create_media_table;
 use crate::dusty::db::project::create_projects_table;
 use crate::dusty::db::show::create_shows_table;
-use crate::dusty::db::media::create_media_table;
 use crate::dusty::db::show_cache::create_show_cache_table;
 use crate::dusty::logger::logger;
 
@@ -51,4 +51,3 @@ pub fn initialize_tables(conn: &Connection) -> Result<Vec<String>, String> {
     tables.push("anime".to_string());
     Ok(tables)
 }
-

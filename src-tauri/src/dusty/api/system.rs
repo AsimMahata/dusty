@@ -46,7 +46,7 @@ pub struct SystemInfoData {
 pub fn get_system_info() -> Result<SystemInfoData, String> {
     let mut sys = System::new_all();
     sys.refresh_all();
-    
+
     let disks_info = Disks::new_with_refreshed_list();
     let mut disks = Vec::new();
     for disk in disks_info.list() {

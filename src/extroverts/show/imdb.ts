@@ -1,19 +1,19 @@
 import { logger } from "../../utility/logger";
+import { fetch } from "@tauri-apps/plugin-http";
 
-export const TVMAZE_API_BASE = 'https://api.tvmaze.com';
+export const IMDB_BASE_API = 'https://imdb.iamidiotareyoutoo.com';
 
 const FETCH_OPTIONS = {
-    mode: 'cors' as RequestMode,
-    // Note: browsers may block setting User-Agent directly in fetch, but providing it per API docs
+    method: 'GET',
     headers: {
-        'User-Agent': 'Dusty-Media-Manager/1.0',
+        'User-Agent': 'Dusty-File-Manager/1.0',
         'Accept': 'application/json'
     }
 };
 
 export async function searchShowAPI(query: string, retryCount = 0): Promise<any[] | null> {
     try {
-        const url = `${TVMAZE_API_BASE}/search/shows?q=${encodeURIComponent(query)}`;
+        const url = `${IMDB_BASE_API}/search?q=${encodeURIComponent(query)}`;
         const res = await fetch(url, FETCH_OPTIONS);
         
         if (res.status === 429 && retryCount < 2) {
@@ -22,7 +22,7 @@ export async function searchShowAPI(query: string, retryCount = 0): Promise<any[
             await new Promise(resolve => setTimeout(resolve, 2000));
             return searchShowAPI(query, retryCount + 1);
         }
-        
+        logger.info(`SEARCH_SHOW_FROM_API_SUCCESS`, url,res);
         if (!res.ok) {
             logger.error(`SEARCH_SHOW_FROM_API_FAILED`, res.statusText);
             return null;
@@ -30,13 +30,13 @@ export async function searchShowAPI(query: string, retryCount = 0): Promise<any[
         
         const data = await res.json();
         
-        if (!Array.isArray(data)) {
+        if (!data || !data.ok || !Array.isArray(data.description)) {
             logger.error(`SEARCH_SHOW_API_RETURNED_ERROR`, data);
             return [];
         }
         
-        logger.info(`SEARCH_SHOW_FROM_API_SUCCESS`, data.length);
-        return data;
+        logger.info(`SEARCH_SHOW_FROM_API_SUCCESS`, data.description.length);
+        return data.description;
     } catch (err) {
         logger.error(`SEARCH_SHOW_FROM_API_FAILED`, err);
         return null;

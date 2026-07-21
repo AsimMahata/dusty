@@ -1,12 +1,12 @@
-use std::path::PathBuf;
-use mime_guess::mime;
-use rusqlite::{Connection, params};
 use crate::dusty::data::file::FileInfo;
 use crate::dusty::data::state::AppState;
 use crate::dusty::logger::logger;
 use crate::dusty::scanners::dfs::dfs_file_of_type;
 use crate::dusty::utility::info::is_root;
 use crate::dusty::utility::sha256_hash::get_sha256_id;
+use mime_guess::mime;
+use rusqlite::{params, Connection};
+use std::path::PathBuf;
 
 #[tauri::command]
 pub fn scan_music(state: tauri::State<AppState>, path: String) -> Vec<FileInfo> {
@@ -97,4 +97,3 @@ pub fn add_music_in_media_cache_table(
 
     Ok(())
 }
-

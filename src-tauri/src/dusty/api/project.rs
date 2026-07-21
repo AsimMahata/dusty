@@ -93,4 +93,3 @@ pub fn reset_project_table(state: tauri::State<AppState>) -> Result<(), String> 
         .ok();
     Ok(())
 }
-

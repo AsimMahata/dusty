@@ -62,12 +62,16 @@ fn add_in_project_cache_table(db: &Connection, project: &Project) -> rusqlite::R
     Ok(())
 }
 pub fn get_project_cache_from_db(db: &Connection) -> Result<Vec<Project>, String> {
-    let mut stmt = db.prepare("SELECT data FROM project_cache").map_err(|e| e.to_string())?;
+    let mut stmt = db
+        .prepare("SELECT data FROM project_cache")
+        .map_err(|e| e.to_string())?;
 
-    let iter = stmt.query_map([], |row| {
-        let data: String = row.get(0)?;
-        Ok(data)
-    }).map_err(|e| e.to_string())?;
+    let iter = stmt
+        .query_map([], |row| {
+            let data: String = row.get(0)?;
+            Ok(data)
+        })
+        .map_err(|e| e.to_string())?;
 
     let mut projects = Vec::new();
     for row in iter {
@@ -82,12 +86,8 @@ pub fn get_project_cache_from_db(db: &Connection) -> Result<Vec<Project>, String
 }
 
 pub fn add_project_in_db(db: &Connection, project: &Project) -> Result<(), String> {
-    add_in_projects_table(db, project).map_err(|err| {
-        err.to_string()
-    })?;
-    add_in_project_cache_table(db, project).map_err(|err| {
-        err.to_string()
-    })?;
+    add_in_projects_table(db, project).map_err(|err| err.to_string())?;
+    add_in_project_cache_table(db, project).map_err(|err| err.to_string())?;
     Ok(())
 }
 

@@ -1,6 +1,6 @@
-use std::{env::home_dir, fs, path::PathBuf};
 #[cfg(target_os = "windows")]
 use std::os::windows::prelude::*;
+use std::{env::home_dir, fs, path::PathBuf};
 use sysinfo::Disks;
 
 use mime_guess::mime::{self, Name};
@@ -102,11 +102,11 @@ pub fn get_file_type(file_path: &PathBuf) -> Option<Name<'static>> {
 pub fn get_all_valid_source_path() -> Vec<PathBuf> {
     let disks = Disks::new_with_refreshed_list();
     let mut drives: Vec<PathBuf> = Vec::new();
-    
+
     for disk in disks.list() {
         drives.push(disk.mount_point().to_path_buf());
     }
-    
+
     // Fallback if no disks are found
     if drives.is_empty() {
         #[cfg(target_os = "windows")]
@@ -114,7 +114,7 @@ pub fn get_all_valid_source_path() -> Vec<PathBuf> {
         #[cfg(target_os = "linux")]
         drives.push(PathBuf::from("/"));
     }
-    
+
     return drives;
 }
 

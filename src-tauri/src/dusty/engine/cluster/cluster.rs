@@ -16,7 +16,7 @@ pub fn word_based_file_clusters(files: &Vec<PathBuf>) -> Vec<Vec<i32>> {
 }
 
 pub fn index_cluster_to_file_cluster(
-    index_clusters: &Vec<Vec<i32>>, 
+    index_clusters: &Vec<Vec<i32>>,
     files: &Vec<PathBuf>,
 ) -> Vec<Vec<PathBuf>> {
     let mut clusters: Vec<Vec<PathBuf>> = Vec::new(); // cluster of shows

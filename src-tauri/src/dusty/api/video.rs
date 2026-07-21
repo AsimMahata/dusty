@@ -57,7 +57,6 @@ pub fn scan_video_using_cache(
     return file_info_list;
 }
 
-
 fn get_cached_videos_from_media_cache_db(db: &Connection, path: &String) -> Option<Vec<FileInfo>> {
     let id = get_sha256_id(path.clone(), "flat_video".to_string());
     let data = db
@@ -87,4 +86,3 @@ pub fn add_videos_in_media_cache_table(
 
     Ok(())
 }
-

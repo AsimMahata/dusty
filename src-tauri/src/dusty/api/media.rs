@@ -69,4 +69,3 @@ pub fn reset_media_cache_table(state: tauri::State<AppState>) -> Result<(), Stri
     reset_media_cache_table_in_db(&db).map_err(|e| e.to_string())?;
     Ok(())
 }
-

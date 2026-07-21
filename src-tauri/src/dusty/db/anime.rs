@@ -21,8 +21,15 @@ pub fn create_anime_table(db: &Connection) -> Result<(), String> {
     Ok(())
 }
 
-pub fn add_to_anime_in_db(db: &Connection, mal_id: i32, title: String,num_episodes:Option<u32>,season:Option<i32>, airing:bool) -> Result<(), String> {
-    let anime_id = get_sha256_id(title.clone(),mal_id.to_string());
+pub fn add_to_anime_in_db(
+    db: &Connection,
+    mal_id: i32,
+    title: String,
+    num_episodes: Option<u32>,
+    season: Option<i32>,
+    airing: bool,
+) -> Result<(), String> {
+    let anime_id = get_sha256_id(title.clone(), mal_id.to_string());
     db.execute(
         "INSERT INTO anime (id, mal_id, title, num_episodes, season, airing) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
         params![anime_id, mal_id, title, num_episodes, season, airing],
@@ -34,23 +41,27 @@ pub fn add_to_anime_in_db(db: &Connection, mal_id: i32, title: String,num_episod
 }
 
 pub fn get_all_anime_titles_in_db(db: &Connection) -> Result<Vec<Anime>, String> {
-    let mut stmt = db.prepare("SELECT mal_id, title, num_episodes, season, airing FROM anime").map_err(|err| {
-        logger::error!("GET_ALL_ANIME_TITLES_FAILED", err);
-        err.to_string()
-    })?;
+    let mut stmt = db
+        .prepare("SELECT mal_id, title, num_episodes, season, airing FROM anime")
+        .map_err(|err| {
+            logger::error!("GET_ALL_ANIME_TITLES_FAILED", err);
+            err.to_string()
+        })?;
 
-    let anime_iter = stmt.query_map([], |row| {
-        Ok(Anime {
-            mal_id: row.get(0)?,
-            title: row.get(1)?,
-            num_episodes: row.get(2)?,
-            season: row.get(3)?,
-            airing: row.get(4).unwrap_or(false),
+    let anime_iter = stmt
+        .query_map([], |row| {
+            Ok(Anime {
+                mal_id: row.get(0)?,
+                title: row.get(1)?,
+                num_episodes: row.get(2)?,
+                season: row.get(3)?,
+                airing: row.get(4).unwrap_or(false),
+            })
         })
-    }).map_err(|err| {
-        logger::error!("GET_ALL_ANIME_TITLES_FAILED", err);
-        err.to_string()
-    })?;
+        .map_err(|err| {
+            logger::error!("GET_ALL_ANIME_TITLES_FAILED", err);
+            err.to_string()
+        })?;
 
     let mut titles = Vec::new();
     for anime_result in anime_iter {
@@ -76,10 +87,10 @@ pub fn reset_anime_table_in_db(conn: &Connection) -> Result<(), String> {
     })
 }
 
-pub struct Anime{
-    pub title:String,
-    pub mal_id:i32,
-    pub num_episodes:Option<usize>,
-    pub season:Option<i32>,
-    pub airing:bool,
+pub struct Anime {
+    pub title: String,
+    pub mal_id: i32,
+    pub num_episodes: Option<usize>,
+    pub season: Option<i32>,
+    pub airing: bool,
 }

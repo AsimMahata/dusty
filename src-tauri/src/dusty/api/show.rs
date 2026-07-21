@@ -138,4 +138,3 @@ pub fn update_mal_id(state: tauri::State<AppState>, id: String, mal_id: i32) -> 
         .ok();
     Ok(())
 }
-

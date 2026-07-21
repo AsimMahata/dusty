@@ -4,6 +4,7 @@ use crate::dusty::db::init::init_db_and_os;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             dusty::api::file_system::read_dir,

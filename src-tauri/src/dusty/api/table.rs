@@ -13,7 +13,10 @@ pub fn reset_table(state: tauri::State<AppState>, table_name: String) -> Result<
     // Use DELETE FROM to keep schema but wipe data
     let query = format!("DELETE FROM {}", table_name);
     db.execute(&query, []).map_err(|e| {
-        logger::error!("FAILED_TO_RESET_TABLE", format!("Table: {}, Error: {}", table_name, e));
+        logger::error!(
+            "FAILED_TO_RESET_TABLE",
+            format!("Table: {}, Error: {}", table_name, e)
+        );
         e.to_string()
     })?;
     logger::info!("RESET_TABLE_SUCCESS", table_name);

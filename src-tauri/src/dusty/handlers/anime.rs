@@ -1,7 +1,7 @@
-use crate::dusty::db::anime::{Anime, get_all_anime_titles_in_db};
+use crate::dusty::db::anime::{get_all_anime_titles_in_db, Anime};
 use rusqlite::Connection;
 
-pub fn get_all_anime_titles(db:&Connection) -> Vec<Anime> {
-    let cached:Vec<Anime> = get_all_anime_titles_in_db(db).unwrap_or_default();
+pub fn get_all_anime_titles(db: &Connection) -> Vec<Anime> {
+    let cached: Vec<Anime> = get_all_anime_titles_in_db(db).unwrap_or_default();
     cached
 }

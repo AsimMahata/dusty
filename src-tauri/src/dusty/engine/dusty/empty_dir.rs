@@ -4,8 +4,7 @@ use std::{fs, path::PathBuf};
 use crate::dusty::{
     data::file::FileInfo,
     utility::info::{
-        check_for_bad_sibling, get_all_valid_source_path, is_forbidden_folder, is_hidden,
-        is_root,
+        check_for_bad_sibling, get_all_valid_source_path, is_forbidden_folder, is_hidden, is_root,
     },
 };
 

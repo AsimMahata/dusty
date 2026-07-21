@@ -15,8 +15,8 @@ pub fn make_project(path: &PathBuf) -> Project {
         title: title,
         path: path_str,
         project_type: "Unknown".to_string(),
-        pinned:false,
-        status:"default".to_string(),
+        pinned: false,
+        status: "default".to_string(),
     };
     return p;
 }

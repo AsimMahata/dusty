@@ -40,9 +40,7 @@ pub fn save_media_to_db(
         ",
         params![id, source, media_type, json_data],
     )
-    .map_err(|err| {
-        err.to_string()
-    })?;
+    .map_err(|err| err.to_string())?;
 
     Ok(())
 }
@@ -115,4 +113,3 @@ pub fn reset_media_cache_table_in_db(db: &Connection) -> Result<(), String> {
     create_media_table(db)?;
     Ok(())
 }
-

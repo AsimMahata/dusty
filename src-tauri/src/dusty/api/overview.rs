@@ -1,9 +1,6 @@
 use rusqlite::{params, Connection};
 
-use crate::dusty::{
-    data::state::AppState,
-    logger::logger,
-};
+use crate::dusty::{data::state::AppState, logger::logger};
 
 #[derive(serde::Serialize)]
 pub struct Stats {
@@ -53,9 +50,13 @@ pub fn get_project_stats(db: &Connection) -> Option<usize> {
 }
 
 fn get_flat_media_stats(db: &Connection, media_type: &str) -> Option<usize> {
-    let mut stmt = db.prepare("SELECT data FROM media_cache WHERE media_type=?1").ok()?;
-    let rows = stmt.query_map(params![media_type], |row| row.get::<_, String>(0)).ok()?;
-    
+    let mut stmt = db
+        .prepare("SELECT data FROM media_cache WHERE media_type=?1")
+        .ok()?;
+    let rows = stmt
+        .query_map(params![media_type], |row| row.get::<_, String>(0))
+        .ok()?;
+
     let mut total = 0;
     for data in rows {
         if let Ok(val) = data {
