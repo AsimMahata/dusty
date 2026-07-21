@@ -6,7 +6,6 @@ import { ProjectToolbar } from './components/toolbar/ProjectToolbar';
 import { ProjectExplorerCurtain } from './components/explorer/ProjectExplorerCurtain';
 import { ProjectDialogManager } from './components/dialogs/ProjectDialogManager';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { FloatingScrollTop } from '../../components/ui/FloatingScrollTop';
 import './css/Projects.css';
 
 export const ProjectsPage: React.FC = () => {
@@ -24,7 +23,6 @@ export const ProjectsPage: React.FC = () => {
                 </div>
             )}
             <ProjectDialogManager projectHook={projectHook} />
-            <FloatingScrollTop />
         </PageLayout>
     );
 };

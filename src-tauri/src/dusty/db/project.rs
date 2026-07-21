@@ -184,7 +184,9 @@ pub fn update_project_pin_status_in_db(
         logger::error!("UPDATE_PROJECT_PIN_STATUS_IN_DB_FAILED", err);
         err.to_string()
     })?;
-
+    logger::info!("UPDATE_PROJECT_PIN_STATUS_SUCCESS",
+        [format!("id: {}", id), format!("pinned: {}", pinned)]
+    );
     Ok(())
 }
 

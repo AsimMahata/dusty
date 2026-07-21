@@ -1,6 +1,8 @@
 // File Operations
 export const CMD_OPEN_FILE = "open_file";
 export const CMD_READ_DIR = "read_dir";
+export const CMD_REVEAL_IN_FILE_EXPLORER = "reveal_in_file_explorer";
+export const CMD_OPEN_IN_VS_CODE = "open_in_vs_code";
 
 // Shows
 

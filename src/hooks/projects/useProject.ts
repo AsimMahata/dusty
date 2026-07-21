@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo, type ReactNode } from 'react';
 import { useCommon } from '../useCommon';
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_SCAN_PROJECTS, CMD_SYNC_SCAN_PROJECTS, CMD_UPDATE_PROJECT_PIN_STATUS, CMD_UPDATE_PROJECT_STATUS } from '../../constants/commands';
+import { getProjectsFromBackend, updateProjectPinStatusOnBackend, updateProjectStatusOnBackend } from '../../personalities/ambiverts/projects';
+import { openFileInExplorer } from '../../personalities/introverts/filesystem/filesystem';
 import { logger } from '../../utility/logger';
 import { filterAndSortProjects } from '../../pages/projects/actions/filter';
 import { DEFAULT_SORT_OPTION } from '../../pages/projects/constants/constants';
-import type { Project, ProjectStatus } from "../../types/projects";
+import type { GitInfo, Project, ProjectStatus } from "../../types/projects";
 import type { SortOption } from "../../types/projects";
+import { invoke } from '@tauri-apps/api/core';
 
 
 // Cache removed to rely on backend SQLite caching
@@ -16,19 +17,38 @@ export const useProject = () => {
     const [selectedItem, setSelectedItem] = useState<Project | null>(null);
     const [allProjects, setAllProjects] = useState<Project[]>([]);
     const [sortOption, setSortOption] = useState<SortOption>(DEFAULT_SORT_OPTION);
-    
+
     // UI states
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, project: Project } | null>(null);
     const [changingStatusProject, setChangingStatusProject] = useState<Project | null>(null);
     const [editingTagsProject, setEditingTagsProject] = useState<Project | null>(null);
     const [explorePathHistory, setExplorePathHistory] = useState<string[]>([]);
+    const [gitInfo, setGitInfo] = useState<GitInfo | undefined>();
     const explorePath = explorePathHistory.length > 0 ? explorePathHistory[explorePathHistory.length - 1] : null;
+
+    useEffect(() => {
+        if (!selectedItem?.path) {
+            setGitInfo(undefined);
+            return;
+        }
+
+        const fetchGitInfo = async () => {
+            const git_info = await invoke<GitInfo>("get_git_info", {
+                path: selectedItem.path,
+            });
+
+            logger.info('RECIEVED GIT INFO', git_info);
+            setGitInfo(git_info);
+        };
+
+        fetchGitInfo();
+    }, [selectedItem]);
 
     const handleExploreItemClick = (file: any) => {
         if (file.is_dir) {
             setExplorePathHistory(prev => [...prev, file.path]);
         } else {
-            invoke('cmd_open_file', { path: file.path }).catch(console.error);
+            void openFileInExplorer(file.path);
         }
     };
 
@@ -52,8 +72,7 @@ export const useProject = () => {
         setIsRefreshing(true);
         if (allProjects.length === 0) setIsLoading(true);
         try {
-            const command = sync ? CMD_SYNC_SCAN_PROJECTS : CMD_SCAN_PROJECTS;
-            const projects: Project[] = await invoke(command);
+            const projects = await getProjectsFromBackend(sync);
             setAllProjects(projects);
             logger.info('all projects fetched', projects);
         } catch (error) {
@@ -71,7 +90,7 @@ export const useProject = () => {
     const handleTogglePin = async (id: string) => {
         try {
             const currentPinnedStatus = allProjects.find(x => x.id === id)?.pinned || false;
-            await invoke(CMD_UPDATE_PROJECT_PIN_STATUS, { id: id, pinned: !currentPinnedStatus });
+            await updateProjectPinStatusOnBackend(id, !currentPinnedStatus);
 
             const newProjects = allProjects.map(item =>
                 item.id === id ? { ...item, pinned: !item.pinned } : item
@@ -92,7 +111,7 @@ export const useProject = () => {
 
     const updateProjectProgressStatus = async (id: string, status: ProjectStatus): Promise<boolean> => {
         try {
-            await invoke(CMD_UPDATE_PROJECT_STATUS, { id: id, status: status });
+            await updateProjectStatusOnBackend(id, status);
             const newProjects = allProjects.map(project =>
                 project.id === id ? { ...project, status: status } : project
             );
@@ -126,6 +145,7 @@ export const useProject = () => {
     return {
         title: "Projects",
         searchQuery, setSearchQuery,
+        gitInfo, setGitInfo,
         selectedItem, setSelectedItem,
         allProjects,
         isRefreshing,
@@ -142,7 +162,7 @@ export const useProject = () => {
         contextMenu, setContextMenu,
         changingStatusProject, setChangingStatusProject,
         editingTagsProject, setEditingTagsProject,
-        explorePath, explorePathHistory, 
+        explorePath, explorePathHistory,
         handleExploreItemClick, handleExploreBack, closeExplorer, startExploring
     };
 };

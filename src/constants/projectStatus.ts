@@ -27,7 +27,7 @@ const GIT_STATUSES: Record<GitStatusValue, StatusDefinition> = {
     behind: { id: "behind", label: "Git Behind", icon: ICONS.PROJECT_STATUSES.GIT_BEHIND, color: COLORS.BASE.PURPLE },
     diverged: { id: "diverged", label: "Git Diverged", icon: ICONS.PROJECT_STATUSES.GIT_DIVERGED, color: COLORS.BASE.ORANGE },
     conflict: { id: "conflict", label: "Merge Conflict", icon: ICONS.PROJECT_STATUSES.GIT_CONFLICT, color: COLORS.BASE.RED },
-    none: { id: "none", label: "Not Git Repository", icon: ICONS.PROJECT_STATUSES.GIT_NONE, color: COLORS.BASE.ZINC },
+    none: { id: "none", label: "Unknown", icon: ICONS.PROJECT_STATUSES.GIT_NONE, color: COLORS.BASE.ZINC },
 };
 
 const getProjectStatusDefinition = (status?: string): StatusDefinition => {

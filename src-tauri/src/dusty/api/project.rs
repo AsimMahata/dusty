@@ -10,6 +10,21 @@ use crate::dusty::db::project::{
 use crate::dusty::engine::project::scanner::scan_all_projects;
 use crate::dusty::logger::logger;
 
+
+pub fn sanitize_projects(db: &Connection, projects: Vec<Project>) -> Vec<Project> {
+    projects
+        .into_iter()
+        .map(|mut p| {
+            if let Ok(info) = get_project_info_from_db(&db, &p.id) {
+                p.project_type = info.project_type;
+                p.pinned = info.pinned;
+                p.status = info.status;
+            }
+            p
+        })
+        .collect()
+}
+
 pub fn scan_projects_using_cache(db: &Connection, cache: bool) -> Vec<Project> {
     if cache {
         let cached_project = match get_project_cache_from_db(db)
@@ -22,7 +37,7 @@ pub fn scan_projects_using_cache(db: &Connection, cache: bool) -> Vec<Project> {
         logger::info!("PROJECT_CACHE_LOADED", cached_project.len());
         if !cached_project.is_empty() {
             logger::info!("PROJECT_CACHE_NOT_EMPTY", cached_project.len());
-            return cached_project;
+            return sanitize_projects(&db, cached_project);
         }
         logger::info!("PROJECT_CACHE_IS_EMPTY", cached_project.len());
     }
@@ -30,17 +45,7 @@ pub fn scan_projects_using_cache(db: &Connection, cache: bool) -> Vec<Project> {
     add_projects_in_db(&db, &projects)
         .map_err(|err| logger::error!("ADD_PROJECTS_IN_DB_FAILED", err))
         .ok();
-    projects
-        .into_iter()
-        .map(|mut p| {
-            if let Ok(info) = get_project_info_from_db(&db, &p.id) {
-                p.project_type = info.project_type;
-                p.pinned = info.pinned;
-                p.status = info.status;
-            }
-            p
-        })
-        .collect()
+    sanitize_projects(&db, projects)
 }
 
 #[tauri::command]

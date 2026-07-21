@@ -346,6 +346,39 @@
     background: var(--accent-hover);
 }
 
+.project-btn.vscode {
+    background: rgba(0, 122, 204, 0.1);
+    border-color: rgba(0, 122, 204, 0.2);
+    color: #4daafc;
+}
+
+.project-btn.vscode:hover {
+    background: rgba(0, 122, 204, 0.15);
+    border-color: rgba(0, 122, 204, 0.35);
+}
+
+.project-btn.github {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e6edf3;
+}
+
+.project-btn.github:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.project-btn.tags {
+    background: rgba(234, 179, 8, 0.06);
+    border-color: rgba(234, 179, 8, 0.15);
+    color: #fde047;
+}
+
+.project-btn.tags:hover {
+    background: rgba(234, 179, 8, 0.12);
+    border-color: rgba(234, 179, 8, 0.25);
+}
+
 .projects-content {
     padding: 2rem;
     flex: 1;

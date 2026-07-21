@@ -8,4 +8,4 @@ export const PROJECT_SORT_OPTIONS: { id: SortOption, label: string }[] = [
     { id: 'project_status', label: 'Project Status' }
 ];
 
-export const DEFAULT_SORT_OPTION: SortOption = "recently_opened";
+export const DEFAULT_SORT_OPTION: SortOption = "project_status";

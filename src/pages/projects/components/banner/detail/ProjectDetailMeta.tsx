@@ -14,11 +14,7 @@ export const ProjectDetailMeta: React.FC<ProjectDetailMetaProps> = ({ project })
             </div>
             <div className="meta-column">
                 <span className="meta-label">Git Branch</span>
-                <span className="meta-value">{project.git_branch || "main"}</span>
-            </div>
-            <div className="meta-column">
-                <span className="meta-label">Size</span>
-                <span className="meta-value">{project.size || "Unknown"}</span>
+                <span className="meta-value">{project.git_info?.git_branch || "main"}</span>
             </div>
             <div className="meta-column">
                 <span className="meta-label">Last Opened</span>

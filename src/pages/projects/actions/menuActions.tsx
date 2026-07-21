@@ -1,5 +1,6 @@
 
 import { logger } from '../../../utility/logger';
+import { openInVsCode } from '../../../personalities/introverts/filesystem/filesystem';
 import { 
     PROJECT_MENU_STAR_ICON, PROJECT_MENU_STAR_FILLED_ICON,
     PROJECT_MENU_STATUS_ICON, PROJECT_MENU_EXPLORER_ICON, 
@@ -43,7 +44,7 @@ export const getProjectContextMenuItems = (
         {
             icon: PROJECT_MENU_VSCODE_ICON,
             label: "Open VSCode",
-            onClick: () => { logger.info(`TODO: Open VSCode for project: ${project.title}`); onClose(); }
+            onClick: () => { void openInVsCode(project.path); onClose(); }
         },
         {
             icon: PROJECT_MENU_GITHUB_ICON,

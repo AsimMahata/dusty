@@ -7,8 +7,12 @@ pub fn run() {
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
+            dusty::api::git::get_git_info,
             dusty::api::file_system::read_dir,
+            dusty::api::file_system::reveal_in_file_explorer,
             dusty::api::opener::open_file,
+            dusty::api::opener::open_in_vs_code,
+            dusty::api::opener::open_url,
             dusty::api::show::scan_shows,
             dusty::api::show::sync_scan_shows,
             dusty::api::show::rename_show,

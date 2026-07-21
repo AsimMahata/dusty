@@ -17,6 +17,7 @@ import { ZipPage } from "./pages/zip/ZipPage";
 import { LabPage } from "./pages/lab/LabPage";
 import { SettingsPage } from "./pages/settings/SettingsPage";
 import { TodoPage } from "./pages/todo/TodoPage";
+import { FloatingScrollTop } from "./components/ui/FloatingScrollTop";
 
 function App() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -59,6 +60,7 @@ function App() {
                     <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
                 </Routes>
             </main>
+            <FloatingScrollTop />
         </div>
     );
 }

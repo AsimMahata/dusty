@@ -1,15 +1,16 @@
 import React from 'react';
-import { invoke } from '@tauri-apps/api/core';
+import { openFileInExplorer } from '../../../../../personalities/introverts/filesystem/filesystem';
 import { GIT_STATUS, PROJECT_STATUS } from '../../../../../constants/projectStatus';
 import { PROJECT_FALLBACK_FOLDER_ICON_48, PROJECT_EXTERNAL_LINK_ICON, PROJECT_PINNED_STAR_ICON_14 } from '../../../../../constants/icon';
-import type { Project } from "../../../../../types/projects";
+import type { GitInfo, Project } from "../../../../../types/projects";
 
 interface ProjectDetailHeaderProps {
     project: Project;
+    gitInfo: GitInfo | undefined
 }
 
-export const ProjectDetailHeader: React.FC<ProjectDetailHeaderProps> = ({ project }) => {
-    const gitStatus = GIT_STATUS.getDefinition(project.git_status);
+export const ProjectDetailHeader: React.FC<ProjectDetailHeaderProps> = ({ project, gitInfo }) => {
+    const gitStatus = GIT_STATUS.getDefinition(gitInfo?.git_status);
     const projectStatus = PROJECT_STATUS.getDefinition(project.status);
 
     return (
@@ -22,12 +23,12 @@ export const ProjectDetailHeader: React.FC<ProjectDetailHeaderProps> = ({ projec
             <div className="project-banner-title">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <h1>{project.title}</h1>
-                    <button 
-                        className="project-btn icon-only" 
+                    <button
+                        className="project-btn icon-only"
                         title="Reveal in File Explorer"
                         onClick={(e) => {
                             e.stopPropagation();
-                            invoke('cmd_open_file', { path: project.path }).catch(console.error);
+                            void openFileInExplorer(project.path);
                         }}
                         style={{ padding: '0.25rem', background: 'transparent', border: 'none', color: 'var(--text-secondary)' }}
                     >

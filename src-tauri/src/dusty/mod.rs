@@ -6,6 +6,7 @@ pub mod engine;
 pub mod handlers;
 pub mod logger;
 pub mod scanners;
+pub mod system;
 pub mod test;
 pub mod types;
 pub mod utility;

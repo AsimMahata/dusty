@@ -17,11 +17,13 @@ export const filterAndSortProjects = (projects: Project[], searchQuery: string, 
     }
 
     return [...filtered].sort((a, b) => {
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+
         switch (sortOption) {
             case "alphabetical":
                 return a.title.localeCompare(b.title);
             case "pinned":
-                if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
                 return a.title.localeCompare(b.title);
             case "git_status":
                 return (a.git_status || "clean").localeCompare(b.git_status || "clean");

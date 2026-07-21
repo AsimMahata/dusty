@@ -16,6 +16,7 @@ export const ActiveProjectPanel: React.FC<ActiveProjectPanelProps> = ({
     projectHook
 }) => {
     const project = projectHook.selectedItem;
+    const gitInfo = projectHook.gitInfo;
     if (!project) return null;
 
     const projectStatus = PROJECT_STATUS.getDefinition(project.status);
@@ -29,13 +30,13 @@ export const ActiveProjectPanel: React.FC<ActiveProjectPanelProps> = ({
             )}
 
             <div className="active-panel-content">
-                <ProjectDetailHeader project={project} />
+                <ProjectDetailHeader project={project} gitInfo={gitInfo} />
                 <ProjectDetailTags project={project} />
-                
+
                 <ProjectDetailDescription project={project} />
 
                 <ProjectDetailMeta project={project} />
-                
+
                 <ProjectDetailActions projectHook={projectHook} />
             </div>
         </div>
