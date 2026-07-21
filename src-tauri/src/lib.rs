@@ -49,6 +49,9 @@ pub fn run() {
             dusty::api::image::sync_scan_image,
             dusty::api::video::scan_video,
             dusty::api::video::sync_scan_video,
+            dusty::api::recent::add_recent_episode,
+            dusty::api::recent::get_recent_episodes,
+            dusty::api::recent::reset_recent_episodes_table,
         ])
         .setup(|app| {
             if cfg!(debug_assertions) {

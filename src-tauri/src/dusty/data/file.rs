@@ -10,7 +10,7 @@ use crate::dusty::utility::sha256_hash::get_sha256_id;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct FileInfo {
-    id: String,
+    pub(crate) id: String,
     name: String,
     path: PathBuf,
     size: u64,

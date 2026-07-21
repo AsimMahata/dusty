@@ -350,12 +350,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-width: 0;
 }
 
 .cw-text {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 0;
+    flex: 1;
+    padding-right: 12px;
 }
 
 .cw-title {

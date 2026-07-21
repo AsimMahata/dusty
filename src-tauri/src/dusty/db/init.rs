@@ -8,6 +8,7 @@ use crate::dusty::db::anime::create_anime_table;
 use crate::dusty::db::mal::create_mal_cache_table;
 use crate::dusty::db::media::create_media_table;
 use crate::dusty::db::project::create_projects_table;
+use crate::dusty::db::recent::create_recent_ep_table;
 use crate::dusty::db::show::create_shows_table;
 use crate::dusty::db::show_cache::create_show_cache_table;
 use crate::dusty::logger::logger;
@@ -49,5 +50,7 @@ pub fn initialize_tables(conn: &Connection) -> Result<Vec<String>, String> {
     tables.push("mal_cache".to_string());
     create_anime_table(&conn)?;
     tables.push("anime".to_string());
+    create_recent_ep_table(&conn)?;
+    tables.push("recent_episodes".to_string());
     Ok(tables)
 }

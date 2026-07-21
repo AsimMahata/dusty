@@ -9,8 +9,8 @@ export const getChildrens = async (item: ItemCollection, shows: ShowResult[]): P
     if (!show) return [];
 
     return show.episodes
-        .map((ep, i) => ({
-            id: `${item.id}-child-${i}`,
+        .map((ep) => ({
+            id: ep.id,
             title: ep.name,
             size: formatBytes(ep.size),
             path: ep.path

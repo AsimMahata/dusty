@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { Episode } from '../../../../types/types';
-import { getChildrens, openEpisode } from '../../actions/utility';
+import { getChildrens } from '../../actions/utility';
 import { ShowDetailHero } from './ShowDetailHero';
 import { ShowEpisodesList } from './ShowEpisodesList';
 import './../../css/ShowDetailPage.css';
@@ -31,7 +31,7 @@ export const ShowDetailPage: React.FC<ShowDetailPageProps> = ({ showHook }) => {
     return (
         <div className="show-detail-page">
             <ShowDetailHero show={show} getActionsForShow={showHook.getActionsForShow} onBack={onBack} />
-            <ShowEpisodesList episodes={episodes} onEpisodeClick={openEpisode} />
+            <ShowEpisodesList episodes={episodes} onEpisodeClick={showHook.openEpisode} />
         </div>
     );
 };

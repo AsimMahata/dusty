@@ -10,15 +10,19 @@ pub fn get_all_tables(state: tauri::State<AppState>) -> Result<Vec<String>, Stri
 #[tauri::command]
 pub fn reset_table(state: tauri::State<AppState>, table_name: String) -> Result<(), String> {
     let db = state.db.lock().unwrap();
-    // Use DELETE FROM to keep schema but wipe data
-    let query = format!("DELETE FROM {}", table_name);
+    // Use DROP TABLE to wipe data AND clear old schemas
+    let query = format!("DROP TABLE IF EXISTS {}", table_name);
     db.execute(&query, []).map_err(|e| {
         logger::error!(
-            "FAILED_TO_RESET_TABLE",
+            "FAILED_TO_DROP_TABLE",
             format!("Table: {}, Error: {}", table_name, e)
         );
         e.to_string()
     })?;
+    
+    // Recreate the table with its latest schema
+    let _ = crate::dusty::db::init::initialize_tables(&db);
+
     logger::info!("RESET_TABLE_SUCCESS", table_name);
     Ok(())
 }

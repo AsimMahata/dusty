@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
-import { CMD_SCAN_SHOWS, CMD_UPDATE_BAN_STATUS, CMD_UPDATE_SHOW_STATUS, CMD_RENAME_SHOW, CMD_UPDATE_PIN_STATUS, CMD_SYNC_SCAN_SHOWS } from '../../constants/commands';
-import type { ShowResult, ShowStatus, ActionItem } from '../../types/types';
+import { CMD_SCAN_SHOWS, CMD_UPDATE_BAN_STATUS, CMD_UPDATE_SHOW_STATUS, CMD_RENAME_SHOW, CMD_UPDATE_PIN_STATUS, CMD_SYNC_SCAN_SHOWS, CMD_OPEN_FILE } from '../../constants/commands';
+import type { ShowResult, ShowStatus, ActionItem, Episode } from '../../types/types';
 import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY, TABS, type ShowSortMethod, type ShowTab } from '../../pages/shows/constants/constants';
 import { logger } from '../../utility/logger';
 import { DEFAULT_STARTING_PATHS } from '../../constants/defaults';
@@ -13,6 +13,7 @@ import { hashString } from '../../pages/shows/actions/hashString';
 import { useMal } from './useMal';
 import { useImdb } from './useImdb';
 import { SEARCH_ICON_16 } from '../../constants/icon';
+import { putEpisodeInRecent } from '../../introverts/home/recentEp';
 
 // Cache removed to rely on backend SQLite caching
 
@@ -377,6 +378,27 @@ export const useShow = () => {
         }
     };
 
+     const openEpisode = async (ep: Episode) => {
+        const path = ep.path;
+        if (!path) return;
+        try {
+            await invoke(CMD_OPEN_FILE, { path: path });
+        } catch (e) {
+            logger.error(`Could not open file: ${String(e)}`);
+        }
+        if(!selectedShow){
+            return;
+        }
+        const currentEp = selectedShow.episodes?.find(e => e.id === ep.id);
+        if(!currentEp){
+            return;
+        }
+
+        void putEpisodeInRecent(selectedShow,currentEp);
+    };
+
+
+
     return {
         title: "Shows",
         searchQuery, setSearchQuery,
@@ -432,5 +454,6 @@ export const useShow = () => {
         imdbId,
         setImdbId,
         updateImdbIdForShow,
+        openEpisode
     };
 };

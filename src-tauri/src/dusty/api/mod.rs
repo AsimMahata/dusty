@@ -15,3 +15,4 @@ pub mod system;
 pub mod table;
 pub mod video;
 pub mod zip;
+pub mod recent;

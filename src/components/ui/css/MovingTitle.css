@@ -1,0 +1,40 @@
+.moving-title-wrapper {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
+}
+
+.moving-title-content {
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.moving-title-text {
+  display: inline-block;
+}
+
+.duplicate-text {
+  margin-left: 30px; /* spacing */
+}
+
+.is-moving {
+  /* Pause on hover for better readability */
+  animation: scroll-left-infinite 12s linear infinite;
+}
+
+.moving-title-wrapper:hover .is-moving {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-left-infinite {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* 50% of the total inline block width is exactly one title + half the margin */
+    /* So we shift 50% + half the margin to perfectly align the duplicate */
+    transform: translateX(calc(-50% - 15px));
+  }
+}

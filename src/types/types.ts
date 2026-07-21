@@ -19,6 +19,7 @@ export interface Episode {
     rawSize?: number;
     episode_status?: EpisodeStatus;
 }
+
 export interface BaseItem {
     id: string;
     title: string;
@@ -92,6 +93,14 @@ export interface ShowResult {
     mal_id?: number,
     imdb_id?: string,
     airing?:boolean,
+}
+export interface ShowInfo {
+    title: string,
+    status: string,
+    banned: boolean,
+    pinned: boolean,
+    mal_id?: number,
+    airing: boolean,
 }
 
 type ProjectType = "C/C++" | "Unknown";
