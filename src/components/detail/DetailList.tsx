@@ -1,8 +1,8 @@
 import React from 'react';
-import type { Item } from '../../types/types';
 import type { useItemDetail } from '../../hooks/useItemDetail';
 import { DetailListChild } from './DetailListChild';
 import { DEFAULT_ICON } from '../../constants/defaults';
+import type { Item } from "../../types/core";
 
 interface DetailListProps {
     detail: ReturnType<typeof useItemDetail<any>>;

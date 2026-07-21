@@ -1,12 +1,4 @@
-export type SortOption = 
-    | "recently_opened"
-    | "recently_modified"
-    | "alphabetical"
-    | "pinned"
-    | "git_status"
-    | "project_status"
-    | "creation_date";
-
+import type { SortOption } from "../../../types/projects";
 export const PROJECT_SORT_OPTIONS: { id: SortOption, label: string }[] = [
     { id: 'recently_opened', label: 'Recently Opened' },
     { id: 'recently_modified', label: 'Recently Modified' },

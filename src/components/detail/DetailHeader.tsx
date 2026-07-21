@@ -1,12 +1,12 @@
 import React from 'react';
 import { ArrowLeft, CheckSquare, CheckCircle2, Circle, EyeOff } from 'lucide-react';
 import { ActionMenu } from '../ui/ActionMenu';
-import type { ActionItem, AnyItem, ItemCollection } from '../../types/types';
 import { EditTitle } from './EditTitle';
 import { DetailTitle } from './DetailTitle';
 
 import type { useItemDetail } from '../../hooks/useItemDetail';
 import { COLORS } from '../../constants/color';
+import type { ActionItem, AnyItem, ItemCollection } from "../../types/core";
 
 interface DetailHeaderProps {
     item: AnyItem;

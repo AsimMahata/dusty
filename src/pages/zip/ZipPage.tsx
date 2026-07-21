@@ -3,7 +3,7 @@ import { PageLayout } from '../../components/layout/PageLayout';
 import { useZip } from '../../hooks/zip/useZip';
 import { ZipHeader } from './components/header/ZipHeader';
 import { ZipTabContent } from './components/tab/ZipTabContent';
-import type { ZipSortMode } from './constants/constants';
+import type { ZipSortMode } from "../../types/zip";
 
 export const ZipPage: React.FC = () => {
     const zip = useZip();

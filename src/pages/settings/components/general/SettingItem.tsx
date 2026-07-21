@@ -1,18 +1,5 @@
 import React, { useState } from 'react';
-
-export interface SettingItemProps {
-    id?: string;
-    title: string;
-    desc: string;
-    type: 'select' | 'checkbox' | 'button';
-    value?: any;
-    onChange?: (val: any) => void;
-    onClick?: () => Promise<boolean | void> | void;
-    buttonText?: string;
-    buttonClass?: string;
-    options?: { value: string; label: string }[];
-}
-
+import type { SettingItemProps } from "../../../../types/settings";
 export const SettingItem: React.FC<SettingItemProps> = ({ title, desc, type, value, onChange, onClick, buttonText, buttonClass, options }) => {
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 

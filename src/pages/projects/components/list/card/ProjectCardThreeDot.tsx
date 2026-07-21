@@ -1,6 +1,6 @@
 import React from 'react';
-import type { Project } from '../../../../../types/types';
 import { PROJECT_MENU_MORE_ICON } from '../../../../../constants/icon';
+import type { Project } from "../../../../../types/projects";
 
 interface ProjectCardThreeDotProps {
     project: Project;

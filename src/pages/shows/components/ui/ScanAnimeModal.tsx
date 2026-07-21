@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Check } from 'lucide-react';
-import { scanShowsForAnime, type ScannedAnimeData } from '../../../../introverts/show/anime';
-import { addSeasonalAnimeDB } from '../../../../ambiverts/show/anime';
-import type { ShowResult } from '../../../../types/types';
+import { scanShowsForAnime } from '../../../../personalities/introverts/show/anime';
+import { addSeasonalAnimeDB } from '../../../../personalities/ambiverts/anime';
+import type { ScannedAnimeData } from "../../../../types/shows";
+import type { ShowResult } from "../../../../types/shows";
 
 interface ScanAnimeModalProps {
     onClose: () => void;
@@ -15,7 +16,7 @@ export const ScanAnimeModal: React.FC<ScanAnimeModalProps> = ({ onClose, shows }
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isScanning, setIsScanning] = useState(true);
     const [scanProgress, setScanProgress] = useState({ current: 0, total: shows.length });
-    const [statusMessage, setStatusMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
+    const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -27,20 +28,20 @@ export const ScanAnimeModal: React.FC<ScanAnimeModalProps> = ({ onClose, shows }
                 (results) => setScannedResults(results),
                 () => isMounted
             );
-            
+
             if (isMounted) setIsScanning(false);
         };
-        
+
         scanAll();
-        
+
         return () => { isMounted = false; };
     }, [shows]);
 
     const toggleSelection = (anime: ScannedAnimeData) => {
-        setSelectedAnime(prev => 
-            prev.some(a => a.mal_id === anime.mal_id) 
-            ? prev.filter(a => a.mal_id !== anime.mal_id)
-            : [...prev, anime]
+        setSelectedAnime(prev =>
+            prev.some(a => a.mal_id === anime.mal_id)
+                ? prev.filter(a => a.mal_id !== anime.mal_id)
+                : [...prev, anime]
         );
         setStatusMessage(null);
     };
@@ -49,10 +50,10 @@ export const ScanAnimeModal: React.FC<ScanAnimeModalProps> = ({ onClose, shows }
         if (selectedAnime.length === 0) return;
         setIsSubmitting(true);
         setStatusMessage(null);
-        
+
         const success = await addSeasonalAnimeDB(selectedAnime);
         setIsSubmitting(false);
-        
+
         if (success) {
             setStatusMessage({ type: 'success', text: 'Successfully added anime!' });
             setSelectedAnime([]);
@@ -73,7 +74,7 @@ export const ScanAnimeModal: React.FC<ScanAnimeModalProps> = ({ onClose, shows }
                         <X size={20} />
                     </button>
                 </div>
-                
+
                 <div className="add-anime-modal-body">
                     {isScanning && (
                         <div style={{ marginBottom: '1rem', color: 'var(--text-secondary)', display: 'flex', justifyContent: 'space-between' }}>
@@ -81,7 +82,7 @@ export const ScanAnimeModal: React.FC<ScanAnimeModalProps> = ({ onClose, shows }
                             <span>{scanProgress.current} / {scanProgress.total}</span>
                         </div>
                     )}
-                    
+
                     <div className="add-anime-list" style={{ maxHeight: '60vh' }}>
                         {scannedResults.length > 0 ? (
                             scannedResults.map((anime) => {
@@ -97,10 +98,10 @@ export const ScanAnimeModal: React.FC<ScanAnimeModalProps> = ({ onClose, shows }
                                             <div className="add-anime-info">
                                                 <span className="add-anime-title">{anime.title}</span>
                                                 <span className="add-anime-episodes" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                                                    <span style={{ 
-                                                        background: 'var(--primary-dark)', 
-                                                        color: 'white', 
-                                                        padding: '0.1rem 0.4rem', 
+                                                    <span style={{
+                                                        background: 'var(--primary-dark)',
+                                                        color: 'white',
+                                                        padding: '0.1rem 0.4rem',
                                                         borderRadius: '4px',
                                                         fontSize: '0.75rem'
                                                     }}>
@@ -110,7 +111,7 @@ export const ScanAnimeModal: React.FC<ScanAnimeModalProps> = ({ onClose, shows }
                                                 </span>
                                             </div>
                                         </div>
-                                        <button 
+                                        <button
                                             className={`add-anime-add-btn ${isSelected ? 'selected' : ''}`}
                                             onClick={() => toggleSelection(anime)}
                                         >
@@ -134,19 +135,19 @@ export const ScanAnimeModal: React.FC<ScanAnimeModalProps> = ({ onClose, shows }
                 <div className="add-anime-modal-footer" style={{ alignItems: 'center' }}>
                     {statusMessage && (
                         <div style={{
-                            marginRight: 'auto', 
-                            color: statusMessage.type === 'success' ? '#10b981' : '#ef4444', 
-                            display: 'flex', 
-                            alignItems: 'center', 
+                            marginRight: 'auto',
+                            color: statusMessage.type === 'success' ? '#10b981' : '#ef4444',
+                            display: 'flex',
+                            alignItems: 'center',
                             fontWeight: 500,
                             fontSize: '0.9rem'
                         }}>
                             {statusMessage.text}
                         </div>
                     )}
-                    <button 
-                        className="add-anime-submit-btn" 
-                        onClick={handleSubmit} 
+                    <button
+                        className="add-anime-submit-btn"
+                        onClick={handleSubmit}
                         disabled={selectedAnime.length === 0 || isSubmitting}
                     >
                         {isSubmitting ? 'Adding...' : `Add Selected (${selectedAnime.length})`}

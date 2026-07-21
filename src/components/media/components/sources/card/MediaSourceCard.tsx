@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import type { MediaSourceItem, MediaSourceCategory } from '../../../constants/constants';
 import { MediaPinButton } from './buttons/MediaPinButton';
 import { MediaSourceContextMenu } from '../menu/MediaSourceContextMenu';
 import { MediaSourceCardPreview } from './preview/MediaSourceCardPreview';
@@ -10,6 +9,7 @@ import { MediaSourceCardMeta } from './info/MediaSourceCardMeta';
 import { generateExtSideBarGradient } from '../../../../../utility/gradient';
 import { getExtensionColor } from '../../../../../constants/mediaExtensions';
 import '../../../css/MediaSources.css';
+import type { MediaSourceItem, MediaSourceCategory } from "../../../../../types/media";
 
 interface MediaSourceCardProps {
     item: MediaSourceItem;

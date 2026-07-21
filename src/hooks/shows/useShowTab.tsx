@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import type { ItemCollection, TabType } from '../../types/types';
 import type { useShow } from './useShow';
 import { getChildrens, openEpisode } from '../../pages/shows/actions/utility';
 import { TITLE_SHOWS, TITLE_BANNED, TYPE_NORMAL, TYPE_BANNED } from '../../constants/tabs';
 import { DEFAULT_SHOW_ICON, DEFAULT_TV_ICON } from '../../constants/defaults';
 import { SHOW_STATUS_PRIORITY } from '../../constants/priority';
+import type { ItemCollection } from "../../types/core";
+import type { TabType } from "../../types/tabs";
 
 let cachedRecentItems: Partial<Record<TabType, ItemCollection[]>> = {
     [TYPE_NORMAL]: [],

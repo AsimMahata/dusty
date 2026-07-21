@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import type { BaseItem, AnyItem, Item, TabHook, ActionItem, EpisodeStatus } from '../types/types';
+import type { BaseItem, AnyItem, Item, ActionItem } from "../types/core";
+import type { TabHook } from "../types/tabs";
+import type { EpisodeStatus } from "../types/media";
 
 export function useItemDetail<T extends BaseItem = AnyItem>(tab: TabHook<T>) {
     const item = tab.selectedItem;

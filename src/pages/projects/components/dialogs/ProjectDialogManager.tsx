@@ -1,8 +1,8 @@
 import React from 'react';
-import type { ProjectHook } from '../../../../hooks/projects/useProject';
 import { ProjectContextMenu } from '../menu/ProjectContextMenu';
 import { ChangeStatusDialog } from './ChangeStatusDialog';
 import { EditTagsDialog } from './EditTagsDialog';
+import type { ProjectHook } from "../../../../types/projects";
 
 interface ProjectDialogManagerProps {
     projectHook: ProjectHook;

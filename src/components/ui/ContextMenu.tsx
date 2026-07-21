@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import type { ActionItem } from '../../types/types';
+import type { ActionItem } from "../../types/core";
 
 interface ContextMenuProps {
     x: number;

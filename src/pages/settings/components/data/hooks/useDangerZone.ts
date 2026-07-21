@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { logger } from '../../../../../utility/logger';
-import type { ResetActionConfig } from '../../../actions/getResetActions';
 import toast from 'react-hot-toast';
+import type { ResetActionConfig } from "../../../../../types/settings";
 
 export const useDangerZone = () => {
     const [activeModalId, setActiveModalId] = useState<string | null>(null);

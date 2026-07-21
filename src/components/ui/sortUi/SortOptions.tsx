@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
 import { ContextMenu } from '../ContextMenu';
-
-export interface Coordinates {
-    x: number;
-    y: number;
-}
-export interface SortOption {
-    id: string;
-    label: string;
-}
-
 import { SortLabelButton } from './SortLabelButton';
 import { SortArrowButton } from './SortArrowButton';
+import type { Coordinates, SortOption } from "../../../types/ui";
 
 interface SortOptionsProps {
     sortMethod: string;

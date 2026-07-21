@@ -1,5 +1,6 @@
-import type { TabType, Item } from '../../types/types';
 import type { useMedia } from './useMedia';
+import type { TabType } from "../../types/tabs";
+import type { Item } from "../../types/core";
 
 export const useMediaTab = (media: ReturnType<typeof useMedia>, type: TabType) => {
 

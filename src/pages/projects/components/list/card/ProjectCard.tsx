@@ -1,10 +1,10 @@
 import React from 'react';
-import type { Project } from '../../../../../types/types';
 import { PROJECT_STATUS } from '../../../../../constants/projectStatus';
 import { ProjectCardCover } from './ProjectCardCover';
 import { ProjectCardHeader } from './ProjectCardHeader';
 import { ProjectCardTags } from './ProjectCardTags';
 import { ProjectCardActions } from './ProjectCardActions';
+import type { Project } from "../../../../../types/projects";
 
 interface ProjectCardProps {
     project: Project;

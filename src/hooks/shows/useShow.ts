@@ -2,8 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
 import { CMD_SCAN_SHOWS, CMD_UPDATE_BAN_STATUS, CMD_UPDATE_SHOW_STATUS, CMD_RENAME_SHOW, CMD_UPDATE_PIN_STATUS, CMD_SYNC_SCAN_SHOWS, CMD_OPEN_FILE } from '../../constants/commands';
-import type { ShowResult, ShowStatus, ActionItem, Episode } from '../../types/types';
-import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY, TABS, type ShowSortMethod, type ShowTab } from '../../pages/shows/constants/constants';
+import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY, TABS } from '../../pages/shows/constants/constants';
 import { logger } from '../../utility/logger';
 import { DEFAULT_STARTING_PATHS } from '../../constants/defaults';
 import { LABELS } from '../../constants/labels';
@@ -13,7 +12,11 @@ import { hashString } from '../../pages/shows/actions/hashString';
 import { useMal } from './useMal';
 import { useImdb } from './useImdb';
 import { SEARCH_ICON_16 } from '../../constants/icon';
-import { putEpisodeInRecent } from '../../introverts/home/recentEp';
+import { putEpisodeInRecent } from '../../personalities/introverts/home/recentEp';
+import type { ShowResult, ShowStatus } from "../../types/shows";
+import type { ActionItem } from "../../types/core";
+import type { Episode } from "../../types/media";
+import type { ShowSortMethod, ShowTab } from "../../types/shows";
 
 // Cache removed to rely on backend SQLite caching
 
@@ -27,7 +30,7 @@ export const useShow = () => {
 
     const [activeTab, setActiveTab] = useState<ShowTab>(getDefaultTab());
     const [lastWatchedMap, setLastWatchedMap] = useState<Record<string, number>>(() => {
-        try { return JSON.parse(localStorage.getItem(LOCAL_STORAGE_LAST_WATCHED) || '{}'); } 
+        try { return JSON.parse(localStorage.getItem(LOCAL_STORAGE_LAST_WATCHED) || '{}'); }
         catch { return {}; }
     });
     const [sortMethod, setSortMethod] = useState<ShowSortMethod>('last_watched');
@@ -59,11 +62,11 @@ export const useShow = () => {
     };
 
     const [allShows, setAllShows] = useState<ShowResult[]>([]);
-    
+
     const fetchData = async (sync: boolean = false) => {
         setIsRefreshing(true);
         if (allShows.length === 0) setIsLoading(true);
-        
+
         try {
             const command = sync ? CMD_SYNC_SCAN_SHOWS : CMD_SCAN_SHOWS;
             let allFetchedShows: ShowResult[] = [];
@@ -169,7 +172,7 @@ export const useShow = () => {
     const getCommonRenderedActions = () => {
         return [];
     }
-    
+
     const malHook = useMal({
         updateShowInState: (showId, updates) => {
             const newShows = allShows.map(s => s.id === showId ? { ...s, ...updates } : s);
@@ -296,7 +299,7 @@ export const useShow = () => {
 
     const getCount = (tab: ShowTab) => {
         if (tab.id === 'banned') return allShows.filter(s => s.banned).length;
-        if( tab.id === 'seasonal') return allShows.filter(s => s.airing).length;
+        if (tab.id === 'seasonal') return allShows.filter(s => s.airing).length;
         const shows = allShows.filter(s => !s.banned);
         if (tab.id === 'all') return shows.length;
         return shows.filter(s => s.status === tab.id).length;
@@ -319,26 +322,26 @@ export const useShow = () => {
 
         if (searchQuery && searchQuery.trim().length > 0) {
             const query = searchQuery.toLowerCase();
-            baseShows = baseShows.filter(s => 
-                s.title.toLowerCase().includes(query) || 
+            baseShows = baseShows.filter(s =>
+                s.title.toLowerCase().includes(query) ||
                 (s.get_title && s.get_title.toLowerCase().includes(query))
             );
         }
 
         return baseShows;
     }, [allShows, activeTab, searchQuery]);
-        
-      
+
+
     const lastWatchedDep =
-    sortMethod === "last_watched" ? lastWatchedMap : null;
+        sortMethod === "last_watched" ? lastWatchedMap : null;
 
     const sortedShows = useMemo(() => {
         let result = [...filteredShows];
-        
+
         result.sort((a, b) => {
             if (a.pinned && !b.pinned) return -1;
             if (!a.pinned && b.pinned) return 1;
-            
+
             let cmp = 0;
             if (sortMethod === 'last_watched') {
                 const timeA = lastWatchedMap[a.id] || 0;
@@ -359,10 +362,10 @@ export const useShow = () => {
             } else {
                 cmp = a.title.localeCompare(b.title, undefined, { numeric: true });
             }
-            
+
             return sortAscending ? cmp : -cmp;
         });
-        
+
         return result;
     }, [filteredShows, sortMethod, sortAscending, randomSeed, lastWatchedDep]);
 
@@ -378,7 +381,7 @@ export const useShow = () => {
         }
     };
 
-     const openEpisode = async (ep: Episode) => {
+    const openEpisode = async (ep: Episode) => {
         const path = ep.path;
         if (!path) return;
         try {
@@ -386,15 +389,15 @@ export const useShow = () => {
         } catch (e) {
             logger.error(`Could not open file: ${String(e)}`);
         }
-        if(!selectedShow){
+        if (!selectedShow) {
             return;
         }
         const currentEp = selectedShow.episodes?.find(e => e.id === ep.id);
-        if(!currentEp){
+        if (!currentEp) {
             return;
         }
 
-        void putEpisodeInRecent(selectedShow,currentEp);
+        void putEpisodeInRecent(selectedShow, currentEp);
     };
 
 
@@ -406,12 +409,12 @@ export const useShow = () => {
         isLoading,
         activeTab, setActiveTab,
         isItemSelected, setIsItemSelected,
-        selectedShow,setSelectedShow,
-        lastWatchedMap,setLastWatchedMap,handleShowOpen,
-        sortMethod,setSortMethod,
-        sortAscending,setSortAscending,
-        randomSeed,setRandomSeed,
-        isGridLayout,setIsGridLayout,
+        selectedShow, setSelectedShow,
+        lastWatchedMap, setLastWatchedMap, handleShowOpen,
+        sortMethod, setSortMethod,
+        sortAscending, setSortAscending,
+        randomSeed, setRandomSeed,
+        isGridLayout, setIsGridLayout,
         sortedShows,
         handleSortChange,
         allShows,

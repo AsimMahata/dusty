@@ -2,14 +2,16 @@ import { useState, useEffect, useMemo } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
 import { CMD_OPEN_FILE } from '../../constants/commands';
-import type { FileInfo, Tab, MediaDir, Item, MediaType } from '../../types/types';
 import { fileInfoToItemData } from '../../utility/util';
 import { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON, DEFAULT_STARTING_PATHS } from '../../constants/defaults';
 import { mediaExplorerTab, mediaListTab } from '../../constants/tabs';
 import { getRootFolders } from '../../utility/media/getRootFolders';
 import { getMediaFolderIcon } from '../../utility/icon/getMediaFolderIcon';
 import { getExplorerTabTitle } from '../../utility/tabs/getExplorerTabTitle';
-import { fetchFlatMedia, fetchMediaTree } from '../../introverts/media/scan';
+import { fetchFlatMedia, fetchMediaTree } from '../../personalities/introverts/media/scan';
+import type { FileInfo, MediaDir, MediaType } from "../../types/media";
+import type { Tab } from "../../types/tabs";
+import type { Item } from "../../types/core";
 
 // Cache removed in favor of backend cache
 
@@ -24,7 +26,7 @@ export const useMedia = (title: string, mediaType: MediaType, defaultPaths: stri
     const currentDir = currentDirHistory.length > 0 ? currentDirHistory[currentDirHistory.length - 1] : null;
 
     const explorerTabTitle = getExplorerTabTitle();
-                             
+
     const explorerTab: Tab = useMemo(() => ({
         title: explorerTabTitle,
         type: mediaExplorerTab.type

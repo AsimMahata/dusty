@@ -1,8 +1,8 @@
-import type { MediaSourceItem } from '../constants/constants';
 import { OPEN_FOLDER_ICON, REVEAL_ICON, COPY_ICON, PIN_ICON } from '../constants/icons';
 import { LABELS } from '../constants/labels';
 import { invoke } from '@tauri-apps/api/core';
 import { CMD_OPEN_FILE } from '../../../constants/commands';
+import type { MediaSourceItem } from "../../../types/media";
 
 export const getMediaSourceMenuActions = (
     item: MediaSourceItem,

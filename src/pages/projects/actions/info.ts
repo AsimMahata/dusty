@@ -1,5 +1,5 @@
-import type { Project } from '../../../types/types';
 import { PROJECT_STATUS } from '../../../constants/projectStatus';
+import type { Project } from "../../../types/projects";
 
 export const getProjectBannerStats = (allProjects: Project[]) => {
     const pinnedCount = allProjects.filter(p => p.pinned).length;

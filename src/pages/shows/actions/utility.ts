@@ -2,7 +2,9 @@ import { invoke } from '@tauri-apps/api/core';
 import { CMD_OPEN_FILE } from '../../../constants/commands';
 import { formatBytes } from '../../../utility/util';
 import { logger } from '../../../utility/logger';
-import type { ItemCollection, ShowResult, Episode } from '../../../types/types';
+import type { ItemCollection } from "../../../types/core";
+import type { ShowResult } from "../../../types/shows";
+import type { Episode } from "../../../types/media";
 
 export const getChildrens = async (item: ItemCollection, shows: ShowResult[]): Promise<Episode[]> => {
     const show = shows.find(show => show.id === item.id);

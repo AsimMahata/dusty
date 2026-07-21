@@ -4,7 +4,8 @@ import { useBazarTab } from '../../../../hooks/bazar/useBazarTab';
 import { ICONS } from '../../../../constants/icon';
 import { sortChunks } from '../../actions/sortChunks';
 import type { useZip } from '../../../../hooks/zip/useZip';
-import { ZIP_TAB_EMPTY_TITLE, ZIP_TAB_EMPTY_DESC, type ZipSortMode } from '../../constants/constants';
+import { ZIP_TAB_EMPTY_TITLE, ZIP_TAB_EMPTY_DESC } from '../../constants/constants';
+import type { ZipSortMode } from "../../../../types/zip";
 
 interface ZipTabContentProps {
     zip: ReturnType<typeof useZip>;

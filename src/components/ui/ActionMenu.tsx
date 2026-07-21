@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MoreVertical } from 'lucide-react';
 import { ContextMenu } from './ContextMenu';
-import type { ActionItem } from '../../types/types';
+import type { ActionItem } from "../../types/core";
 
 interface ActionMenuProps {
     actions: ActionItem[];

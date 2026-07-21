@@ -1,6 +1,6 @@
-import type { MediaType } from '../../types/types';
 import { ICONS } from '../../constants/icon';
 import { DEFAULT_FOLDER_ICON } from '../../constants/defaults';
+import type { MediaType } from "../../types/media";
 
 export const getMediaFolderIcon = (mediaType: MediaType) => {
     switch (mediaType) {

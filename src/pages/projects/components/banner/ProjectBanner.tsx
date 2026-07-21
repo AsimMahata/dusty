@@ -1,7 +1,7 @@
 import React from 'react';
-import type { ProjectHook } from '../../../../hooks/projects/useProject';
 import { DefaultProjectBanner } from './DefaultProjectBanner';
 import { ActiveProjectPanel } from './ActiveProjectPanel';
+import type { ProjectHook } from "../../../../types/projects";
 
 interface ProjectBannerProps {
     projectHook: ProjectHook;

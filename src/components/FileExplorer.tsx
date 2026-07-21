@@ -4,11 +4,11 @@ import { ICONS } from '../constants/icon';
 import { COLORS } from '../constants/color';
 import { EXPLORER } from '../styles/fileExplorerStyles';
 import { CMD_READ_DIR, CMD_OPEN_FILE } from '../constants/commands';
-import type { FileInfo } from '../types/types';
 import { getFileIcon } from '../utility/fileExplorer/getFileIcon';
 import { sortFiles } from '../utility/fileExplorer/sortFiles';
 import { getExplorerTitle } from '../utility/fileExplorer/getExplorerTitle';
 import { formatBytes } from '../utility/util';
+import type { FileInfo } from "../types/media";
 
 interface FileExplorerProps {
     initialPath?: string;

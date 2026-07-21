@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
 import { CMD_SCAN_EMPTY_DIR } from '../../constants/commands';
-import type { FileInfo } from '../../types/types';
 import { fileInfoToItemData } from '../../utility/util';
-import type { AnyItem } from '../../types/types';
 import { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } from '../../constants/defaults';
 import { TYPE_COMING_SOON, TYPE_EMPTY_DIRECTORIES } from '../../constants/tabs';
+import type { FileInfo } from "../../types/media";
+import type { AnyItem } from "../../types/core";
 
 let cachedEmptyDirData: AnyItem[] | null = null;
 

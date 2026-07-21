@@ -3,73 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { invoke } from '@tauri-apps/api/core';
 import { CMD_GET_SYSTEM_INFO } from '../constants/commands';
 import { logger } from '../utility/logger';
-
-export interface DiskInfo {
-    name: string;
-    kind: string;
-    file_system: string;
-    total_space: number;
-    available_space: number;
-    is_removable: boolean;
-}
-
-export interface CpuInfo {
-    name: string;
-    cpu_usage: number;
-    frequency: number;
-}
-
-export interface ProcessInfo {
-    pid: string;
-    name: string;
-    memory: number;
-    cpu_usage: number;
-}
-
-export interface SystemInfoData {
-    username: string | null;
-    os_version: string | null;
-    hostname: string | null;
-    uptime: number;
-    total_memory: number;
-    used_memory: number;
-    total_swap: number;
-    used_swap: number;
-    cpus: CpuInfo[];
-    disks: DiskInfo[];
-    processes: ProcessInfo[];
-}
-
-
-export interface MediaItem {
-  id: string;
-  title: string;
-  subtitle: string;
-  progressPercent: number;
-  image: string;
-}
-
-export interface StorageInfo {
-  used: string;
-  free: string;
-  total: string;
-  segments: {
-    color: 'green' | 'yellow' | 'orange';
-    percent: number;
-  }[];
-}
-
-export interface OverviewStats {
-  shows: number;
-  projects: number;
-  songs: number;
-  videos: number;
-}
-
-export interface UserProfile {
-  name: string;
-  avatar: string;
-}
+import type { SystemInfoData, StorageInfo, OverviewStats, UserProfile } from "../types/system";
+import type { MediaItem } from "../types/media";
 
 interface DustyContextType {
     lastOpenedPage: string;

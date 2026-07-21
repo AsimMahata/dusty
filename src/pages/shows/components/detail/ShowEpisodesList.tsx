@@ -1,7 +1,8 @@
 import React from 'react';
-import type { Episode } from '../../../../types/types';
 import { NO_EPISODE_AVAILABLE_ICON, NO_EPISODE_AVAILABLE_P_TEXT } from '../../../../constants/icon';
 import { EpisodeCard } from './EpisodeCard';
+import type { Episode } from "../../../../types/media";
+
 interface ShowEpisodesListProps {
     episodes: Episode[];
     onEpisodeClick: (episode: Episode) => void;

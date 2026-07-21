@@ -1,7 +1,7 @@
 import React from 'react';
 import { getProjectBannerStats } from '../../actions/info';
-import type { Project } from '../../../../types/types';
 import { PROJECT_BANNER_FOLDER_ICON, PROJECT_PINNED_STAR_ICON_12 } from '../../../../constants/icon';
+import type { Project } from "../../../../types/projects";
 
 interface DefaultProjectBannerProps {
     allProjects: Project[];

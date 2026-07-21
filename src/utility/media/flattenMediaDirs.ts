@@ -1,4 +1,4 @@
-import type { MediaDir, FileInfo } from '../../types/types';
+import type { MediaDir, FileInfo } from "../../types/media";
 
 export const flattenMediaDirs = (mediaDirs: MediaDir[]): FileInfo[] => {
     const flat: FileInfo[] = [];

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import type { Episode } from '../../../../types/types';
 import { getChildrens } from '../../actions/utility';
 import { ShowDetailHero } from './ShowDetailHero';
 import { ShowEpisodesList } from './ShowEpisodesList';
 import './../../css/ShowDetailPage.css';
 import type { useShow } from '../../../../hooks/shows/useShow';
+import type { Episode } from "../../../../types/media";
 
 interface ShowDetailPageProps {
     showHook: ReturnType<typeof useShow>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { SORT_OPTIONS, type ZipSortMode } from '../../constants/constants';
+import { SORT_OPTIONS } from '../../constants/constants';
+import type { ZipSortMode } from "../../../../types/zip";
 
 interface ZipSortBarProps {
     sortMode: ZipSortMode;

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { CMD_UPDATE_MAL_ID } from '../../constants/commands';
-import type { ShowResult } from '../../types/types';
 import { logger } from '../../utility/logger';
+import type { ShowResult } from "../../types/shows";
 
 interface UseMalProps {
     updateShowInState: (showId: string, updates: Partial<ShowResult>) => void;

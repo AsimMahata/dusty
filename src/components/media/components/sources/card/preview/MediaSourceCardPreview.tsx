@@ -1,5 +1,5 @@
 import React from 'react';
-import type { MediaSourceItem } from '../../../../constants/constants';
+import type { MediaSourceItem } from "../../../../../../types/media";
 
 interface MediaSourceCardPreviewProps {
     item: MediaSourceItem;

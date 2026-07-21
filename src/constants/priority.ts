@@ -1,4 +1,4 @@
-import type { ShowStatus } from "../types/types";
+import type { ShowStatus } from "../types/shows";
 
 // Status Ordering Priority (lower number = higher priority)
 export const SHOW_STATUS_PRIORITY: Record<ShowStatus, number> = {

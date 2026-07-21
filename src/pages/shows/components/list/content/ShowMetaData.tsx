@@ -1,8 +1,8 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 import { ShowStatusIcon } from './ShowStatusIcon';
-import type { ShowResult } from '../../../../../types/types';
 import { PinDot } from '../../../../../components/ui/PinDot';
+import type { ShowResult } from "../../../../../types/shows";
 
 interface ShowMetaDataProps {
     show: ShowResult;

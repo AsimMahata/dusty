@@ -1,4 +1,4 @@
-import type { FileInfo } from '../../types/types';
+import type { FileInfo } from "../../types/media";
 
 export const sortFiles = (files: FileInfo[]): FileInfo[] => {
     return [...files].sort((a, b) => {

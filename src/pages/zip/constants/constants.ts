@@ -1,5 +1,4 @@
-export type ZipSortMode = 'name' | 'name-desc' | 'size' | 'size-asc' | 'type';
-
+import type { ZipSortMode } from "../../../types/zip";
 export const SORT_OPTIONS: { mode: ZipSortMode; label: string }[] = [
     { mode: 'name',      label: 'A → Z' },
     { mode: 'name-desc', label: 'Z → A' },

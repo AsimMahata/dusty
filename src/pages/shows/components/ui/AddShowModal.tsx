@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Plus, Check } from 'lucide-react';
-import type { ShowData } from '../../../../introverts/show/imdb';
-import { searchShow } from '../../../../introverts/show/imdb';
-import { addSeasonalShowDB } from '../../../../ambiverts/show/imdb';
+import { searchShow } from '../../../../personalities/introverts/show/imdb';
+import { addSeasonalShowDB } from '../../../../personalities/ambiverts/imdb';
+import type { ShowData } from "../../../../types/shows";
 
 interface AddShowModalProps {
     onClose: () => void;
@@ -17,7 +17,7 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
     const [selectedShow, setSelectedShow] = useState<ShowData[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
-    const [statusMessage, setStatusMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
+    const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -43,10 +43,10 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
     }, [searchQuery]);
 
     const toggleSelection = (show: ShowData) => {
-        setSelectedShow(prev => 
-            prev.some(a => a.imdb_id === show.imdb_id) 
-            ? prev.filter(a => a.imdb_id !== show.imdb_id)
-            : [...prev, show]
+        setSelectedShow(prev =>
+            prev.some(a => a.imdb_id === show.imdb_id)
+                ? prev.filter(a => a.imdb_id !== show.imdb_id)
+                : [...prev, show]
         );
         setStatusMessage(null);
     };
@@ -55,10 +55,10 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
         if (selectedShow.length === 0) return;
         setIsSubmitting(true);
         setStatusMessage(null);
-        
+
         const success = await addSeasonalShowDB(selectedShow);
         setIsSubmitting(false);
-        
+
         if (success) {
             setStatusMessage({ type: 'success', text: 'Successfully added show!' });
             setSelectedShow([]);
@@ -77,7 +77,7 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
 
         // Add to DB first so it is cached
         await addSeasonalShowDB([show]);
-        
+
         try {
             const success = await onLinkAction(targetShowId, show.imdb_id);
             if (success) {
@@ -104,14 +104,14 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
                         <X size={20} />
                     </button>
                 </div>
-                
+
                 <div className="add-anime-modal-body">
                     <div className="add-anime-search-container">
-                        <input 
+                        <input
                             ref={inputRef}
-                            type="text" 
-                            placeholder="Search for show..." 
-                            className="add-anime-search-input" 
+                            type="text"
+                            placeholder="Search for show..."
+                            className="add-anime-search-input"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -119,7 +119,7 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
                             <Search size={18} />
                         </button>
                     </div>
-                    
+
                     <div className="add-anime-list">
                         {isSearching ? (
                             <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>Searching...</div>
@@ -141,13 +141,13 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
                                         </div>
                                         {targetShowId ? (
                                             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                                                <button 
+                                                <button
                                                     className={`add-anime-add-btn ${isSelected ? 'selected' : ''}`}
                                                     onClick={() => toggleSelection(show)}
                                                 >
                                                     {isSelected ? <Check size={18} /> : <Plus size={18} />}
                                                 </button>
-                                                <button 
+                                                <button
                                                     className="add-anime-add-btn"
                                                     onClick={() => handleLinkToIMDB(show)}
                                                     disabled={isSubmitting}
@@ -157,7 +157,7 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
                                                 </button>
                                             </div>
                                         ) : (
-                                            <button 
+                                            <button
                                                 className={`add-anime-add-btn ${isSelected ? 'selected' : ''}`}
                                                 onClick={() => toggleSelection(show)}
                                             >
@@ -178,10 +178,10 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
                 <div className="add-anime-modal-footer" style={{ alignItems: 'center' }}>
                     {statusMessage && (
                         <div style={{
-                            marginRight: 'auto', 
-                            color: statusMessage.type === 'success' ? '#10b981' : '#ef4444', 
-                            display: 'flex', 
-                            alignItems: 'center', 
+                            marginRight: 'auto',
+                            color: statusMessage.type === 'success' ? '#10b981' : '#ef4444',
+                            display: 'flex',
+                            alignItems: 'center',
                             fontWeight: 500,
                             fontSize: '0.9rem'
                         }}>
@@ -189,9 +189,9 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
                         </div>
                     )}
                     {(!targetShowId || selectedShow.length > 0) && (
-                        <button 
-                            className="add-anime-submit-btn" 
-                            onClick={handleSubmit} 
+                        <button
+                            className="add-anime-submit-btn"
+                            onClick={handleSubmit}
                             disabled={selectedShow.length === 0 || isSubmitting}
                         >
                             {isSubmitting ? 'Adding...' : `Add Selected (${selectedShow.length})`}

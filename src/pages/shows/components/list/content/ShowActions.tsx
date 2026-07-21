@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActionMenu } from '../../../../../components/ui/ActionMenu';
-import type { ActionItem } from '../../../../../types/types';
+import type { ActionItem } from "../../../../../types/core";
 
 interface ShowActionsProps {
     actions: ActionItem[];

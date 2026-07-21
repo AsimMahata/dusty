@@ -1,6 +1,6 @@
 import React from 'react';
 import { PROJECT_BACK_ARROW_ICON, PROJECT_CLOSE_X_ICON } from '../../../../../constants/icon';
-import type { ProjectHook } from '../../../../../hooks/projects/useProject';
+import type { ProjectHook } from "../../../../../types/projects";
 
 interface ProjectDetailActionsProps {
     projectHook: ProjectHook;

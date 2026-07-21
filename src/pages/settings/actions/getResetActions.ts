@@ -1,19 +1,5 @@
 import { CMD_RESET_DATABASE } from '../../../constants/commands';
-
-export interface ResetActionConfig {
-    id: string;
-    buttonLabel: string;
-    resettingLabel: string;
-    buttonClass: string;
-    command: string;
-    modalTitle: string;
-    modalMessage: string;
-    confirmText: string;
-    successMessage: string;
-    errorMessagePrefix: string;
-    loggerPrefix: string;
-}
-
+import type { ResetActionConfig } from "../../../types/settings";
 export const getResetActions = (): ResetActionConfig[] => {
     return [
         {

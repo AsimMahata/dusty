@@ -1,5 +1,5 @@
 import type { Chunk } from '../../../types/bazar';
-import type { ZipSortMode } from '../constants/constants';
+import type { ZipSortMode } from "../../../types/zip";
 
 export const sortChunks = (chunks: Chunk[], mode: ZipSortMode): Chunk[] => {
     const pinned = chunks.filter(c => c.is_pinned);

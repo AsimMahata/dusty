@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { fetchHomeDashboardData } from '../../../introverts/home/home';
-import type { MediaItem, UserProfile, StorageInfo, OverviewStats } from '../../../contexts/DustyContext';
+import { fetchHomeDashboardData } from '../../../personalities/introverts/home/home';
+import type { MediaItem } from "../../../types/media";
+import type { UserProfile, StorageInfo, OverviewStats } from "../../../types/system";
 
 interface HomeContextType {
     profile: UserProfile;
@@ -38,7 +39,7 @@ export const HomeProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const systemStatus = 'Filesystem is up to date.';
     const heroBanner = ['/banner.jpg'];
     const heroLogo = '/icon.png';
-    
+
     const [continueWatching, setContinueWatching] = useState<MediaItem[]>([
         { id: '1', title: 'Frieren', subtitle: 'Episode 18', progressPercent: 60, image: '/banner.jpg' },
         { id: '2', title: 'One Piece', subtitle: 'Episode 1136', progressPercent: 30, image: '/banner.jpg' },
@@ -55,7 +56,7 @@ export const HomeProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 progressPercent: Math.floor(Math.random() * 100),
                 image
             };
-            
+
             if (existingIndex >= 0) {
                 const newList = [...prev];
                 newList.splice(existingIndex, 1);

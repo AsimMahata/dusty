@@ -2,10 +2,12 @@ import { useState, useEffect, useMemo, type ReactNode } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
 import { CMD_SCAN_PROJECTS, CMD_SYNC_SCAN_PROJECTS, CMD_UPDATE_PROJECT_PIN_STATUS, CMD_UPDATE_PROJECT_STATUS } from '../../constants/commands';
-import type { Project, ProjectStatus } from '../../types/types';
 import { logger } from '../../utility/logger';
 import { filterAndSortProjects } from '../../pages/projects/actions/filter';
-import { DEFAULT_SORT_OPTION, type SortOption } from '../../pages/projects/constants/constants';
+import { DEFAULT_SORT_OPTION } from '../../pages/projects/constants/constants';
+import type { Project, ProjectStatus } from "../../types/projects";
+import type { SortOption } from "../../types/projects";
+
 
 // Cache removed to rely on backend SQLite caching
 
@@ -144,5 +146,3 @@ export const useProject = () => {
         handleExploreItemClick, handleExploreBack, closeExplorer, startExploring
     };
 };
-
-export type ProjectHook = ReturnType<typeof useProject>;

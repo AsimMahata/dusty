@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PROJECT_TAGS } from '../../../../constants/projectTags';
-import type { Project } from '../../../../types/types';
 import { Check } from 'lucide-react';
+import type { Project } from "../../../../types/projects";
 
 interface EditTagsDialogProps {
     project: Project;

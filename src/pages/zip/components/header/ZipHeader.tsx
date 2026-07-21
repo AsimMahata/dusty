@@ -1,6 +1,7 @@
 import React from 'react';
-import { ZIP_TITLE, ZIP_EMPTY_DESC, type ZipSortMode } from '../../constants/constants';
+import { ZIP_TITLE, ZIP_EMPTY_DESC } from '../../constants/constants';
 import { ZipSortBar } from './ZipSortBar';
+import type { ZipSortMode } from "../../../../types/zip";
 
 interface ZipHeaderProps {
     count: number;

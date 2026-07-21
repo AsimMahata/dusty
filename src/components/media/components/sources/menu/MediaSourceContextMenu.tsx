@@ -1,7 +1,7 @@
 import React from 'react';
 import { ContextMenu } from '../../../../ui/ContextMenu';
-import type { MediaSourceItem } from '../../../constants/constants';
 import { getMediaSourceMenuActions } from '../../../actions/menuActions';
+import type { MediaSourceItem } from "../../../../../types/media";
 
 interface MediaSourceContextMenuProps {
     x: number;

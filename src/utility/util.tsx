@@ -1,7 +1,6 @@
 import React from 'react';
-import type { Item, FileInfo } from "../types/types";
-
-
+import type { Item } from "../types/core";
+import type { FileInfo } from "../types/media";
 
 export function formatBytes(bytes: number): string {
     const KB = 1024;

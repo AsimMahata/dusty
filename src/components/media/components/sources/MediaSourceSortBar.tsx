@@ -3,8 +3,7 @@ import { SORT_DROPDOWN_ICON, SORT_ASC_ICON, SORT_DESC_ICON } from '../../constan
 import { LABELS } from '../../constants/labels';
 import { ContextMenu } from '../../../ui/ContextMenu';
 import '../../css/MediaSources.css';
-
-export type MediaSortMethod = 'title' | 'updated' | 'random';
+import type { MediaSortMethod } from "../../../../types/media";
 
 interface MediaSourceSortBarProps {
     sortMethod: MediaSortMethod;

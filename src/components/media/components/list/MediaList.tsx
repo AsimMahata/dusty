@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import type { TabHook, BaseItem, AnyItem } from '../../../../types/types';
 import { ChunkItem } from '../../../bazar/ChunkItem';
 import { ICONS } from '../../../../constants/icon';
 import { getChunkFileIcon } from '../../../../utility/chunkIcon';
 import { LABELS } from '../../constants/labels';
+import type { TabHook } from "../../../../types/tabs";
+import type { BaseItem, AnyItem } from "../../../../types/core";
+import type { MediaSortMode } from "../../../../types/media";
 
 interface MediaListProps<T extends BaseItem = AnyItem> {
     tab: TabHook<T>;
 }
 export const VISIBLE_COUNT = 60;
-export type MediaSortMode = 'name' | 'name-desc' | 'size' | 'size-asc' | 'type';
-
 const SORT_OPTIONS: { mode: MediaSortMode; label: string }[] = [
     { mode: 'name',      label: LABELS.SORT_A_Z },
     { mode: 'name-desc', label: LABELS.SORT_Z_A },

@@ -1,6 +1,6 @@
 import React from 'react';
-import type { Project } from '../../../../../types/types';
-import type { ProjectAction } from '../../../actions/cardActions';
+import type { Project } from "../../../../../types/projects";
+import type { ProjectAction } from "../../../../../types/projects";
 
 interface ProjectCardActionIconProps {
     project: Project;

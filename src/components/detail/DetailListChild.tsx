@@ -1,7 +1,8 @@
 import React from 'react';
-import type { Item, ActionItem, EpisodeStatus } from '../../types/types';
 import { ActionMenu } from '../ui/ActionMenu';
 import { CheckCircle2, Circle, EyeOff } from 'lucide-react';
+import type { Item, ActionItem } from "../../types/core";
+import type { EpisodeStatus } from "../../types/media";
 
 interface DetailListChildProps {
     child: Item;

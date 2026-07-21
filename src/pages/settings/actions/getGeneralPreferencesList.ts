@@ -1,7 +1,7 @@
-import type { SettingItemProps } from '../components/general/SettingItem';
+import type { SettingItemProps } from "../../../types/settings";
 
 export const getGeneralPreferencesList = (
-    settings: { theme: string; showHiddenFiles: boolean; [key: string]: any }, 
+    settings: { theme: string; showHiddenFiles: boolean;[key: string]: any },
     updateSettings: (s: any) => void
 ): SettingItemProps[] => {
     return [
@@ -33,7 +33,7 @@ export const getGeneralPreferencesList = (
             buttonText: 'Add Anime',
             buttonClass: 'settings-button-blue',
             onClick: () => {
-                return import('../../../introverts/show/anime').then(async ({ addSeasonalAnime }) => {
+                return import('../../../personalities/introverts/show/anime').then(async ({ addSeasonalAnime }) => {
                     const success = await addSeasonalAnime();
                     return success;
                 }).catch(e => {

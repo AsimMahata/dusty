@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Plus, Check } from 'lucide-react';
-import type { AnimeData } from '../../../../introverts/show/anime';
-import { searchAnime } from '../../../../introverts/show/anime';
-import { addSeasonalAnimeDB } from '../../../../ambiverts/show/anime';
+import { searchAnime } from '../../../../personalities/introverts/show/anime';
+import { addSeasonalAnimeDB } from '../../../../personalities/ambiverts/anime';
+import type { AnimeData } from "../../../../types/shows";
 
 interface AddAnimeModalProps {
     onClose: () => void;
@@ -17,7 +17,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
     const [selectedAnime, setSelectedAnime] = useState<AnimeData[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
-    const [statusMessage, setStatusMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
+    const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -43,10 +43,10 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
     }, [searchQuery]);
 
     const toggleSelection = (anime: AnimeData) => {
-        setSelectedAnime(prev => 
-            prev.some(a => a.mal_id === anime.mal_id) 
-            ? prev.filter(a => a.mal_id !== anime.mal_id)
-            : [...prev, anime]
+        setSelectedAnime(prev =>
+            prev.some(a => a.mal_id === anime.mal_id)
+                ? prev.filter(a => a.mal_id !== anime.mal_id)
+                : [...prev, anime]
         );
         setStatusMessage(null);
     };
@@ -55,10 +55,10 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
         if (selectedAnime.length === 0) return;
         setIsSubmitting(true);
         setStatusMessage(null);
-        
+
         const success = await addSeasonalAnimeDB(selectedAnime);
         setIsSubmitting(false);
-        
+
         if (success) {
             setStatusMessage({ type: 'success', text: 'Successfully added anime!' });
             setSelectedAnime([]);
@@ -77,7 +77,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
 
         // Add to DB first so it is cached
         await addSeasonalAnimeDB([anime]);
-        
+
         try {
             const success = await onLinkAction(targetShowId, anime.mal_id);
             if (success) {
@@ -104,14 +104,14 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
                         <X size={20} />
                     </button>
                 </div>
-                
+
                 <div className="add-anime-modal-body">
                     <div className="add-anime-search-container">
-                        <input 
+                        <input
                             ref={inputRef}
-                            type="text" 
-                            placeholder="Search for anime..." 
-                            className="add-anime-search-input" 
+                            type="text"
+                            placeholder="Search for anime..."
+                            className="add-anime-search-input"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -119,7 +119,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
                             <Search size={18} />
                         </button>
                     </div>
-                    
+
                     <div className="add-anime-list">
                         {isSearching ? (
                             <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>Searching...</div>
@@ -141,13 +141,13 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
                                         </div>
                                         {targetShowId ? (
                                             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                                                <button 
+                                                <button
                                                     className={`add-anime-add-btn ${isSelected ? 'selected' : ''}`}
                                                     onClick={() => toggleSelection(anime)}
                                                 >
                                                     {isSelected ? <Check size={18} /> : <Plus size={18} />}
                                                 </button>
-                                                <button 
+                                                <button
                                                     className="add-anime-add-btn"
                                                     onClick={() => handleLinkToMAL(anime)}
                                                     disabled={isSubmitting}
@@ -157,7 +157,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
                                                 </button>
                                             </div>
                                         ) : (
-                                            <button 
+                                            <button
                                                 className={`add-anime-add-btn ${isSelected ? 'selected' : ''}`}
                                                 onClick={() => toggleSelection(anime)}
                                             >
@@ -178,10 +178,10 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
                 <div className="add-anime-modal-footer" style={{ alignItems: 'center' }}>
                     {statusMessage && (
                         <div style={{
-                            marginRight: 'auto', 
-                            color: statusMessage.type === 'success' ? '#10b981' : '#ef4444', 
-                            display: 'flex', 
-                            alignItems: 'center', 
+                            marginRight: 'auto',
+                            color: statusMessage.type === 'success' ? '#10b981' : '#ef4444',
+                            display: 'flex',
+                            alignItems: 'center',
                             fontWeight: 500,
                             fontSize: '0.9rem'
                         }}>
@@ -189,9 +189,9 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
                         </div>
                     )}
                     {(!targetShowId || selectedAnime.length > 0) && (
-                        <button 
-                            className="add-anime-submit-btn" 
-                            onClick={handleSubmit} 
+                        <button
+                            className="add-anime-submit-btn"
+                            onClick={handleSubmit}
                             disabled={selectedAnime.length === 0 || isSubmitting}
                         >
                             {isSubmitting ? 'Adding...' : `Add Selected (${selectedAnime.length})`}

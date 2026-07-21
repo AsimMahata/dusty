@@ -1,5 +1,4 @@
 import React from 'react';
-import type { Project } from '../../../types/types';
 import { logger } from '../../../utility/logger';
 import { 
     PROJECT_OPEN_ZAP_ICON, 
@@ -7,14 +6,8 @@ import {
     PROJECT_OPEN_EXPLORER_ICON, 
     PROJECT_OPEN_GITHUB_ICON 
 } from '../../../constants/icon';
-
-export interface ProjectAction {
-    id: string;
-    title: string;
-    icon: React.ReactNode;
-    onClick: (e: React.MouseEvent, project: Project) => void;
-}
-
+import type { Project } from "../../../types/projects";
+import type { ProjectAction } from "../../../types/projects";
 export const getProjectCardActions = (
     onClick: (project: Project) => void,
     onOpenVSCode?: (e: React.MouseEvent, project: Project) => void

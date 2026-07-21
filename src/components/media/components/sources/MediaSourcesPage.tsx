@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import type { MediaDir } from '../../../../types/types';
 import type { useMedia } from '../../../../hooks/media/useMedia';
-import { MediaSourceSortBar, type MediaSortMethod } from './MediaSourceSortBar';
+import { MediaSourceSortBar } from './MediaSourceSortBar';
 import { MediaSourceGrid } from './grid/MediaSourceGrid';
-import type { MediaSourceItem } from '../../constants/constants';
 import { LABELS } from '../../constants/labels';
 import '../../css/MediaSources.css';
+import type { MediaDir } from "../../../../types/media";
+import type { MediaSortMethod } from "../../../../types/media";
+import type { MediaSourceItem } from "../../../../types/media";
 
 interface MediaSourcesPageProps {
     media: ReturnType<typeof useMedia>;

@@ -1,7 +1,7 @@
 import React from 'react';
-import type { Project } from '../../../../../types/types';
 import { GIT_STATUS, PROJECT_STATUS } from '../../../../../constants/projectStatus';
 import { ProjectCardThreeDot } from './ProjectCardThreeDot';
+import type { Project } from "../../../../../types/projects";
 
 interface ProjectCardHeaderProps {
     project: Project;

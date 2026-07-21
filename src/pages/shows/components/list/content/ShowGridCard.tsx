@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { type ShowResult, type ActionItem } from '../../../../../types/types';
-import { getShowMetaData, getStatusColor, calculateProgressPercentage } from '../../../../../introverts/show/mal';
-import type { ShowMetaData as ShowMetaDataInterface } from '../../../constants/constants';
-import { ShowMetaData } from './ShowMetaData';
+import { getShowMetaData, getStatusColor, calculateProgressPercentage } from '../../../../../personalities/introverts/show/mal';
 import { ShowPoster } from './ShowPoster';
 import { ShowActions } from './ShowActions';
 import { ShowProgress } from './ShowProgress';
+import type { ShowResult } from "../../../../../types/shows";
+import type { ActionItem } from "../../../../../types/core";
+import type { ShowMetaData as ShowMetaDataInterface } from "../../../../../types/shows";
+import { ShowMetaData } from "./ShowMetaData";
 
 interface ShowGridCardProps {
     show: ShowResult;
@@ -42,11 +43,11 @@ export const ShowGridCard: React.FC<ShowGridCardProps> = ({ show, onDoubleClick,
                 <ShowProgress progress={progress} statusColor={statusColor} />
             </div>
 
-            <ShowMetaData 
-                show={show} 
-                statusColor={statusColor} 
-                totalEpisodes={totalEpisodes} 
-                rating={rating} 
+            <ShowMetaData
+                show={show}
+                statusColor={statusColor}
+                totalEpisodes={totalEpisodes}
+                rating={rating}
             />
         </div>
     );

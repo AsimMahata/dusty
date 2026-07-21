@@ -1,6 +1,6 @@
 import React from 'react';
 import { FileExplorer } from '../../../../components/FileExplorer';
-import type { ProjectHook } from '../../../../hooks/projects/useProject';
+import type { ProjectHook } from "../../../../types/projects";
 
 interface ProjectExplorerCurtainProps {
     projectHook: ProjectHook;

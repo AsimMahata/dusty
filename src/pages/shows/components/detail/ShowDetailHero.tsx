@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ChevronLeft, Tv, Play, Check, Star, Calendar, Radio } from 'lucide-react';
 import { ActionMenu } from '../../../../components/ui/ActionMenu';
-import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../introverts/show/mal';
-import type { ShowMetaData } from '../../constants/constants';
-import type { ActionItem, ShowResult } from '../../../../types/types';
+import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../personalities/introverts/show/mal';
+import type { ShowMetaData } from "../../../../types/shows";
+import type { ActionItem } from "../../../../types/core";
+import type { ShowResult } from "../../../../types/shows";
 
 interface ShowDetailHeroProps {
     show: ShowResult;
@@ -41,13 +42,13 @@ export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActions
 
     return (
         <div className="show-detail-hero">
-            <div 
-                className="show-detail-banner" 
+            <div
+                className="show-detail-banner"
                 style={{ backgroundImage: bannerUrl ? `url(${bannerUrl})` : 'none' }}
             >
                 <div className="show-detail-banner-overlay" />
             </div>
-            
+
             <button className="show-detail-back-btn" onClick={onBack}>
                 <ChevronLeft size={24} /> Back
             </button>
@@ -62,7 +63,7 @@ export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActions
                         </div>
                     )}
                 </div>
-                
+
                 <div className="show-detail-info">
                     <div className="show-detail-title-row">
                         <h1 className="show-detail-title">{show.title}</h1>
@@ -81,7 +82,7 @@ export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActions
                             {!isWatching && !isCompleted && <div className="status-dot" style={{ backgroundColor: statusColor }} />}
                             <span style={{ textTransform: 'capitalize' }}>{show.status.replace('_', ' ')}</span>
                         </div>
-                        
+
                         {rating > 0 && (
                             <div className="show-detail-rating">
                                 <Star size={16} className="star-icon" /> {rating}
@@ -93,7 +94,7 @@ export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActions
                                 <Calendar size={14} /> {seasonYear}
                             </div>
                         )}
-                        
+
                         {!seasonYear && isAiring && (
                             <div className="show-detail-meta-item">
                                 <Radio size={14} /> Airing
@@ -103,12 +104,12 @@ export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActions
 
                     <div className="show-detail-progress-section">
                         <div className="show-detail-progress-bar-container">
-                            <div 
-                                className="show-detail-progress-bar" 
-                                style={{ 
-                                    width: `${progress}%`, 
-                                    backgroundColor: statusColor 
-                                }} 
+                            <div
+                                className="show-detail-progress-bar"
+                                style={{
+                                    width: `${progress}%`,
+                                    backgroundColor: statusColor
+                                }}
                             />
                         </div>
                         <div className="show-detail-progress-text">
@@ -120,7 +121,7 @@ export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActions
                             </span>
                         </div>
                     </div>
-                    
+
                     {isWatching && nextEpisode && rating > 0 && (
                         <div className="show-detail-next-ep">
                             Next Up: Episode {nextEpisode}

@@ -1,11 +1,11 @@
 import React from 'react';
 import { MediaSourcesPage } from './components/sources/MediaSourcesPage';
 import { ItemDetailPage } from '../detail/ItemDetailPage';
-import type { TabType } from '../../types/types';
 import type { useMedia } from '../../hooks/media/useMedia';
 import { useMediaTab } from '../../hooks/media/useMediaTab';
 import { MediaExplorer } from './components/explorer/MediaExplorer';
 import { MediaList } from './components/list/MediaList';
+import type { TabType } from "../../types/tabs";
 
 interface MediaTabProps {
     media: ReturnType<typeof useMedia>;

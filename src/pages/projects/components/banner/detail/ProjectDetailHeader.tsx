@@ -1,8 +1,8 @@
 import React from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import type { Project } from '../../../../../types/types';
 import { GIT_STATUS, PROJECT_STATUS } from '../../../../../constants/projectStatus';
 import { PROJECT_FALLBACK_FOLDER_ICON_48, PROJECT_EXTERNAL_LINK_ICON, PROJECT_PINNED_STAR_ICON_14 } from '../../../../../constants/icon';
+import type { Project } from "../../../../../types/projects";
 
 interface ProjectDetailHeaderProps {
     project: Project;

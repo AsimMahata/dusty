@@ -3,8 +3,8 @@ import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
 import { CMD_OPEN_FILE, CMD_SCAN_ZIP } from '../../constants/commands';
 import type { Chunk } from '../../types/bazar';
-import type { FileInfo } from '../../types/types';
 import { logger } from '../../utility/logger';
+import type { FileInfo } from "../../types/media";
 
 let cachedChunks: Chunk[] | null = null;
 

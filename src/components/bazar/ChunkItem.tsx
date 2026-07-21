@@ -4,7 +4,7 @@ import type { Chunk } from '../../types/bazar';
 import { getChunkFileIcon } from '../../utility/chunkIcon';
 import { formatBytes } from '../../utility/util';
 import { getExtensionColor } from '../../constants/mediaExtensions';
-import type { ActionItem } from '../../types/types';
+import type { ActionItem } from "../../types/core";
 
 interface ChunkItemProps {
     chunk?: Chunk;

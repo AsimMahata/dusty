@@ -1,7 +1,7 @@
 import React from 'react';
-import type { MediaSourceItem, MediaSourceCategory } from '../../../constants/constants';
 import { MediaSourceCard } from '../card/MediaSourceCard';
 import '../../../css/MediaSources.css';
+import type { MediaSourceItem, MediaSourceCategory } from "../../../../../types/media";
 
 interface MediaSourceGridProps {
     items: MediaSourceItem[];

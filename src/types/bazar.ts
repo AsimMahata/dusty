@@ -1,4 +1,4 @@
-import type { ActionItem } from './types';
+import type { ActionItem } from './core';
 
 // A Chunk represents a single miscellaneous file inside a Bazar.
 export interface Chunk {

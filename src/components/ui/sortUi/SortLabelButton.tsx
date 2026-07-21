@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
-import type { Coordinates } from './SortOptions';
+import type { Coordinates } from "../../../types/shows";
 
 interface SortLabelButtonProps {
     sortMenuPos: Coordinates | null;

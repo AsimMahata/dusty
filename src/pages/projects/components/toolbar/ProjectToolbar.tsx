@@ -1,6 +1,6 @@
 import React from 'react';
-import type { ProjectHook } from '../../../../hooks/projects/useProject';
 import { PROJECT_SORT_OPTIONS } from '../../constants/constants';
+import type { ProjectHook } from "../../../../types/projects";
 
 interface ProjectToolbarProps {
     projectHook: ProjectHook;

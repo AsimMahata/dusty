@@ -1,7 +1,7 @@
 import React from 'react';
-import type { Project } from '../../../../../types/types';
 import { generateTagGradient } from '../../../../../utility/gradient';
 import { PROJECT_FALLBACK_FOLDER_ICON_48, PROJECT_PINNED_STAR_ICON_16 } from '../../../../../constants/icon';
+import type { Project } from "../../../../../types/projects";
 
 interface ProjectCardCoverProps {
     project: Project;

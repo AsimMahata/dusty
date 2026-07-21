@@ -1,6 +1,6 @@
 import React from 'react';
-import type { Tab } from '../../types/types';
 import { logger } from '../../utility/logger';
+import type { Tab } from "../../types/tabs";
 
 interface TabsOptionProps {
     isItemSelected: boolean,

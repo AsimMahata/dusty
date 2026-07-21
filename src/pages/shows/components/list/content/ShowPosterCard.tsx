@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Play, Check, Calendar, ListVideo, Folder, Star, Radio, Clock, Tv } from 'lucide-react';
-import type { ShowResult, ActionItem } from '../../../../../types/types';
-import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../../introverts/show/mal';
-import type { ShowMetaData } from '../../../constants/constants';
+import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../../personalities/introverts/show/mal';
 import { ActionMenu } from '../../../../../components/ui/ActionMenu';
+import type { ShowResult } from "../../../../../types/shows";
+import type { ActionItem } from "../../../../../types/core";
+import type { ShowMetaData } from "../../../../../types/shows";
 
 interface ShowPosterCardProps {
     show: ShowResult;
@@ -12,7 +13,7 @@ interface ShowPosterCardProps {
 }
 
 export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onDoubleClick, actions }) => {
-    
+
     const [meta, setMeta] = useState<ShowMetaData | null>(null);
 
     useEffect(() => {
@@ -69,12 +70,12 @@ export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onDoubleCl
 
                 <div className="show-card-progress-section">
                     <div className="show-card-progress-bar-container">
-                        <div 
-                            className="show-card-progress-bar" 
-                            style={{ 
-                                width: `${progress}%`, 
-                                backgroundColor: statusColor 
-                            }} 
+                        <div
+                            className="show-card-progress-bar"
+                            style={{
+                                width: `${progress}%`,
+                                backgroundColor: statusColor
+                            }}
                         />
                     </div>
                     <div className="show-card-progress-text">
@@ -139,9 +140,9 @@ export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onDoubleCl
                 </div>
             </div>
             {isCompleted && (
-                 <div style={{position: 'absolute', right: '4rem', bottom: '1.2rem', color: statusColor, display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.9rem', fontWeight: 500}}>
-                     Completed <Check size={16} color={statusColor}/>
-                 </div>
+                <div style={{ position: 'absolute', right: '4rem', bottom: '1.2rem', color: statusColor, display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.9rem', fontWeight: 500 }}>
+                    Completed <Check size={16} color={statusColor} />
+                </div>
             )}
         </div>
     );

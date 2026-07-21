@@ -1,8 +1,7 @@
 import React from 'react';
 import { ICONS } from './icon';
 import { COLORS } from './color';
-
-export type ProjectWorkflowStatus = "active" | "paused" | "completed" | "archived" | "broken" | "default";
+import type { ProjectWorkflowStatus } from "../types/projects";
 type GitStatusValue = "clean" | "modified" | "ahead" | "behind" | "diverged" | "conflict" | "none";
 
 interface StatusDefinition {

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useMemo } from 'react';
-import type { Project } from '../../../../types/types';
 import { getProjectContextMenuItems } from '../../actions/menuActions';
+import type { Project } from "../../../../types/projects";
 
 interface ProjectContextMenuProps {
     project: Project;

@@ -1,4 +1,4 @@
-import type { Tab, TabType } from "../types/types"
+import type { Tab, TabType } from "../types/tabs";
 
 // Titles
 export const TITLE_SHOWS = "Shows";

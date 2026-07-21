@@ -1,7 +1,7 @@
 import React from 'react';
-import type { MediaSourceCategory } from '../../../../constants/constants';
 import { getExtensionColor } from '../../../../../../constants/mediaExtensions';
 import '../../../../css/MediaSources.css';
+import type { MediaSourceCategory } from "../../../../../../types/media";
 
 interface MediaMediaTagProps {
     extension: string;

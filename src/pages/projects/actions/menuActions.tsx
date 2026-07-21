@@ -1,5 +1,4 @@
-import React from 'react';
-import type { Project } from '../../../types/types';
+
 import { logger } from '../../../utility/logger';
 import { 
     PROJECT_MENU_STAR_ICON, PROJECT_MENU_STAR_FILLED_ICON,
@@ -8,15 +7,8 @@ import {
     PROJECT_MENU_GITHUB_ICON, PROJECT_MENU_TAGS_ICON, 
     PROJECT_MENU_RENAME_ICON, PROJECT_MENU_DELETE_ICON 
 } from '../../../constants/icon';
-
-export interface ContextMenuItem {
-    icon?: React.ReactNode;
-    label?: string;
-    onClick?: () => void;
-    danger?: boolean;
-    separator?: boolean;
-}
-
+import type { Project } from "../../../types/projects";
+import type { ContextMenuItem } from "../../../types/projects";
 export const getProjectContextMenuItems = (
     project: Project,
     onClose: () => void,

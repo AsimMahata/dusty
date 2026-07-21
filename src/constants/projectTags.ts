@@ -1,14 +1,7 @@
-import React from 'react';
+
 import { ICONS } from './icon';
 import { COLORS } from './color';
-
-export interface TagDefinition {
-    id: string;
-    label: string;
-    icon?: React.ReactNode;
-    color: string;
-}
-
+import type { TagDefinition } from "../types/projects";
 const PREDEFINED_TAGS: Record<string, TagDefinition> = {
     rust: { id: "rust", label: "Rust", icon: ICONS.PROJECT_TAGS.RUST, color: COLORS.BASE.ORANGE },
     react: { id: "react", label: "React", icon: ICONS.PROJECT_TAGS.REACT, color: COLORS.BASE.BLUE },

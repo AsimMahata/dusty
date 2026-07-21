@@ -1,4 +1,4 @@
-import type { ItemStatus } from "../types/types";
+import type { ItemStatus } from "../types/core";
 
 const BASE = {
     YELLOW: '#eab308',

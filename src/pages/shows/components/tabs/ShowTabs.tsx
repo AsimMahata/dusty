@@ -2,10 +2,10 @@ import React from 'react';
 import { TABS } from '../../constants/constants';
 import { useShow } from '../../../../hooks/shows/useShow';
 import { ContextMenu } from '../../../../components/ui/ContextMenu';
-import type { ActionItem } from '../../../../types/types';
 import { Play, Tv, ChevronDown } from 'lucide-react';
 import { COLORS } from '../../../../constants/color';
 import { useState, useRef } from 'react';
+import type { ActionItem } from "../../../../types/core";
 
 const DropdownButton: React.FC<{ label: string, actions: ActionItem[], className?: string }> = ({ label, actions, className }) => {
     const [menuPos, setMenuPos] = useState<{ x: number, y: number } | null>(null);
@@ -103,7 +103,7 @@ export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime, onAddS
                                 label: 'Anime',
                                 icon: <Play size={16} />,
                                 color: COLORS.BASE.BLUE,
-                                onClick: onAddAnime ? onAddAnime : () => {}
+                                onClick: onAddAnime
                             },
                             {
                                 label: 'TV Show',

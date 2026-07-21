@@ -1,15 +1,4 @@
-import { type ShowStatus } from '../../../types/types';
-
-export type ShowTabStatus = 'all' | ShowStatus | 'banned' | 'seasonal';
-
-export interface ShowTab {
-    id: ShowTabStatus,
-    label: string
-}
-export interface Coordinates {
-    x: number,
-    y: number
-};
+import type { ShowTab, ShowSortMethod } from "../../../types/shows";
 
 export const ALL = 'all'
 
@@ -38,9 +27,6 @@ export const SHOW_STATUS_COMPLETED = 'completed'
 export const SHOW_STATUS_ON_HOLD = 'on_hold'
 export const SHOW_STATUS_PLANNED = 'planned'
 export const SHOW_STATUS_DROPPED = 'dropped'
-
-export type ShowSortMethod = 'title' | 'last_watched' | 'status' | 'random' | 'malId';
-
 export const LOCAL_STORAGE_LAST_WATCHED = 'dusk_last_watched';
 
 export const SORT_OPTIONS: { id: ShowSortMethod, label: string }[] = [
@@ -52,16 +38,3 @@ export const SORT_OPTIONS: { id: ShowSortMethod, label: string }[] = [
 ];
 export const DEFAULT_SORT_METHOD: ShowSortMethod = 'title';
 export const DEFAULT_SORT_ASCENDING: boolean = false;
-
-export interface ShowMetaData {
-    posterUrl: string;
-    bannerUrl: string;
-    rating: number;
-    totalEpisodes: number | string;
-    nextEpisode: number | string;
-    seasonYear: string;
-    progress: number;
-    statusColor: string;
-}
-
-

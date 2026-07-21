@@ -1,8 +1,8 @@
 import React from 'react';
-import type { ProjectHook } from '../../../../hooks/projects/useProject';
 import { ProjectCard } from './card/ProjectCard';
 import { ProjectEmptyState } from './ProjectEmptyState';
-import type { Project } from '../../../../types/types';
+import type { ProjectHook } from "../../../../types/projects";
+import type { Project } from "../../../../types/projects";
 
 interface ProjectListProps {
     projectHook: ProjectHook;

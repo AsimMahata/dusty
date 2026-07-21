@@ -1,11 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { STORAGE_KEY_SETTINGS } from '../constants/storage';
-
-export interface AppSettings {
-    theme: 'dark' | 'light';
-    showHiddenFiles: boolean;
-    autoUpdate: boolean;
-}
+import type { AppSettings } from "../types/system";
 
 interface SettingsContextType {
     settings: AppSettings;

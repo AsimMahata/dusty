@@ -1,8 +1,9 @@
 import { ContextMenu } from '../ui/ContextMenu';
 import { useItemDetail } from '../../hooks/useItemDetail';
-import type { TabHook, BaseItem, AnyItem } from '../../types/types';
 import { DetailHeader } from './DetailHeader';
 import { DetailList } from './DetailList';
+import type { TabHook } from "../../types/tabs";
+import type { BaseItem, AnyItem } from "../../types/core";
 
 interface ItemDetailPageProps<T extends BaseItem = AnyItem> {
     tab: TabHook<T>;
