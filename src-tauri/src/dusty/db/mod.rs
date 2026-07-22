@@ -8,3 +8,4 @@ pub mod show;
 pub mod show_cache;
 pub mod recent;
 pub mod zip_cache;
+pub mod empty_dir_cache;
