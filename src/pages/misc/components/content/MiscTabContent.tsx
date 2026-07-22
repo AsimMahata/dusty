@@ -16,7 +16,7 @@ export const MiscTabContent: React.FC<MiscTabContentProps> = ({ misc, tab }) => 
         return <ComingSoonTab />;
     }
     if (misc.activeTab === TYPE_EXE_FILES) {
-        return <ExeFilesTab tab={tab} />;
+        return <ExeFilesTab tab={tab} misc={misc} />;
     }
 
     return <EmptyDirectoriesTab tab={tab} />;

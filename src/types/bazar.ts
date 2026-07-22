@@ -8,6 +8,8 @@ export interface Chunk {
     ext?: string;
     size?: number;
     is_pinned?: boolean;
+    tags?: string[];
+    icon?: React.ReactNode;
 }
 
 // A BazarAction is what the owning Bazar provides to the Chunk.

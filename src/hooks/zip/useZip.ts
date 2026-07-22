@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useCommon } from '../useCommon';
 import { openFile } from '../../personalities/introverts/filesystem/filesystem';
-import { scanZip } from '../../personalities/introverts/zip/scan';
+import { scanZip, scanZipTree } from '../../personalities/introverts/zip/scan';
 import type { Chunk } from '../../types/bazar';
 import { logger } from '../../utility/logger';
 import type { FileInfo } from "../../types/media";
-
-let cachedChunks: Chunk[] | null = null;
+import type { ZipDir } from "../../types/zip";
 
 const fileInfoToChunk = (file: FileInfo): Chunk => ({
     id: file.id,
@@ -19,17 +18,39 @@ const fileInfoToChunk = (file: FileInfo): Chunk => ({
 
 export const useZip = () => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
-    const [chunks, setChunks] = useState<Chunk[]>(cachedChunks ?? []);
+    const [chunks, setChunks] = useState<Chunk[]>([]);
+    const [zipTree, setZipTree] = useState<ZipDir[]>([]);
+    const [currentDirHistory, setCurrentDirHistory] = useState<ZipDir[]>([]);
+
+    const currentDir = currentDirHistory.length > 0 ? currentDirHistory[currentDirHistory.length - 1] : null;
+
+    const handleFolderClick = (folder: ZipDir) => {
+        setCurrentDirHistory(prev => [...prev, folder]);
+    };
+
+    const goBack = () => {
+        if (currentDirHistory.length > 0) {
+            setCurrentDirHistory(prev => prev.slice(0, -1));
+        }
+    };
 
     const fetchData = async (sync: boolean = false) => {
-        setIsRefreshing(true);
-        if (chunks.length === 0) setIsLoading(true);
+        if (sync) {
+            setIsRefreshing(true);
+        } else {
+            setIsLoading(true);
+        }
+
         try {
-            const files: FileInfo[] = await scanZip(sync);
+            const [files, tree] = await Promise.all([
+                scanZip(sync),
+                scanZipTree(sync)
+            ]);
             const newChunks = files.map(fileInfoToChunk);
-            cachedChunks = newChunks;
             setChunks(newChunks);
-            logger.info('zip chunks fetched', newChunks.length);
+            setZipTree(tree);
+            setCurrentDirHistory([]);
+            logger.info('zip chunks and tree fetched', newChunks.length);
         } catch (err) {
             logger.error(`Zip: failed to fetch chunks: ${String(err)}`);
         } finally {
@@ -39,9 +60,7 @@ export const useZip = () => {
     };
 
     useEffect(() => {
-        if (!cachedChunks) {
-            fetchData();
-        }
+        fetchData(false);
     }, []);
 
     const openChunk = async (chunk: Chunk) => {
@@ -53,11 +72,9 @@ export const useZip = () => {
     };
 
     const togglePin = (id: string) => {
-        const updated = chunks.map(c =>
+        setChunks(prev => prev.map(c =>
             c.id === id ? { ...c, is_pinned: !c.is_pinned } : c
-        );
-        cachedChunks = updated;
-        setChunks(updated);
+        ));
     };
 
     return {
@@ -66,6 +83,12 @@ export const useZip = () => {
         isRefreshing, isLoading,
         fetchData,
         chunks,
+        zipTree,
+        currentDir,
+        currentDirHistory,
+        handleFolderClick,
+        goBack,
+        canGoBack: currentDirHistory.length > 0,
         openChunk,
         togglePin,
     };

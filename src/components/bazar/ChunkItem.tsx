@@ -16,20 +16,22 @@ interface ChunkItemProps {
     sizeLabel?: string | null;
     path?: string;
     isPinned?: boolean;
+    tags?: string[];
     onDoubleClick?: () => void;
 }
 
 export const ChunkItem: React.FC<ChunkItemProps> = ({ 
-    chunk, actions, name, icon, extLabel, sizeLabel, path, isPinned, onDoubleClick 
+    chunk, actions, name, icon, extLabel, sizeLabel, path, isPinned, tags, onDoubleClick 
 }) => {
     const finalName = name ?? chunk?.name ?? '';
-    const finalIcon = icon !== undefined ? icon : getChunkFileIcon(chunk?.ext);
+    const finalIcon = icon !== undefined ? icon : (chunk?.icon ?? getChunkFileIcon(chunk?.ext));
     const finalSizeLabel = sizeLabel !== undefined ? sizeLabel : (chunk?.size != null ? formatBytes(chunk.size) : null);
     const finalExtLabel = extLabel !== undefined ? extLabel : (chunk?.ext ? chunk.ext.toUpperCase() : null);
     const badgeExt = extLabel !== undefined ? extLabel?.toLowerCase() : chunk?.ext?.toLowerCase();
     const badgeColor = badgeExt ? getExtensionColor(badgeExt, 'transparent') : undefined;
     const finalPath = path !== undefined ? path : chunk?.path;
     const finalPinned = isPinned !== undefined ? isPinned : chunk?.is_pinned;
+    const finalTags = tags ?? chunk?.tags;
 
     return (
         <div 
@@ -47,7 +49,25 @@ export const ChunkItem: React.FC<ChunkItemProps> = ({
                     {finalPinned && <span className="chunk-pin-dot" title="Pinned" />}
                 </div>
                 <div className="chunk-meta">
-                    {finalExtLabel && (
+                    {finalTags && finalTags.length > 0 ? (
+                        finalTags.map(tag => {
+                            const color = getExtensionColor(tag.toLowerCase(), 'transparent');
+                            return (
+                                <span 
+                                    key={tag}
+                                    className="chunk-badge" 
+                                    data-ext={tag.toLowerCase()}
+                                    style={color && color !== 'transparent' ? {
+                                        color: color,
+                                        backgroundColor: `${color}15`,
+                                        borderColor: `${color}30`
+                                    } : undefined}
+                                >
+                                    {tag}
+                                </span>
+                            );
+                        })
+                    ) : finalExtLabel && (
                         <span 
                             className="chunk-badge" 
                             data-ext={badgeExt}

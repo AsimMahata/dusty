@@ -2,21 +2,21 @@ import React, { useState } from 'react';
 import { ChunkItem } from '../../../bazar/ChunkItem';
 import { ICONS } from '../../../../constants/icon';
 import { getChunkFileIcon } from '../../../../utility/chunkIcon';
-import { LABELS } from '../../constants/labels';
+import { SortOptions } from '../../../ui/sortUi/SortOptions';
 import type { TabHook } from "../../../../types/tabs";
 import type { BaseItem, AnyItem } from "../../../../types/core";
 import type { MediaSortMode } from "../../../../types/media";
+import type { SortOption } from '../../../../types/ui';
 
 interface MediaListProps<T extends BaseItem = AnyItem> {
     tab: TabHook<T>;
 }
 export const VISIBLE_COUNT = 60;
-const SORT_OPTIONS: { mode: MediaSortMode; label: string }[] = [
-    { mode: 'name',      label: LABELS.SORT_A_Z },
-    { mode: 'name-desc', label: LABELS.SORT_Z_A },
-    { mode: 'size',      label: LABELS.SORT_LARGEST },
-    { mode: 'size-asc',  label: LABELS.SORT_SMALLEST },
-    { mode: 'type',      label: LABELS.SORT_TYPE },
+
+const MEDIA_SORT_OPTIONS: SortOption[] = [
+    { id: 'name', label: 'Name' },
+    { id: 'size', label: 'Size' },
+    { id: 'type', label: 'Type' },
 ];
 
 export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
@@ -80,6 +80,27 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
         }
     }, [visibleCount, sortedAll.length]);
 
+    const sortMethod = sortMode.startsWith('size') ? 'size' : (sortMode.startsWith('name') ? 'name' : 'type');
+    const sortAscending = sortMethod === 'size' ? sortMode === 'size-asc' : sortMode === 'name';
+
+    const handleSortChange = (method: string) => {
+        if (method === 'size') {
+            setSortMode(sortAscending ? 'size-asc' : 'size');
+        } else if (method === 'name') {
+            setSortMode(sortAscending ? 'name' : 'name-desc');
+        } else {
+            setSortMode('type');
+        }
+    };
+
+    const handleAscendingChange = (asc: boolean) => {
+        if (sortMethod === 'size') {
+            setSortMode(asc ? 'size-asc' : 'size');
+        } else if (sortMethod === 'name') {
+            setSortMode(asc ? 'name' : 'name-desc');
+        }
+    };
+
     const renderSection = (sectionTitle: string, icon: React.ReactNode, items: T[], showSortBar: boolean = false) => {
         if (items.length === 0) return null;
 
@@ -92,17 +113,14 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
                     </div>
                     <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '16px' }}>
                         {showSortBar && (
-                            <div className="zip-sort-bar" style={{ marginBottom: 0 }}>
-                                {SORT_OPTIONS.map(opt => (
-                                    <button
-                                        key={opt.mode}
-                                        className={`zip-sort-btn ${sortMode === opt.mode ? 'active' : ''}`}
-                                        onClick={() => setSortMode(opt.mode)}
-                                    >
-                                        {opt.label}
-                                    </button>
-                                ))}
-                            </div>
+                            <SortOptions
+                                sortMethod={sortMethod}
+                                sortAscending={sortAscending}
+                                setSortAscending={handleAscendingChange}
+                                handleSortChange={handleSortChange}
+                                options={MEDIA_SORT_OPTIONS}
+                                defaultSortMethodLabel="Name"
+                            />
                         )}
                         <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>
                             {items.length}
@@ -113,26 +131,25 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
                     {items.map(item => {
                         const mediaItem = item as any;
                         
-                        let ext = '';
-                        if (!mediaItem.is_dir && item.path) {
-                            const parts = item.path.split('.');
-                            if (parts.length > 1) {
-                                ext = parts[parts.length - 1];
-                            }
+                        let ext = mediaItem.ext;
+                        if (!ext && item.path) {
+                            ext = item.path.split('.').pop() || '';
                         }
-                        
-                        const rowIcon = mediaItem.is_dir ? item.icon : getChunkFileIcon(ext);
+                        const itemIcon = getChunkFileIcon(ext);
 
                         return (
                             <ChunkItem
                                 key={item.id}
-                                name={item.title}
-                                icon={rowIcon}
-                                extLabel={item.metadata || (ext ? ext.toUpperCase() : undefined)}
-                                sizeLabel={mediaItem.size}
-                                path={item.path}
-                                isPinned={mediaItem.is_pinned}
+                                chunk={{
+                                    id: item.id,
+                                    name: item.title,
+                                    path: item.path || '',
+                                    ext: ext,
+                                    size: mediaItem.rawSize,
+                                    is_pinned: mediaItem.is_pinned
+                                }}
                                 actions={getCardActions ? getCardActions(item) : []}
+                                icon={itemIcon}
                                 onDoubleClick={() => onCardClick?.(item)}
                             />
                         );
@@ -143,16 +160,9 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
     };
 
     return (
-        <div className="category-page">
-            {renderSection(LABELS.SECTION_RECENT, ICONS.GENERAL.CLOCK, filteredRecent)}
-
-            {sortedAll.length > 0 ? (
-                renderSection(`All ${title}`, tab.defaultIcon || ICONS.GENERAL.LIST, sortedAll.slice(0, visibleCount), true)
-            ) : (
-                <div style={{ textAlign: 'center', marginTop: '48px', color: 'var(--text-muted)' }}>
-                    {searchQuery ? `No results found for "${searchQuery}"` : LABELS.NO_RESULTS}
-                </div>
-            )}
+        <div className="media-list-container">
+            {recentItems.length > 0 && renderSection("Recently Watched", ICONS.GENERAL.CLOCK, filteredRecent)}
+            {renderSection(`All ${title}`, ICONS.GENERAL.LIST, sortedAll.slice(0, visibleCount), true)}
         </div>
     );
 }

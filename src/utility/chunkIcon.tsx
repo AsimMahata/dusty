@@ -3,13 +3,15 @@ import { ICONS } from '../constants/icon';
 import { getExtensionColor } from '../constants/mediaExtensions';
 
 export const getChunkFileIcon = (ext?: string): React.ReactNode => {
-    if (!ext) return ICONS.FILE.FOLDER_EMPTY;
+    if (!ext) return ICONS.FILE.FOLDER;
 
     const lower = ext.toLowerCase();
 
     let icon = ICONS.FILE.DEFAULT;
 
-    if (['zip', 'rar', '7z', 'tar', 'gz', 'bz2', 'xz', 'iso', 'img'].includes(lower)) icon = ICONS.FILE.ARCHIVE_OPEN;
+    if (['folder', 'dir', 'directory'].includes(lower)) icon = ICONS.FILE.FOLDER;
+    else if (['zip', 'rar', '7z', 'tar', 'gz', 'bz2', 'xz', 'iso', 'img'].includes(lower)) icon = ICONS.FILE.ARCHIVE_OPEN;
+    else if (['exe', 'msi', 'bat', 'cmd', 'bin', 'app', 'sh'].includes(lower)) icon = ICONS.FILE.CONFIG;
     else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(lower)) icon = ICONS.FILE.IMAGE;
     else if (['mp3', 'wav', 'flac', 'ogg', 'm4a', 'aac'].includes(lower)) icon = ICONS.FILE.AUDIO;
     else if (['mp4', 'mkv', 'avi', 'mov', 'wmv', 'webm'].includes(lower)) icon = ICONS.FILE.VIDEO;
@@ -22,5 +24,5 @@ export const getChunkFileIcon = (ext?: string): React.ReactNode => {
     else if (['toml', 'ini', 'cfg', 'yaml', 'yml'].includes(lower)) icon = ICONS.FILE.CONFIG;
 
     const color = ext ? getExtensionColor(ext) : undefined;
-    return color ? React.cloneElement(icon as React.ReactElement<any>, { color }) : icon;
+    return color && color !== 'transparent' ? React.cloneElement(icon as React.ReactElement<any>, { color }) : icon;
 };

@@ -26,6 +26,15 @@ export const MEDIA_EXT_COLORS: Record<string, string> = {
     svg: COLORS.BASE.EMERALD,
     bmp: COLORS.BASE.LIME,
     ico: COLORS.BASE.GREEN,
+
+    zip: COLORS.BASE.AMBER,
+    rar: COLORS.BASE.ORANGE,
+    '7z': COLORS.BASE.YELLOW,
+    tar: COLORS.BASE.RED,
+    exe: COLORS.BASE.CYAN,
+    msi: COLORS.BASE.BLUE,
+    bat: COLORS.BASE.SKY,
+    folder: COLORS.ICON.FOLDER || '#f59e0b',
 };
 
 export const getExtensionColor = (ext: string, fallback: string = '#888888') => {

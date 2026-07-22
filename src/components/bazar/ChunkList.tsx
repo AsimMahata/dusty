@@ -5,6 +5,8 @@ import type { Chunk, BazarAction } from '../../types/bazar';
 interface ChunkListProps {
     chunks: Chunk[];
     getChunkActions: (chunk: Chunk) => BazarAction[];
+    onItemClick?: (chunk: Chunk) => void;
+    onDoubleClick?: (chunk: Chunk) => void;
     emptyIcon?: React.ReactNode;
     emptyTitle?: string;
     emptyDesc?: string;
@@ -13,6 +15,8 @@ interface ChunkListProps {
 export const ChunkList: React.FC<ChunkListProps> = ({
     chunks,
     getChunkActions,
+    onItemClick,
+    onDoubleClick,
     emptyIcon,
     emptyTitle = 'Nothing here',
     emptyDesc = 'No files were found.',
@@ -30,11 +34,16 @@ export const ChunkList: React.FC<ChunkListProps> = ({
     return (
         <div className="chunk-list">
             {chunks.map(chunk => (
-                <ChunkItem
+                <div 
                     key={chunk.id}
-                    chunk={chunk}
-                    actions={getChunkActions(chunk)}
-                />
+                    onClick={() => onItemClick?.(chunk)}
+                >
+                    <ChunkItem
+                        chunk={chunk}
+                        actions={getChunkActions(chunk)}
+                        onDoubleClick={() => onDoubleClick?.(chunk)}
+                    />
+                </div>
             ))}
         </div>
     );
