@@ -17,12 +17,10 @@ import type { ShowResult, ShowStatus } from "../../types/shows";
 import type { ActionItem } from "../../types/core";
 import type { Episode } from "../../types/media";
 import type { ShowSortMethod, ShowTab } from "../../types/shows";
+import { getActiveTabShowPage, getDefaultTab, setActiveTabShowPage } from '../../session/show/tab';
+import { getSortMethodShowPage, getDefaultSortMethod, setSortMethodShowPage, getSortAscendingShowPage, getDefaultSortAscending, setSortAscendingShowPage } from '../../session/show/sort';
+import { getIsGridLayoutShowPage, getDefaultIsGridLayout, setIsGridLayoutShowPage } from '../../session/show/layout';
 
-// Cache removed to rely on backend SQLite caching
-
-const getDefaultTab = () => {
-    return TABS[1];
-}
 
 export const useShow = () => {
 
@@ -33,10 +31,10 @@ export const useShow = () => {
         try { return JSON.parse(localStorage.getItem(LOCAL_STORAGE_LAST_WATCHED) || '{}'); }
         catch { return {}; }
     });
-    const [sortMethod, setSortMethod] = useState<ShowSortMethod>('last_watched');
-    const [sortAscending, setSortAscending] = useState<boolean>(false);
+    const [sortMethod, setSortMethod] = useState<ShowSortMethod>(getDefaultSortMethod());
+    const [sortAscending, setSortAscending] = useState<boolean>(getDefaultSortAscending());
     const [randomSeed, setRandomSeed] = useState<number>(Math.random());
-    const [isGridLayout, setIsGridLayout] = useState(false);
+    const [isGridLayout, setIsGridLayout] = useState<boolean>(getDefaultIsGridLayout());
     const [selectedShow, setSelectedShow] = useState<ShowResult | null>(null);
     const [isItemSelected, setIsItemSelected] = useState(false);
 
@@ -44,6 +42,41 @@ export const useShow = () => {
     const [isScanAnimeOpen, setIsScanAnimeOpen] = useState(false);
     const [addAnimeQuery, setAddAnimeQuery] = useState('');
     const [addAnimeTargetShowId, setAddAnimeTargetShowId] = useState<string | undefined>(undefined);
+
+    async function fetchSessionData(){
+        try {
+            const tab = await getActiveTabShowPage();
+            setActiveTab(tab);
+        } catch (e) {}
+        try {
+            const method = await getSortMethodShowPage();
+            setSortMethod(method);
+        } catch (e) {}
+        try {
+            const ascending = await getSortAscendingShowPage();
+            setSortAscending(ascending);
+        } catch (e) {}
+        try {
+            const gridLayout = await getIsGridLayoutShowPage();
+            setIsGridLayout(gridLayout);
+        } catch (e) {}
+    }
+    function updateActiveTab(tab:ShowTab) {
+        setActiveTab(tab);
+        void setActiveTabShowPage(tab);
+    }
+    function updateSortMethod(method:ShowSortMethod) {
+        setSortMethod(method);
+        void setSortMethodShowPage(method);
+    }
+    function updateSortAscending(ascending:boolean) {
+        setSortAscending(ascending);
+        void setSortAscendingShowPage(ascending);
+    }
+    function updateIsGridLayout(gridLayout:boolean) {
+        setIsGridLayout(gridLayout);
+        void setIsGridLayoutShowPage(gridLayout);
+    }
 
     const handleOpenAddAnime = (query: string = '', targetShowId?: string) => {
         setAddAnimeQuery(query);
@@ -91,6 +124,7 @@ export const useShow = () => {
     };
 
     useEffect(() => {
+        fetchSessionData();
         fetchData();
     }, []);
 
@@ -370,14 +404,14 @@ export const useShow = () => {
     }, [filteredShows, sortMethod, sortAscending, randomSeed, lastWatchedDep]);
 
     const handleSortChange = (method: ShowSortMethod) => {
-        setSortMethod(method);
+        updateSortMethod(method);
         if (method === 'random') {
             setRandomSeed(Math.random());
-            setSortAscending(true);
+            updateSortAscending(true);
         } else if (method === 'last_watched' || method === 'malId') {
-            setSortAscending(false);
+            updateSortAscending(false);
         } else {
-            setSortAscending(true);
+            updateSortAscending(true);
         }
     };
 
@@ -405,14 +439,14 @@ export const useShow = () => {
         searchQuery, setSearchQuery,
         isRefreshing,
         isLoading,
-        activeTab, setActiveTab,
+        activeTab, setActiveTab:updateActiveTab,
         isItemSelected, setIsItemSelected,
         selectedShow, setSelectedShow,
         lastWatchedMap, setLastWatchedMap, handleShowOpen,
-        sortMethod, setSortMethod,
-        sortAscending, setSortAscending,
+        sortMethod, setSortMethod:updateSortMethod,
+        sortAscending, setSortAscending:updateSortAscending,
         randomSeed, setRandomSeed,
-        isGridLayout, setIsGridLayout,
+        isGridLayout, setIsGridLayout:updateIsGridLayout,
         sortedShows,
         handleSortChange,
         allShows,

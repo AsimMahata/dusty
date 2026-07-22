@@ -7,3 +7,4 @@ pub mod project;
 pub mod shows;
 pub mod state;
 pub mod zip;
+pub mod session;

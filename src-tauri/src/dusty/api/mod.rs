@@ -12,6 +12,7 @@ pub mod opener;
 pub mod overview;
 pub mod project;
 pub mod recent;
+pub mod session;
 pub mod settings;
 pub mod show;
 pub mod system;

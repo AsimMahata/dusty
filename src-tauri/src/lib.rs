@@ -68,6 +68,9 @@ pub fn run() {
             dusty::api::recent::add_recent_episode,
             dusty::api::recent::get_recent_episodes,
             dusty::api::recent::reset_recent_episodes_table,
+            dusty::api::session::get_value_by_session_id,
+            dusty::api::session::add_or_update_by_session_id,
+            dusty::api::session::reset_session_cache,
         ])
         .setup(|app| {
             if cfg!(debug_assertions) {

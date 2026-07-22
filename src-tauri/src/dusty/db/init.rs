@@ -16,6 +16,7 @@ use crate::dusty::db::zip_dir_cache::create_zip_dir_cache_table;
 use crate::dusty::db::empty_dir_cache::create_empty_dir_cache_table;
 use crate::dusty::db::exe_cache::create_exe_cache_table;
 use crate::dusty::db::exe_dir_cache::create_exe_dir_cache_table;
+use crate::dusty::db::session_cache::create_session_cache_table;
 use crate::dusty::logger::logger;
 
 #[tauri::command]
@@ -67,5 +68,7 @@ pub fn initialize_tables(conn: &Connection) -> Result<Vec<String>, String> {
     tables.push("anime".to_string());
     create_recent_ep_table(&conn)?;
     tables.push("recent_episodes".to_string());
+    create_session_cache_table(&conn)?;
+    tables.push("session_cache".to_string());
     Ok(tables)
 }

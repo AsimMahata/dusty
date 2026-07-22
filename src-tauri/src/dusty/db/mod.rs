@@ -12,3 +12,5 @@ pub mod zip_dir_cache;
 pub mod empty_dir_cache;
 pub mod exe_cache;
 pub mod exe_dir_cache;
+pub mod session_cache;
+
