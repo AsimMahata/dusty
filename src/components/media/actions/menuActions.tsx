@@ -1,7 +1,6 @@
 import { OPEN_FOLDER_ICON, REVEAL_ICON, COPY_ICON, PIN_ICON } from '../constants/icons';
 import { LABELS } from '../constants/labels';
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_OPEN_FILE } from '../../../constants/commands';
+import { openFile } from '../../../personalities/introverts/filesystem/filesystem';
 import type { MediaSourceItem } from "../../../types/media";
 
 export const getMediaSourceMenuActions = (
@@ -26,7 +25,7 @@ export const getMediaSourceMenuActions = (
             onClick: async () => {
                 try {
                     if (item.path) {
-                        await invoke(CMD_OPEN_FILE, { path: item.path });
+                        await openFile(item.path);
                     }
                 } catch (e) {
                     console.error("Failed to reveal:", e);

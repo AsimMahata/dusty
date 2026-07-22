@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { invoke } from '@tauri-apps/api/core';
 import { ICONS } from '../constants/icon';
 import { COLORS } from '../constants/color';
 import { EXPLORER } from '../styles/fileExplorerStyles';
-import { CMD_READ_DIR, CMD_OPEN_FILE } from '../constants/commands';
+import { readDir, openFile } from '../personalities/introverts/filesystem/filesystem';
 import { getFileIcon } from '../utility/fileExplorer/getFileIcon';
 import { sortFiles } from '../utility/fileExplorer/sortFiles';
 import { getExplorerTitle } from '../utility/fileExplorer/getExplorerTitle';
@@ -20,8 +19,6 @@ interface FileExplorerProps {
     loading?: boolean;
     inline?: boolean;
 }
-
-
 
 export const FileExplorer: React.FC<FileExplorerProps> = ({ 
     initialPath, 
@@ -55,7 +52,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
             setInternalLoading(true);
             setSelectedFile(null);
             try {
-                const dirFiles: FileInfo[] = await invoke(CMD_READ_DIR, { path: currentPath });
+                const dirFiles: FileInfo[] = await readDir(currentPath);
                 if (!cancelled) {
                     const sorted = sortFiles(dirFiles);
                     setInternalFiles(sorted);
@@ -94,7 +91,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
         } else {
             if (selectedFile === file.path) {
                 try {
-                    await invoke(CMD_OPEN_FILE, { path: file.path });
+                    await openFile(file.path);
                 } catch (err) {
                     console.error(`Failed to open file ${file.path}:`, err);
                 }
@@ -119,7 +116,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
                             <button 
                                 onClick={(e) => { 
                                     e.stopPropagation(); 
-                                    invoke(CMD_OPEN_FILE, { path: currentPath }).catch(console.error); 
+                                    openFile(currentPath).catch(console.error); 
                                 }}
                                 style={EXPLORER.REVEAL_BTN}
                                 title="Reveal in File Explorer"

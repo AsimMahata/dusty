@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { invoke } from '@tauri-apps/api/core';
 import { logger } from '../../../../../utility/logger';
 import toast from 'react-hot-toast';
 import type { ResetActionConfig } from "../../../../../types/settings";
@@ -15,7 +14,7 @@ export const useDangerZone = () => {
         setResettingId(config.id);
         try {
             logger.info(`requesting ${config.loggerPrefix} reset`); 
-            await invoke(config.command);
+            await config.action();
             toast.success(config.successMessage);
         } catch (err) {
             logger.error(`${config.errorMessagePrefix}: ${String(err)}`);

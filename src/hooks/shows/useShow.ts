@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useCommon } from '../useCommon';
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_SCAN_SHOWS, CMD_UPDATE_BAN_STATUS, CMD_UPDATE_SHOW_STATUS, CMD_RENAME_SHOW, CMD_UPDATE_PIN_STATUS, CMD_SYNC_SCAN_SHOWS, CMD_OPEN_FILE } from '../../constants/commands';
+import { fetchShows, updateBanStatus as updateBanStatusIntrovert, updateShowStatus as updateShowStatusIntrovert, updateShowTitle as updateShowTitleIntrovert, toggleShowPin as toggleShowPinIntrovert } from '../../personalities/introverts/show/shows';
+import { openFile } from '../../personalities/introverts/filesystem/filesystem';
 import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY, TABS } from '../../pages/shows/constants/constants';
 import { logger } from '../../utility/logger';
 import { DEFAULT_STARTING_PATHS } from '../../constants/defaults';
@@ -68,11 +68,10 @@ export const useShow = () => {
         if (allShows.length === 0) setIsLoading(true);
 
         try {
-            const command = sync ? CMD_SYNC_SCAN_SHOWS : CMD_SCAN_SHOWS;
             let allFetchedShows: ShowResult[] = [];
             for (const path of DEFAULT_STARTING_PATHS) {
                 try {
-                    const shows: ShowResult[] = await invoke(command, { path });
+                    const shows: ShowResult[] = await fetchShows(path, sync);
                     allFetchedShows = [...allFetchedShows, ...shows];
                 } catch (err) {
                     logger.error(`Failed to fetch shows from ${path}: ${String(err)}`);
@@ -103,7 +102,7 @@ export const useShow = () => {
     };
     const updateBanStatus = async (showId: string, isBanned: boolean): Promise<boolean> => {
         try {
-            await invoke(CMD_UPDATE_BAN_STATUS, { showId: showId, newBanStatus: isBanned });
+            await updateBanStatusIntrovert(showId, isBanned);
             const newShows = allShows.map(show =>
                 show.id === showId ? { ...show, banned: isBanned } : show
             );
@@ -117,7 +116,7 @@ export const useShow = () => {
     };
 
     const updateShowStatusOnDatabase = async (showId: string, status: ShowStatus): Promise<boolean> => {
-        return invoke(CMD_UPDATE_SHOW_STATUS, { showId: showId, newStatus: status });
+        return updateShowStatusIntrovert(showId, status);
     }
 
     const updateShowVisualStatus = async (showId: string, status: ShowStatus): Promise<boolean> => {
@@ -138,7 +137,7 @@ export const useShow = () => {
     const updateShowTitle = async (showId: string, newTitle: string) => {
         try {
             logger.info('requested rename for', { id: showId, newName: newTitle });
-            const success = await invoke(CMD_RENAME_SHOW, { showId, newName: newTitle });
+            const success = await updateShowTitleIntrovert(showId, newTitle);
             if (!success) {
                 logger.error(`Failed to rename show: ${showId}, ${newTitle}`);
                 return;
@@ -158,7 +157,7 @@ export const useShow = () => {
         const show = allShows.find(s => s.id === id);
         if (show) {
             try {
-                await invoke(CMD_UPDATE_PIN_STATUS, { showId: id, newPinStatus: !show.pinned });
+                await toggleShowPinIntrovert(id, show.pinned);
                 const newShows = allShows.map(s =>
                     s.id === id ? { ...s, pinned: !s.pinned } : s
                 );
@@ -385,7 +384,7 @@ export const useShow = () => {
         const path = ep.path;
         if (!path) return;
         try {
-            await invoke(CMD_OPEN_FILE, { path: path });
+            await openFile(path);
         } catch (e) {
             logger.error(`Could not open file: ${String(e)}`);
         }
@@ -399,8 +398,6 @@ export const useShow = () => {
 
         void putEpisodeInRecent(selectedShow, currentEp);
     };
-
-
 
     return {
         title: "Shows",

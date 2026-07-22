@@ -1,5 +1,4 @@
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_OPEN_FILE } from '../../../constants/commands';
+import { openFile } from '../../../personalities/introverts/filesystem/filesystem';
 import { formatBytes } from '../../../utility/util';
 import { logger } from '../../../utility/logger';
 import type { ItemCollection } from "../../../types/core";
@@ -24,7 +23,7 @@ export const openEpisode = async (ep: Episode) => {
     const path = ep.path;
     if (!path) return;
     try {
-        await invoke(CMD_OPEN_FILE, { path: path });
+        await openFile(path);
     } catch (e) {
         logger.error(`Could not open file: ${String(e)}`);
     }

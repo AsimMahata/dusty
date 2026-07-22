@@ -3,8 +3,7 @@ import { ConfirmationModal } from '../../../../components/ui/ConfirmationModal';
 import { useDangerZone } from './hooks/useDangerZone';
 import { getResetActions } from '../../actions/getResetActions';
 import { SETTINGS_DANGER_ICON } from '../../../../constants/icon';
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_GET_ALL_TABLES, CMD_RESET_TABLE, CMD_RESYNC_TABLE } from '../../../../constants/commands';
+import { getAllTables, resetTable, resyncTable } from '../../../../personalities/introverts/table/table';
 import { logger } from '../../../../utility/logger';
 import toast from 'react-hot-toast';
 
@@ -22,7 +21,7 @@ export const DangerZone: React.FC = () => {
     React.useEffect(() => {
         const fetchTables = async () => {
             try {
-                const fetchedTables = await invoke<string[]>(CMD_GET_ALL_TABLES);
+                const fetchedTables = await getAllTables();
                 setTables(fetchedTables);
             } catch (err) {
                 logger.error(`Failed to fetch tables: ${String(err)}`);
@@ -34,7 +33,7 @@ export const DangerZone: React.FC = () => {
     const handleResetTable = async (tableName: string) => {
         if (!window.confirm(`Are you sure you want to reset the table: ${tableName}? All data in it will be lost.`)) return;
         try {
-            await invoke(CMD_RESET_TABLE, { tableName });
+            await resetTable(tableName);
             toast.success(`Successfully reset table: ${tableName}`);
         } catch (err) {
             toast.error(`Failed to reset table ${tableName}: ${String(err)}`);
@@ -43,7 +42,7 @@ export const DangerZone: React.FC = () => {
 
     const handleResyncTable = async (tableName: string) => {
         try {
-            await invoke(CMD_RESYNC_TABLE, { tableName });
+            await resyncTable(tableName);
             toast.success(`Resync initiated for table: ${tableName}`);
         } catch (err) {
             toast.error(`Failed to resync table ${tableName}: ${String(err)}`);

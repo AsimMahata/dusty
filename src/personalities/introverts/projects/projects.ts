@@ -1,10 +1,9 @@
 import toast from 'react-hot-toast';
-import type { GitInfo } from '../../../types/projects';
-import type { Project } from '../../../types/projects';
+import type { GitInfo, Project, ProjectStatus } from '../../../types/projects';
 import { logger } from '../../../utility/logger';
 import { scanProjectTagsIPC, getProjectsIPC, updateProjectPinStatusIPC, updateProjectStatusIPC, updateProjectTagsIPC } from '../../ambiverts/projects';
-import { invoke } from '@tauri-apps/api/core';
-import type { ProjectStatus } from '../../../types/projects';
+import { getGitInfoIPC } from '../../ambiverts/git';
+import { openUrl } from '../filesystem/filesystem';
 
 export async function getProjects(sync: boolean = false): Promise<Project[]> {
     return await getProjectsIPC(sync);
@@ -22,6 +21,10 @@ export async function updateProjectTags(id: string, tags: string[]): Promise<boo
     return await updateProjectTagsIPC(id, tags);
 }
 
+export async function getGitInfo(path: string): Promise<GitInfo | undefined> {
+    return await getGitInfoIPC(path);
+}
+
 export const openProjectGithub = async (gitInfo: GitInfo | undefined): Promise<void> => {
     if (!gitInfo?.git_remote_url) {
         toast("GitHub repository not found", { icon: "❌" });
@@ -30,10 +33,8 @@ export const openProjectGithub = async (gitInfo: GitInfo | undefined): Promise<v
     }
 
     logger.info(`Opening GitHub repository: ${gitInfo.git_remote_url}`);
-    await invoke("open_url", {
-        url: gitInfo.git_remote_url,
-    });
-}
+    await openUrl(gitInfo.git_remote_url);
+};
 
 export const scanProjectTags = async (project: Project): Promise<string[]> => {
     try {

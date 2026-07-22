@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { invoke } from '@tauri-apps/api/core';
+import { getAllTableData } from '../../../personalities/introverts/lab/lab';
 
 export const useDatabaseViewer = () => {
     const [data, setData] = useState<Record<string, any[]>>({});
@@ -10,7 +10,7 @@ export const useDatabaseViewer = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const result = await invoke<Record<string, any[]>>('get_all_table_data');
+            const result = await getAllTableData();
             setData(result);
         } catch (err) {
             setError(String(err));

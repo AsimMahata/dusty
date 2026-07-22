@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useCommon } from '../useCommon';
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_OPEN_FILE } from '../../constants/commands';
+import { openFile } from '../../personalities/introverts/filesystem/filesystem';
 import { fileInfoToItemData } from '../../utility/util';
 import { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON, DEFAULT_STARTING_PATHS } from '../../constants/defaults';
 import { mediaExplorerTab, mediaListTab } from '../../constants/tabs';
@@ -51,7 +50,7 @@ export const useMedia = (title: string, mediaType: MediaType, defaultPaths: stri
         const path = m.path;
         if (!path) return;
         try {
-            await invoke(CMD_OPEN_FILE, { path });
+            await openFile(path);
         } catch (e) {
             console.error(`Could not open file: ${String(e)}`);
         }

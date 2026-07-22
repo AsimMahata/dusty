@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_UPDATE_MAL_ID } from '../../constants/commands';
+import { updateMalIdForShow as updateMalIdForShowIntrovert } from '../../personalities/introverts/show/shows';
 import { logger } from '../../utility/logger';
 import type { ShowResult } from "../../types/shows";
 
@@ -21,10 +20,7 @@ export const useMal = ({ updateShowInState }: UseMalProps) => {
     
     const updateMalIdForShow = async (showId: string, newMalId: number): Promise<boolean> => {
         try {
-            await invoke(CMD_UPDATE_MAL_ID, {
-                id: showId,
-                malId: newMalId
-            });
+            await updateMalIdForShowIntrovert(showId, newMalId);
             logger.info("MAL ID updated successfully", { id: showId, newMalId });
             updateShowInState(showId, { mal_id: newMalId });
             return true;

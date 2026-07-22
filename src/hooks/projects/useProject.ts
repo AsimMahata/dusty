@@ -1,13 +1,12 @@
 import { useState, useEffect, useMemo, type ReactNode } from 'react';
 import { useCommon } from '../useCommon';
-import { getProjects, updateProjectPinStatus, updateProjectStatus, updateProjectTags } from '../../personalities/introverts/projects/projects';
+import { getProjects, updateProjectPinStatus, updateProjectStatus, updateProjectTags, getGitInfo } from '../../personalities/introverts/projects/projects';
 import { openFileInExplorer } from '../../personalities/introverts/filesystem/filesystem';
 import { logger } from '../../utility/logger';
 import { filterAndSortProjects } from '../../pages/projects/actions/filter';
 import { DEFAULT_SORT_OPTION } from '../../pages/projects/constants/constants';
 import type { GitInfo, Project, ProjectStatus } from "../../types/projects";
 import type { SortOption } from "../../types/projects";
-import { invoke } from '@tauri-apps/api/core';
 
 
 // Cache removed to rely on backend SQLite caching
@@ -33,9 +32,7 @@ export const useProject = () => {
         }
 
         const fetchGitInfo = async () => {
-            const git_info = await invoke<GitInfo>("get_git_info", {
-                path: selectedItem.path,
-            });
+            const git_info = await getGitInfo(selectedItem.path);
 
             logger.info('RECIEVED GIT INFO', git_info);
             setGitInfo(git_info);

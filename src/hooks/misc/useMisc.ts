@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useCommon } from '../useCommon';
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_SCAN_EMPTY_DIR } from '../../constants/commands';
+import { scanEmptyDir } from '../../personalities/introverts/empty_dir/scan';
 import { fileInfoToItemData } from '../../utility/util';
 import { DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON } from '../../constants/defaults';
 import { TYPE_COMING_SOON, TYPE_EMPTY_DIRECTORIES } from '../../constants/tabs';
@@ -15,7 +14,7 @@ export const useMisc = () => {
     const [activeTab, setActiveTab] = useState(TYPE_EMPTY_DIRECTORIES);
     const [data, setData] = useState<AnyItem[]>(cachedEmptyDirData || []);
 
-    const fetchData = async () => {
+    const fetchData = async (sync: boolean = false) => {
         if (activeTab === TYPE_COMING_SOON) {
             setIsRefreshing(false);
             setIsLoading(false);
@@ -23,9 +22,9 @@ export const useMisc = () => {
         }
 
         setIsRefreshing(true);
-        setIsLoading(data.length === 0);
+        if (data.length === 0) setIsLoading(true);
         try {
-            const dirs: FileInfo[] = await invoke(CMD_SCAN_EMPTY_DIR);
+            const dirs: FileInfo[] = await scanEmptyDir(sync);
             const items = fileInfoToItemData(dirs, DEFAULT_FILE_ICON, DEFAULT_FOLDER_ICON);
             cachedEmptyDirData = items;
             setData(items);

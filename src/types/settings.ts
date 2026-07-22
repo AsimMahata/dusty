@@ -3,7 +3,7 @@ export interface ResetActionConfig {
     buttonLabel: string;
     resettingLabel: string;
     buttonClass: string;
-    command: string;
+    action: () => Promise<boolean>;
     modalTitle: string;
     modalMessage: string;
     confirmText: string;

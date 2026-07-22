@@ -1,5 +1,4 @@
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_OPEN_FILE } from '../../constants/commands';
+import { openFile } from '../../personalities/introverts/filesystem/filesystem';
 import { useState } from 'react';
 import type { useMisc } from './useMisc';
 import type { Chunk } from '../../types/bazar';
@@ -21,7 +20,7 @@ export const useMiscChunkTab = (misc: ReturnType<typeof useMisc>) => {
 
     const openChunk = async (chunk: Chunk) => {
         try {
-            await invoke(CMD_OPEN_FILE, { path: chunk.path });
+            await openFile(chunk.path);
         } catch (err) {
             logger.error(`Misc: failed to open ${chunk.name}: ${String(err)}`);
         }

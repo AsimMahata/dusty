@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_GET_SYSTEM_INFO } from '../constants/commands';
+import { getSystemInfo } from '../personalities/introverts/system/system';
 import { logger } from '../utility/logger';
 import type { SystemInfoData, StorageInfo, OverviewStats, UserProfile } from "../types/system";
 import type { MediaItem } from "../types/media";
@@ -45,7 +44,7 @@ export const DustyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     useEffect(() => {
         const fetchSystemInfo = async () => {
             try {
-                const info = await invoke<SystemInfoData>(CMD_GET_SYSTEM_INFO);
+                const info = await getSystemInfo();
                 setSystemData(info);
                 
                 if (info && info.username) {

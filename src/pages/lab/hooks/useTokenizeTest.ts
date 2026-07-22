@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_TOKENIZE } from '../../../constants/commands';
+import { tokenize } from '../../../personalities/introverts/lab/lab';
 
 export const useTokenizeTest = () => {
     const [tokenInput, setTokenInput] = useState('');
@@ -12,7 +11,7 @@ export const useTokenizeTest = () => {
         
         setIsTokenizing(true);
         try {
-            const result: string[] = await invoke(CMD_TOKENIZE, { input: tokenInput });
+            const result: string[] = await tokenize(tokenInput);
             setTokenizedResult(result);
         } catch (error) {
             console.error('Failed to tokenize:', error);

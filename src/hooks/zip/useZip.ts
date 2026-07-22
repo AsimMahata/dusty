@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useCommon } from '../useCommon';
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_OPEN_FILE } from '../../constants/commands';
+import { openFile } from '../../personalities/introverts/filesystem/filesystem';
 import { scanZip } from '../../personalities/introverts/zip/scan';
 import type { Chunk } from '../../types/bazar';
 import { logger } from '../../utility/logger';
@@ -47,7 +46,7 @@ export const useZip = () => {
 
     const openChunk = async (chunk: Chunk) => {
         try {
-            await invoke(CMD_OPEN_FILE, { path: chunk.path });
+            await openFile(chunk.path);
         } catch (err) {
             logger.error(`Zip: failed to open ${chunk.name}: ${String(err)}`);
         }

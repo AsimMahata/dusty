@@ -1,5 +1,6 @@
-import { CMD_RESET_DATABASE } from '../../../constants/commands';
+import { resetDatabase } from '../../../personalities/introverts/settings/settings';
 import type { ResetActionConfig } from "../../../types/settings";
+
 export const getResetActions = (): ResetActionConfig[] => {
     return [
         {
@@ -7,7 +8,7 @@ export const getResetActions = (): ResetActionConfig[] => {
             buttonLabel: 'Reset All Data',
             resettingLabel: 'Resetting...',
             buttonClass: 'settings-button-red',
-            command: CMD_RESET_DATABASE,
+            action: resetDatabase,
             modalTitle: 'Reset Database',
             modalMessage: 'Are you absolutely sure you want to reset the database? This will erase all shows, bans, and saved metadata. This cannot be undone.',
             confirmText: 'Yes, reset all data',

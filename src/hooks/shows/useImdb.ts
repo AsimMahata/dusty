@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_UPDATE_IMDB_ID } from '../../constants/commands';
+import { updateImdbIdForShow as updateImdbIdForShowIntrovert } from '../../personalities/introverts/show/shows';
 import { logger } from '../../utility/logger';
 import type { ShowResult } from "../../types/shows";
 
@@ -21,10 +20,7 @@ export const useImdb = ({ updateShowInState }: UseImdbProps) => {
     
     const updateImdbIdForShow = async (showId: string, newImdbId: string): Promise<boolean> => {
         try {
-            await invoke(CMD_UPDATE_IMDB_ID, {
-                id: showId,
-                imdbId: newImdbId
-            });
+            await updateImdbIdForShowIntrovert(showId, newImdbId);
             logger.info("IMDB ID updated successfully", { id: showId, newImdbId });
             updateShowInState(showId, { imdb_id: newImdbId });
             return true;
