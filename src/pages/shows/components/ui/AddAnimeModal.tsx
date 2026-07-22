@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Plus, Check } from 'lucide-react';
-import { searchAnime } from '../../../../personalities/introverts/show/anime';
-import { addSeasonalAnimeDB } from '../../../../personalities/ambiverts/anime';
+import { searchAnime, saveSelectedAnime } from '../../../../personalities/introverts/show/anime';
 import type { AnimeData } from "../../../../types/shows";
 
 interface AddAnimeModalProps {
@@ -56,7 +55,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
         setIsSubmitting(true);
         setStatusMessage(null);
 
-        const success = await addSeasonalAnimeDB(selectedAnime);
+        const success = await saveSelectedAnime(selectedAnime);
         setIsSubmitting(false);
 
         if (success) {
@@ -76,7 +75,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
         setStatusMessage(null);
 
         // Add to DB first so it is cached
-        await addSeasonalAnimeDB([anime]);
+        await saveSelectedAnime([anime]);
 
         try {
             const success = await onLinkAction(targetShowId, anime.mal_id);

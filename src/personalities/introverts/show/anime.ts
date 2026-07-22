@@ -1,12 +1,12 @@
 import { logger } from "../../../utility/logger";
 import { getSeasonalAnimeAPI, searchAnimeAPI } from "../../extroverts/show/anime";
-import { addSeasonalAnimeDB, getSeasonalAnimeFromDB, getAllAnimeFromDB } from "../../ambiverts/anime";
+import { addSeasonalAnimeIPC, getSeasonalAnimeFromIPC, getAllAnimeFromIPC } from "../../ambiverts/anime";
 import type { ShowResult } from "../../../types/shows";
 import type { AnimeData, ScannedAnimeData } from "../../../types/shows";
 
 export async function addSeasonalAnime(): Promise<boolean> {
     try {
-        let anime_list: AnimeData[] = await getSeasonalAnimeFromDB();
+        let anime_list: AnimeData[] = await getSeasonalAnimeFromIPC();
         if (anime_list && anime_list.length > 0) {
             logger.info('Seasonal anime already available in backend.');
             return true;
@@ -15,7 +15,7 @@ export async function addSeasonalAnime(): Promise<boolean> {
         let data = await getSeasonalAnimeAPI();
         logger.info('Seasonal anime fetched from API.', data);
         if (data && data.length > 0) {
-            return await addSeasonalAnimeDB(data);
+            return await addSeasonalAnimeIPC(data);
         }
         logger.error('Failed to fetch seasonal anime from API or list is empty.');
         return false;
@@ -23,6 +23,10 @@ export async function addSeasonalAnime(): Promise<boolean> {
         logger.error(`addSeasonalAnime error: ${e}`);
         return false;
     }
+}
+
+export async function saveSelectedAnime(data: AnimeData[]): Promise<boolean> {
+    return await addSeasonalAnimeIPC(data);
 }
 
 export async function searchAnime(query: string): Promise<AnimeData[]> {
@@ -39,7 +43,7 @@ export async function searchAnime(query: string): Promise<AnimeData[]> {
 }
 
 export async function prefetchAllAnimeMalIds(): Promise<Set<number>> {
-    const allAnime = await getAllAnimeFromDB();
+    const allAnime = await getAllAnimeFromIPC();
     return new Set(allAnime.map(a => a.mal_id));
 }
 

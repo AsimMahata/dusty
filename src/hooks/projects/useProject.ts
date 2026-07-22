@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, type ReactNode } from 'react';
 import { useCommon } from '../useCommon';
-import { getProjectsFromBackend, updateProjectPinStatusOnBackend, updateProjectStatusOnBackend, updateProjectTagsOnBackend } from '../../personalities/ambiverts/projects';
+import { getProjects, updateProjectPinStatus, updateProjectStatus, updateProjectTags } from '../../personalities/introverts/projects/projects';
 import { openFileInExplorer } from '../../personalities/introverts/filesystem/filesystem';
 import { logger } from '../../utility/logger';
 import { filterAndSortProjects } from '../../pages/projects/actions/filter';
@@ -72,7 +72,7 @@ export const useProject = () => {
         setIsRefreshing(true);
         if (allProjects.length === 0) setIsLoading(true);
         try {
-            const projects = await getProjectsFromBackend(sync);
+            const projects = await getProjects(sync);
             setAllProjects(projects);
             logger.info('all projects fetched', projects);
         } catch (error) {
@@ -90,7 +90,7 @@ export const useProject = () => {
     const handleTogglePin = async (id: string) => {
         try {
             const currentPinnedStatus = allProjects.find(x => x.id === id)?.pinned || false;
-            await updateProjectPinStatusOnBackend(id, !currentPinnedStatus);
+            await updateProjectPinStatus(id, !currentPinnedStatus);
 
             const newProjects = allProjects.map(item =>
                 item.id === id ? { ...item, pinned: !item.pinned } : item
@@ -111,7 +111,7 @@ export const useProject = () => {
 
     const updateProjectProgressStatus = async (id: string, status: ProjectStatus): Promise<boolean> => {
         try {
-            await updateProjectStatusOnBackend(id, status);
+            await updateProjectStatus(id, status);
             const newProjects = allProjects.map(project =>
                 project.id === id ? { ...project, status: status } : project
             );
@@ -128,9 +128,9 @@ export const useProject = () => {
         }
     };
 
-    const updateProjectTags = async (id: string, tags: string[]): Promise<boolean> => {
+    const updateProjectTagsLocal = async (id: string, tags: string[]): Promise<boolean> => {
         try {
-            await updateProjectTagsOnBackend(id, tags);
+            await updateProjectTags(id, tags);
             setAllProjects(projects => projects.map(project =>
                 project.id === id ? { ...project, tags } : project
             ));
@@ -165,7 +165,7 @@ export const useProject = () => {
         handleTogglePin,
         getCommonRenderedActions,
         updateProjectProgressStatus,
-        updateProjectTags,
+        updateProjectTags: updateProjectTagsLocal,
         handleRename,
         handleDelete,
         sortOption, setSortOption,

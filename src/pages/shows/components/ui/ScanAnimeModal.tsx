@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Check } from 'lucide-react';
-import { scanShowsForAnime } from '../../../../personalities/introverts/show/anime';
-import { addSeasonalAnimeDB } from '../../../../personalities/ambiverts/anime';
+import { scanShowsForAnime, saveSelectedAnime } from '../../../../personalities/introverts/show/anime';
 import type { ScannedAnimeData } from "../../../../types/shows";
 import type { ShowResult } from "../../../../types/shows";
 
@@ -51,7 +50,7 @@ export const ScanAnimeModal: React.FC<ScanAnimeModalProps> = ({ onClose, shows }
         setIsSubmitting(true);
         setStatusMessage(null);
 
-        const success = await addSeasonalAnimeDB(selectedAnime);
+        const success = await saveSelectedAnime(selectedAnime);
         setIsSubmitting(false);
 
         if (success) {

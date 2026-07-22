@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Plus, Check } from 'lucide-react';
-import { searchShow } from '../../../../personalities/introverts/show/imdb';
-import { addSeasonalShowDB } from '../../../../personalities/ambiverts/imdb';
+import { searchShow, saveSelectedShow } from '../../../../personalities/introverts/show/imdb';
 import type { ShowData } from "../../../../types/shows";
 
 interface AddShowModalProps {
@@ -56,7 +55,7 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
         setIsSubmitting(true);
         setStatusMessage(null);
 
-        const success = await addSeasonalShowDB(selectedShow);
+        const success = await saveSelectedShow(selectedShow);
         setIsSubmitting(false);
 
         if (success) {
@@ -75,8 +74,8 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
         setIsSubmitting(true);
         setStatusMessage(null);
 
-        // Add to DB first so it is cached
-        await addSeasonalShowDB([show]);
+        
+        await saveSelectedShow([show]);
 
         try {
             const success = await onLinkAction(targetShowId, show.imdb_id);

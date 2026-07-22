@@ -1,6 +1,11 @@
 import { logger } from "../../../utility/logger";
 import { searchShowAPI } from "../../extroverts/show/imdb";
+import { addSeasonalShowIPC } from "../../ambiverts/imdb";
 import type { ShowData } from "../../../types/shows";
+
+export async function saveSelectedShow(data: ShowData[]): Promise<boolean> {
+    return await addSeasonalShowIPC(data);
+}
 
 export async function searchShow(query: string): Promise<ShowData[]> {
     if (!query || query.trim().length < 3) {
