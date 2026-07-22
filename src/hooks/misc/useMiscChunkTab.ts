@@ -9,14 +9,17 @@ import { logger } from '../../utility/logger';
 export const useMiscChunkTab = (misc: ReturnType<typeof useMisc>) => {
     const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
 
-    const chunks: Chunk[] = misc.data.map(item => ({
-        id: item.id,
-        name: item.title,
-        path: item.path ?? '',
-        ext: undefined,
-        size: undefined,
-        is_pinned: pinnedIds.has(item.id),
-    }));
+    const chunks: Chunk[] = misc.data.map(item => {
+        const rawItem = item as any;
+        return {
+            id: item.id,
+            name: item.title,
+            path: item.path ?? '',
+            ext: rawItem.ext ?? (item.path ? item.path.split('.').pop() : undefined),
+            size: rawItem.rawSize ?? undefined,
+            is_pinned: pinnedIds.has(item.id),
+        };
+    });
 
     const openChunk = async (chunk: Chunk) => {
         try {

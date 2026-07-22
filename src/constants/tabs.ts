@@ -6,6 +6,7 @@ export const TITLE_BANNED = "Banned Shows";
 const TITLE_EXPLORER = "Explorer";
 const TITLE_MEDIA_LIST = "Media List";
 export const TITLE_EMPTY_DIRECTORIES = "Empty Directories";
+export const TITLE_EXE_FILES = "Executable Files";
 export const TITLE_COMING_SOON = "Coming Soon";
 export const TITLE_GENERAL = "General";
 export const TITLE_DATA = "Data";
@@ -20,6 +21,7 @@ export const TYPE_BANNED: TabType = "banned";
 const TYPE_MEDIA: TabType = "media";
 const TYPE_FOLDERS: TabType = "folders";
 export const TYPE_EMPTY_DIRECTORIES = "empty_directories";
+export const TYPE_EXE_FILES = "exe_files";
 export const TYPE_COMING_SOON = "coming_soon";
 export const TYPE_GENERAL = "general";
 export const TYPE_DATA = "data";
@@ -34,7 +36,6 @@ export const showBannedTab: Tab = {
     title: TITLE_BANNED,
     type: TYPE_BANNED
 }
-
 
 export const mediaExplorerTab: Tab = {
     title: TITLE_EXPLORER,

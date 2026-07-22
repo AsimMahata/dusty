@@ -1,5 +1,6 @@
 pub mod anime;
 pub mod empty_dir;
+pub mod exe;
 pub mod file_system;
 pub mod git;
 pub mod image;
