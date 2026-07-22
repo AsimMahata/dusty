@@ -1,4 +1,5 @@
 import type { SettingItemProps } from "../../../types/settings";
+import { addSeasonalAnime } from "../../../personalities/introverts/show/anime";
 
 export const getGeneralPreferencesList = (
     settings: { theme: string; showHiddenFiles: boolean;[key: string]: any },
@@ -32,14 +33,14 @@ export const getGeneralPreferencesList = (
             type: 'button',
             buttonText: 'Add Anime',
             buttonClass: 'settings-button-blue',
-            onClick: () => {
-                return import('../../../personalities/introverts/show/anime').then(async ({ addSeasonalAnime }) => {
+            onClick: async () => {
+                try {
                     const success = await addSeasonalAnime();
                     return success;
-                }).catch(e => {
+                } catch (e) {
                     console.error('Failed to invoke addSeasonalAnime', e);
                     return false;
-                });
+                }
             }
         }
     ];

@@ -20,7 +20,56 @@ interface ChunkItemProps {
     onDoubleClick?: () => void;
 }
 
-export const ChunkItem: React.FC<ChunkItemProps> = ({ 
+const arePropsEqual = (prev: ChunkItemProps, next: ChunkItemProps) => {
+    if (prev.name !== next.name ||
+        prev.path !== next.path ||
+        prev.extLabel !== next.extLabel ||
+        prev.sizeLabel !== next.sizeLabel ||
+        prev.isPinned !== next.isPinned) {
+        return false;
+    }
+
+    if (prev.chunk && next.chunk) {
+        if (prev.chunk.id !== next.chunk.id ||
+            prev.chunk.name !== next.chunk.name ||
+            prev.chunk.path !== next.chunk.path ||
+            prev.chunk.ext !== next.chunk.ext ||
+            prev.chunk.size !== next.chunk.size ||
+            prev.chunk.is_pinned !== next.chunk.is_pinned) {
+            return false;
+        }
+    } else if (prev.chunk !== next.chunk) {
+        return false;
+    }
+
+    const prevActions = prev.actions || [];
+    const nextActions = next.actions || [];
+    if (prevActions.length !== nextActions.length) {
+        return false;
+    }
+    for (let i = 0; i < prevActions.length; i++) {
+        if (prevActions[i].label !== nextActions[i].label ||
+            prevActions[i].color !== nextActions[i].color ||
+            prevActions[i].separator !== nextActions[i].separator) {
+            return false;
+        }
+    }
+
+    const prevTags = prev.tags || [];
+    const nextTags = next.tags || [];
+    if (prevTags.length !== nextTags.length) {
+        return false;
+    }
+    for (let i = 0; i < prevTags.length; i++) {
+        if (prevTags[i] !== nextTags[i]) {
+            return false;
+        }
+    }
+
+    return true;
+};
+
+export const ChunkItem: React.FC<ChunkItemProps> = React.memo(({ 
     chunk, actions, name, icon, extLabel, sizeLabel, path, isPinned, tags, onDoubleClick 
 }) => {
     const finalName = name ?? chunk?.name ?? '';
@@ -91,4 +140,4 @@ export const ChunkItem: React.FC<ChunkItemProps> = ({
             </div>
         </div>
     );
-};
+}, arePropsEqual);

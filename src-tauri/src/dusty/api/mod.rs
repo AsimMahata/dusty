@@ -16,5 +16,6 @@ pub mod settings;
 pub mod show;
 pub mod system;
 pub mod table;
+pub mod utility;
 pub mod video;
 pub mod zip;

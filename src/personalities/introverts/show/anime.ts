@@ -1,6 +1,7 @@
 import { logger } from "../../../utility/logger";
 import { getSeasonalAnimeTENRAI, searchAnimeTENRAI } from "../../extroverts/tenrai";
 import { addSeasonalAnimeIPC, getSeasonalAnimeFromIPC, getAllAnimeFromIPC } from "../../ambiverts/anime";
+import { getCouplingValueBetweenQueryAndResultTitleIPC } from "../../ambiverts/utility";
 import type { ShowResult } from "../../../types/shows";
 import type { AnimeData, ScannedAnimeData } from "../../../types/shows";
 
@@ -83,23 +84,33 @@ export async function scanShowsForAnime(
             const topResults = filteredResults.slice(0, 3);
 
             let updated = false;
-            topResults.forEach((anime, index) => {
+            for (let index = 0; index < topResults.length; index++) {
+                const anime = topResults[index];
+                
+                // Fetch the similarity/coupling score from the backend utility API
+                const coupling = await getCouplingValueBetweenQueryAndResultTitleIPC(anime.title, cleanQuery) || 0;
+                
+                // Since coupling is similarity (1.0 is best, 0.0 is worst) and previous priority is rank (1 is best, 3 is worst),
+                // we use (1 - coupling) to align their directions so that smaller combined values represent higher priority.
+                const prevPriority = index + 1;
+                const newPriority = parseFloat((0.7 * (1 - coupling) + 0.3 * prevPriority).toFixed(2));
+
                 if (!resultsMap.has(anime.mal_id)) {
                     resultsMap.set(anime.mal_id, {
                         ...anime,
-                        priority: index + 1,
+                        priority: newPriority,
                         sourceQuery: show.title
                     });
                     updated = true;
                 } else {
                     const existing = resultsMap.get(anime.mal_id)!;
-                    if (index + 1 < existing.priority) {
-                        existing.priority = index + 1;
+                    if (newPriority < existing.priority) {
+                        existing.priority = newPriority;
                         existing.sourceQuery = show.title;
                         updated = true;
                     }
                 }
-            });
+            }
 
             if (updated) {
                 onResultsUpdated(Array.from(resultsMap.values()).sort((a, b) => a.priority - b.priority));

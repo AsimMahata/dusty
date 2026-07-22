@@ -56,6 +56,7 @@ pub fn run() {
             dusty::api::table::reset_table,
             dusty::api::table::resync_table,
             dusty::api::system::get_system_info,
+            dusty::api::utility::get_coupling_value_between_query_and_result_title,
             dusty::api::overview::get_stats,
             dusty::api::music::scan_music,
             dusty::api::music::sync_scan_music,

@@ -1,6 +1,5 @@
 use rusqlite::Connection;
 
-use crate::dusty::data::shows::Show;
 use crate::dusty::data::{shows::ShowResult, state::AppState};
 use crate::dusty::db::show::{
     add_shows_in_db, print_all_shows_in_db, reset_show_table_in_db, update_ban_status_in_db,

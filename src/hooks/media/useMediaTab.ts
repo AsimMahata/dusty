@@ -2,6 +2,8 @@ import type { useMedia } from './useMedia';
 import type { TabType } from "../../types/tabs";
 import type { Item } from "../../types/core";
 
+const EMPTY_ARRAY: any[] = [];
+
 export const useMediaTab = (media: ReturnType<typeof useMedia>, type: TabType) => {
 
     const isExplorerTab = type === 'folders';
@@ -15,7 +17,7 @@ export const useMediaTab = (media: ReturnType<typeof useMedia>, type: TabType) =
 
     return {
         title: isExplorerTab ? 'Explorer' : 'Media List',
-        recentItems: [],
+        recentItems: EMPTY_ARRAY,
         allItems: isExplorerTab ? media.rootFolderItems : media.allMediaItems,
         searchQuery: media.searchQuery,
         onCardClick: isExplorerTab ? handleRootCardClick : media.playMedia,

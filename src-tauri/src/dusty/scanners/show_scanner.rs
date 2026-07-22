@@ -48,9 +48,8 @@ pub fn scan_for_shows_with_seasons(db: &Connection, root: &PathBuf) -> Vec<ShowR
     let mut videos: Vec<PathBuf> = Vec::new();
     dfs_file_of_type(&root, mime::VIDEO, &mut videos, is_root(&root));
     let titles: Vec<Anime> = get_all_anime_titles(db);
-    let mut clusters: Vec<Vec<PathBuf>> = Vec::new();
     if titles.len() == 0 {
-        clusters = cluster_files(&videos);
+        let clusters = cluster_files(&videos);
         let mut shows: Vec<ShowResult> = Vec::new();
         make_show_results_from_clusters(&clusters, &mut shows);
         return shows;

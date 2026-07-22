@@ -19,6 +19,8 @@ const MEDIA_SORT_OPTIONS: SortOption[] = [
     { id: 'type', label: 'Type' },
 ];
 
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
 export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
     const title = tab.title || "Unknown";
     const recentItems = tab.recentItems || [];
@@ -28,7 +30,7 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
     const getCardActions = tab.getCardActions;
 
     const [sortMode, setSortMode] = useState<MediaSortMode>('name');
-    const [visibleCount, setVisibleCount] = useState(50);
+    const [visibleCount, setVisibleCount] = useState(VISIBLE_COUNT);
 
     const query = searchQuery.toLowerCase();
 
@@ -37,38 +39,50 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
         setVisibleCount(VISIBLE_COUNT);
     }, [allItems, query, sortMode]);
 
-    const filterItems = (items: T[]) => items.filter(item =>
-        item.title.toLowerCase().includes(query) ||
-        item.subtitle.toLowerCase().includes(query) ||
-        (item.metadata && item.metadata.toLowerCase().includes(query))
-    );
+    const filterItems = React.useCallback((items: T[]) => {
+        if (!query) return items;
+        return items.filter(item =>
+            item.title.toLowerCase().includes(query) ||
+            item.subtitle.toLowerCase().includes(query) ||
+            (item.metadata && item.metadata.toLowerCase().includes(query))
+        );
+    }, [query]);
 
-    const sortItems = (items: T[], mode: MediaSortMode): T[] => {
+    const sortItems = React.useCallback((items: T[], mode: MediaSortMode): T[] => {
         const pinned = items.filter(c => (c as any).is_pinned);
         const rest = items.filter(c => !(c as any).is_pinned);
 
-        const sorted = [...rest].sort((a, b) => {
-            const aRawSize = (a as any).rawSize ?? 0;
-            const bRawSize = (b as any).rawSize ?? 0;
-            
-            const aExt = a.path ? a.path.split('.').pop() || '' : '';
-            const bExt = b.path ? b.path.split('.').pop() || '' : '';
+        if (rest.length === 0) return [...pinned];
 
+        // Precompute sort keys to avoid slow repeated operations during sorting
+        const mapped = rest.map((item) => {
+            const rawSize = (item as any).rawSize ?? 0;
+            const ext = item.path ? item.path.split('.').pop() || '' : '';
+            return {
+                item,
+                rawSize,
+                ext,
+                title: item.title
+            };
+        });
+
+        mapped.sort((a, b) => {
             switch (mode) {
-                case 'name':      return a.title.localeCompare(b.title, undefined, { numeric: true });
-                case 'name-desc': return b.title.localeCompare(a.title, undefined, { numeric: true });
-                case 'size':      return bRawSize - aRawSize;
-                case 'size-asc':  return aRawSize - bRawSize;
-                case 'type':      return aExt.localeCompare(bExt) || a.title.localeCompare(b.title, undefined, { numeric: true });
+                case 'name':      return collator.compare(a.title, b.title);
+                case 'name-desc': return collator.compare(b.title, a.title);
+                case 'size':      return b.rawSize - a.rawSize;
+                case 'size-asc':  return a.rawSize - b.rawSize;
+                case 'type':      return collator.compare(a.ext, b.ext) || collator.compare(a.title, b.title);
             }
         });
 
+        const sorted = mapped.map(x => x.item);
         return [...pinned, ...sorted];
-    };
+    }, []);
 
-    const filteredRecent = filterItems(recentItems);
-    const filteredAll = filterItems(allItems);
-    const sortedAll = sortItems(filteredAll, sortMode);
+    const filteredRecent = React.useMemo(() => filterItems(recentItems), [recentItems, filterItems]);
+    const filteredAll = React.useMemo(() => filterItems(allItems), [allItems, filterItems]);
+    const sortedAll = React.useMemo(() => sortItems(filteredAll, sortMode), [filteredAll, sortMode, sortItems]);
 
     // Progressive rendering chunker
     React.useEffect(() => {
