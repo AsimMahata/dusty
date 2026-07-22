@@ -32,6 +32,7 @@ pub fn run() {
             dusty::api::media::sync_media_database,
             dusty::api::media::reset_media_cache_table,
             dusty::api::zip::scan_zip,
+            dusty::api::zip::sync_scan_zip,
             dusty::api::empty_dir::scan_empty_dir,
             dusty::api::lab::tokenize,
             dusty::api::lab::get_all_table_data,

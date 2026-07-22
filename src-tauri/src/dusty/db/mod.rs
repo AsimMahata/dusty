@@ -7,3 +7,4 @@ pub mod project;
 pub mod show;
 pub mod show_cache;
 pub mod recent;
+pub mod zip_cache;

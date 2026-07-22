@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useCommon } from '../useCommon';
 import { invoke } from '@tauri-apps/api/core';
-import { CMD_OPEN_FILE, CMD_SCAN_ZIP } from '../../constants/commands';
+import { CMD_OPEN_FILE } from '../../constants/commands';
+import { scanZip } from '../../personalities/introverts/zip/scan';
 import type { Chunk } from '../../types/bazar';
 import { logger } from '../../utility/logger';
 import type { FileInfo } from "../../types/media";
@@ -21,11 +22,11 @@ export const useZip = () => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
     const [chunks, setChunks] = useState<Chunk[]>(cachedChunks ?? []);
 
-    const fetchData = async () => {
+    const fetchData = async (sync: boolean = false) => {
         setIsRefreshing(true);
         if (chunks.length === 0) setIsLoading(true);
         try {
-            const files: FileInfo[] = await invoke(CMD_SCAN_ZIP);
+            const files: FileInfo[] = await scanZip(sync);
             const newChunks = files.map(fileInfoToChunk);
             cachedChunks = newChunks;
             setChunks(newChunks);
