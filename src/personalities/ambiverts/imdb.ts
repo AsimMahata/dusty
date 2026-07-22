@@ -1,4 +1,3 @@
-import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
 import type { ShowData } from "../../types/shows";
 
@@ -6,7 +5,6 @@ import type { ShowData } from "../../types/shows";
 // Backend command not yet implemented
 */
 
-const CMD_ADD_SEASONAL_SHOW_DB = 'add_seasonal_show_db';
 
 export async function addSeasonalShowIPC(data: ShowData[]): Promise<boolean> {
     try {

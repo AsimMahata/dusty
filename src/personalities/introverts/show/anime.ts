@@ -1,5 +1,5 @@
 import { logger } from "../../../utility/logger";
-import { getSeasonalAnimeAPI, searchAnimeAPI } from "../../extroverts/show/anime";
+import { getSeasonalAnimeTENRAI, searchAnimeTENRAI } from "../../extroverts/tenrai";
 import { addSeasonalAnimeIPC, getSeasonalAnimeFromIPC, getAllAnimeFromIPC } from "../../ambiverts/anime";
 import type { ShowResult } from "../../../types/shows";
 import type { AnimeData, ScannedAnimeData } from "../../../types/shows";
@@ -12,7 +12,8 @@ export async function addSeasonalAnime(): Promise<boolean> {
             return true;
         }
         logger.info('Seasonal anime not available, fetching from API...');
-        let data = await getSeasonalAnimeAPI();
+        let res = await getSeasonalAnimeTENRAI();
+        let data = res?.data || null;
         logger.info('Seasonal anime fetched from API.', data);
         if (data && data.length > 0) {
             return await addSeasonalAnimeIPC(data);
@@ -34,8 +35,8 @@ export async function searchAnime(query: string): Promise<AnimeData[]> {
         return [];
     }
     try {
-        const results = await searchAnimeAPI(query);
-        return results || [];
+        const res = await searchAnimeTENRAI(query);
+        return res?.data || [];
     } catch (e) {
         logger.error(`searchAnime error: ${e}`);
         return [];

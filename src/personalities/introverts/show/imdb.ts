@@ -1,5 +1,5 @@
 import { logger } from "../../../utility/logger";
-import { searchShowAPI } from "../../extroverts/show/imdb";
+import { searchShowIMDB } from "../../extroverts/imdb";
 import { addSeasonalShowIPC } from "../../ambiverts/imdb";
 import type { ShowData } from "../../../types/shows";
 
@@ -12,7 +12,8 @@ export async function searchShow(query: string): Promise<ShowData[]> {
         return [];
     }
     try {
-        const results = await searchShowAPI(query);
+        const res = await searchShowIMDB(query);
+        const results = res?.data || null;
         if (!results || !Array.isArray(results)) return [];
         logger.info(`SEARCH_SHOW_FROM_API_RESULT`, results);
         return results.map((item: any) => {

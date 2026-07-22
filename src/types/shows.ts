@@ -69,6 +69,19 @@ export interface ShowData {
     image_url?: string;
 }
 
+export const ApiProvider = {
+    TENRAI: 'TENRAI',
+    MAL: 'MAL',
+    IMDB: 'IMDB',
+    TMDB: 'TMDB',
+    TVMAZE: 'TVMAZE',
+    ANILIST: 'ANILIST',
+} as const;
+
+export type ApiProvider = (typeof ApiProvider)[keyof typeof ApiProvider];
+
+
+
 
 
 

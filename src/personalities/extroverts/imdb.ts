@@ -1,5 +1,6 @@
-import { logger } from "../../../utility/logger";
+import { logger } from "../../utility/logger";
 import { fetch } from "@tauri-apps/plugin-http";
+import { ApiProvider } from "../../types/shows";
 
 export const IMDB_BASE_API = 'https://imdb.iamidiotareyoutoo.com';
 
@@ -11,7 +12,7 @@ const FETCH_OPTIONS = {
     }
 };
 
-export async function searchShowAPI(query: string, retryCount = 0): Promise<any[] | null> {
+export async function searchShowIMDB(query: string, retryCount = 0): Promise<{ data: any[]; source: typeof ApiProvider.IMDB } | null> {
     try {
         const url = `${IMDB_BASE_API}/search?q=${encodeURIComponent(query)}`;
         const res = await fetch(url, FETCH_OPTIONS);
@@ -20,7 +21,7 @@ export async function searchShowAPI(query: string, retryCount = 0): Promise<any[
             // TVmaze asks to back off for a few seconds
             logger.warn(`TVMAZE API Rate Limited. Retrying in 2 seconds...`);
             await new Promise(resolve => setTimeout(resolve, 2000));
-            return searchShowAPI(query, retryCount + 1);
+            return searchShowIMDB(query, retryCount + 1);
         }
         logger.info(`SEARCH_SHOW_FROM_API_SUCCESS`, url, res);
         if (!res.ok) {
@@ -32,11 +33,14 @@ export async function searchShowAPI(query: string, retryCount = 0): Promise<any[
 
         if (!data || !data.ok || !Array.isArray(data.description)) {
             logger.error(`SEARCH_SHOW_API_RETURNED_ERROR`, data);
-            return [];
+            return { data: [], source: ApiProvider.IMDB };
         }
 
         logger.info(`SEARCH_SHOW_FROM_API_SUCCESS`, data.description.length);
-        return data.description;
+        return {
+            data: data.description,
+            source: ApiProvider.IMDB,
+        };
     } catch (err) {
         logger.error(`SEARCH_SHOW_FROM_API_FAILED`, err);
         return null;

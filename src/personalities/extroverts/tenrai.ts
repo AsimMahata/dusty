@@ -1,11 +1,12 @@
-import { logger } from "../../../utility/logger";
-import { API_BASE } from "./mal";
-import type { AnimeData } from "../../../types/shows";
+import { logger } from "../../utility/logger";
+import type { AnimeData } from "../../types/shows";
+import { ApiProvider } from "../../types/shows";
 
-export async function getSeasonalAnimeAPI(): Promise<AnimeData[] | null> {
+export const TENRAI_BASE_API = 'https://api.tenrai.org/v1';
 
+export async function getSeasonalAnimeTENRAI(): Promise<{ data: AnimeData[]; source: typeof ApiProvider.TENRAI } | null> {
     try {
-        const res = await fetch(`${API_BASE}/seasons/now`);
+        const res = await fetch(`${TENRAI_BASE_API}/seasons/now`);
         if (!res.ok) {
             logger.error(`SEASONAL_ANIME_FROM_API_FAILED`, res);
             return null;
@@ -26,17 +27,19 @@ export async function getSeasonalAnimeAPI(): Promise<AnimeData[] | null> {
         });
 
         logger.info('SEASONAL_ANIME_API_PARSED', animeList.length, animeList);
-        return animeList;
+        return {
+            data: animeList,
+            source: ApiProvider.TENRAI,
+        };
     } catch (err) {
         logger.error(`SEASONAL_ANIME_FROM_API_FAILED`, err);
         return null;
     }
-
 }
 
-export async function searchAnimeAPI(query: string): Promise<AnimeData[] | null> {
+export async function searchAnimeTENRAI(query: string): Promise<{ data: AnimeData[]; source: typeof ApiProvider.TENRAI } | null> {
     try {
-        const res = await fetch(`https://api.tenrai.org/v1/anime?q=${encodeURIComponent(query)}&limit=15`);
+        const res = await fetch(`${TENRAI_BASE_API}/anime?q=${encodeURIComponent(query)}&limit=15`);
         if (!res.ok) {
             logger.error(`SEARCH_ANIME_FROM_API_FAILED`, res);
             return null;
@@ -45,7 +48,7 @@ export async function searchAnimeAPI(query: string): Promise<AnimeData[] | null>
         const data = json?.data || null;
         logger.info(`SEARCH_ANIME_FROM_API_SUCCESS`, data?.length);
 
-        if (!data) return [];
+        if (!data) return { data: [], source: ApiProvider.TENRAI };
 
         const animeList: AnimeData[] = data.map((animePayLoad: any) => {
             const animeData: AnimeData = {
@@ -59,9 +62,32 @@ export async function searchAnimeAPI(query: string): Promise<AnimeData[] | null>
             return animeData;
         });
 
-        return animeList;
+        return {
+            data: animeList,
+            source: ApiProvider.TENRAI,
+        };
     } catch (err) {
         logger.error(`SEARCH_ANIME_FROM_API_FAILED`, err);
+        return null;
+    }
+}
+
+export async function getAnimeInfoTENRAI(id: number): Promise<{ data: string; source: typeof ApiProvider.TENRAI } | null> {
+    try {
+        const res = await fetch(`${TENRAI_BASE_API}/anime/${id}`);
+        if (!res.ok) {
+            throw new Error(`Failed to fetch anime info for malId=${id}`);
+        }
+        const json = await res.json();
+        const data = json?.data || null;
+        logger.info(`MAL_INFO_FROM_API_SUCESS id ${id}`);
+        if (!data) return null;
+        return {
+            data: JSON.stringify(data),
+            source: ApiProvider.TENRAI,
+        };
+    } catch (err) {
+        logger.error(`MAL_INFO_FROM_API_FAILED id ${id}`, err);
         return null;
     }
 }

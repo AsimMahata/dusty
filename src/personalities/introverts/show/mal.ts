@@ -1,5 +1,5 @@
 import { getAnimeInfoFromMalIPC, addAnimeInfoToMalIPC } from "../../ambiverts/mal";
-import { getAnimeInfoFromMalApi } from "../../extroverts/show/mal";
+import { getAnimeInfoTENRAI } from "../../extroverts/tenrai";
 import { logger } from "../../../utility/logger";
 import { COLORS } from "../../../constants/color";
 import type { ShowResult } from "../../../types/shows";
@@ -12,7 +12,8 @@ export async function getAnimeInfoFromMal(id: number | null): Promise<string | n
     let result: string | null = await getAnimeInfoFromMalIPC(id);
     if (!result) {
         try {
-            result = await getAnimeInfoFromMalApi(id);
+            const res = await getAnimeInfoTENRAI(id);
+            result = res?.data || null;
             if (result) {
                 try {
                     await addAnimeInfoToMalIPC(id, result);

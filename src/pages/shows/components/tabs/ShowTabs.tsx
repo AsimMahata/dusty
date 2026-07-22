@@ -51,7 +51,7 @@ interface ShowTabsProps {
     onAddShow?: () => void;
 }
 
-export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime, onAddShow }) => {
+export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime, onAddShow: _onAddShow }) => {
     const { activeTab, setActiveTab, getCount } = showHook;
     
     return (
