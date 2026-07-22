@@ -29,13 +29,13 @@ export const getProjectCardActions = (
             id: 'explorer',
             title: 'Reveal in Explorer',
             icon: PROJECT_OPEN_EXPLORER_ICON,
-            onClick: (e, project) => { e.stopPropagation(); logger.info(`TODO: Reveal in Explorer for project: ${project.title}`); }
+            onClick: (e, project) => { e.stopPropagation(); logger.todo(`Reveal in Explorer for project: ${project.title}`); }
         },
         {
             id: 'github',
             title: 'Open GitHub',
             icon: PROJECT_OPEN_GITHUB_ICON,
-            onClick: (e, project) => { e.stopPropagation(); logger.info(`TODO: Open GitHub for project: ${project.title}`); }
+            onClick: (e, project) => { e.stopPropagation(); logger.todo(`Open GitHub for project: ${project.title}`); }
         }
     ];
 };

@@ -4,6 +4,7 @@ import { fetchShows, updateBanStatus as updateBanStatusIntrovert, updateShowStat
 import { openFile } from '../../personalities/introverts/filesystem/filesystem';
 import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY, TABS } from '../../pages/shows/constants/constants';
 import { logger } from '../../utility/logger';
+import toast from 'react-hot-toast';
 import { DEFAULT_STARTING_PATHS } from '../../constants/defaults';
 import { LABELS } from '../../constants/labels';
 import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE_CIRCLE_ICON_16, X_CIRCLE_ICON_16, ROTATE_CCW_ICON_16, BAN_ICON_16, SHIELD_CHECK_ICON_16, ICONS } from '../../constants/icon';
@@ -56,9 +57,7 @@ export const useShow = () => {
     const [addShowTargetShowId, setAddShowTargetShowId] = useState<string | undefined>(undefined);
 
     const handleOpenAddShow = (query: string = '', targetShowId?: string) => {
-        setAddShowQuery(query);
-        setAddShowTargetShowId(targetShowId);
-        setIsAddShowOpen(true);
+        logger.todo('TV Show API is closed. Functionality is disabled.');
     };
 
     const [allShows, setAllShows] = useState<ShowResult[]>([]);

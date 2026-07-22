@@ -26,7 +26,7 @@ export const filterAndSortProjects = (projects: Project[], searchQuery: string, 
             case "pinned":
                 return a.title.localeCompare(b.title);
             case "git_status":
-                return (a.git_info.git_status || "clean").localeCompare(b.git_info.git_status || "clean");
+                return (a.git_info?.git_status || "clean").localeCompare(b.git_info?.git_status || "clean");
             case "project_status":
                 return (a.status || "default").localeCompare(b.status || "default");
             case "recently_opened":

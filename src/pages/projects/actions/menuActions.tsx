@@ -34,12 +34,12 @@ export const getProjectContextMenuItems = (
         {
             icon: PROJECT_MENU_EXPLORER_ICON,
             label: "Reveal in Explorer",
-            onClick: () => { logger.info(`TODO: Reveal in Explorer for project: ${project.title}`); onClose(); }
+            onClick: () => { logger.todo(`Reveal in Explorer for project: ${project.title}`); onClose(); }
         },
         {
             icon: PROJECT_MENU_TERMINAL_ICON,
             label: "Open Terminal",
-            onClick: () => { logger.info(`TODO: Open Terminal for project: ${project.title}`); onClose(); }
+            onClick: () => { logger.todo(`Open Terminal for project: ${project.title}`); onClose(); }
         },
         {
             icon: PROJECT_MENU_VSCODE_ICON,
@@ -49,7 +49,7 @@ export const getProjectContextMenuItems = (
         {
             icon: PROJECT_MENU_GITHUB_ICON,
             label: "Open GitHub",
-            onClick: () => { logger.info(`TODO: Open GitHub for project: ${project.title}`); onClose(); }
+            onClick: () => { logger.todo(`Open GitHub for project: ${project.title}`); onClose(); }
         },
         { separator: true },
         {

@@ -15,7 +15,14 @@ export const useProject = () => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
     const [selectedItem, setSelectedItem] = useState<Project | null>(null);
     const [allProjects, setAllProjects] = useState<Project[]>([]);
-    const [sortOption, setSortOption] = useState<SortOption>(DEFAULT_SORT_OPTION);
+    const [sortOption, setSortOptionState] = useState<SortOption>(DEFAULT_SORT_OPTION);
+
+    const setSortOption = (option: SortOption) => {
+        if (option === 'git_status') {
+            logger.todo('Git status sorting is not implemented yet');
+        }
+        setSortOptionState(option);
+    };
 
     // UI states
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, project: Project } | null>(null);
@@ -143,11 +150,11 @@ export const useProject = () => {
     };
 
     const handleRename = (project: Project) => {
-        logger.info(`TODO: Implement Rename for project: ${project.title}`);
+        logger.todo(`Implement Rename for project: ${project.title}`);
     };
 
     const handleDelete = (project: Project) => {
-        logger.info(`TODO: Implement Delete for project: ${project.title}`);
+        logger.todo(`Implement Delete for project: ${project.title}`);
     };
 
     return {

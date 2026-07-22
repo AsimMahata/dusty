@@ -4,6 +4,7 @@ import { useShow } from '../../../../hooks/shows/useShow';
 import { ContextMenu } from '../../../../components/ui/ContextMenu';
 import { Play, Tv, ChevronDown } from 'lucide-react';
 import { COLORS } from '../../../../constants/color';
+import { logger } from '../../../../utility/logger';
 import { useState, useRef } from 'react';
 import type { ActionItem } from "../../../../types/core";
 
@@ -88,8 +89,7 @@ export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime, onAddS
                                 icon: <Tv size={16} />,
                                 color: COLORS.BASE.ORANGE,
                                 onClick: () => {
-                                    // TODO: Implement TV show scan
-                                    console.log("Scan TV Show clicked");
+                                    logger.todo('TV Show scan is not implemented yet.');
                                 }
                             }
                         ]}
@@ -109,7 +109,9 @@ export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime, onAddS
                                 label: 'TV Show',
                                 icon: <Tv size={16} />,
                                 color: COLORS.BASE.ORANGE,
-                                onClick: onAddShow ? onAddShow : () => {}
+                                onClick: () => {
+                                    logger.todo('TV Show API is closed. Functionality is disabled.');
+                                }
                             }
                         ]}
                     />
@@ -118,4 +120,3 @@ export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime, onAddS
         </div>
     );
 };
-
