@@ -1,7 +1,7 @@
-import { scanVideo, syncScanVideo } from '../../ambiverts/video';
-import { scanMusic, syncScanMusic } from '../../ambiverts/music';
-import { scanImage, syncScanImage } from '../../ambiverts/image';
-import { getMediaOfTypeFromBackend, syncMediaDatabaseFromBackend } from '../../ambiverts/media';
+import { scanVideoIPC, syncScanVideoIPC } from '../../ambiverts/video';
+import { scanMusicIPC, syncScanMusicIPC } from '../../ambiverts/music';
+import { scanImageIPC, syncScanImageIPC } from '../../ambiverts/image';
+import { getMediaOfTypeIPC, syncMediaDatabaseIPC } from '../../ambiverts/media';
 import { logger } from '../../../utility/logger';
 import type { FileInfo, MediaType, MediaDir } from "../../../types/media";
 
@@ -9,7 +9,7 @@ export async function fetchMediaTree(mediaType: MediaType, paths: string[], sync
     let allDirs: MediaDir[] = [];
     for (const path of paths) {
         try {
-            const dirs = sync ? await syncMediaDatabaseFromBackend(path, mediaType) : await getMediaOfTypeFromBackend(path, mediaType);
+            const dirs = sync ? await syncMediaDatabaseIPC(path, mediaType) : await getMediaOfTypeIPC(path, mediaType);
             allDirs = [...allDirs, ...dirs];
         } catch (err) {
             logger.error(`Failed to fetch media tree for ${mediaType} from ${path}`, err);
@@ -25,11 +25,11 @@ export async function fetchFlatMedia(mediaType: MediaType, paths: string[], sync
         try {
             let files: FileInfo[] = [];
             if (mediaType === 'video') {
-                files = sync ? await syncScanVideo(path) : await scanVideo(path);
+                files = sync ? await syncScanVideoIPC(path) : await scanVideoIPC(path);
             } else if (mediaType === 'music') {
-                files = sync ? await syncScanMusic(path) : await scanMusic(path);
+                files = sync ? await syncScanMusicIPC(path) : await scanMusicIPC(path);
             } else if (mediaType === 'image') {
-                files = sync ? await syncScanImage(path) : await scanImage(path);
+                files = sync ? await syncScanImageIPC(path) : await scanImageIPC(path);
             }
             allFiles = [...allFiles, ...files];
         } catch (err) {

@@ -1,11 +1,31 @@
-import { invoke } from '@tauri-apps/api/core';
-import { CMD_GET_MEDIA_OF_TYPE, CMD_SYNC_MEDIA_DATABASE } from '../../constants/commands';
+import { invoke } from "@tauri-apps/api/core";
+import { logger } from "../../utility/logger";
 import type { MediaDir, MediaType } from "../../types/media";
 
-export async function getMediaOfTypeFromBackend(path: string, mediaType: MediaType): Promise<MediaDir[]> {
-    return invoke<MediaDir[]>(CMD_GET_MEDIA_OF_TYPE, { path, mediaType });
+/*
+dusty::api::media::get_media_of_type,
+dusty::api::media::sync_media_database,
+*/
+
+const CMD_GET_MEDIA_OF_TYPE = 'get_media_of_type';
+const CMD_SYNC_MEDIA_DATABASE = 'sync_media_database';
+
+export async function getMediaOfTypeIPC(path: string, mediaType: MediaType): Promise<MediaDir[]> {
+    try {
+        let result = await invoke<MediaDir[]>(CMD_GET_MEDIA_OF_TYPE, { path, mediaType });
+        return result;
+    } catch (error) {
+        logger.error(`getMediaOfTypeIPC error: ${error}`);
+        return [];
+    }
 }
 
-export async function syncMediaDatabaseFromBackend(path: string, mediaType: MediaType): Promise<MediaDir[]> {
-    return invoke<MediaDir[]>(CMD_SYNC_MEDIA_DATABASE, { path, mediaType });
+export async function syncMediaDatabaseIPC(path: string, mediaType: MediaType): Promise<MediaDir[]> {
+    try {
+        let result = await invoke<MediaDir[]>(CMD_SYNC_MEDIA_DATABASE, { path, mediaType });
+        return result;
+    } catch (error) {
+        logger.error(`syncMediaDatabaseIPC error: ${error}`);
+        return [];
+    }
 }

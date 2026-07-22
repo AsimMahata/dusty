@@ -1,38 +1,43 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
 import type { VideoItem } from "../../types/media";
-export const CMD_GET_RECENT_VIEW_VIDEOS = "get_recent_episodes";
-export const CMD_PUT_EPISODE_IN_RECENT = "add_recent_episode";
-export const CMD_RESET_RECENT_EPISODES_TABLE = "reset_recent_episodes_table";
 
-export async function getRecentViewedEpisodesDB(): Promise<VideoItem[]> {
+/*
+dusty::api::recent::get_recent_episodes,
+dusty::api::recent::add_recent_episode,
+dusty::api::recent::reset_recent_episodes_table,
+*/
+
+const CMD_GET_RECENT_VIEW_VIDEOS = 'get_recent_episodes';
+const CMD_PUT_EPISODE_IN_RECENT = 'add_recent_episode';
+const CMD_RESET_RECENT_EPISODES_TABLE = 'reset_recent_episodes_table';
+
+export async function getRecentViewedEpisodesIPC(): Promise<VideoItem[]> {
     try {
-        return await invoke(CMD_GET_RECENT_VIEW_VIDEOS);
-    } catch (err) {
-        logger.error("Failed to get recent view videos", err);
+        let result = await invoke<VideoItem[]>(CMD_GET_RECENT_VIEW_VIDEOS);
+        return result;
+    } catch (error) {
+        logger.error(`getRecentViewedEpisodesIPC error: ${error}`);
         return [];
     }
 }
 
-export async function putEpisodeInRecentDB(video: VideoItem): Promise<boolean> {
+export async function putEpisodeInRecentIPC(video: VideoItem): Promise<boolean> {
     try {
-        await invoke(CMD_PUT_EPISODE_IN_RECENT, {
-            video: video
-        });
-        logger.info("Added episode to recent", video);
-        return true;
-    } catch (err) {
-        logger.error("Failed to put episode in recent", err);
+        let result = await invoke<boolean>(CMD_PUT_EPISODE_IN_RECENT, { video: video });
+        return result;
+    } catch (error) {
+        logger.error(`putEpisodeInRecentIPC error: ${error}`);
         return false;
     }
 }
 
-export async function resetRecentEpisodesTableDB(): Promise<boolean> {
+export async function resetRecentEpisodesTableIPC(): Promise<boolean> {
     try {
-        await invoke(CMD_RESET_RECENT_EPISODES_TABLE);
-        return true;
-    } catch (err) {
-        logger.error("Failed to reset recent episodes table", err);
+        let result = await invoke<boolean>(CMD_RESET_RECENT_EPISODES_TABLE);
+        return result;
+    } catch (error) {
+        logger.error(`resetRecentEpisodesTableIPC error: ${error}`);
         return false;
     }
 }

@@ -1,5 +1,5 @@
 
-import { getRecentViewedEpisodesDB, putEpisodeInRecentDB } from "../../ambiverts/recent";
+import { getRecentViewedEpisodesIPC, putEpisodeInRecentIPC } from "../../ambiverts/recent";
 import { logger } from "../../../utility/logger";
 import type { VideoItem } from "../../../types/media";
 import type { RecentEpisode } from "../../../types/home";
@@ -8,7 +8,7 @@ import type { ShowResult } from "../../../types/shows";
 
 export async function getRecentViewedEpisodes(): Promise<RecentEpisode[]> {
     try {
-        const recentVideos: VideoItem[] = await getRecentViewedEpisodesDB();
+        const recentVideos: VideoItem[] = await getRecentViewedEpisodesIPC();
         return recentVideos.map(video => ({
             show: video.show,
             episode: {
@@ -27,7 +27,7 @@ export async function getRecentViewedEpisodes(): Promise<RecentEpisode[]> {
 
 export async function putEpisodeInRecent(show: ShowResult, episode: FileInfo) {
     try {
-        await putEpisodeInRecentDB({
+        await putEpisodeInRecentIPC({
             show: show,
             episode: episode
         });

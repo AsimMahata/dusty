@@ -1,62 +1,71 @@
-import { invoke } from '@tauri-apps/api/core';
-import { logger } from '../../utility/logger';
-import { 
-    CMD_SCAN_PROJECTS, 
-    CMD_SYNC_SCAN_PROJECTS, 
-    CMD_UPDATE_PROJECT_PIN_STATUS, 
-    CMD_UPDATE_PROJECT_STATUS,
-    CMD_UPDATE_PROJECT_TAGS,
-    CMD_SCAN_PROJECT_TAGS
-} from '../../constants/commands';
+import { invoke } from "@tauri-apps/api/core";
+import { logger } from "../../utility/logger";
 import type { Project, ProjectStatus } from "../../types/projects";
 
-export const getProjectsFromBackend = async (sync: boolean = false): Promise<Project[]> => {
+/*
+dusty::api::project::scan_projects,
+dusty::api::project::sync_scan_projects,
+dusty::api::project::update_project_pin_status,
+dusty::api::project::update_project_status,
+dusty::api::project::update_project_tags,
+dusty::api::project::scan_project_tags,
+*/
+
+const CMD_UPDATE_PROJECT_PIN_STATUS = 'update_project_pin_status';
+const CMD_UPDATE_PROJECT_STATUS = 'update_project_status';
+const CMD_UPDATE_PROJECT_TAGS = 'update_project_tags';
+const CMD_SCAN_PROJECT_TAGS = 'scan_project_tags';
+
+const CMD_SCAN_PROJECTS = 'scan_projects';
+const CMD_SYNC_SCAN_PROJECTS = 'sync_scan_projects';
+
+export async function getProjectsIPC(sync: boolean = false): Promise<Project[]> {
     try {
         const command = sync ? CMD_SYNC_SCAN_PROJECTS : CMD_SCAN_PROJECTS;
-        return await invoke(command);
-    } catch (err) {
-        logger.error("Failed to fetch projects from backend", err);
-        throw err;
+        let result = await invoke<Project[]>(command);
+        return result;
+    } catch (error) {
+        logger.error(`getProjectsIPC error: ${error}`);
+        return [];
     }
-};
+}
 
-export const updateProjectPinStatusOnBackend = async (id: string, pinned: boolean): Promise<boolean> => {
+export async function updateProjectPinStatusIPC(id: string, pinned: boolean): Promise<boolean> {
     try {
-        await invoke(CMD_UPDATE_PROJECT_PIN_STATUS, { id, pinned });
-        return true;
-    } catch (err) {
-        logger.error(`Failed to toggle project pin on backend: ${String(err)}`);
-        throw err;
+        let result = await invoke<boolean>(CMD_UPDATE_PROJECT_PIN_STATUS, { id, pinned });
+        return result;
+    } catch (error) {
+        logger.error(`updateProjectPinStatusIPC error: ${error}`);
+        return false;
     }
-};
+}
 
-export const updateProjectStatusOnBackend = async (id: string, status: ProjectStatus): Promise<boolean> => {
+export async function updateProjectStatusIPC(id: string, status: ProjectStatus): Promise<boolean> {
     try {
-        await invoke(CMD_UPDATE_PROJECT_STATUS, { id, status });
-        return true;
-    } catch (err) {
-        logger.error(`Failed to update project progress status on backend: ${String(err)}`);
-        throw err;
+        let result = await invoke<boolean>(CMD_UPDATE_PROJECT_STATUS, { id, status });
+        return result;
+    } catch (error) {
+        logger.error(`updateProjectStatusIPC error: ${error}`);
+        return false;
     }
-};
+}
 
-export const updateProjectTagsOnBackend = async (id: string, tags: string[]): Promise<boolean> => {
+export async function updateProjectTagsIPC(id: string, tags: string[]): Promise<boolean> {
     try {
-        await invoke(CMD_UPDATE_PROJECT_TAGS, { id, tags });
-        return true;
-    } catch (err) {
-        logger.error(`Failed to update project tags: ${String(err)}`);
-        throw err;
+        let result = await invoke<boolean>(CMD_UPDATE_PROJECT_TAGS, { id, tags });
+        return result;
+    } catch (error) {
+        logger.error(`updateProjectTagsIPC error: ${error}`);
+        return false;
     }
-};
+}
 
-export const scanProjectTagsOnBackend = async (project: Project): Promise<string[]> => {
+export async function scanProjectTagsIPC(project: Project): Promise<string[]> {
     try {
-        const tags:string[] = await invoke(CMD_SCAN_PROJECT_TAGS, { project });
-        logger.info(`Project tags: ${JSON.stringify(tags,null,2)}`);
-        return tags;
-    } catch (err) {
-        logger.error(`Failed to scan project tags: ${String(err)}`);
-        throw err;
+        let result = await invoke<string[]>(CMD_SCAN_PROJECT_TAGS, { project });
+        return result;
+    } catch (error) {
+        logger.error(`scanProjectTagsIPC error: ${error}`);
+        return [];
     }
-};
+}

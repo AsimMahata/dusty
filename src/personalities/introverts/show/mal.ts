@@ -1,4 +1,4 @@
-import { getAnimeInfoFromMalDB, addAnimeInfoToMalDB } from "../../ambiverts/mal";
+import { getAnimeInfoFromMalIPC, addAnimeInfoToMalIPC } from "../../ambiverts/mal";
 import { getAnimeInfoFromMalApi } from "../../extroverts/show/mal";
 import { logger } from "../../../utility/logger";
 import { COLORS } from "../../../constants/color";
@@ -9,13 +9,13 @@ export async function getAnimeInfoFromMal(id: number | null): Promise<string | n
     if (!id) {
         return null;
     }
-    let result: string | null = await getAnimeInfoFromMalDB(id);
+    let result: string | null = await getAnimeInfoFromMalIPC(id);
     if (!result) {
         try {
             result = await getAnimeInfoFromMalApi(id);
             if (result) {
                 try {
-                    await addAnimeInfoToMalDB(id, result);
+                    await addAnimeInfoToMalIPC(id, result);
                     logger.info("MAL_INFO_API_TO_DB_SUCCESS", id);
                 } catch (err) {
                     logger.error("MAL_INFO_API_TO_DB_FAILED", err);

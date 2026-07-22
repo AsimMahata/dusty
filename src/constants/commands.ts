@@ -33,6 +33,7 @@ export const CMD_TOKENIZE = "tokenize";
 
 // Media & Scanning
 export const CMD_SCAN_ZIP = "scan_zip";
+export const CMD_SYNC_SCAN_ZIP = "sync_scan_zip";
 
 export const CMD_SCAN_EMPTY_DIR = "scan_empty_dir";
 export const CMD_GET_MEDIA_OF_TYPE = "get_media_of_type";

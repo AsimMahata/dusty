@@ -1,5 +1,5 @@
-import { getSystemInfoFromBackend } from '../../ambiverts/system';
-import { getOverviewStatsFromBackend } from '../../ambiverts/overview';
+import { getSystemInfoIPC } from '../../ambiverts/system';
+import { getOverviewStatsIPC } from '../../ambiverts/overview';
 import { logger } from '../../../utility/logger';
 import type { StorageInfo, OverviewStats } from "../../../types/system";
 import type { HomeDashboardData } from "../../../types/home";
@@ -17,11 +17,11 @@ export async function fetchHomeDashboardData(): Promise<HomeDashboardData> {
 
     try {
         const [info, backendStats] = await Promise.all([
-            getSystemInfoFromBackend().catch(e => {
+            getSystemInfoIPC().catch(e => {
                 logger.error("Failed to get system info", e);
                 return null;
             }),
-            getOverviewStatsFromBackend().catch(e => {
+            getOverviewStatsIPC().catch(e => {
                 logger.error("Failed to get overview stats", e);
                 return null;
             })

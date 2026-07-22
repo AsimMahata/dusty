@@ -1,9 +1,9 @@
-import { revealInFileExplorer, openInVsCodeOnBackend } from '../../ambiverts/filesystem';
+import { revealInFileExplorerIPC, openInVsCodeIPC } from '../../ambiverts/filesystem';
 import { logger } from '../../../utility/logger';
 
 export const openFileInExplorer = async (path: string): Promise<boolean> => {
     try {
-        const success = await revealInFileExplorer(path);
+        const success = await revealInFileExplorerIPC(path);
         if (success) {
             logger.info(`Opened file in explorer: ${path}`);
         }
@@ -16,7 +16,7 @@ export const openFileInExplorer = async (path: string): Promise<boolean> => {
 
 export const openInVsCode = async (path: string): Promise<boolean> => {
     try {
-        const success = await openInVsCodeOnBackend(path);
+        const success = await openInVsCodeIPC(path);
         if (success) {
             logger.info(`Opened in VS Code: ${path}`);
         }
