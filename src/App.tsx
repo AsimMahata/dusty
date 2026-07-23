@@ -43,8 +43,8 @@ function App() {
     return (
         <div className="app-container">
             <RouteTracker />
-            <Toaster 
-                position="top-center" 
+            <Toaster
+                position="top-center"
                 toastOptions={{
                     style: {
                         background: 'var(--bg-card)',

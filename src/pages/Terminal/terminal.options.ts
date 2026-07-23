@@ -1,10 +1,22 @@
-import { ITerminalOptions } from "@xterm/xterm"
+import type { ITerminalOptions } from "@xterm/xterm"
 
-export interface Tab {
+export interface TerminalTab {
     id: string;
     name: string;
     active: boolean;
+    shell?: string;
 }
+
+export const getShellExecutable = (shellName?: string): string => {
+    if (!shellName) return 'pwsh.exe';
+    const s = shellName.toLowerCase().trim();
+    if (s === 'wt') return 'pwsh.exe'; // Do not use wt for pty
+    if (s === 'pwsh') return 'pwsh.exe';
+    if (s === 'powershell') return 'powershell.exe';
+    if (s === 'cmd') return 'cmd.exe';
+    if (s.endsWith('.exe')) return s;
+    return `${s}.exe`;
+};
 export type TerminalOptions = {
     cwd?: string,
     cols: number,
@@ -39,9 +51,7 @@ export const terminalTheme = {
 // terminal.constants.ts
 
 export const terminalFontFamily =
-    '"Cascadia Code","AnonymicePro Nerd Font","Fira Code",Consolas,"Courier New",monospace'
-
-
+    '"Cascadia Code NF", "Cascadia Mono NF", "JetBrainsMono Nerd Font", "FiraCode Nerd Font", "MesloLGS NF", "AnonymicePro Nerd Font", "Symbols Nerd Font", "Nerd Fonts Symbols Non-Mono", "Segoe UI Emoji", "Segoe UI Symbol", "Apple Color Emoji", "Noto Color Emoji", "Cascadia Code", Consolas, monospace';
 
 export const xtermOptions: ITerminalOptions = {
     theme: terminalTheme,
@@ -51,6 +61,8 @@ export const xtermOptions: ITerminalOptions = {
     letterSpacing: 0,
     cursorBlink: true,
     cursorStyle: 'block',
+    customGlyphs: true,
+    drawBoldTextInBrightColors: true,
     scrollback: 10000,
     allowProposedApi: true
 }

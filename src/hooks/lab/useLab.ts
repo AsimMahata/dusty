@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LAB_TABS, type LabTab } from '../../pages/lab/constants/constants';
+import { LAB_TABS } from '../../pages/lab/constants/constants';
 
 export const useLab = () => {
     const [activeTabId, setActiveTabId] = useState<string>(LAB_TABS[0].id);

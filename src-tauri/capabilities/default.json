@@ -8,9 +8,20 @@
   "permissions": [
     "core:default",
     "http:default",
+    "pty:default",
     {
       "identifier": "http:default",
-      "allow": [{ "url": "https://**" }, { "url": "http://**" }, { "url": "https://imdb.iamidiotareyoutoo.com/*" }]
+      "allow": [
+        {
+          "url": "https://**"
+        },
+        {
+          "url": "http://**"
+        },
+        {
+          "url": "https://imdb.iamidiotareyoutoo.com/*"
+        }
+      ]
     }
   ]
 }

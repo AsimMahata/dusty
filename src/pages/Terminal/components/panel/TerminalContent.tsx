@@ -1,110 +1,117 @@
-import React, { useState, useEffect, useRef } from 'react';
-import type { TerminalTab } from '../../constants/types';
-
-interface TerminalContentProps {
-    tab: TerminalTab;
-    executeCommand: (id: string, cmd: string) => void;
-    clearHistory: (id: string) => void;
+import { Terminal } from "@xterm/xterm"
+import { FitAddon } from '@xterm/addon-fit';
+import "@xterm/xterm/css/xterm.css"
+import { spawn } from "tauri-pty";
+import { useEffect, useRef } from "react";
+import { xtermOptions, getShellExecutable, type TerminalTab } from "../../terminal.options";
+import { logger } from "../../../../utility/logger";
+export interface TerminalContentProps {
+    tab: TerminalTab
 }
+export const TerminalContent: React.FC<TerminalContentProps> = ({ tab }) => {
+    const termRef = useRef<HTMLDivElement>(null);
+    const handleFitRef = useRef<() => void>(() => {});
 
-export const TerminalContent: React.FC<TerminalContentProps> = ({
-    tab,
-    executeCommand,
-    clearHistory,
-}) => {
-    const [inputVal, setInputVal] = useState('');
-    const [historyIndex, setHistoryIndex] = useState<number | null>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    // Scroll to bottom when history changes
     useEffect(() => {
-        if (containerRef.current) {
-            containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        if (tab.active) {
+            requestAnimationFrame(() => {
+                handleFitRef.current();
+            });
         }
-        setHistoryIndex(null); // Reset command history index on new prompt
-    }, [tab.history]);
+    }, [tab.active]);
 
-    const handleFormSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const trimmed = inputVal.trim();
-        if (trimmed) {
-            executeCommand(tab.id, trimmed);
-            setInputVal('');
-        }
-    };
+    useEffect(() => {
+        if (!termRef.current) return;
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            if (tab.commandHistory.length === 0) return;
+        let isMounted = true;
+        let pty: any = null;
+        let dataSub: any = null;
+        let exitSub: any = null;
+        let termDataSub: any = null;
+        let termResizeSub: any = null;
+        let resizeObserver: ResizeObserver | null = null;
 
-            let nextIndex = historyIndex;
-            if (nextIndex === null) {
-                nextIndex = tab.commandHistory.length - 1;
-            } else if (nextIndex > 0) {
-                nextIndex -= 1;
+        const term = new Terminal({
+            ...xtermOptions,
+            convertEol: true,
+        });
+        const fitAddon = new FitAddon();
+
+        term.open(termRef.current);
+        term.loadAddon(fitAddon);
+
+        const initPty = async () => {
+            const targetShell = getShellExecutable(tab.shell);
+            pty = await spawn(targetShell, [], {
+                cols: term.cols || 80,
+                rows: term.rows || 24,
+            });
+
+            if (!isMounted) {
+                try { pty?.kill(); } catch (e) {}
+                return;
             }
 
-            setHistoryIndex(nextIndex);
-            setInputVal(tab.commandHistory[nextIndex]);
-        } else if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            if (tab.commandHistory.length === 0 || historyIndex === null) return;
+            const handleFit = () => {
+                try {
+                    fitAddon.fit();
+                    if (term.cols && term.rows && term.cols > 0 && term.rows > 0 && pty?.resize) {
+                        pty.resize(term.cols, term.rows);
+                    }
+                } catch (err){
+                    // ignore fit errors during hidden/unmount states
+                    console.error(err)
+                }
+            };
 
-            let nextIndex = historyIndex + 1;
-            if (nextIndex >= tab.commandHistory.length) {
-                setHistoryIndex(null);
-                setInputVal('');
-            } else {
-                setHistoryIndex(nextIndex);
-                setInputVal(tab.commandHistory[nextIndex]);
+            handleFitRef.current = handleFit;
+
+            resizeObserver = new ResizeObserver(() => {
+                handleFit();
+            });
+
+            if (termRef.current) {
+                resizeObserver.observe(termRef.current);
             }
-        }
-    };
 
-    // Auto-focus input on clicking anywhere in terminal body
-    const handleContainerClick = () => {
-        if (inputRef.current) {
-            inputRef.current.focus();
-        }
-    };
+            requestAnimationFrame(() => {
+                handleFit();
+            });
 
-    const displayCwd = tab.cwd.split('\\').pop() || tab.cwd;
+            dataSub = pty.onData((data: string) => { term.write(data); });
+            exitSub = pty.onExit(({ exitCode }: { exitCode: number }) => { term.write(`\r\n\r\nProgram exit: ${exitCode}`); });
+            termDataSub = term.onData(data => pty?.write?.(data));
+            termResizeSub = term.onResize(e => pty?.resize?.(e.cols, e.rows));
+        };
+
+        initPty();
+
+        return () => {
+            isMounted = false;
+            resizeObserver?.disconnect();
+            dataSub?.dispose?.();
+            exitSub?.dispose?.();
+            termDataSub?.dispose?.();
+            termResizeSub?.dispose?.();
+            try {
+                pty?.kill();
+            } catch (e) {
+                // ignore cleanup errors
+            }
+            term.dispose();
+            logger.info("TERMINAL_DESTROYED");
+        };
+    }, []);
 
     return (
-        <div 
-            className="simulated-terminal-container" 
-            ref={containerRef}
-            onClick={handleContainerClick}
-        >
-            <div className="terminal-history">
-                {tab.history.map((line, idx) => (
-                    <pre key={idx} className="simulated-terminal-line">
-                        {line}
-                    </pre>
-                ))}
-            </div>
-
-            <form onSubmit={handleFormSubmit} className="simulated-terminal-prompt-row">
-                <span className="simulated-terminal-prompt">
-                    dusty@user:{displayCwd} $
-                </span>
-                <input
-                    ref={inputRef}
-                    type="text"
-                    className="simulated-terminal-input"
-                    value={inputVal}
-                    onChange={(e) => setInputVal(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    autoComplete="off"
-                    autoCorrect="off"
-                    autoCapitalize="off"
-                    spellCheck={false}
-                    autoFocus
-                />
-            </form>
-        </div>
+        <div
+            ref={termRef}
+            className="terminal-content-wrapper"
+            style={{
+                visibility: tab.active ? "visible" : "hidden",
+                pointerEvents: tab.active ? "auto" : "none",
+            }}
+        />
     );
 };
 export default TerminalContent;
