@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
+const timeFormatter = new Intl.DateTimeFormat('en-GB', {
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false
+});
+
 export const Clock: React.FC = () => {
   const [time, setTime] = useState(new Date());
 
@@ -11,11 +17,7 @@ export const Clock: React.FC = () => {
   }, []);
 
   const formatTime = (date: Date) => {
-    return new Intl.DateTimeFormat('en-GB', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    }).format(date);
+    return timeFormatter.format(date);
   };
 
   return <div className="home-time">{formatTime(time)}</div>;

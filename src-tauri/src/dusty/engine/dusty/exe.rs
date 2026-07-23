@@ -1,10 +1,10 @@
 use std::{fs, path::PathBuf};
 
+use mime_guess::mime;
+
 use crate::dusty::{
-    data::file::FileInfo,
-    utility::info::{
-        check_for_bad_sibling, get_all_valid_source_path, is_forbidden_folder,
-        is_hidden, is_root,
+    data::file::FileInfo, utility::info::{
+        check_for_bad_sibling, get_all_valid_source_path, get_file_type, is_forbidden_folder, is_hidden, is_root,
     },
 };
 
@@ -71,8 +71,8 @@ pub fn dfs_executables_scanner(path: &PathBuf, executables: &mut Vec<FileInfo>, 
 }
 
 pub fn is_exe_file(path: &PathBuf) -> bool {
-    if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
-        return ext.eq_ignore_ascii_case("exe");
+    if let Some(guess) = get_file_type(path){
+        return guess.eq(&mime::PDF);
     }
     false
 }

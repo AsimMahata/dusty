@@ -12,8 +12,6 @@ import type { FileInfo, MediaDir, MediaType } from "../../types/media";
 import type { Tab } from "../../types/tabs";
 import type { Item } from "../../types/core";
 
-// Cache removed in favor of backend cache
-
 export const useMedia = (title: string, mediaType: MediaType, defaultPaths: string[] = DEFAULT_STARTING_PATHS) => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
     const [isItemSelected, setIsItemSelected] = useState<boolean>(false);

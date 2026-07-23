@@ -1,18 +1,14 @@
 import React from 'react';
-import { MORE_OPTIONS_ICON } from '../../../../constants/icons';
+import { MovingTitle } from '../../../../../ui/MovingTitle';
 
 interface MediaSourceCardHeaderProps {
     title: string;
-    onMenuClick: (e: React.MouseEvent) => void;
 }
 
-export const MediaSourceCardHeader: React.FC<MediaSourceCardHeaderProps> = ({ title, onMenuClick }) => {
+export const MediaSourceCardHeader: React.FC<MediaSourceCardHeaderProps> = ({ title }) => {
     return (
-        <div className="media-source-header">
-            <h3 className="media-source-title">{title}</h3>
-            <button className="media-source-menu-btn" onClick={onMenuClick}>
-                {MORE_OPTIONS_ICON}
-            </button>
+        <div className="media-source-card-header">
+            <MovingTitle title={title} maxLength={25} />
         </div>
     );
 };

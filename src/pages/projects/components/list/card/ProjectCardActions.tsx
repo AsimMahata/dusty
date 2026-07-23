@@ -6,11 +6,12 @@ import type { Project } from "../../../../../types/projects";
 interface ProjectCardActionsProps {
     project: Project;
     onClick: (project: Project) => void;
+    onOpen?: (project: Project) => void;
     onOpenVSCode?: (e: React.MouseEvent, project: Project) => void;
 }
 
-export const ProjectCardActions: React.FC<ProjectCardActionsProps> = ({ project, onClick, onOpenVSCode }) => {
-    const actions = useMemo(() => getProjectCardActions(onClick, onOpenVSCode), [onClick, onOpenVSCode]);
+export const ProjectCardActions: React.FC<ProjectCardActionsProps> = ({ project, onClick, onOpen, onOpenVSCode }) => {
+    const actions = useMemo(() => getProjectCardActions(onClick, onOpen, onOpenVSCode), [onClick, onOpen, onOpenVSCode]);
 
     return (
         <div className="project-card-actions">

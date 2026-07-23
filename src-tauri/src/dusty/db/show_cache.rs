@@ -18,7 +18,7 @@ pub fn create_show_cache_table(db: &Connection) -> Result<(), String> {
 
 pub fn add_to_show_cache_in_db(db: &Connection, id: String, data: String) -> Result<(), String> {
     db.execute(
-        "INSERT INTO show_cache (id, data) VALUES (?1, ?2)",
+        "INSERT OR REPLACE INTO show_cache (id, data) VALUES (?1, ?2)",
         params![id, data],
     )
     .map_err(|err| err.to_string())?;

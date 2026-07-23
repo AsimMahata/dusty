@@ -59,6 +59,7 @@ export const COLORS = {
         AUDIO: '#ef5350',
         VIDEO: '#ab47bc',
         ARCHIVE: '#ffb300',
+        PDF: BASE.RED,
         DEFAULT: '#a0a0a0',
     },
     TRANSPARENT: {

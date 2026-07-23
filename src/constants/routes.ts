@@ -8,7 +8,9 @@ export const ROUTES = {
     IMAGES: "/images",
     MISC: "/misc",
     ZIP: "/zip",
+    PDF: "/pdf",
     LAB: "/lab",
     TODO: "/todo",
     SETTINGS: "/settings"
 } as const;
+

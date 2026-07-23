@@ -4,12 +4,14 @@ import { ProjectCardCover } from './ProjectCardCover';
 import { ProjectCardHeader } from './ProjectCardHeader';
 import { ProjectCardTags } from './ProjectCardTags';
 import { ProjectCardActions } from './ProjectCardActions';
+import { ProjectCardThreeDot } from './ProjectCardThreeDot';
 import type { Project } from "../../../../../types/projects";
 
 interface ProjectCardProps {
     project: Project;
     isSelected: boolean;
     onClick: (project: Project) => void;
+    onOpen?: (project: Project) => void;
     onOpenVSCode?: (e: React.MouseEvent, project: Project) => void;
     onThreeDotClick?: (e: React.MouseEvent, project: Project) => void;
     style?: React.CSSProperties;
@@ -19,6 +21,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
     project,
     isSelected,
     onClick,
+    onOpen,
     onOpenVSCode,
     onThreeDotClick,
     style
@@ -32,16 +35,17 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
             style={{ ...style, borderBottom: `2px solid ${projectStatus.color}` }}
         >
             <ProjectCardCover project={project} />
+            <ProjectCardThreeDot project={project} onThreeDotClick={onThreeDotClick} />
 
             <div className="project-card-info">
-                <ProjectCardHeader project={project} onThreeDotClick={onThreeDotClick} />
+                <ProjectCardHeader project={project} />
                 <ProjectCardTags project={project} />
 
                 <div className="project-card-meta">
                     <span>Updated {project.last_modified || "Today"}</span>
                 </div>
 
-                <ProjectCardActions project={project} onClick={onClick} onOpenVSCode={onOpenVSCode} />
+                <ProjectCardActions project={project} onClick={onClick} onOpen={onOpen} onOpenVSCode={onOpenVSCode} />
             </div>
         </div>
     );

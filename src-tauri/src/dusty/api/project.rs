@@ -1,9 +1,10 @@
+use log::logger;
 use rusqlite::Connection;
 
 use crate::dusty::data::project::{Project, Tag};
 use crate::dusty::data::state::AppState;
 use crate::dusty::db::project::{
-    add_projects_in_db, get_project_cache_from_db, get_project_info_from_db,
+    add_projects_in_db, clear_project_cache, get_project_cache_from_db, get_project_info_from_db,
     reset_project_table_in_db, update_project_pin_status_in_db, update_project_status_in_db,
     update_project_tags_in_db,
 };
@@ -43,6 +44,9 @@ pub fn scan_projects_using_cache(db: &Connection, cache: bool) -> Vec<Project> {
         }
         logger::info!("PROJECT_CACHE_IS_EMPTY", cached_project.len());
     }
+    
+    clear_project_cache(db).ok();
+    logger::info!("PROJECT_CACHE_CLEARED", "PROJECT_CACHE_CLEARED");
     let projects = scan_all_projects();
     add_projects_in_db(&db, &projects)
         .map_err(|err| logger::error!("ADD_PROJECTS_IN_DB_FAILED", err))

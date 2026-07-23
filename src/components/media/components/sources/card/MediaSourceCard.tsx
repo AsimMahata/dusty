@@ -8,6 +8,7 @@ import { MediaSourceCardTags } from './tags/MediaSourceCardTags';
 import { MediaSourceCardMeta } from './info/MediaSourceCardMeta';
 import { generateExtSideBarGradient } from '../../../../../utility/gradient';
 import { getExtensionColor } from '../../../../../constants/mediaExtensions';
+import { MORE_OPTIONS_ICON } from '../../../constants/icons';
 import '../../../css/MediaSources.css';
 import type { MediaSourceItem, MediaSourceCategory } from "../../../../../types/media";
 
@@ -42,6 +43,13 @@ export const MediaSourceCard: React.FC<MediaSourceCardProps> = ({
             onClick={() => onOpen(item)}
             style={{ '--hover-border-bg': hoverBorderBg, '--hover-color': hoverColor } as React.CSSProperties}
         >
+            <button 
+                className="media-source-menu-btn" 
+                onClick={handleMenuClick}
+            >
+                {MORE_OPTIONS_ICON}
+            </button>
+
             <div className="media-source-card-inner">
                 <MediaPinButton 
                     isPinned={isPinned} 
@@ -53,7 +61,6 @@ export const MediaSourceCard: React.FC<MediaSourceCardProps> = ({
                 <MediaSourceCardInfo>
                     <MediaSourceCardHeader 
                         title={item.title} 
-                        onMenuClick={handleMenuClick} 
                     />
                     <MediaSourceCardTags 
                         extensions={extensions} 

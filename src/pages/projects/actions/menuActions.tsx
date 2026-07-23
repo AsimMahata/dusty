@@ -1,15 +1,15 @@
-
-import { logger } from '../../../utility/logger';
-import { openInVsCode } from '../../../personalities/introverts/filesystem/filesystem';
-import { 
+import { openFileInExplorer, openInVsCode } from '../../../personalities/introverts/filesystem/filesystem';
+import { openTerminal } from '../../../personalities/introverts/terminal/terminal';
+import {
     PROJECT_MENU_STAR_ICON, PROJECT_MENU_STAR_FILLED_ICON,
-    PROJECT_MENU_STATUS_ICON, PROJECT_MENU_EXPLORER_ICON, 
-    PROJECT_MENU_TERMINAL_ICON, PROJECT_MENU_VSCODE_ICON, 
-    PROJECT_MENU_GITHUB_ICON, PROJECT_MENU_TAGS_ICON, 
-    PROJECT_MENU_RENAME_ICON, PROJECT_MENU_DELETE_ICON 
+    PROJECT_MENU_STATUS_ICON, PROJECT_MENU_EXPLORER_ICON,
+    PROJECT_MENU_TERMINAL_ICON, PROJECT_MENU_VSCODE_ICON,
+    PROJECT_MENU_GITHUB_ICON, PROJECT_MENU_TAGS_ICON,
+    PROJECT_MENU_RENAME_ICON, PROJECT_MENU_DELETE_ICON
 } from '../../../constants/icon';
 import type { Project } from "../../../types/projects";
 import type { ContextMenuItem } from "../../../types/projects";
+import { openProjectGithub } from '../../../personalities/introverts/projects/projects';
 export const getProjectContextMenuItems = (
     project: Project,
     onClose: () => void,
@@ -34,12 +34,12 @@ export const getProjectContextMenuItems = (
         {
             icon: PROJECT_MENU_EXPLORER_ICON,
             label: "Reveal in Explorer",
-            onClick: () => { logger.todo(`Reveal in Explorer for project: ${project.title}`); onClose(); }
+            onClick: () => { void openFileInExplorer(project.path); onClose(); }
         },
         {
             icon: PROJECT_MENU_TERMINAL_ICON,
             label: "Open Terminal",
-            onClick: () => { logger.todo(`Open Terminal for project: ${project.title}`); onClose(); }
+            onClick: () => { void openTerminal(project.path); onClose(); }
         },
         {
             icon: PROJECT_MENU_VSCODE_ICON,
@@ -49,7 +49,7 @@ export const getProjectContextMenuItems = (
         {
             icon: PROJECT_MENU_GITHUB_ICON,
             label: "Open GitHub",
-            onClick: () => { logger.todo(`Open GitHub for project: ${project.title}`); onClose(); }
+            onClick: () => { void openProjectGithub(project.git_info); onClose(); }
         },
         { separator: true },
         {

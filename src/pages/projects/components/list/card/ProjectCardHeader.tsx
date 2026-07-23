@@ -1,14 +1,12 @@
 import React from 'react';
 import { GIT_STATUS, PROJECT_STATUS } from '../../../../../constants/projectStatus';
-import { ProjectCardThreeDot } from './ProjectCardThreeDot';
 import type { Project } from "../../../../../types/projects";
 
 interface ProjectCardHeaderProps {
     project: Project;
-    onThreeDotClick?: (e: React.MouseEvent, project: Project) => void;
 }
 
-export const ProjectCardHeader: React.FC<ProjectCardHeaderProps> = ({ project, onThreeDotClick }) => {
+export const ProjectCardHeader: React.FC<ProjectCardHeaderProps> = ({ project }) => {
     //BUG:: fix this thing 
     const gitStatus = GIT_STATUS.getDefinition('none');
     const projectStatus = PROJECT_STATUS.getDefinition(project.status);
@@ -33,7 +31,6 @@ export const ProjectCardHeader: React.FC<ProjectCardHeaderProps> = ({ project, o
                 >
                     {gitStatus.icon}
                 </span>
-                <ProjectCardThreeDot project={project} onThreeDotClick={onThreeDotClick} />
             </div>
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { useMedia } from '../../../../hooks/media/useMedia';
 import { MediaSourceSortBar } from './MediaSourceSortBar';
 import { MediaSourceGrid } from './grid/MediaSourceGrid';
@@ -7,6 +7,7 @@ import '../../css/MediaSources.css';
 import type { MediaDir } from "../../../../types/media";
 import type { MediaSortMethod } from "../../../../types/media";
 import type { MediaSourceItem } from "../../../../types/media";
+import { getSortMethodMediaSourcesPage, getDefaultSourcesSortMethod, setSortMethodMediaSourcesPage, getSortAscendingMediaSourcesPage, getDefaultSourcesSortAscending, setSortAscendingMediaSourcesPage } from '../../../../session/media/sort';
 
 interface MediaSourcesPageProps {
     media: ReturnType<typeof useMedia>;
@@ -25,9 +26,34 @@ const getExtensionsForDir = (dir: MediaDir): string[] => {
 };
 
 export const MediaSourcesPage: React.FC<MediaSourcesPageProps> = ({ media }) => {
-    const [sortMethod, setSortMethod] = useState<MediaSortMethod>('title');
-    const [sortAscending, setSortAscending] = useState<boolean>(true);
+    const [sortMethod, setSortMethodState] = useState<MediaSortMethod>(getDefaultSourcesSortMethod());
+    const [sortAscending, setSortAscendingState] = useState<boolean>(getDefaultSourcesSortAscending());
     const [randomSeed, setRandomSeed] = useState<number>(Math.random());
+
+    async function fetchSessionData() {
+        try {
+            const method = await getSortMethodMediaSourcesPage();
+            setSortMethodState(method);
+        } catch (e) {}
+        try {
+            const ascending = await getSortAscendingMediaSourcesPage();
+            setSortAscendingState(ascending);
+        } catch (e) {}
+    }
+
+    useEffect(() => {
+        fetchSessionData();
+    }, []);
+
+    const setSortMethod = (method: MediaSortMethod) => {
+        setSortMethodState(method);
+        void setSortMethodMediaSourcesPage(method);
+    };
+
+    const setSortAscending = (ascending: boolean) => {
+        setSortAscendingState(ascending);
+        void setSortAscendingMediaSourcesPage(ascending);
+    };
     
     // In a real app we might persist pins to storage. 
     // Here we'll just keep it in state for the session or assume user handles it if added later.

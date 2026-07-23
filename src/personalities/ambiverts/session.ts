@@ -16,7 +16,10 @@ export async function getValueBySessionIdIPC(id: string): Promise<string> {
         let result = await invoke<string>(CMD_GET_VALUE_BY_SESSION_ID, { id });
         return result;
     } catch (error) {
-        logger.error(`getValueBySessionIdIPC error: ${error}`);
+        const errStr = String(error);
+        if (!errStr.includes("Session not found")) {
+            logger.error(`getValueBySessionIdIPC error: ${error}`);
+        }
         throw error;
     }
 }

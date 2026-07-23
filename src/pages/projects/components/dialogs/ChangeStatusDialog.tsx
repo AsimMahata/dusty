@@ -19,7 +19,7 @@ export const ChangeStatusDialog: React.FC<ChangeStatusDialogProps> = ({ project,
                 <h2 className="modal-title">Change Status for {project.title}</h2>
                 <div className="modal-message">Select the current workflow status of this project.</div>
                 
-                <div className="tags-dialog-list">
+                <div className="status-dialog-list">
                     {statuses.map(status => {
                         const isSelected = project.status === status.id;
                         return (

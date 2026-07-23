@@ -1,17 +1,17 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ChunkList } from '../../../../components/bazar/ChunkList';
 import { BazarBreadcrumbs } from '../../../../components/bazar/BazarBreadcrumbs';
 import { ICONS } from '../../../../constants/icon';
 import { EXE_FILES_TITLE, EXE_FILES_DESC } from '../../constants/constants';
 import { sortChunks, type MiscSortMode } from '../../actions/sortChunks';
 import { ExeSortBar } from './ExeSortBar';
-import type { useBazarTab } from '../../../../hooks/bazar/useBazarTab';
+import { useExeTab } from '../../../../hooks/misc/useExeTab';
 import type { useMisc } from '../../../../hooks/misc/useMisc';
 import type { Chunk, BazarAction } from '../../../../types/bazar';
 import type { ExecutableDir } from '../../../../types/exe';
+import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../../../session/misc/sort';
 
 interface ExeFilesTabProps {
-    tab: ReturnType<typeof useBazarTab>;
     misc: ReturnType<typeof useMisc>;
 }
 
@@ -31,17 +31,34 @@ const getExeDirTags = (dir: ExecutableDir): string[] => {
     return Array.from(extSet);
 };
 
-export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ tab, misc }) => {
-    const [sortMode, setSortMode] = useState<MiscSortMode>('size');
+export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ misc }) => {
+    const tab = useExeTab(misc);
+    const [sortMode, setSortModeState] = useState<MiscSortMode>(getDefaultSortMode());
+
+    async function fetchSessionData() {
+        try {
+            const mode = await getSortModeMiscPage();
+            setSortModeState(mode);
+        } catch (e) {}
+    }
+
+    useEffect(() => {
+        fetchSessionData();
+    }, []);
+
+    const setSortMode = (mode: MiscSortMode) => {
+        setSortModeState(mode);
+        void setSortModeMiscPage(mode);
+    };
 
     // Build folder chunks and file chunks for current directory level
     const currentChunks: Chunk[] = useMemo(() => {
         const folderChunks: (Chunk & { rawDir?: ExecutableDir })[] = [];
         const fileChunks: Chunk[] = [];
 
-        if (misc.currentDir) {
+        if (tab.currentDir) {
             // Inside a directory
-            for (const childDir of misc.currentDir.childs) {
+            for (const childDir of tab.currentDir.childs) {
                 const folderName = childDir.path.split(/[/\\]/).filter(Boolean).pop() || childDir.path;
                 folderChunks.push({
                     id: childDir.id,
@@ -55,7 +72,7 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ tab, misc }) => {
                     rawDir: childDir,
                 });
             }
-            for (const file of misc.currentDir.files) {
+            for (const file of tab.currentDir.files) {
                 fileChunks.push({
                     id: file.id,
                     name: file.name,
@@ -67,8 +84,8 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ tab, misc }) => {
             }
         } else {
             // At Root level: display top-level root folders
-            const rootDirs = misc.exeTree.filter(dir => 
-                !misc.exeTree.some(other => 
+            const rootDirs = tab.exeTree.filter(dir => 
+                !tab.exeTree.some(other => 
                     other.id !== dir.id && 
                     (dir.path.startsWith(other.path + '/') || dir.path.startsWith(other.path + '\\'))
                 )
@@ -89,13 +106,13 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ tab, misc }) => {
                 });
             }
             // Add root executables
-            for (const chunk of tab.visibleChunks) {
+            for (const chunk of tab.chunks) {
                 fileChunks.push(chunk);
             }
         }
 
         return [...folderChunks, ...fileChunks];
-    }, [misc.currentDir, misc.exeTree, tab.visibleChunks]);
+    }, [tab.currentDir, tab.exeTree, tab.chunks]);
 
     // Apply search filtering if query exists
     const filteredChunks = useMemo(() => {
@@ -118,9 +135,9 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ tab, misc }) => {
     const handleItemClick = (chunk: Chunk) => {
         const rawDir = (chunk as any).rawDir as ExecutableDir | undefined;
         if (rawDir) {
-            misc.handleFolderClick(rawDir);
+            tab.handleFolderClick(rawDir);
         } else {
-            tab.getChunkActions(chunk)[0]?.onClick();
+            tab.openChunk(chunk);
         }
     };
 
@@ -130,19 +147,27 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ tab, misc }) => {
             return [
                 {
                     label: 'Open Folder',
-                    onClick: () => misc.handleFolderClick(rawDir),
+                    onClick: () => tab.handleFolderClick(rawDir),
                 }
             ];
         }
         return tab.getChunkActions(chunk);
     };
 
+    if (tab.isLoading) {
+        return (
+            <div style={{ display: 'flex', height: '100%', minHeight: '200px', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '1.1rem' }}>
+                Loading...
+            </div>
+        );
+    }
+
     return (
         <div className="exe-files-tab">
             <BazarBreadcrumbs
-                path={misc.currentDir?.path}
-                canGoBack={misc.canGoBack}
-                onGoBack={misc.goBack}
+                path={tab.currentDir?.path}
+                canGoBack={tab.canGoBack}
+                onGoBack={tab.goBack}
             >
                 <ExeSortBar sortMode={sortMode} onSortChange={setSortMode} />
             </BazarBreadcrumbs>

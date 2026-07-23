@@ -17,8 +17,12 @@ export async function getSortMethodShowPage(): Promise<ShowSortMethod> {
         let sortMethod: ShowSortMethod = JSON.parse(res);
         return sortMethod;
     } catch (e) {
+        const errStr = String(e);
+        if (errStr.includes("Session not found")) {
+            return getDefaultSortMethod();
+        }
         logger.error(`getSortMethodShowPage error: ${e}`);
-        throw e;
+        return getDefaultSortMethod();
     }
 }
 
@@ -38,8 +42,12 @@ export async function getSortAscendingShowPage(): Promise<boolean> {
         let sortAscending: boolean = JSON.parse(res);
         return sortAscending;
     } catch (e) {
+        const errStr = String(e);
+        if (errStr.includes("Session not found")) {
+            return getDefaultSortAscending();
+        }
         logger.error(`getSortAscendingShowPage error: ${e}`);
-        throw e;
+        return getDefaultSortAscending();
     }
 }
 

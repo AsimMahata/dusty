@@ -1,25 +1,25 @@
-import { scanExeIPC, syncScanExeIPC, scanExeTreeIPC, syncScanExeTreeIPC, resetExeCacheTableIPC } from '../../ambiverts/exe';
+import { scanMiscIPC, syncScanMiscIPC, scanMiscTreeIPC, syncScanMiscTreeIPC, resetMiscCacheIPC } from '../../ambiverts/misc';
 import type { FileInfo } from "../../../types/media";
 import type { ExecutableDir } from "../../../types/exe";
 
 export async function scanExe(sync: boolean = false): Promise<FileInfo[]> {
     if (sync) {
-        return await syncScanExeIPC();
+        return await syncScanMiscIPC("exe");
     }
-    return await scanExeIPC();
+    return await scanMiscIPC("exe");
 }
 
 export async function scanExeTree(sync: boolean = false): Promise<ExecutableDir[]> {
     if (sync) {
-        return await syncScanExeTreeIPC();
+        return await syncScanMiscTreeIPC<ExecutableDir>("exe");
     }
-    return await scanExeTreeIPC();
+    return await scanMiscTreeIPC<ExecutableDir>("exe");
 }
 
 export async function syncScanExe(): Promise<FileInfo[]> {
-    return await syncScanExeIPC();
+    return await syncScanMiscIPC("exe");
 }
 
 export async function resetExeCacheTable(): Promise<void> {
-    await resetExeCacheTableIPC();
+    await resetMiscCacheIPC("exe");
 }

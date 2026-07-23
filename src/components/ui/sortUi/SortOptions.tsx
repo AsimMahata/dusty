@@ -6,8 +6,8 @@ import type { Coordinates, SortOption } from "../../../types/ui";
 
 interface SortOptionsProps {
     sortMethod: string;
-    sortAscending: boolean;
-    setSortAscending: (asc: boolean) => void;
+    sortAscending?: boolean;
+    setSortAscending?: (asc: boolean) => void;
     handleSortChange: (method: string) => void;
     options: SortOption[];
     defaultSortMethodLabel?: string;
@@ -32,11 +32,13 @@ export const SortOptions: React.FC<SortOptionsProps> = ({
                     setSortMenuPos={setSortMenuPos} 
                     sortLabel={getSortLabel()} 
                 />
-                <SortArrowButton 
-                    sortMethod={sortMethod} 
-                    sortAscending={sortAscending} 
-                    setSortAscending={setSortAscending} 
-                />
+                {setSortAscending && sortAscending !== undefined && (
+                    <SortArrowButton 
+                        sortMethod={sortMethod} 
+                        sortAscending={sortAscending} 
+                        setSortAscending={setSortAscending} 
+                    />
+                )}
             </div>
             {sortMenuPos && (
                 <ContextMenu 

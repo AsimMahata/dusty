@@ -3,13 +3,35 @@ import { useCommon } from '../useCommon';
 import type { TodoItem, SortMethod, SortDirection } from '../../types/todo';
 import { fetchTodos, createTodo, updateTodo, deleteTodo } from '../../utility/todoStorage';
 import { PRIORITY_LEVELS } from '../../constants/todo';
+import { getSortMethodTodoPage, getDefaultSortMethod, setSortMethodTodoPage, getSortDirectionTodoPage, getDefaultSortDirection, setSortDirectionTodoPage } from '../../session/todo/sort';
 
 export const useTodo = () => {
     const common = useCommon();
     const [todos, setTodos] = useState<TodoItem[]>([]);
     const [activeCategory, setActiveCategory] = useState<string>('all');
-    const [sortMethod, setSortMethod] = useState<SortMethod>('created');
-    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+    const [sortMethod, setSortMethodState] = useState<SortMethod>(getDefaultSortMethod());
+    const [sortDirection, setSortDirectionState] = useState<SortDirection>(getDefaultSortDirection());
+
+    async function fetchSessionData() {
+        try {
+            const method = await getSortMethodTodoPage();
+            setSortMethodState(method);
+        } catch (e) {}
+        try {
+            const direction = await getSortDirectionTodoPage();
+            setSortDirectionState(direction);
+        } catch (e) {}
+    }
+
+    const setSortMethod = (method: SortMethod) => {
+        setSortMethodState(method);
+        void setSortMethodTodoPage(method);
+    };
+
+    const setSortDirection = (direction: SortDirection) => {
+        setSortDirectionState(direction);
+        void setSortDirectionTodoPage(direction);
+    };
 
     const loadTodos = async () => {
         common.setIsLoading(true);
@@ -30,6 +52,7 @@ export const useTodo = () => {
     };
 
     useEffect(() => {
+        fetchSessionData();
         loadTodos();
     }, []);
 

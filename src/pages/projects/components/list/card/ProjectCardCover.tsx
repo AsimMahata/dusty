@@ -12,8 +12,8 @@ export const ProjectCardCover: React.FC<ProjectCardCoverProps> = ({ project }) =
         <>
             {project.pinned && <div className="project-card-pin-indicator">{PROJECT_PINNED_STAR_ICON_16}</div>}
             {project.cover_image ? (
-                <div 
-                    className="project-card-cover" 
+                <div
+                    className="project-card-cover"
                     style={{ backgroundImage: `url(${project.cover_image})` }}
                 />
             ) : (

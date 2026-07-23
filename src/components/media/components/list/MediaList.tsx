@@ -8,6 +8,8 @@ import type { BaseItem, AnyItem } from "../../../../types/core";
 import type { MediaSortMode } from "../../../../types/media";
 import type { SortOption } from '../../../../types/ui';
 
+import { getSortModeMediaListPage, getDefaultListSortMode, setSortModeMediaListPage } from '../../../../session/media/sort';
+
 interface MediaListProps<T extends BaseItem = AnyItem> {
     tab: TabHook<T>;
 }
@@ -29,8 +31,24 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
     const onCardClick = tab.onCardClick;
     const getCardActions = tab.getCardActions;
 
-    const [sortMode, setSortMode] = useState<MediaSortMode>('name');
+    const [sortMode, setSortModeState] = useState<MediaSortMode>(getDefaultListSortMode());
     const [visibleCount, setVisibleCount] = useState(VISIBLE_COUNT);
+
+    async function fetchSessionData() {
+        try {
+            const mode = await getSortModeMediaListPage();
+            setSortModeState(mode);
+        } catch (e) {}
+    }
+
+    React.useEffect(() => {
+        fetchSessionData();
+    }, []);
+
+    const setSortMode = (mode: MediaSortMode) => {
+        setSortModeState(mode);
+        void setSortModeMediaListPage(mode);
+    };
 
     const query = searchQuery.toLowerCase();
 

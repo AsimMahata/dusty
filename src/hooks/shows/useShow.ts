@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useCommon } from '../useCommon';
 import { fetchShows, updateBanStatus as updateBanStatusIntrovert, updateShowStatus as updateShowStatusIntrovert, updateShowTitle as updateShowTitleIntrovert, toggleShowPin as toggleShowPinIntrovert } from '../../personalities/introverts/show/shows';
 import { openFile } from '../../personalities/introverts/filesystem/filesystem';
-import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY, TABS } from '../../pages/shows/constants/constants';
+import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY } from '../../pages/shows/constants/constants';
 import { logger } from '../../utility/logger';
 import { DEFAULT_STARTING_PATHS } from '../../constants/defaults';
 import { LABELS } from '../../constants/labels';

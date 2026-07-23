@@ -44,7 +44,6 @@ pub fn scan_show_using_cached(db: &Connection, root: &PathBuf, cache: bool) -> V
         }
     }
     let shows = scan_for_shows_with_seasons(&db, &root);
-    reset_show_table_in_db(&db).ok();
     reset_show_cache_table_in_db(&db).ok();
     add_shows_in_db(&db, &shows).ok();
     return shows;

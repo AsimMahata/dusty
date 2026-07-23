@@ -31,7 +31,7 @@ pub fn add_to_anime_in_db(
 ) -> Result<(), String> {
     let anime_id = get_sha256_id(title.clone(), mal_id.to_string());
     db.execute(
-        "INSERT INTO anime (id, mal_id, title, num_episodes, season, airing) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+        "INSERT OR REPLACE INTO anime (id, mal_id, title, num_episodes, season, airing) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
         params![anime_id, mal_id, title, num_episodes, season, airing],
     )
     .map_err(|err| {

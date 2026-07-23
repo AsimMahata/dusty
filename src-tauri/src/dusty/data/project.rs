@@ -324,16 +324,42 @@ pub struct ProjectInfo {
     pub tags: Vec<Tag>,
 }
 
+const FRAMEWORK_PRIORITY: &[Framework] = &[
+    Framework::NextJs,
+    Framework::NestJs,
+    Framework::Tauri,
+    Framework::Electron,
+    Framework::Astro,
+    Framework::SolidJs,
+    Framework::Svelte,
+    Framework::Vue,
+    Framework::Angular,
+    Framework::React,
+    Framework::Flutter,
+    Framework::SpringBoot,
+    Framework::DotNet,
+    Framework::Laravel,
+    Framework::Rails,
+    Framework::Django,
+    Framework::FastApi,
+    Framework::Flask,
+    Framework::Express,
+];
+
 impl Project {
     pub fn get_framework(&self) -> Framework {
         self.project_type
             .clone()
             .filter(|framework| framework != &Framework::Unknown)
             .or_else(|| {
-                self.tags
+                FRAMEWORK_PRIORITY
                     .iter()
-                    .map(|tag| Framework::from_value(tag.as_str()))
-                    .find(|framework| framework != &Framework::Unknown)
+                    .find(|&framework| {
+                        self.tags.iter().any(|tag| {
+                            &Framework::from_value(tag.as_str()) == framework
+                        })
+                    })
+                    .cloned()
             })
             .unwrap_or_default()
     }

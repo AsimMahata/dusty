@@ -8,7 +8,7 @@ import {
     Check,
     Folder,
     Star, FolderOpen, Globe, MoreVertical,
-    ArrowUp, CircleDot, Terminal, Tags, Pencil, Trash2,
+    ArrowUp, CircleDot, Terminal, Tags, Pencil, Trash2, BookOpen,
     Tag, CheckSquare, Square, AlertCircle, ClipboardList, ListTodo, Plus, ChevronDown, ArrowDown,
     Settings, Database, Search
 } from "lucide-react";
@@ -38,6 +38,7 @@ export const ICONS = {
         VIDEO: <FileVideo size={18} color={COLORS.ICON.VIDEO} />,
         ARCHIVE: <FileArchive size={20} color={COLORS.ICON.ARCHIVE} />,
         ARCHIVE_OPEN: <PackageOpen size={20} color={COLORS.ICON.ARCHIVE} />,
+        PDF: <FileText size={18} color={COLORS.ICON.PDF} />,
         FOLDER_EMPTY: <FolderX size={20} color={COLORS.ICON.FOLDER} />,
         DEFAULT: <LucideFile size={20} color={COLORS.ICON.DEFAULT} />,
     },
@@ -87,6 +88,7 @@ export const NAV_MUSIC_ICON = <MusicIcon size={20} />
 export const NAV_VIDEOS_ICON = <Film size={20} />
 export const NAV_IMAGES_ICON = <ImageIcon size={20} />
 export const NAV_ZIP_ICON = <Archive size={20} />
+export const NAV_PDF_ICON = <BookOpen size={20} />
 export const NAV_MISC_ICON = <Box size={20} />
 
 // Action Icons (16px)

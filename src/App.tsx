@@ -14,6 +14,7 @@ import { Videos } from "./pages/videos/Videos";
 import { Images } from "./pages/images/Images";
 import { Misc } from "./pages/misc/Misc";
 import { ZipPage } from "./pages/zip/ZipPage";
+import { PdfPage } from "./pages/pdf/PdfPage";
 import { LabPage } from "./pages/lab/LabPage";
 import { SettingsPage } from "./pages/settings/SettingsPage";
 import { TodoPage } from "./pages/todo/TodoPage";
@@ -55,6 +56,7 @@ function App() {
                     <Route path={ROUTES.IMAGES} element={<Images />} />
                     <Route path={ROUTES.MISC} element={<Misc />} />
                     <Route path={ROUTES.ZIP} element={<ZipPage />} />
+                    <Route path={ROUTES.PDF} element={<PdfPage />} />
                     <Route path={ROUTES.LAB} element={<LabPage />} />
                     <Route path={ROUTES.TODO} element={<TodoPage />} />
                     <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />

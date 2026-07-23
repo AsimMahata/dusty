@@ -1,6 +1,5 @@
 pub mod anime;
 pub mod empty_dir;
-pub mod exe;
 pub mod file_system;
 pub mod git;
 pub mod image;
@@ -19,4 +18,6 @@ pub mod system;
 pub mod table;
 pub mod utility;
 pub mod video;
-pub mod zip;
+pub mod terminal;
+pub mod misc;
+

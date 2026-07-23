@@ -24,7 +24,7 @@ pub fn add_show_in_db(db: &Connection, show: &ShowResult) -> Result<(), String> 
 fn add_in_show_table(db: &Connection, show: &ShowResult) -> Result<()> {
     db.execute(
         "
-        INSERT INTO shows (id, title, dir, status, banned, pinned, mal_id, airing)
+        INSERT OR IGNORE INTO shows (id, title, dir, status, banned, pinned, mal_id, airing)
         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
         ",
         params![

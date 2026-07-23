@@ -10,6 +10,7 @@ pub struct Stats {
     pub videos: Option<usize>,
     pub images: Option<usize>,
     pub zips: Option<usize>,
+    pub pdfs: Option<usize>,
     pub empty_dir: Option<usize>,
 }
 
@@ -23,6 +24,7 @@ pub fn get_stats(state: tauri::State<AppState>) -> Result<Stats, String> {
         videos: get_video_stats(&db),
         images: get_image_stats(&db),
         zips: get_zip_stats(&db),
+        pdfs: get_pdf_stats(&db),
         empty_dir: get_empty_dir_stats(&db),
     })
 }
@@ -80,9 +82,12 @@ pub fn get_image_stats(db: &Connection) -> Option<usize> {
     get_flat_media_stats(db, "flat_image")
 }
 
-pub fn get_zip_stats(_db: &Connection) -> Option<usize> {
-    logger::info!("TODO GET_ZIP_STATS", 0);
-    None
+pub fn get_zip_stats(db: &Connection) -> Option<usize> {
+    db.query_row("SELECT COUNT(*) FROM zip_cache", [], |row| row.get(0)).ok()
+}
+
+pub fn get_pdf_stats(db: &Connection) -> Option<usize> {
+    db.query_row("SELECT COUNT(*) FROM pdf_cache", [], |row| row.get(0)).ok()
 }
 
 pub fn get_empty_dir_stats(_db: &Connection) -> Option<usize> {

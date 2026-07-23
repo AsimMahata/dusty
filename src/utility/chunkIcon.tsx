@@ -20,7 +20,8 @@ export const getChunkFileIcon = (ext?: string): React.ReactNode => {
     else if (['js', 'jsx'].includes(lower)) icon = ICONS.FILE.JS;
     else if (['html', 'htm'].includes(lower)) icon = ICONS.FILE.HTML;
     else if (['css', 'scss', 'sass'].includes(lower)) icon = ICONS.FILE.CSS;
-    else if (['md', 'txt', 'rst', 'pdf', 'doc', 'docx'].includes(lower)) icon = ICONS.FILE.MARKDOWN;
+    else if (lower === 'pdf') icon = ICONS.FILE.PDF;
+    else if (['md', 'txt', 'rst', 'doc', 'docx'].includes(lower)) icon = ICONS.FILE.MARKDOWN;
     else if (['toml', 'ini', 'cfg', 'yaml', 'yml'].includes(lower)) icon = ICONS.FILE.CONFIG;
 
     const color = ext ? getExtensionColor(ext) : undefined;

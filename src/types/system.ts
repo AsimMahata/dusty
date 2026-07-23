@@ -61,8 +61,10 @@ export interface BackendStats {
     videos: number | null;
     images: number | null;
     zips: number | null;
+    pdfs: number | null;
     empty_dir: number | null;
 }
+
 
 
 

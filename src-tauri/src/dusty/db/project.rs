@@ -42,7 +42,7 @@ pub fn add_projects_in_db(db: &Connection, projects: &Vec<Project>) -> Result<()
 fn add_in_projects_table(db: &Connection, project: &Project) -> rusqlite::Result<()> {
     db.execute(
         "
-        INSERT INTO projects (id, title, path, project_type, pinned, status, tags)
+        INSERT OR IGNORE INTO projects (id, title, path, project_type, pinned, status, tags)
         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
         ",
         params![
@@ -58,6 +58,7 @@ fn add_in_projects_table(db: &Connection, project: &Project) -> rusqlite::Result
 
     Ok(())
 }
+
 fn add_in_project_cache_table(db: &Connection, project: &Project) -> rusqlite::Result<()> {
     let data = serde_json::to_string(project).unwrap_or_default();
     db.execute(
@@ -70,6 +71,16 @@ fn add_in_project_cache_table(db: &Connection, project: &Project) -> rusqlite::R
 
     Ok(())
 }
+
+pub fn clear_project_cache(db: &Connection) -> Result<(), String> {
+    db.execute("DELETE FROM project_cache", [])
+        .map_err(|err| {
+            logger::error!("CLEAR_PROJECT_CACHE_FAILED", err);
+            err.to_string()
+        })?;
+    Ok(())
+}
+
 pub fn get_project_cache_from_db(db: &Connection) -> Result<Vec<Project>, String> {
     let mut stmt = db
         .prepare("SELECT data FROM project_cache")
@@ -142,7 +153,7 @@ pub fn create_projects_table(db: &Connection) -> Result<(), String> {
         [],
     )
     .map_err(|err| {
-        logger::error!("CREATE_PROJECTS_TABLE_FAILED", err);
+        logger::error!("CREATE_PROJECT_CACHE_TABLE_FAILED", err);
         err.to_string()
     })?;
 

@@ -9,7 +9,7 @@ interface ProjectCardActionIconProps {
 
 export const ProjectCardActionIcon: React.FC<ProjectCardActionIconProps> = ({ project, action }) => {
     return (
-        <button 
+        <button
             className="project-card-action-icon"
             title={action.title}
             onClick={(e) => action.onClick(e, project)}

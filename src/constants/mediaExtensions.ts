@@ -34,6 +34,7 @@ export const MEDIA_EXT_COLORS: Record<string, string> = {
     exe: COLORS.BASE.CYAN,
     msi: COLORS.BASE.BLUE,
     bat: COLORS.BASE.SKY,
+    pdf: COLORS.BASE.RED,
     folder: COLORS.ICON.FOLDER || '#f59e0b',
 };
 

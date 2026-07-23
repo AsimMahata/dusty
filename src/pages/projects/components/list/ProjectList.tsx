@@ -9,7 +9,7 @@ interface ProjectListProps {
 }
 
 export const ProjectList: React.FC<ProjectListProps> = ({ projectHook }) => {
-    const { displayProjects, selectedItem, setSelectedItem, setContextMenu } = projectHook;
+    const { displayProjects, selectedItem, setSelectedItem, setContextMenu, startExploring } = projectHook;
 
     const handleThreeDotClick = (e: React.MouseEvent, project: Project) => {
         e.stopPropagation();
@@ -32,6 +32,10 @@ export const ProjectList: React.FC<ProjectListProps> = ({ projectHook }) => {
                     project={project}
                     isSelected={selectedItem?.id === project.id}
                     onClick={(p) => setSelectedItem(selectedItem?.id === p.id ? null : p)}
+                    onOpen={(p) => {
+                        setSelectedItem(p);
+                        startExploring(p.path);
+                    }}
                     onThreeDotClick={handleThreeDotClick}
                     style={{ animationDelay: `${index * 0.05}s` }}
                 />

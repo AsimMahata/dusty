@@ -12,8 +12,12 @@ export async function getIsGridLayoutShowPage(): Promise<boolean> {
         let isGridLayout: boolean = JSON.parse(res);
         return isGridLayout;
     } catch (e) {
+        const errStr = String(e);
+        if (errStr.includes("Session not found")) {
+            return getDefaultIsGridLayout();
+        }
         logger.error(`getIsGridLayoutShowPage error: ${e}`);
-        throw e;
+        return getDefaultIsGridLayout();
     }
 }
 

@@ -1,4 +1,4 @@
-import { TABS } from "../../pages/shows/constants/constants";
+ import { TABS } from "../../pages/shows/constants/constants";
 import { addOrUpdateBySessionIdIPC, getValueBySessionIdIPC } from "../../personalities/ambiverts/session";
 import type { ShowTab } from "../../types/shows";
 import { logger } from "../../utility/logger";
@@ -9,13 +9,17 @@ export function getDefaultTab():ShowTab{
 }
 
 export async function getActiveTabShowPage(): Promise<ShowTab> {
-    try{
-    let res = await getValueBySessionIdIPC(ACTIVE_SHOW_PAGE_TAB);
-    let tab:ShowTab = JSON.parse(res);
-    return tab;
-    }catch(e){
+    try {
+        let res = await getValueBySessionIdIPC(ACTIVE_SHOW_PAGE_TAB);
+        let tab: ShowTab = JSON.parse(res);
+        return tab;
+    } catch (e) {
+        const errStr = String(e);
+        if (errStr.includes("Session not found")) {
+            return getDefaultTab();
+        }
         logger.error(`getActiveTabShowPage error: ${e}`);
-        throw e;
+        return getDefaultTab();
     }
 }
 

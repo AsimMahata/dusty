@@ -3,6 +3,7 @@ import { PROJECT_BACK_ARROW_ICON, PROJECT_CLOSE_X_ICON } from '../../../../../co
 import type { ProjectHook } from "../../../../../types/projects";
 import { openInVsCode } from '../../../../../personalities/introverts/filesystem/filesystem';
 import { openProjectGithub } from '../../../../../personalities/introverts/projects/projects';
+import { openTerminal } from '../../../../../personalities/introverts/terminal/terminal';
 
 interface ProjectDetailActionsProps {
     projectHook: ProjectHook;
@@ -48,7 +49,8 @@ export const ProjectDetailActions: React.FC<ProjectDetailActionsProps> = ({
         <div className="project-banner-actions">
             <button className="project-btn primary" onClick={() => startExploring(selectedItem.path)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '90px' }}>Open</button>
             <button className="project-btn vscode" onClick={() => void openInVsCode(selectedItem.path)}>VSCode</button>
-            <button className="project-btn github" onClick={() => openProjectGithub(gitInfo)}>GitHub</button>
+            <button className="project-btn terminal" onClick={() => void openTerminal(selectedItem.path)}>Terminal</button>
+            <button className="project-btn github" onClick={() => void openProjectGithub(gitInfo)}>GitHub</button>
             <button className="project-btn tags" onClick={() => setEditingTagsProject(selectedItem)}>
                 {selectedItem.tags && selectedItem.tags.length > 0 ? "Edit Tags" : "Scan Tags"}
             </button>

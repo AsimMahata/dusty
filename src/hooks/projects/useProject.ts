@@ -4,27 +4,42 @@ import { getProjects, updateProjectPinStatus, updateProjectStatus, updateProject
 import { openFileInExplorer } from '../../personalities/introverts/filesystem/filesystem';
 import { logger } from '../../utility/logger';
 import { filterAndSortProjects } from '../../pages/projects/actions/filter';
-import { DEFAULT_SORT_OPTION } from '../../pages/projects/constants/constants';
 import type { GitInfo, Project, ProjectStatus } from "../../types/projects";
 import type { SortOption } from "../../types/projects";
 
-
-// Cache removed to rely on backend SQLite caching
+import { getSortOptionProjectsPage, getDefaultSortOption, setSortOptionProjectsPage, getSortAscendingProjectsPage, getDefaultSortAscending, setSortAscendingProjectsPage } from '../../session/projects/sort';
 
 export const useProject = () => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
     const [selectedItem, setSelectedItem] = useState<Project | null>(null);
     const [allProjects, setAllProjects] = useState<Project[]>([]);
-    const [sortOption, setSortOptionState] = useState<SortOption>(DEFAULT_SORT_OPTION);
+    const [sortOption, setSortOptionState] = useState<SortOption>(getDefaultSortOption());
+    const [sortAscending, setSortAscendingState] = useState<boolean>(getDefaultSortAscending());
+
+    async function fetchSessionData() {
+        try {
+            const option = await getSortOptionProjectsPage();
+            setSortOptionState(option);
+        } catch (e) {}
+        try {
+            const ascending = await getSortAscendingProjectsPage();
+            setSortAscendingState(ascending);
+        } catch (e) {}
+    }
 
     const setSortOption = (option: SortOption) => {
         if (option === 'git_status') {
             logger.todo('Git status sorting is not implemented yet');
         }
         setSortOptionState(option);
+        void setSortOptionProjectsPage(option);
     };
 
-    // UI states
+    const setSortAscending = (ascending: boolean) => {
+        setSortAscendingState(ascending);
+        void setSortAscendingProjectsPage(ascending);
+    };
+
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, project: Project } | null>(null);
     const [changingStatusProject, setChangingStatusProject] = useState<Project | null>(null);
     const [editingTagsProject, setEditingTagsProject] = useState<Project | null>(null);
@@ -69,8 +84,8 @@ export const useProject = () => {
     };
 
     const displayProjects = useMemo(() => {
-        return filterAndSortProjects(allProjects, searchQuery || "", sortOption);
-    }, [allProjects, searchQuery, sortOption]);
+        return filterAndSortProjects(allProjects, searchQuery || "", sortOption, sortAscending);
+    }, [allProjects, searchQuery, sortOption, sortAscending]);
 
     const fetchData = async (sync: boolean = false) => {
         setIsRefreshing(true);
@@ -88,6 +103,7 @@ export const useProject = () => {
     };
 
     useEffect(() => {
+        fetchSessionData();
         fetchData();
     }, []);
 
@@ -138,9 +154,9 @@ export const useProject = () => {
             setAllProjects(projects => projects.map(project =>
                 project.id === id ? { ...project, tags } : project
             ));
-        if (selectedItem?.id === id) {
-            setSelectedItem({ ...selectedItem, tags: tags });
-        }
+            if (selectedItem?.id === id) {
+                setSelectedItem({ ...selectedItem, tags: tags });
+            }
             logger.info(`Updated project tags for project ${id}`);
             return true;
         } catch (err) {
@@ -173,6 +189,7 @@ export const useProject = () => {
         handleRename,
         handleDelete,
         sortOption, setSortOption,
+        sortAscending, setSortAscending,
         displayProjects,
         contextMenu, setContextMenu,
         changingStatusProject, setChangingStatusProject,
