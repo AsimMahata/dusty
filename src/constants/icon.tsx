@@ -10,7 +10,8 @@ import {
     Star, FolderOpen, Globe, MoreVertical,
     ArrowUp, CircleDot, Terminal, Tags, Pencil, Trash2, BookOpen,
     Tag, CheckSquare, Square, AlertCircle, ClipboardList, ListTodo, Plus, ChevronDown, ArrowDown,
-    Settings, Database, Search
+    Settings, Database, Search,
+    TerminalIcon
 } from "lucide-react";
 import { COLORS } from './color';
 
@@ -84,6 +85,7 @@ export const ICONS = {
 export const NAV_HOME_ICON = <HomeIcon size={20} />
 export const NAV_SHOWS_ICON = <Tv size={20} />
 export const NAV_PROJECTS_ICON = <FolderGit2 size={20} />
+export const NAV_TERMINAL_ICON = <TerminalIcon size={20} />
 export const NAV_MUSIC_ICON = <MusicIcon size={20} />
 export const NAV_VIDEOS_ICON = <Film size={20} />
 export const NAV_IMAGES_ICON = <ImageIcon size={20} />

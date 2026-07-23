@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useSettings } from '../../../../contexts/SettingsContext';
 import { SETTINGS_GENERAL_ICON } from '../../../../constants/icon';
 import { getGeneralPreferencesList } from '../../actions/getGeneralPreferencesList';
 import { SettingItem } from './SettingItem';
@@ -7,7 +6,6 @@ import { getAvailableTerminalsIPC } from '../../../../personalities/ambiverts/te
 import { getValueBySessionIdIPC, addOrUpdateBySessionIdIPC } from '../../../../personalities/ambiverts/session';
 
 export const GeneralPreferences: React.FC = () => {
-    const { settings, updateSettings } = useSettings();
     const [availableTerminals, setAvailableTerminals] = useState<string[]>([]);
     const [selectedTerminal, setSelectedTerminal] = useState<string>('');
 
@@ -56,7 +54,7 @@ export const GeneralPreferences: React.FC = () => {
         }
     };
 
-    const preferencesList = getGeneralPreferencesList(settings, updateSettings);
+    const preferencesList = getGeneralPreferencesList();
 
     if (availableTerminals.length > 0) {
         preferencesList.push({

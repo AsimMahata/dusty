@@ -1,8 +1,27 @@
-import React from 'react';
-import { useDusty } from '../../../contexts/DustyContext';
+import React, { useEffect, useState } from 'react';
+import { getSystemInfo } from '../../../personalities/introverts/system/system';
+import type { SystemInfoData } from '../../../types/system';
 
 export const SystemInfoViewer: React.FC = () => {
-    const { systemData } = useDusty();
+    const [systemData, setSystemData] = useState<SystemInfoData | null>(null);
+
+    useEffect(() => {
+        let active = true;
+        async function fetchInfo() {
+            try {
+                const info = await getSystemInfo();
+                if (active) {
+                    setSystemData(info);
+                }
+            } catch (err) {
+                console.error("Failed to load system info", err);
+            }
+        }
+        fetchInfo();
+        return () => {
+            active = false;
+        };
+    }, []);
 
     if (!systemData) {
         return <div style={{ color: 'var(--text-secondary)' }}>Loading System Data...</div>;

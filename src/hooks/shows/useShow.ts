@@ -20,6 +20,7 @@ import type { ShowSortMethod, ShowTab } from "../../types/shows";
 import { getActiveTabShowPage, getDefaultTab, setActiveTabShowPage } from '../../session/show/tab';
 import { getSortMethodShowPage, getDefaultSortMethod, setSortMethodShowPage, getSortAscendingShowPage, getDefaultSortAscending, setSortAscendingShowPage } from '../../session/show/sort';
 import { getIsGridLayoutShowPage, getDefaultIsGridLayout, setIsGridLayoutShowPage } from '../../session/show/layout';
+import { CONTINUE_WATCHING_TO_SHOW_PAGE } from '../../constants/routes';
 
 
 export const useShow = () => {
@@ -127,6 +128,19 @@ export const useShow = () => {
         fetchSessionData();
         fetchData();
     }, []);
+
+    useEffect(() => {
+        if (allShows.length > 0) {
+            const activeShowId = localStorage.getItem(CONTINUE_WATCHING_TO_SHOW_PAGE);
+            if (activeShowId) {
+                const show = allShows.find(s => s.id === activeShowId);
+                if (show) {
+                    setSelectedShow(show);
+                }
+            }
+            localStorage.removeItem(CONTINUE_WATCHING_TO_SHOW_PAGE);
+        }
+    }, [allShows]);
 
 
     const handleShowOpen = (s: ShowResult) => {

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDusty } from '../../contexts/DustyContext';
 import { Search, FlaskConical, Settings, RefreshCw, X, ListTodo } from 'lucide-react';
 import { ROUTES } from '../../constants/routes';
 
@@ -39,7 +38,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   children 
 }) => {
   const navigate = useNavigate();
-  const { lastOpenedPage } = useDusty();
+  const lastOpenedPage = localStorage.getItem('last_opened_page') || '/';
 
   const displayTitle = hook?.title || propTitle || "Unknown";
   const searchQuery = hook ? hook.searchQuery : propSearchQuery;

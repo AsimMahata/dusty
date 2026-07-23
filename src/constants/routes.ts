@@ -11,6 +11,8 @@ export const ROUTES = {
     PDF: "/pdf",
     LAB: "/lab",
     TODO: "/todo",
-    SETTINGS: "/settings"
+    SETTINGS: "/settings",
+    TERMINAL: "/terminal"
 } as const;
 
+export const CONTINUE_WATCHING_TO_SHOW_PAGE = 'continue-watching-to-show-page';

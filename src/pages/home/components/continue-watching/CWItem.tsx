@@ -5,6 +5,11 @@ import { logger } from '../../../../utility/logger';
 import { RecentEpisodeTitle, RecentEpisodeSubtitle } from '../../../../components/ui/RecentEpisodeText';
 import type { RecentEpisode } from "../../../../types/home";
 import type { ShowMetaData } from "../../../../types/shows";
+import { useNavigate } from 'react-router-dom';
+import { CONTINUE_WATCHING_TO_SHOW_PAGE, ROUTES } from '../../../../constants/routes';
+import { openEpisode } from '../../../../pages/shows/actions/utility';
+
+
 
 interface CWItemProps {
     item: RecentEpisode;
@@ -17,16 +22,21 @@ export const CWItem: React.FC<CWItemProps> = ({ item }) => {
             try {
                 const meta: ShowMetaData = await getShowMetaData(item.show);
                 setMeta(meta);
-                logger.info("Show meta data", meta);
             } catch (err) {
                 logger.error("Failed to get show meta data", err);
             }
         }
         getMetaData();
     }, [item.show.mal_id]);
+    const navigate = useNavigate();
+    const continueWatchingRecentShowHandleClick = () => {
+        localStorage.setItem(CONTINUE_WATCHING_TO_SHOW_PAGE, item.show.id);
+        navigate(ROUTES.SHOWS);
+        void openEpisode(item.episode);
+    }
     return (
         <div className="cw-item">
-            <div className="cw-image-container">
+            <div className="cw-image-container" onClick={continueWatchingRecentShowHandleClick}>
                 <img src={meta?.posterUrl} alt={item.show.title} className="cw-image" />
                 <div className="cw-play-overlay">
                     <Play size={20} fill="currentColor" />

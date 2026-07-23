@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
-import { RouteTracker } from "./contexts/DustyContext";
+import { useState, useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { Sidebar } from "./components/layout/Sidebar";
 import { Home } from "./pages/home/Home";
 import { ROUTES } from "./constants/routes";
@@ -19,6 +18,20 @@ import { LabPage } from "./pages/lab/LabPage";
 import { SettingsPage } from "./pages/settings/SettingsPage";
 import { TodoPage } from "./pages/todo/TodoPage";
 import { FloatingScrollTop } from "./components/ui/FloatingScrollTop";
+import { TerminalPage } from "./pages/Terminal/TerminalPage";
+
+const RouteTracker: React.FC = () => {
+    const location = useLocation();
+
+    useEffect(() => {
+        const path = location.pathname;
+        if (path !== "/settings" && path !== "/lab" && path !== "/todo") {
+            localStorage.setItem("last_opened_page", path);
+        }
+    }, [location.pathname]);
+
+    return null;
+};
 
 function App() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -60,6 +73,7 @@ function App() {
                     <Route path={ROUTES.LAB} element={<LabPage />} />
                     <Route path={ROUTES.TODO} element={<TodoPage />} />
                     <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
+                    <Route path={ROUTES.TERMINAL} element={<TerminalPage />} />
                 </Routes>
             </main>
             <FloatingScrollTop />
