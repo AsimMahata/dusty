@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
-import type { Coordinates } from "../../../types/shows";
+import type { Coordinates } from '../../../pages/shows/types/types';
 
 interface SortLabelButtonProps {
     sortMenuPos: Coordinates | null;
@@ -10,15 +10,15 @@ interface SortLabelButtonProps {
 
 export const SortLabelButton: React.FC<SortLabelButtonProps> = ({ sortMenuPos, setSortMenuPos, sortLabel }) => {
     return (
-        <button 
+        <button
             className="show-sort-btn"
-            onClick={(e) => { 
-                e.stopPropagation(); 
+            onClick={(e) => {
+                e.stopPropagation();
                 if (sortMenuPos) {
                     setSortMenuPos(null);
                 } else {
                     const rect = e.currentTarget.getBoundingClientRect();
-                    setSortMenuPos({ x: rect.left, y: rect.bottom + 4 }); 
+                    setSortMenuPos({ x: rect.left, y: rect.bottom + 4 });
                 }
             }}
         >

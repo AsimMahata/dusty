@@ -7,14 +7,14 @@ import { HomeProvider } from './contexts/HomeContext';
 import './css/Home.css';
 
 export const Home: React.FC = () => {
-  return (
-    <HomeProvider>
-      <div className="home-dashboard">
-        <HomeHeader />
-        <HomeHero />
-        <HomeOverview />
-        <ContinueWatching />
-      </div>
-    </HomeProvider>
-  );
+    return (
+        <HomeProvider>
+            <div className="home-dashboard">
+                <HomeHeader />
+                <HomeHero />
+                <HomeOverview />
+                <ContinueWatching />
+            </div>
+        </HomeProvider>
+    );
 };

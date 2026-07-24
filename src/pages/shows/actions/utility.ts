@@ -2,8 +2,8 @@ import { openFile } from '../../../personalities/introverts/filesystem/filesyste
 import { formatBytes } from '../../../utility/util';
 import { logger } from '../../../utility/logger';
 import type { ItemCollection } from "../../../types/core";
-import type { ShowResult } from "../../../types/shows";
-import type { Episode } from "../../../types/media";
+import type { ShowResult } from '../types/types';
+import type { Episode } from "../../../components/media/types/types";
 
 export const getChildrens = async (item: ItemCollection, shows: ShowResult[]): Promise<Episode[]> => {
     const show = shows.find(show => show.id === item.id);

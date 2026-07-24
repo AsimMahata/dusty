@@ -2,7 +2,7 @@ import React from 'react';
 import { ShowGridCard } from './ShowGridCard';
 import { ShowPosterCard } from './ShowPosterCard';
 import { ShowCompactCard } from './ShowCompactCard';
-import type { useShow } from '../../../../../hooks/shows/useShow';
+import type { useShow } from '../../../hooks/useShow';
 
 interface ShowListContentProps {
     showHook: ReturnType<typeof useShow>

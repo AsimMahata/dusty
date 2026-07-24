@@ -1,5 +1,5 @@
 import { logger } from "../../utility/logger";
-import type { ShowData } from "../../types/shows";
+import type { ShowData } from '../../pages/shows/types/types';
 
 /*
 // Backend command not yet implemented

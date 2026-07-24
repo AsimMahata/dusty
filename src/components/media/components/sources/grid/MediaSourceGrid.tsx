@@ -1,7 +1,7 @@
 import React from 'react';
 import { MediaSourceCard } from '../card/MediaSourceCard';
 import '../../../css/MediaSources.css';
-import type { MediaSourceItem, MediaSourceCategory } from "../../../../../types/media";
+import type { MediaSourceItem, MediaSourceCategory } from "../../../types/types";
 
 interface MediaSourceGridProps {
     items: MediaSourceItem[];
@@ -18,7 +18,7 @@ export const MediaSourceGrid: React.FC<MediaSourceGridProps> = ({
     return (
         <div className="media-source-grid">
             {items.map(item => (
-                <MediaSourceCard 
+                <MediaSourceCard
                     key={item.id}
                     item={item}
                     extensions={extensionsMap[item.path || ''] || []}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { MediaMediaTag } from './MediaMediaTag';
-import type { MediaSourceCategory } from "../../../../../../types/media";
+import type { MediaSourceCategory } from "../../../../types/types";
 
 interface MediaSourceCardTagsProps {
     extensions: string[];

@@ -1,6 +1,6 @@
 import React from 'react';
 import { PROJECT_SORT_OPTIONS } from '../../constants/constants';
-import type { ProjectHook } from "../../../../types/projects";
+import type { ProjectHook } from '../../types/types';
 import { SortOptions } from '../../../../components/ui/sortUi/SortOptions';
 
 interface ProjectToolbarProps {

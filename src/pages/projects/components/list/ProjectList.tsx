@@ -1,8 +1,8 @@
 import React from 'react';
 import { ProjectCard } from './card/ProjectCard';
 import { ProjectEmptyState } from './ProjectEmptyState';
-import type { ProjectHook } from "../../../../types/projects";
-import type { Project } from "../../../../types/projects";
+import type { ProjectHook } from '../../types/types';
+import type { Project } from '../../types/types';
 
 interface ProjectListProps {
     projectHook: ProjectHook;
@@ -26,7 +26,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({ projectHook }) => {
 
     return (
         <div className="projects-grid">
-            {displayProjects.map((project, index) => (
+            {displayProjects.map((project: Project, index: number) => (
                 <ProjectCard
                     key={project.id}
                     project={project}

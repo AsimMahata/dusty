@@ -1,5 +1,5 @@
 import React from 'react';
-import type { useShow } from '../../../../hooks/shows/useShow';
+import type { useShow } from '../../hooks/useShow';
 import { ShowListHeader } from './header/ShowListHeader';
 import { ShowListContent } from './content/ShowListContent';
 

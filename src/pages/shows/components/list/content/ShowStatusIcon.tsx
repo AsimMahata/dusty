@@ -1,6 +1,9 @@
+import { SHOW_DEFAULT_STATUS_ICON } from '../../../constants/constants';
+import { SHOW_COMPLETED_ICON } from '../../../constants/constants';
+import { SHOW_WATCHING_ICON } from '../../../constants/constants';
 import React from 'react';
 import { SHOW_STATUS_WATCHING, SHOW_STATUS_COMPLETED } from '../../../constants/constants';
-import { SHOW_WATCHING_ICON, SHOW_COMPLETED_ICON, SHOW_DEFAULT_STATUS_ICON } from '../../../../../constants/icon';
+
 
 interface ShowStatusIconProps {
     status: string;

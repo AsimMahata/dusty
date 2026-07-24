@@ -3,14 +3,15 @@ import { FitAddon } from '@xterm/addon-fit';
 import "@xterm/xterm/css/xterm.css"
 import { spawn } from "tauri-pty";
 import { useEffect, useRef } from "react";
-import { xtermOptions, getShellExecutable, type TerminalTab } from "../../terminal.options";
+import { xtermOptions, getShellExecutable } from "../../constants/constants";
 import { logger } from "../../../../utility/logger";
+import type { TerminalTab } from "../../types/types";
 export interface TerminalContentProps {
     tab: TerminalTab
 }
 export const TerminalContent: React.FC<TerminalContentProps> = ({ tab }) => {
     const termRef = useRef<HTMLDivElement>(null);
-    const handleFitRef = useRef<() => void>(() => {});
+    const handleFitRef = useRef<() => void>(() => { });
 
     useEffect(() => {
         if (tab.active) {
@@ -48,7 +49,7 @@ export const TerminalContent: React.FC<TerminalContentProps> = ({ tab }) => {
             });
 
             if (!isMounted) {
-                try { pty?.kill(); } catch (e) {}
+                try { pty?.kill(); } catch (e) { }
                 return;
             }
 
@@ -58,7 +59,7 @@ export const TerminalContent: React.FC<TerminalContentProps> = ({ tab }) => {
                     if (term.cols && term.rows && term.cols > 0 && term.rows > 0 && pty?.resize) {
                         pty.resize(term.cols, term.rows);
                     }
-                } catch (err){
+                } catch (err) {
                     // ignore fit errors during hidden/unmount states
                     console.error(err)
                 }

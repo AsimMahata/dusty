@@ -1,6 +1,6 @@
 import { scanMiscIPC, syncScanMiscIPC, scanMiscTreeIPC, syncScanMiscTreeIPC, resetMiscCacheIPC } from '../../ambiverts/misc';
-import type { FileInfo } from "../../../types/media";
-import type { JsonDir } from "../../../types/json";
+import type { MiscDir } from "../../../pages/misc/types/types";
+import type { FileInfo } from '../../../types/core';
 
 export async function scanJson(sync: boolean = false): Promise<FileInfo[]> {
     if (sync) {
@@ -9,11 +9,11 @@ export async function scanJson(sync: boolean = false): Promise<FileInfo[]> {
     return await scanMiscIPC("json");
 }
 
-export async function scanJsonTree(sync: boolean = false): Promise<JsonDir[]> {
+export async function scanJsonTree(sync: boolean = false): Promise<MiscDir[]> {
     if (sync) {
-        return await syncScanMiscTreeIPC<JsonDir>("json");
+        return await syncScanMiscTreeIPC<MiscDir>("json");
     }
-    return await scanMiscTreeIPC<JsonDir>("json");
+    return await scanMiscTreeIPC<MiscDir>("json");
 }
 
 export async function syncScanJson(): Promise<FileInfo[]> {

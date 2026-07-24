@@ -1,10 +1,10 @@
 
 import { getRecentViewedEpisodesIPC, putEpisodeInRecentIPC } from "../../ambiverts/recent";
 import { logger } from "../../../utility/logger";
-import type { VideoItem } from "../../../types/media";
-import type { RecentEpisode } from "../../../types/home";
-import type { FileInfo } from "../../../types/media";
-import type { ShowResult } from "../../../types/shows";
+import type { VideoItem } from "../../../types/core";
+import type { FileInfo } from "../../../types/core";
+import type { ShowResult } from '../../../pages/shows/types/types';
+import type { RecentEpisode } from "../../../pages/home/types/types";
 
 export async function getRecentViewedEpisodes(): Promise<RecentEpisode[]> {
     try {

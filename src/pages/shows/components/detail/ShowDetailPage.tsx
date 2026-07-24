@@ -3,8 +3,8 @@ import { getChildrens } from '../../actions/utility';
 import { ShowDetailHero } from './ShowDetailHero';
 import { ShowEpisodesList } from './ShowEpisodesList';
 import './../../css/ShowDetailPage.css';
-import type { useShow } from '../../../../hooks/shows/useShow';
-import type { Episode } from "../../../../types/media";
+import type { useShow } from '../../hooks/useShow';
+import type { Episode } from "../../../../components/media/types/types";
 
 interface ShowDetailPageProps {
     showHook: ReturnType<typeof useShow>

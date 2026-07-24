@@ -1,12 +1,12 @@
 import React from 'react';
 import { PDF_TITLE, PDF_EMPTY_DESC } from '../../constants/constants';
 import { PdfSortBar } from './PdfSortBar';
-import type { PdfSortMode } from "../../../../types/pdf";
+import type { MiscSortMode } from "../../../misc/types/types";
 
 interface PdfHeaderProps {
     count: number;
-    sortMode: PdfSortMode;
-    onSortChange: (mode: PdfSortMode) => void;
+    sortMode: MiscSortMode;
+    onSortChange: (mode: MiscSortMode) => void;
 }
 
 export const PdfHeader: React.FC<PdfHeaderProps> = ({ count, sortMode, onSortChange }) => {

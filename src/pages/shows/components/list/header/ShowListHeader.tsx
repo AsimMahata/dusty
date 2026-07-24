@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { TABS, SORT_OPTIONS, DEFAULT_SORT_METHOD } from '../../../constants/constants';
-import type { useShow } from '../../../../../hooks/shows/useShow';
+import type { useShow } from '../../../hooks/useShow';
 import { SortOptions } from '../../../../../components/ui/sortUi/SortOptions';
 import { LayoutOptions } from './../layout/LayoutOptions';
 

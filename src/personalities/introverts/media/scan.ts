@@ -3,7 +3,8 @@ import { scanMusicIPC, syncScanMusicIPC } from '../../ambiverts/music';
 import { scanImageIPC, syncScanImageIPC } from '../../ambiverts/image';
 import { getMediaOfTypeIPC, syncMediaDatabaseIPC } from '../../ambiverts/media';
 import { logger } from '../../../utility/logger';
-import type { FileInfo, MediaType, MediaDir } from "../../../types/media";
+import type { FileInfo } from "../../../types/core";
+import type { MediaType, MediaDir } from "../../../components/media/types/types";
 
 export async function fetchMediaTree(mediaType: MediaType, paths: string[], sync: boolean = false): Promise<MediaDir[]> {
     let allDirs: MediaDir[] = [];

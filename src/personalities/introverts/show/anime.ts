@@ -2,8 +2,8 @@ import { logger } from "../../../utility/logger";
 import { getSeasonalAnimeTENRAI, searchAnimeTENRAI } from "../../extroverts/tenrai";
 import { addSeasonalAnimeIPC, getSeasonalAnimeFromIPC, getAllAnimeFromIPC } from "../../ambiverts/anime";
 import { getCouplingValueBetweenQueryAndResultTitleIPC } from "../../ambiverts/utility";
-import type { ShowResult } from "../../../types/shows";
-import type { AnimeData, ScannedAnimeData } from "../../../types/shows";
+import type { ShowResult } from '../../../pages/shows/types/types';
+import type { AnimeData, ScannedAnimeData } from '../../../pages/shows/types/types';
 
 export async function addSeasonalAnime(): Promise<boolean> {
     try {
@@ -86,10 +86,10 @@ export async function scanShowsForAnime(
             let updated = false;
             for (let index = 0; index < topResults.length; index++) {
                 const anime = topResults[index];
-                
+
                 // Fetch the similarity/coupling score from the backend utility API
                 const coupling = await getCouplingValueBetweenQueryAndResultTitleIPC(anime.title, cleanQuery) || 0;
-                
+
                 // Since coupling is similarity (1.0 is best, 0.0 is worst) and previous priority is rank (1 is best, 3 is worst),
                 // we use (1 - coupling) to align their directions so that smaller combined values represent higher priority.
                 const prevPriority = index + 1;

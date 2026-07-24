@@ -1,7 +1,7 @@
 import { logger } from "../../../utility/logger";
 import { searchShowIMDB } from "../../extroverts/imdb";
 import { addSeasonalShowIPC } from "../../ambiverts/imdb";
-import type { ShowData } from "../../../types/shows";
+import type { ShowData } from '../../../pages/shows/types/types';
 
 export async function saveSelectedShow(data: ShowData[]): Promise<boolean> {
     return await addSeasonalShowIPC(data);

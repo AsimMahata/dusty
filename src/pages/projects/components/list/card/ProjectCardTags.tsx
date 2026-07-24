@@ -1,6 +1,6 @@
 import React from 'react';
-import { PROJECT_TAGS } from '../../../../../constants/projectTags';
-import type { Project } from "../../../../../types/projects";
+import type { Project } from '../../../types/types';
+import { PROJECT_TAGS } from '../../../constants/constants';
 
 interface ProjectCardTagsProps {
     project: Project;
@@ -12,8 +12,8 @@ export const ProjectCardTags: React.FC<ProjectCardTagsProps> = ({ project }) => 
             {project.tags?.slice(0, 3).map((tagString, index) => {
                 const tag = PROJECT_TAGS.getDefinition(tagString);
                 return (
-                    <span 
-                        key={index} 
+                    <span
+                        key={index}
                         className="project-card-tag"
                         style={{ color: tag.color, backgroundColor: `${tag.color}15`, border: `1px solid ${tag.color}30` }}
                     >

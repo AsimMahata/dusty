@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
 import { ChunkItem } from '../../../bazar/ChunkItem';
 import { ICONS } from '../../../../constants/icon';
-import { getChunkFileIcon } from '../../../../utility/chunkIcon';
+import { getChunkFileIcon } from '../../../bazar/utility/chunkIcon';
 import { SortOptions } from '../../../ui/sortUi/SortOptions';
-import type { TabHook } from "../../../../types/tabs";
-import type { BaseItem, AnyItem } from "../../../../types/core";
-import type { MediaSortMode } from "../../../../types/media";
+import type { BaseItem, AnyItem, ActionItem } from "../../../../types/core";
+import type { MediaSortMode } from "../../types/types";
 import type { SortOption } from '../../../../types/ui';
 
-import { getSortModeMediaListPage, getDefaultListSortMode, setSortModeMediaListPage } from '../../../../session/media/sort';
+import { getSortModeMediaListPage, getDefaultListSortMode, setSortModeMediaListPage } from '../../session/sort';
 
-interface MediaListProps<T extends BaseItem = AnyItem> {
-    tab: TabHook<T>;
+export interface MediaListProps<T extends BaseItem = AnyItem> {
+    tab: {
+        title?: string;
+        recentItems?: T[];
+        allItems?: T[];
+        searchQuery?: string;
+        onCardClick?: (item: T) => void;
+        getCardActions?: (item: T) => ActionItem[];
+    };
 }
 export const VISIBLE_COUNT = 60;
 
@@ -38,7 +44,7 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
         try {
             const mode = await getSortModeMediaListPage();
             setSortModeState(mode);
-        } catch (e) {}
+        } catch (e) { }
     }
 
     React.useEffect(() => {
@@ -86,11 +92,11 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
 
         mapped.sort((a, b) => {
             switch (mode) {
-                case 'name':      return collator.compare(a.title, b.title);
+                case 'name': return collator.compare(a.title, b.title);
                 case 'name-desc': return collator.compare(b.title, a.title);
-                case 'size':      return b.rawSize - a.rawSize;
-                case 'size-asc':  return a.rawSize - b.rawSize;
-                case 'type':      return collator.compare(a.ext, b.ext) || collator.compare(a.title, b.title);
+                case 'size': return b.rawSize - a.rawSize;
+                case 'size-asc': return a.rawSize - b.rawSize;
+                case 'type': return collator.compare(a.ext, b.ext) || collator.compare(a.title, b.title);
             }
         });
 
@@ -162,7 +168,7 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
                 <div className="chunk-list">
                     {items.map(item => {
                         const mediaItem = item as any;
-                        
+
                         let ext = mediaItem.ext;
                         if (!ext && item.path) {
                             ext = item.path.split('.').pop() || '';

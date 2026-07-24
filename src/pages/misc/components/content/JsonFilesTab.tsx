@@ -3,21 +3,21 @@ import { ChunkList } from '../../../../components/bazar/ChunkList';
 import { BazarBreadcrumbs } from '../../../../components/bazar/BazarBreadcrumbs';
 import { ICONS } from '../../../../constants/icon';
 import { JSON_FILES_TITLE, JSON_FILES_DESC } from '../../constants/constants';
-import { sortChunks, type MiscSortMode } from '../../actions/sortChunks';
+import { sortChunks } from '../../actions/sortChunks';
 import { ExeSortBar } from './ExeSortBar'; // Reusable sort bar
-import { useJsonTab } from '../../../../hooks/misc/useJsonTab';
-import type { useMisc } from '../../../../hooks/misc/useMisc';
-import type { Chunk, BazarAction } from '../../../../types/bazar';
-import type { JsonDir } from '../../../../types/json';
-import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../../../session/misc/sort';
+import { useJsonTab } from '../../hooks/useJsonTab';
+import type { useMisc } from '../../hooks/useMisc';
+import type { Chunk, BazarAction } from '../../../../components/bazar/types/types';
+import type { MiscDir, MiscSortMode } from '../../types/types';
+import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../session/sort';
 
 interface JsonFilesTabProps {
     misc: ReturnType<typeof useMisc>;
 }
 
-const getJsonDirTags = (dir: JsonDir): string[] => {
+const getJsonDirTags = (dir: MiscDir): string[] => {
     const extSet = new Set<string>();
-    const collect = (d: JsonDir) => {
+    const collect = (d: MiscDir) => {
         for (const f of d.files) {
             if (f.ext) extSet.add(f.ext.toUpperCase());
             else extSet.add('JSON');
@@ -39,7 +39,7 @@ export const JsonFilesTab: React.FC<JsonFilesTabProps> = ({ misc }) => {
         try {
             const mode = await getSortModeMiscPage();
             setSortModeState(mode);
-        } catch (e) {}
+        } catch (e) { }
     }
 
     useEffect(() => {
@@ -53,7 +53,7 @@ export const JsonFilesTab: React.FC<JsonFilesTabProps> = ({ misc }) => {
 
     // Build folder chunks and file chunks for current directory level
     const currentChunks: Chunk[] = useMemo(() => {
-        const folderChunks: (Chunk & { rawDir?: JsonDir })[] = [];
+        const folderChunks: (Chunk & { rawDir?: MiscDir })[] = [];
         const fileChunks: Chunk[] = [];
 
         if (tab.currentJsonDir) {
@@ -84,9 +84,9 @@ export const JsonFilesTab: React.FC<JsonFilesTabProps> = ({ misc }) => {
             }
         } else {
             // At Root level: display top-level root folders
-            const rootDirs = tab.jsonTree.filter(dir => 
-                !tab.jsonTree.some(other => 
-                    other.id !== dir.id && 
+            const rootDirs = tab.jsonTree.filter((dir: MiscDir) =>
+                !tab.jsonTree.some((other: MiscDir) =>
+                    other.id !== dir.id &&
                     (dir.path.startsWith(other.path + '/') || dir.path.startsWith(other.path + '\\'))
                 )
             );
@@ -118,7 +118,7 @@ export const JsonFilesTab: React.FC<JsonFilesTabProps> = ({ misc }) => {
     const filteredChunks = useMemo(() => {
         if (!misc.searchQuery.trim()) return currentChunks;
         const q = misc.searchQuery.toLowerCase();
-        return currentChunks.filter(c => 
+        return currentChunks.filter(c =>
             c.name.toLowerCase().includes(q) || c.path.toLowerCase().includes(q)
         );
     }, [currentChunks, misc.searchQuery]);
@@ -133,7 +133,7 @@ export const JsonFilesTab: React.FC<JsonFilesTabProps> = ({ misc }) => {
     }, [filteredChunks, sortMode]);
 
     const handleItemClick = (chunk: Chunk) => {
-        const rawDir = (chunk as any).rawDir as JsonDir | undefined;
+        const rawDir = (chunk as any).rawDir as MiscDir | undefined;
         if (rawDir) {
             tab.handleJsonFolderClick(rawDir);
         } else {
@@ -142,7 +142,7 @@ export const JsonFilesTab: React.FC<JsonFilesTabProps> = ({ misc }) => {
     };
 
     const getChunkActions = (chunk: Chunk): BazarAction[] => {
-        const rawDir = (chunk as any).rawDir as JsonDir | undefined;
+        const rawDir = (chunk as any).rawDir as MiscDir | undefined;
         if (rawDir) {
             return [
                 {
@@ -168,6 +168,7 @@ export const JsonFilesTab: React.FC<JsonFilesTabProps> = ({ misc }) => {
                 path={tab.currentJsonDir?.path}
                 canGoBack={tab.canGoJsonBack}
                 onGoBack={tab.goJsonBack}
+                count={filteredChunks.filter(c => !(c as any).rawDir).length}
             >
                 <ExeSortBar sortMode={sortMode} onSortChange={setSortMode} />
             </BazarBreadcrumbs>

@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { FileInfo } from "../../types/media";
-import type { PdfDir } from "../../types/pdf";
+import type { MiscDir } from "../../pages/misc/types/types";
+import type { FileInfo } from "../../types/core";
 
 /*
 IPC Commands:
@@ -36,9 +36,9 @@ export async function syncScanPdfIPC(): Promise<FileInfo[]> {
     }
 }
 
-export async function scanPdfTreeIPC(): Promise<PdfDir[]> {
+export async function scanPdfTreeIPC(): Promise<MiscDir[]> {
     try {
-        let result = await invoke<PdfDir[]>(CMD_SCAN_PDF_TREE);
+        let result = await invoke<MiscDir[]>(CMD_SCAN_PDF_TREE);
         return result;
     } catch (error) {
         logger.error(`scanPdfTreeIPC error: ${error}`);
@@ -46,9 +46,9 @@ export async function scanPdfTreeIPC(): Promise<PdfDir[]> {
     }
 }
 
-export async function syncScanPdfTreeIPC(): Promise<PdfDir[]> {
+export async function syncScanPdfTreeIPC(): Promise<MiscDir[]> {
     try {
-        let result = await invoke<PdfDir[]>(CMD_SYNC_SCAN_PDF_TREE);
+        let result = await invoke<MiscDir[]>(CMD_SYNC_SCAN_PDF_TREE);
         return result;
     } catch (error) {
         logger.error(`syncScanPdfTreeIPC error: ${error}`);

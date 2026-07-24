@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { FileInfo } from "../../types/media";
-import type { ZipDir } from "../../types/zip";
+import type { MiscDir } from "../../pages/misc/types/types";
+import type { FileInfo } from "../../types/core";
 
 /*
 IPC Commands:
@@ -36,9 +36,9 @@ export async function syncScanZipIPC(): Promise<FileInfo[]> {
     }
 }
 
-export async function scanZipTreeIPC(): Promise<ZipDir[]> {
+export async function scanZipTreeIPC(): Promise<MiscDir[]> {
     try {
-        let result = await invoke<ZipDir[]>(CMD_SCAN_ZIP_TREE);
+        let result = await invoke<MiscDir[]>(CMD_SCAN_ZIP_TREE);
         return result;
     } catch (error) {
         logger.error(`scanZipTreeIPC error: ${error}`);
@@ -46,9 +46,9 @@ export async function scanZipTreeIPC(): Promise<ZipDir[]> {
     }
 }
 
-export async function syncScanZipTreeIPC(): Promise<ZipDir[]> {
+export async function syncScanZipTreeIPC(): Promise<MiscDir[]> {
     try {
-        let result = await invoke<ZipDir[]>(CMD_SYNC_SCAN_ZIP_TREE);
+        let result = await invoke<MiscDir[]>(CMD_SYNC_SCAN_ZIP_TREE);
         return result;
     } catch (error) {
         logger.error(`syncScanZipTreeIPC error: ${error}`);

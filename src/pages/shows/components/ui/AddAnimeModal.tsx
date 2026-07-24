@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Plus, Check } from 'lucide-react';
 import { searchAnime, saveSelectedAnime } from '../../../../personalities/introverts/show/anime';
-import type { AnimeData } from "../../../../types/shows";
+import type { AnimeData } from '../../types/types';
 
 interface AddAnimeModalProps {
     onClose: () => void;

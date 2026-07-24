@@ -1,5 +1,5 @@
 import { resetDatabase } from '../../../personalities/introverts/settings/settings';
-import type { ResetActionConfig } from "../../../types/settings";
+import type { ResetActionConfig } from "../types/types";
 
 export const getResetActions = (): ResetActionConfig[] => {
     return [

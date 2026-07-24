@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { FileInfo } from "../../types/media";
-import type { ExecutableDir } from "../../types/exe";
+import type { MiscDir } from "../../pages/misc/types/types";
+import type { FileInfo } from "../../types/core";
 
 /*
 IPC Commands:
@@ -38,9 +38,9 @@ export async function syncScanExeIPC(): Promise<FileInfo[]> {
     }
 }
 
-export async function scanExeTreeIPC(): Promise<ExecutableDir[]> {
+export async function scanExeTreeIPC(): Promise<MiscDir[]> {
     try {
-        let result = await invoke<ExecutableDir[]>(CMD_SCAN_EXE_TREE);
+        let result = await invoke<MiscDir[]>(CMD_SCAN_EXE_TREE);
         return result;
     } catch (error) {
         logger.error(`scanExeTreeIPC error: ${error}`);
@@ -48,9 +48,9 @@ export async function scanExeTreeIPC(): Promise<ExecutableDir[]> {
     }
 }
 
-export async function syncScanExeTreeIPC(): Promise<ExecutableDir[]> {
+export async function syncScanExeTreeIPC(): Promise<MiscDir[]> {
     try {
-        let result = await invoke<ExecutableDir[]>(CMD_SYNC_SCAN_EXE_TREE);
+        let result = await invoke<MiscDir[]>(CMD_SYNC_SCAN_EXE_TREE);
         return result;
     } catch (error) {
         logger.error(`syncScanExeTreeIPC error: ${error}`);

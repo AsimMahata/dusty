@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { ProjectCardActionIcon } from './ProjectCardActionIcon';
 import { getProjectCardActions } from '../../../actions/cardActions';
-import type { Project } from "../../../../../types/projects";
+import type { Project } from '../../../types/types';
 
 interface ProjectCardActionsProps {
     project: Project;

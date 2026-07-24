@@ -7,10 +7,10 @@ import { MediaSourceCardHeader } from './info/MediaSourceCardHeader';
 import { MediaSourceCardTags } from './tags/MediaSourceCardTags';
 import { MediaSourceCardMeta } from './info/MediaSourceCardMeta';
 import { generateExtSideBarGradient } from '../../../../../utility/gradient';
-import { getExtensionColor } from '../../../../../constants/mediaExtensions';
+import { getFileExtensionColor } from '../../../../../constants/color';
 import { MORE_OPTIONS_ICON } from '../../../constants/icons';
 import '../../../css/MediaSources.css';
-import type { MediaSourceItem, MediaSourceCategory } from "../../../../../types/media";
+import type { MediaSourceCategory, MediaSourceItem } from '../../../types/types';
 
 interface MediaSourceCardProps {
     item: MediaSourceItem;
@@ -24,7 +24,7 @@ interface MediaSourceCardProps {
 export const MediaSourceCard: React.FC<MediaSourceCardProps> = ({
     item, extensions, mediaType, isPinned, onOpen, onPinToggle
 }) => {
-    const [menuPos, setMenuPos] = useState<{x: number, y: number} | null>(null);
+    const [menuPos, setMenuPos] = useState<{ x: number, y: number } | null>(null);
 
     const handleMenuClick = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -35,36 +35,36 @@ export const MediaSourceCard: React.FC<MediaSourceCardProps> = ({
     const defaultColor = mediaType === 'music' ? '#d946ef' : mediaType === 'video' ? '#f97316' : '#3b82f6';
     const hoverBorderBg = generateExtSideBarGradient(extensions, defaultColor);
 
-    const hoverColor = extensions.length > 0 ? getExtensionColor(extensions[0], defaultColor) : defaultColor;
+    const hoverColor = extensions.length > 0 ? getFileExtensionColor(extensions[0], defaultColor) : defaultColor;
 
     return (
-        <div 
-            className="media-source-card" 
+        <div
+            className="media-source-card"
             onClick={() => onOpen(item)}
             style={{ '--hover-border-bg': hoverBorderBg, '--hover-color': hoverColor } as React.CSSProperties}
         >
-            <button 
-                className="media-source-menu-btn" 
+            <button
+                className="media-source-menu-btn"
                 onClick={handleMenuClick}
             >
                 {MORE_OPTIONS_ICON}
             </button>
 
             <div className="media-source-card-inner">
-                <MediaPinButton 
-                    isPinned={isPinned} 
-                    onClick={(e) => { e.stopPropagation(); onPinToggle(item); }} 
+                <MediaPinButton
+                    isPinned={isPinned}
+                    onClick={(e) => { e.stopPropagation(); onPinToggle(item); }}
                 />
 
                 <MediaSourceCardPreview item={item} />
 
                 <MediaSourceCardInfo>
-                    <MediaSourceCardHeader 
-                        title={item.title} 
+                    <MediaSourceCardHeader
+                        title={item.title}
                     />
-                    <MediaSourceCardTags 
-                        extensions={extensions} 
-                        mediaType={mediaType} 
+                    <MediaSourceCardTags
+                        extensions={extensions}
+                        mediaType={mediaType}
                     />
                     <MediaSourceCardMeta path={item.path} />
                 </MediaSourceCardInfo>

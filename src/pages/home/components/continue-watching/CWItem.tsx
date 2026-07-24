@@ -1,13 +1,14 @@
+import { CONTINUE_WATCHING_TO_SHOW_PAGE } from '../../../shows/constants/constants';
 import React, { useEffect, useState } from 'react';
 import { Play, MoreVertical } from 'lucide-react';
 import { getShowMetaData } from '../../../../personalities/introverts/show/mal';
 import { logger } from '../../../../utility/logger';
 import { RecentEpisodeTitle, RecentEpisodeSubtitle } from '../../../../components/ui/RecentEpisodeText';
-import type { RecentEpisode } from "../../../../types/home";
-import type { ShowMetaData } from "../../../../types/shows";
+import type { ShowMetaData } from '../../../shows/types/types';
 import { useNavigate } from 'react-router-dom';
-import { CONTINUE_WATCHING_TO_SHOW_PAGE, ROUTES } from '../../../../constants/routes';
+import { ROUTES } from '../../../../constants/routes';
 import { openEpisode } from '../../../../pages/shows/actions/utility';
+import type { RecentEpisode } from '../../types/types';
 
 
 

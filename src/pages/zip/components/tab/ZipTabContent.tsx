@@ -1,22 +1,22 @@
 import React, { useMemo } from 'react';
 import { ChunkList } from '../../../../components/bazar/ChunkList';
 import { BazarBreadcrumbs } from '../../../../components/bazar/BazarBreadcrumbs';
-import { useBazarTab } from '../../../../hooks/bazar/useBazarTab';
 import { ICONS } from '../../../../constants/icon';
 import { sortChunks } from '../../actions/sortChunks';
-import type { useZip } from '../../../../hooks/zip/useZip';
+import type { useZip } from '../../hooks/useZip';
 import { ZIP_TAB_EMPTY_TITLE, ZIP_TAB_EMPTY_DESC } from '../../constants/constants';
-import type { ZipSortMode, ZipDir } from "../../../../types/zip";
-import type { Chunk, BazarAction } from '../../../../types/bazar';
+import type { MiscSortMode, MiscDir } from "../../../misc/types/types";
+import type { Chunk, BazarAction } from '../../../../components/bazar/types/types';
+import { useBazarTab } from '../../../../components/bazar/hooks/useBazarTab';
 
 interface ZipTabContentProps {
     zip: ReturnType<typeof useZip>;
-    sortMode: ZipSortMode;
+    sortMode: MiscSortMode;
 }
 
-const getZipDirTags = (dir: ZipDir): string[] => {
+const getZipDirTags = (dir: MiscDir): string[] => {
     const extSet = new Set<string>();
-    const collect = (d: ZipDir) => {
+    const collect = (d: MiscDir) => {
         for (const f of d.files) {
             if (f.ext) extSet.add(f.ext.toUpperCase());
             else extSet.add('ZIP');
@@ -35,7 +35,7 @@ export const ZipTabContent: React.FC<ZipTabContentProps> = ({ zip, sortMode }) =
 
     // Build folder chunks and file chunks for current directory level
     const currentChunks: Chunk[] = useMemo(() => {
-        const folderChunks: (Chunk & { rawDir?: ZipDir })[] = [];
+        const folderChunks: (Chunk & { rawDir?: MiscDir })[] = [];
         const fileChunks: Chunk[] = [];
 
         if (zip.currentDir) {
@@ -66,8 +66,8 @@ export const ZipTabContent: React.FC<ZipTabContentProps> = ({ zip, sortMode }) =
             }
         } else {
             // At Root level: display top-level root folders
-            const rootDirs = zip.zipTree.filter(dir =>
-                !zip.zipTree.some(other =>
+            const rootDirs = zip.zipTree.filter((dir: MiscDir) =>
+                !zip.zipTree.some((other: MiscDir) =>
                     other.id !== dir.id &&
                     (dir.path.startsWith(other.path + '/') || dir.path.startsWith(other.path + '\\'))
                 )
@@ -115,7 +115,7 @@ export const ZipTabContent: React.FC<ZipTabContentProps> = ({ zip, sortMode }) =
     }, [filteredChunks, sortMode]);
 
     const handleItemClick = (chunk: Chunk) => {
-        const rawDir = (chunk as any).rawDir as ZipDir | undefined;
+        const rawDir = (chunk as any).rawDir as MiscDir | undefined;
         if (rawDir) {
             zip.handleFolderClick(rawDir);
         } else {
@@ -124,7 +124,7 @@ export const ZipTabContent: React.FC<ZipTabContentProps> = ({ zip, sortMode }) =
     };
 
     const getChunkActions = (chunk: Chunk): BazarAction[] => {
-        const rawDir = (chunk as any).rawDir as ZipDir | undefined;
+        const rawDir = (chunk as any).rawDir as MiscDir | undefined;
         if (rawDir) {
             return [
                 {

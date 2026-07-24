@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Project } from "../../../../../types/projects";
+import type { Project } from '../../../types/types';
 
 interface ProjectDetailDescriptionProps {
     project: Project;

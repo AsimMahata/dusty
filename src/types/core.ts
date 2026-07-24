@@ -1,6 +1,17 @@
 import type { ReactNode } from "react";
-import type { ProjectStatus } from "./projects";
-import type { ShowStatus } from "./shows";
+import type { ProjectStatus } from '../pages/projects/types/types';
+import type { ShowStatus } from '../pages/shows/types/types';
+import type { ShowResult } from '../pages/shows/types/types';
+
+
+export interface FileInfo {
+    id: string,
+    name: string,
+    path: string,
+    size: number,
+    ext?: string,
+    is_dir: boolean,
+}
 
 export interface ActionItem {
     label: string;
@@ -28,6 +39,11 @@ export interface Item extends BaseItem {
 }
 export type ItemStatus = ShowStatus | ProjectStatus;
 export type AnyItem = ItemCollection | Item;
+
+export interface VideoItem {
+    show: ShowResult;
+    episode: FileInfo;
+}
 
 
 

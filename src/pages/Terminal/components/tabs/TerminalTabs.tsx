@@ -1,6 +1,6 @@
 import React from 'react';
 import { Plus, X, Terminal } from 'lucide-react';
-import type { TerminalTab } from '../../terminal.options';
+import type { TerminalTab } from '../../types/types';
 
 interface TerminalTabsProps {
     tabs: TerminalTab[];

@@ -1,6 +1,6 @@
 import React from 'react';
 import { SortOptions } from '../../../../components/ui/sortUi/SortOptions';
-import type { MiscSortMode } from '../../actions/sortChunks';
+import type { MiscSortMode } from '../../types/types';
 import type { SortOption } from '../../../../types/ui';
 
 interface ExeSortBarProps {

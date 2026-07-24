@@ -1,5 +1,5 @@
 import React from 'react';
-import { useShow } from '../../../../hooks/shows/useShow';
+import { useShow } from '../../hooks/useShow';
 
 interface EditMalNumberModalProps {
     showHook: ReturnType<typeof useShow>;

@@ -1,6 +1,6 @@
 import { scanMiscIPC, syncScanMiscIPC, scanMiscTreeIPC, syncScanMiscTreeIPC } from '../../ambiverts/misc';
-import type { FileInfo } from "../../../types/media";
-import type { PdfDir } from "../../../types/pdf";
+import type { MiscDir } from "../../../pages/misc/types/types";
+import type { FileInfo } from '../../../types/core';
 
 export async function scanPdf(sync: boolean = false): Promise<FileInfo[]> {
     if (sync) {
@@ -9,9 +9,9 @@ export async function scanPdf(sync: boolean = false): Promise<FileInfo[]> {
     return await scanMiscIPC("pdf");
 }
 
-export async function scanPdfTree(sync: boolean = false): Promise<PdfDir[]> {
+export async function scanPdfTree(sync: boolean = false): Promise<MiscDir[]> {
     if (sync) {
-        return await syncScanMiscTreeIPC<PdfDir>("pdf");
+        return await syncScanMiscTreeIPC<MiscDir>("pdf");
     }
-    return await scanMiscTreeIPC<PdfDir>("pdf");
+    return await scanMiscTreeIPC<MiscDir>("pdf");
 }

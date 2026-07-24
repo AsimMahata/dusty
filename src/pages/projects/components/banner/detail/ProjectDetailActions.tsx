@@ -1,9 +1,10 @@
 import React from 'react';
-import { PROJECT_BACK_ARROW_ICON, PROJECT_CLOSE_X_ICON } from '../../../../../constants/icon';
-import type { ProjectHook } from "../../../../../types/projects";
+
+import type { ProjectHook } from '../../../types/types';
 import { openInVsCode } from '../../../../../personalities/introverts/filesystem/filesystem';
 import { openProjectGithub } from '../../../../../personalities/introverts/projects/projects';
 import { openTerminal } from '../../../../../personalities/introverts/terminal/terminal';
+import { PROJECT_BACK_ARROW_ICON, PROJECT_CLOSE_X_ICON } from '../../../constants/constants';
 
 interface ProjectDetailActionsProps {
     projectHook: ProjectHook;

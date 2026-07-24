@@ -3,21 +3,21 @@ import { ChunkList } from '../../../../components/bazar/ChunkList';
 import { BazarBreadcrumbs } from '../../../../components/bazar/BazarBreadcrumbs';
 import { ICONS } from '../../../../constants/icon';
 import { TEXT_FILES_TITLE, TEXT_FILES_DESC } from '../../constants/constants';
-import { sortChunks, type MiscSortMode } from '../../actions/sortChunks';
+import { sortChunks } from '../../actions/sortChunks';
 import { ExeSortBar } from './ExeSortBar'; // Reusable sort bar
-import { useTextTab } from '../../../../hooks/misc/useTextTab';
-import type { useMisc } from '../../../../hooks/misc/useMisc';
-import type { Chunk, BazarAction } from '../../../../types/bazar';
-import type { TextDir } from '../../../../types/text';
-import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../../../session/misc/sort';
+import { useTextTab } from '../../hooks/useTextTab';
+import type { useMisc } from '../../hooks/useMisc';
+import type { Chunk, BazarAction } from '../../../../components/bazar/types/types';
+import type { MiscDir, MiscSortMode } from '../../types/types';
+import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../session/sort';
 
 interface TextFilesTabProps {
     misc: ReturnType<typeof useMisc>;
 }
 
-const getTextDirTags = (dir: TextDir): string[] => {
+const getTextDirTags = (dir: MiscDir): string[] => {
     const extSet = new Set<string>();
-    const collect = (d: TextDir) => {
+    const collect = (d: MiscDir) => {
         for (const f of d.files) {
             if (f.ext) extSet.add(f.ext.toUpperCase());
             else extSet.add('TEXT');
@@ -39,7 +39,7 @@ export const TextFilesTab: React.FC<TextFilesTabProps> = ({ misc }) => {
         try {
             const mode = await getSortModeMiscPage();
             setSortModeState(mode);
-        } catch (e) {}
+        } catch (e) { }
     }
 
     useEffect(() => {
@@ -53,7 +53,7 @@ export const TextFilesTab: React.FC<TextFilesTabProps> = ({ misc }) => {
 
     // Build folder chunks and file chunks for current directory level
     const currentChunks: Chunk[] = useMemo(() => {
-        const folderChunks: (Chunk & { rawDir?: TextDir })[] = [];
+        const folderChunks: (Chunk & { rawDir?: MiscDir })[] = [];
         const fileChunks: Chunk[] = [];
 
         if (tab.currentTextDir) {
@@ -84,9 +84,9 @@ export const TextFilesTab: React.FC<TextFilesTabProps> = ({ misc }) => {
             }
         } else {
             // At Root level: display top-level root folders
-            const rootDirs = tab.textTree.filter(dir => 
-                !tab.textTree.some(other => 
-                    other.id !== dir.id && 
+            const rootDirs = tab.textTree.filter((dir: MiscDir) =>
+                !tab.textTree.some((other: MiscDir) =>
+                    other.id !== dir.id &&
                     (dir.path.startsWith(other.path + '/') || dir.path.startsWith(other.path + '\\'))
                 )
             );
@@ -118,7 +118,7 @@ export const TextFilesTab: React.FC<TextFilesTabProps> = ({ misc }) => {
     const filteredChunks = useMemo(() => {
         if (!misc.searchQuery.trim()) return currentChunks;
         const q = misc.searchQuery.toLowerCase();
-        return currentChunks.filter(c => 
+        return currentChunks.filter(c =>
             c.name.toLowerCase().includes(q) || c.path.toLowerCase().includes(q)
         );
     }, [currentChunks, misc.searchQuery]);
@@ -133,7 +133,7 @@ export const TextFilesTab: React.FC<TextFilesTabProps> = ({ misc }) => {
     }, [filteredChunks, sortMode]);
 
     const handleItemClick = (chunk: Chunk) => {
-        const rawDir = (chunk as any).rawDir as TextDir | undefined;
+        const rawDir = (chunk as any).rawDir as MiscDir | undefined;
         if (rawDir) {
             tab.handleTextFolderClick(rawDir);
         } else {
@@ -142,7 +142,7 @@ export const TextFilesTab: React.FC<TextFilesTabProps> = ({ misc }) => {
     };
 
     const getChunkActions = (chunk: Chunk): BazarAction[] => {
-        const rawDir = (chunk as any).rawDir as TextDir | undefined;
+        const rawDir = (chunk as any).rawDir as MiscDir | undefined;
         if (rawDir) {
             return [
                 {
@@ -168,6 +168,7 @@ export const TextFilesTab: React.FC<TextFilesTabProps> = ({ misc }) => {
                 path={tab.currentTextDir?.path}
                 canGoBack={tab.canGoTextBack}
                 onGoBack={tab.goTextBack}
+                count={filteredChunks.filter(c => !(c as any).rawDir).length}
             >
                 <ExeSortBar sortMode={sortMode} onSortChange={setSortMode} />
             </BazarBreadcrumbs>

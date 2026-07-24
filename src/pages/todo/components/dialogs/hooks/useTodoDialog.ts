@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { TodoItem, TodoPriority } from '../../../../../types/todo';
+import type { TodoItem, TodoPriority } from '../../../types/types';
 
 export const useTodoDialog = (
     initialData?: TodoItem | null, 

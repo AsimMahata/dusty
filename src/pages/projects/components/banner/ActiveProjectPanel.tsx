@@ -1,12 +1,12 @@
 import React from 'react';
-import { generateTagGradient } from '../../../../utility/gradient';
-import { PROJECT_STATUS } from '../../../../constants/projectStatus';
+import { generateTagGradient } from '../../utility/gradient';
 import { ProjectDetailHeader } from './detail/ProjectDetailHeader';
 import { ProjectDetailTags } from './detail/ProjectDetailTags';
 import { ProjectDetailMeta } from './detail/ProjectDetailMeta';
 import { ProjectDetailActions } from './detail/ProjectDetailActions';
 import { ProjectDetailDescription } from './detail/ProjectDetailDescription';
-import type { ProjectHook } from "../../../../types/projects";
+import type { ProjectHook } from '../../types/types';
+import { PROJECT_STATUS } from '../../constants/constants';
 
 interface ActiveProjectPanelProps {
     projectHook: ProjectHook;

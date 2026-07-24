@@ -1,8 +1,7 @@
 import { getSystemInfoIPC } from '../../ambiverts/system';
 import { getOverviewStatsIPC } from '../../ambiverts/overview';
 import { logger } from '../../../utility/logger';
-import type { StorageInfo, OverviewStats } from "../../../types/system";
-import type { HomeDashboardData } from "../../../types/home";
+import type { StorageInfo, OverviewStats, HomeDashboardData } from "../../../pages/home/types/types";
 
 export async function fetchHomeDashboardData(): Promise<HomeDashboardData> {
     const defaultStorageInfo: StorageInfo = {

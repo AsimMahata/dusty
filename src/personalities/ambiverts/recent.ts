@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { VideoItem } from "../../types/media";
+import type { VideoItem } from "../../types/core";
 
 /*
 dusty::api::recent::get_recent_episodes,

@@ -5,6 +5,7 @@ interface BazarBreadcrumbsProps {
     path?: string;
     canGoBack: boolean;
     onGoBack: () => void;
+    count?: number;
     children?: React.ReactNode;
 }
 
@@ -12,6 +13,7 @@ export const BazarBreadcrumbs: React.FC<BazarBreadcrumbsProps> = ({
     path,
     canGoBack,
     onGoBack,
+    count,
     children,
 }) => {
     return (
@@ -54,6 +56,17 @@ export const BazarBreadcrumbs: React.FC<BazarBreadcrumbsProps> = ({
                         title={path}
                     >
                         {path}
+                    </span>
+                )}
+                {count !== undefined && (
+                    <span 
+                        style={{
+                            fontSize: '0.88rem',
+                            color: 'var(--text-muted, #94a3b8)',
+                            fontWeight: 500,
+                        }}
+                    >
+                        Showing {count} {count === 1 ? 'file' : 'files'}
                     </span>
                 )}
             </div>

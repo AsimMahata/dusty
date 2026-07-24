@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Play, Check, Calendar, ListVideo, Folder, Star, Radio, Clock, Tv } from 'lucide-react';
 import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../../personalities/introverts/show/mal';
 import { ActionMenu } from '../../../../../components/ui/ActionMenu';
-import type { ShowResult } from "../../../../../types/shows";
+import type { ShowResult } from '../../../types/types';
 import type { ActionItem } from "../../../../../types/core";
-import type { ShowMetaData } from "../../../../../types/shows";
+import type { ShowMetaData } from '../../../types/types';
 
 interface ShowCompactCardProps {
     show: ShowResult;

@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast';
-import type { GitInfo, Project, ProjectStatus } from '../../../types/projects';
+import type { GitInfo, Project, ProjectStatus } from '../../../pages/projects/types/types';
 import { logger } from '../../../utility/logger';
 import { scanProjectTagsIPC, getProjectsIPC, updateProjectPinStatusIPC, updateProjectStatusIPC, updateProjectTagsIPC } from '../../ambiverts/projects';
 import { getGitInfoIPC } from '../../ambiverts/git';

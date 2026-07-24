@@ -1,8 +1,9 @@
+import { TODO_LIST_TODO_ICON } from '../../constants/constants';
 import React from 'react';
-import type { TodoItem } from '../../../../types/todo';
-import { DEFAULT_CATEGORIES } from '../../../../constants/todo';
+import type { TodoItem } from '../../types/types';
+import { DEFAULT_CATEGORIES } from '../../constants/constants';
 import { getTodoCount } from '../../actions/counts';
-import { TODO_LIST_TODO_ICON } from '../../../../constants/icon';
+
 
 interface TodoSidebarProps {
     activeCategory: string;
@@ -17,8 +18,8 @@ export const TodoSidebar: React.FC<TodoSidebarProps> = ({ activeCategory, setAct
                 Views
             </div>
             {DEFAULT_CATEGORIES.map(cat => (
-                <div 
-                    key={cat.id} 
+                <div
+                    key={cat.id}
                     className={`todo-category-item ${activeCategory === cat.id ? 'active' : ''}`}
                     onClick={() => setActiveCategory(cat.id)}
                 >

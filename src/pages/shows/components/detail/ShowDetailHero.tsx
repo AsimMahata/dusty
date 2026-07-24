@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { ChevronLeft, Tv, Play, Check, Star, Calendar, Radio } from 'lucide-react';
 import { ActionMenu } from '../../../../components/ui/ActionMenu';
 import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../personalities/introverts/show/mal';
-import type { ShowMetaData } from "../../../../types/shows";
+import type { ShowMetaData } from '../../types/types';
 import type { ActionItem } from "../../../../types/core";
-import type { ShowResult } from "../../../../types/shows";
+import type { ShowResult } from '../../types/types';
 
 interface ShowDetailHeroProps {
     show: ShowResult;

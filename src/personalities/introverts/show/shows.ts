@@ -9,7 +9,7 @@ import {
     updateImdbIdIPC,
     resetShowsTableIPC
 } from "../../ambiverts/show";
-import type { ShowResult, ShowStatus } from "../../../types/shows";
+import type { ShowResult, ShowStatus } from '../../../pages/shows/types/types';
 
 export async function fetchShows(path: string, sync: boolean = false): Promise<ShowResult[]> {
     if (sync) {

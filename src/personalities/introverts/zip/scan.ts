@@ -1,6 +1,6 @@
 import { scanMiscIPC, syncScanMiscIPC, scanMiscTreeIPC, syncScanMiscTreeIPC } from '../../ambiverts/misc';
-import type { FileInfo } from "../../../types/media";
-import type { ZipDir } from "../../../types/zip";
+import type { MiscDir } from "../../../pages/misc/types/types";
+import type { FileInfo } from '../../../types/core';
 
 export async function scanZip(sync: boolean = false): Promise<FileInfo[]> {
     if (sync) {
@@ -9,9 +9,9 @@ export async function scanZip(sync: boolean = false): Promise<FileInfo[]> {
     return await scanMiscIPC("zip");
 }
 
-export async function scanZipTree(sync: boolean = false): Promise<ZipDir[]> {
+export async function scanZipTree(sync: boolean = false): Promise<MiscDir[]> {
     if (sync) {
-        return await syncScanMiscTreeIPC<ZipDir>("zip");
+        return await syncScanMiscTreeIPC<MiscDir>("zip");
     }
-    return await scanMiscTreeIPC<ZipDir>("zip");
+    return await scanMiscTreeIPC<MiscDir>("zip");
 }

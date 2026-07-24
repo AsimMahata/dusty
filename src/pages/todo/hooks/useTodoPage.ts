@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import type { TodoItem } from '../../../types/todo';
-import { useTodo } from '../../../hooks/todo/useTodo';
+import type { TodoItem } from '../types/types';
+import { useTodo } from './useTodo';
 
 export const useTodoPage = () => {
     const todo = useTodo();

@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { SystemInfoData } from "../../types/system";
+import type { SystemInfoData } from "../../pages/home/types/types";
 
 /*
 dusty::api::system::get_system_info,

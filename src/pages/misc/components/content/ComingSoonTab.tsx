@@ -1,10 +1,10 @@
 import React from 'react';
-import { TITLE_COMING_SOON } from '../../../../constants/tabs';
-import { getComingSoonStyle } from '../../styles/miscStyles';
+import { TITLE_COMING_SOON } from '../../constants/constants';
+import '../../css/Misc.css';
 
 export const ComingSoonTab: React.FC = () => {
     return (
-        <div style={getComingSoonStyle()}>
+        <div className="misc-coming-soon">
             <h2>{TITLE_COMING_SOON}...</h2>
         </div>
     );

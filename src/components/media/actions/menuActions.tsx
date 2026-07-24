@@ -1,7 +1,7 @@
 import { OPEN_FOLDER_ICON, REVEAL_ICON, COPY_ICON, PIN_ICON } from '../constants/icons';
 import { LABELS } from '../constants/labels';
 import { openFile } from '../../../personalities/introverts/filesystem/filesystem';
-import type { MediaSourceItem } from "../../../types/media";
+import type { MediaSourceItem } from "../types/types";
 
 export const getMediaSourceMenuActions = (
     item: MediaSourceItem,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useProject } from '../../hooks/projects/useProject';
+import { useProject } from './hooks/useProject';
 import { ProjectBanner } from './components/banner/ProjectBanner';
 import { ProjectList } from './components/list/ProjectList';
 import { ProjectToolbar } from './components/toolbar/ProjectToolbar';

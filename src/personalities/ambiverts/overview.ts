@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { BackendStats } from "../../types/system";
+import type { BackendStats } from "../../pages/home/types/types";
 
 /*
 dusty::api::overview::get_stats,

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Check } from 'lucide-react';
 import { scanShowsForAnime, saveSelectedAnime } from '../../../../personalities/introverts/show/anime';
-import type { ScannedAnimeData } from "../../../../types/shows";
-import type { ShowResult } from "../../../../types/shows";
+import type { ScannedAnimeData } from '../../types/types';
+import type { ShowResult } from '../../types/types';
 
 interface ScanAnimeModalProps {
     onClose: () => void;

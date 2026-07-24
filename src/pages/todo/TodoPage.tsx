@@ -21,20 +21,20 @@ export const TodoPage: React.FC = () => {
     return (
         <PageLayout hook={todo} showCloseButton>
             <div className="todo-page-container">
-                <TodoSidebar 
-                    activeCategory={todo.activeCategory} 
-                    setActiveCategory={todo.setActiveCategory} 
-                    todos={todo.todos} 
+                <TodoSidebar
+                    activeCategory={todo.activeCategory}
+                    setActiveCategory={todo.setActiveCategory}
+                    todos={todo.todos}
                 />
-                
+
                 <div className="todo-main-content">
-                    <TodoToolbar 
+                    <TodoToolbar
                         todo={todo}
-                        onCreateNew={handleCreateNew} 
+                        onCreateNew={handleCreateNew}
                     />
-                    
-                    <TodoList 
-                        todos={todo.filteredTodos} 
+
+                    <TodoList
+                        todos={todo.filteredTodos}
                         onEdit={handleEdit}
                         onToggleComplete={todo.toggleComplete}
                         onTogglePin={todo.togglePin}
@@ -45,11 +45,11 @@ export const TodoPage: React.FC = () => {
             </div>
 
             {isDialogOpen && (
-                <TodoDialog 
-                    isOpen={isDialogOpen} 
-                    onClose={handleCloseDialog} 
+                <TodoDialog
+                    isOpen={isDialogOpen}
+                    onClose={handleCloseDialog}
                     onSave={handleSaveDialog}
-                    initialData={editingTodo} 
+                    initialData={editingTodo}
                 />
             )}
         </PageLayout>

@@ -1,11 +1,11 @@
 import React from 'react';
 import { SortOptions } from '../../../../components/ui/sortUi/SortOptions';
-import type { PdfSortMode } from "../../../../types/pdf";
+import type { MiscSortMode } from "../../../misc/types/types";
 import type { SortOption } from '../../../../types/ui';
 
 interface PdfSortBarProps {
-    sortMode: PdfSortMode;
-    onSortChange: (mode: PdfSortMode) => void;
+    sortMode: MiscSortMode;
+    onSortChange: (mode: MiscSortMode) => void;
 }
 
 const PDF_SORT_OPTIONS: SortOption[] = [

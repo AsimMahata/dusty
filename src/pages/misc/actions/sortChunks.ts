@@ -1,6 +1,5 @@
-import type { Chunk } from '../../../types/bazar';
-
-export type MiscSortMode = 'name' | 'name-desc' | 'size' | 'size-asc';
+import type { Chunk } from '../../../components/bazar/types/types';
+import type { MiscSortMode } from '../types/types';
 
 export const sortChunks = (chunks: Chunk[], mode: MiscSortMode): Chunk[] => {
     const pinned = chunks.filter(c => c.is_pinned);
@@ -8,10 +7,11 @@ export const sortChunks = (chunks: Chunk[], mode: MiscSortMode): Chunk[] => {
 
     const sorted = [...rest].sort((a, b) => {
         switch (mode) {
-            case 'size':      return (b.size ?? 0) - (a.size ?? 0);
-            case 'size-asc':  return (a.size ?? 0) - (b.size ?? 0);
-            case 'name':      return a.name.localeCompare(b.name, undefined, { numeric: true });
+            case 'size': return (b.size ?? 0) - (a.size ?? 0);
+            case 'size-asc': return (a.size ?? 0) - (b.size ?? 0);
+            case 'name': return a.name.localeCompare(b.name, undefined, { numeric: true });
             case 'name-desc': return b.name.localeCompare(a.name, undefined, { numeric: true });
+            default: return 0;
         }
     });
 

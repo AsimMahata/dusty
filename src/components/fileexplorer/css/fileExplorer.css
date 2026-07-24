@@ -1,0 +1,50 @@
+.explorer-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.explorer-container.inline {
+    overflow: hidden;
+}
+
+.explorer-header-info {
+    overflow: hidden;
+    flex: 1;
+}
+
+.explorer-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.explorer-reveal-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    color: var(--text-secondary);
+}
+
+.explorer-subtitle {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.explorer-close-btn {
+    margin-left: auto;
+}
+
+.explorer-list-container {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.explorer-empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+}

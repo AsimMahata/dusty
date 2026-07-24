@@ -1,7 +1,8 @@
+import { TODO_CLIPBOARD_LIST_ICON } from '../../constants/constants';
 import React from 'react';
-import type { TodoItem } from '../../../../types/todo';
+import type { TodoItem } from '../../types/types';
 import { TodoCard } from './card/TodoCard';
-import { TODO_CLIPBOARD_LIST_ICON } from '../../../../constants/icon';
+
 
 interface TodoListProps {
     todos: TodoItem[];

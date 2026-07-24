@@ -1,9 +1,10 @@
+import { EPISODE_PLAY_ICON_18 } from '../../constants/constants';
 import React from 'react';
 import { ActionMenu } from '../../../../components/ui/ActionMenu';
 import { getEpisodeActions } from '../../actions/utility';
-import { EPISODE_PLAY_ICON_18 } from '../../../../constants/icon';
+
 import { EpisodeInfo } from './EpisodeInfo';
-import type { Episode } from "../../../../types/media";
+import type { Episode } from "../../../../components/media/types/types";
 
 interface EpisodeCardProps {
     episode: Episode;

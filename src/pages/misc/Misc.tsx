@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { useMisc } from '../../hooks/misc/useMisc';
+import { useMisc } from './hooks/useMisc';
 import { MiscTabs } from './components/tabs/MiscTabs';
 import { MiscTabContent } from './components/content/MiscTabContent';
 

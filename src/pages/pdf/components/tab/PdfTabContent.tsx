@@ -1,22 +1,22 @@
 import React, { useMemo } from 'react';
 import { ChunkList } from '../../../../components/bazar/ChunkList';
 import { BazarBreadcrumbs } from '../../../../components/bazar/BazarBreadcrumbs';
-import { useBazarTab } from '../../../../hooks/bazar/useBazarTab';
 import { ICONS } from '../../../../constants/icon';
 import { sortChunks } from '../../actions/sortChunks';
-import type { usePdf } from '../../../../hooks/pdf/usePdf';
+import type { usePdf } from '../../hooks/usePdf';
 import { PDF_TAB_EMPTY_TITLE, PDF_TAB_EMPTY_DESC } from '../../constants/constants';
-import type { PdfSortMode, PdfDir } from "../../../../types/pdf";
-import type { Chunk, BazarAction } from '../../../../types/bazar';
+import type { MiscSortMode, MiscDir } from "../../../misc/types/types";
+import type { Chunk, BazarAction } from '../../../../components/bazar/types/types';
+import { useBazarTab } from '../../../../components/bazar/hooks/useBazarTab';
 
 interface PdfTabContentProps {
     pdf: ReturnType<typeof usePdf>;
-    sortMode: PdfSortMode;
+    sortMode: MiscSortMode;
 }
 
-const getPdfDirTags = (dir: PdfDir): string[] => {
+const getPdfDirTags = (dir: MiscDir): string[] => {
     const extSet = new Set<string>();
-    const collect = (d: PdfDir) => {
+    const collect = (d: MiscDir) => {
         for (const f of d.files) {
             if (f.ext) extSet.add(f.ext.toUpperCase());
             else extSet.add('PDF');
@@ -33,13 +33,11 @@ const getPdfDirTags = (dir: PdfDir): string[] => {
 export const PdfTabContent: React.FC<PdfTabContentProps> = ({ pdf, sortMode }) => {
     const tab = useBazarTab(pdf);
 
-    // Build folder chunks and file chunks for current directory level
     const currentChunks: Chunk[] = useMemo(() => {
-        const folderChunks: (Chunk & { rawDir?: PdfDir })[] = [];
+        const folderChunks: (Chunk & { rawDir?: MiscDir })[] = [];
         const fileChunks: Chunk[] = [];
 
         if (pdf.currentDir) {
-            // Inside a directory
             for (const childDir of pdf.currentDir.childs) {
                 const folderName = childDir.path.split(/[/\\]/).filter(Boolean).pop() || childDir.path;
                 folderChunks.push({
@@ -65,9 +63,8 @@ export const PdfTabContent: React.FC<PdfTabContentProps> = ({ pdf, sortMode }) =
                 });
             }
         } else {
-            // At Root level: display top-level root folders
-            const rootDirs = pdf.pdfTree.filter(dir =>
-                !pdf.pdfTree.some(other =>
+            const rootDirs = pdf.pdfTree.filter((dir: MiscDir) =>
+                !pdf.pdfTree.some((other: MiscDir) =>
                     other.id !== dir.id &&
                     (dir.path.startsWith(other.path + '/') || dir.path.startsWith(other.path + '\\'))
                 )
@@ -87,7 +84,6 @@ export const PdfTabContent: React.FC<PdfTabContentProps> = ({ pdf, sortMode }) =
                     rawDir: dir,
                 });
             }
-            // Add root pdfs
             for (const chunk of tab.visibleChunks) {
                 fileChunks.push(chunk);
             }
@@ -96,7 +92,6 @@ export const PdfTabContent: React.FC<PdfTabContentProps> = ({ pdf, sortMode }) =
         return [...folderChunks, ...fileChunks];
     }, [pdf.currentDir, pdf.pdfTree, tab.visibleChunks]);
 
-    // Apply search filtering if query exists
     const filteredChunks = useMemo(() => {
         if (!pdf.searchQuery.trim()) return currentChunks;
         const q = pdf.searchQuery.toLowerCase();
@@ -105,7 +100,6 @@ export const PdfTabContent: React.FC<PdfTabContentProps> = ({ pdf, sortMode }) =
         );
     }, [currentChunks, pdf.searchQuery]);
 
-    // Apply sorting to both folders and files (folders stay on top)
     const sortedChunks = useMemo(() => {
         const folders = filteredChunks.filter(c => (c as any).rawDir);
         const files = filteredChunks.filter(c => !(c as any).rawDir);
@@ -115,7 +109,7 @@ export const PdfTabContent: React.FC<PdfTabContentProps> = ({ pdf, sortMode }) =
     }, [filteredChunks, sortMode]);
 
     const handleItemClick = (chunk: Chunk) => {
-        const rawDir = (chunk as any).rawDir as PdfDir | undefined;
+        const rawDir = (chunk as any).rawDir as MiscDir | undefined;
         if (rawDir) {
             pdf.handleFolderClick(rawDir);
         } else {
@@ -124,7 +118,7 @@ export const PdfTabContent: React.FC<PdfTabContentProps> = ({ pdf, sortMode }) =
     };
 
     const getChunkActions = (chunk: Chunk): BazarAction[] => {
-        const rawDir = (chunk as any).rawDir as PdfDir | undefined;
+        const rawDir = (chunk as any).rawDir as MiscDir | undefined;
         if (rawDir) {
             return [
                 {

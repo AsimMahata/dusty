@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { fetchHomeDashboardData } from '../../../personalities/introverts/home/home';
-import type { MediaItem } from "../../../types/media";
-import type { UserProfile, StorageInfo, OverviewStats } from "../../../types/system";
+import type { MediaItem } from "../../../components/media/types/types";
+import type { UserProfile, StorageInfo, OverviewStats } from "../types/types";
 
 interface HomeContextType {
     profile: UserProfile;
@@ -40,11 +40,7 @@ export const HomeProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const heroBanner = ['/banner.jpg'];
     const heroLogo = '/icon.png';
 
-    const [continueWatching, setContinueWatching] = useState<MediaItem[]>([
-        { id: '1', title: 'Frieren', subtitle: 'Episode 18', progressPercent: 60, image: '/banner.jpg' },
-        { id: '2', title: 'One Piece', subtitle: 'Episode 1136', progressPercent: 30, image: '/banner.jpg' },
-        { id: '3', title: 'Trigun', subtitle: 'Episode 2', progressPercent: 85, image: '/banner.jpg' },
-    ]);
+    const [continueWatching, setContinueWatching] = useState<MediaItem[]>([]);
 
     const watchEpisode = (showTitle: string, episodeTitle: string, image: string = '/banner.jpg') => {
         setContinueWatching(prev => {

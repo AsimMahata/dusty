@@ -2,7 +2,7 @@ import React from 'react';
 import { Star } from 'lucide-react';
 import { ShowStatusIcon } from './ShowStatusIcon';
 import { PinDot } from '../../../../../components/ui/PinDot';
-import type { ShowResult } from "../../../../../types/shows";
+import type { ShowResult } from '../../../types/types';
 
 interface ShowMetaDataProps {
     show: ShowResult;
@@ -16,9 +16,9 @@ export const ShowMetaData: React.FC<ShowMetaDataProps> = ({ show, statusColor, t
         <div className="show-grid-content">
             <div className="show-grid-title" title={show.title}>
                 {show.title}
-                {show.pinned && <PinDot/>}
+                {show.pinned && <PinDot />}
             </div>
-            
+
             <div className="show-grid-meta">
                 <div className="show-grid-status">
                     <ShowStatusIcon status={show.status} statusColor={statusColor} />

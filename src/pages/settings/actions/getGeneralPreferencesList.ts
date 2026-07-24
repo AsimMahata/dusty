@@ -1,4 +1,4 @@
-import type { SettingItemProps } from "../../../types/settings";
+import type { SettingItemProps } from "../types/types";
 import { addSeasonalAnime } from "../../../personalities/introverts/show/anime";
 
 export const getGeneralPreferencesList = (): SettingItemProps[] => {

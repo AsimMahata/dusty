@@ -1,12 +1,12 @@
 import React from 'react';
 import { ZIP_TITLE, ZIP_EMPTY_DESC } from '../../constants/constants';
 import { ZipSortBar } from './ZipSortBar';
-import type { ZipSortMode } from "../../../../types/zip";
+import type { MiscSortMode } from "../../../misc/types/types";
 
 interface ZipHeaderProps {
     count: number;
-    sortMode: ZipSortMode;
-    onSortChange: (mode: ZipSortMode) => void;
+    sortMode: MiscSortMode;
+    onSortChange: (mode: MiscSortMode) => void;
 }
 
 export const ZipHeader: React.FC<ZipHeaderProps> = ({ count, sortMode, onSortChange }) => {

@@ -1,11 +1,11 @@
 import React from 'react';
 import { MediaSourcesPage } from './components/sources/MediaSourcesPage';
-import { ItemDetailPage } from '../detail/ItemDetailPage';
-import type { useMedia } from '../../hooks/media/useMedia';
-import { useMediaTab } from '../../hooks/media/useMediaTab';
+import { MediaItemDetailPage } from './components/detail/MediaItemDetailPage';
 import { MediaExplorer } from './components/explorer/MediaExplorer';
 import { MediaList } from './components/list/MediaList';
 import type { TabType } from "../../types/tabs";
+import type { useMedia } from './hooks/useMedia';
+import { useMediaTab } from './hooks/useMediaTab';
 
 interface MediaTabProps {
     media: ReturnType<typeof useMedia>;
@@ -25,7 +25,7 @@ export const MediaTab: React.FC<MediaTabProps> = ({ media, tabType }) => {
         }
 
         return (
-            <MediaExplorer 
+            <MediaExplorer
                 currentDir={media.currentDir}
                 onFolderClick={media.handleFolderClick}
                 onFileClick={media.playMedia}
@@ -36,7 +36,7 @@ export const MediaTab: React.FC<MediaTabProps> = ({ media, tabType }) => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            {tab.selectedItem ? <ItemDetailPage tab={tab} /> : <MediaList tab={tab} />}
+            {tab.selectedItem ? <MediaItemDetailPage tab={tab} mediaType={media.mediaType} /> : <MediaList tab={tab} />}
         </div>
     );
 };

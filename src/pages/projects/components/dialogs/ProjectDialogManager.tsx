@@ -2,7 +2,7 @@ import React from 'react';
 import { ProjectContextMenu } from '../menu/ProjectContextMenu';
 import { ChangeStatusDialog } from './ChangeStatusDialog';
 import { EditTagsDialog } from './EditTagsDialog';
-import type { ProjectHook } from "../../../../types/projects";
+import type { ProjectHook } from '../../types/types';
 
 interface ProjectDialogManagerProps {
     projectHook: ProjectHook;
@@ -35,9 +35,9 @@ export const ProjectDialogManager: React.FC<ProjectDialogManagerProps> = ({ proj
                     onDelete={handleDelete}
                 />
             )}
-            
+
             {changingStatusProject && (
-                <ChangeStatusDialog 
+                <ChangeStatusDialog
                     project={changingStatusProject}
                     onClose={() => setChangingStatusProject(null)}
                     onSave={(newStatus) => {
@@ -46,7 +46,7 @@ export const ProjectDialogManager: React.FC<ProjectDialogManagerProps> = ({ proj
                     }}
                 />
             )}
-            
+
             {editingTagsProject && (
                 <EditTagsDialog
                     project={editingTagsProject}

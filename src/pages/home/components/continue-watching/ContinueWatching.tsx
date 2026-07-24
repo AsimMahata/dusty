@@ -3,8 +3,8 @@ import { CWHeader } from './CWHeader';
 import { CWItem } from './CWItem';
 import { logger } from '../../../../utility/logger';
 import { getRecentViewedEpisodes } from '../../../../personalities/introverts/home/recentEp';
+import type { RecentEpisode } from '../../types/types';
 
-import type { RecentEpisode } from "../../../../types/home";
 export const ContinueWatching: React.FC = () => {
     const [recentVideos, setRecentVideos] = useState<RecentEpisode[]>([]);
     useEffect(() => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { TABS } from '../../constants/constants';
-import { useShow } from '../../../../hooks/shows/useShow';
+import { useShow } from '../../hooks/useShow';
 import { ContextMenu } from '../../../../components/ui/ContextMenu';
 import { Play, Tv, ChevronDown } from 'lucide-react';
 import { COLORS } from '../../../../constants/color';

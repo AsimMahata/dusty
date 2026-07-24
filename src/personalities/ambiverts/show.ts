@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { ShowResult, ShowStatus } from "../../types/shows";
+import type { ShowResult, ShowStatus } from '../../pages/shows/types/types';
 
 /*
 IPC Commands:

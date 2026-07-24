@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
-import { FileExplorer } from '../../../FileExplorer';
-import type { FileInfo, MediaDir } from "../../../../types/media";
+import { FileExplorer } from '../../../fileexplorer/FileExplorer';
+import type { FileInfo } from "../../../../types/core";
+import type { MediaDir } from "../../types/types";
 
 interface MediaExplorerProps {
     currentDir: MediaDir | null;
@@ -9,11 +10,11 @@ interface MediaExplorerProps {
     onBack?: () => void;
 }
 
-export const MediaExplorer: React.FC<MediaExplorerProps> = ({ 
-    currentDir, 
-    onFolderClick, 
-    onFileClick, 
-    onBack 
+export const MediaExplorer: React.FC<MediaExplorerProps> = ({
+    currentDir,
+    onFolderClick,
+    onFileClick,
+    onBack
 }) => {
     const files: FileInfo[] = useMemo(() => {
         if (!currentDir) return [];
@@ -32,7 +33,7 @@ export const MediaExplorer: React.FC<MediaExplorerProps> = ({
     }
 
     return (
-        <FileExplorer 
+        <FileExplorer
             title={currentDir.path.split(/[/\\]/).filter(Boolean).pop() || 'Media Explorer'}
             currentPath={currentDir.path}
             files={files}

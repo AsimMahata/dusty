@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { logger } from '../../../../../utility/logger';
 import toast from 'react-hot-toast';
-import type { ResetActionConfig } from "../../../../../types/settings";
+import type { ResetActionConfig } from "../../../types/types";
 
 export const useDangerZone = () => {
     const [activeModalId, setActiveModalId] = useState<string | null>(null);
@@ -13,7 +13,7 @@ export const useDangerZone = () => {
         setActiveModalId(null);
         setResettingId(config.id);
         try {
-            logger.info(`requesting ${config.loggerPrefix} reset`); 
+            logger.info(`requesting ${config.loggerPrefix} reset`);
             await config.action();
             toast.success(config.successMessage);
         } catch (err) {

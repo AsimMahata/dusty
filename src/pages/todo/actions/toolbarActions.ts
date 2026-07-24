@@ -1,4 +1,4 @@
-import type { SortMethod } from '../../../types/todo';
+import type { SortMethod } from '../types/types';
 
 export const getToolbarSortActions = (setSortMethod: (method: SortMethod) => void) => [
     { label: 'Created Date', onClick: () => setSortMethod('created') },

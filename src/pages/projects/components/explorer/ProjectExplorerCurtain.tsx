@@ -1,6 +1,6 @@
 import React from 'react';
-import { FileExplorer } from '../../../../components/FileExplorer';
-import type { ProjectHook } from "../../../../types/projects";
+import { FileExplorer } from '../../../../components/fileexplorer/FileExplorer';
+import type { ProjectHook } from '../../types/types';
 
 interface ProjectExplorerCurtainProps {
     projectHook: ProjectHook;
@@ -12,7 +12,7 @@ export const ProjectExplorerCurtain: React.FC<ProjectExplorerCurtainProps> = ({ 
     return (
         <div className="explorer-curtain-container">
             <div className="explorer-curtain">
-                <FileExplorer 
+                <FileExplorer
                     currentPath={projectHook.explorePath}
                     onBack={projectHook.handleExploreBack}
                     onItemClick={projectHook.handleExploreItemClick}

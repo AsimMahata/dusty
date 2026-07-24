@@ -1,6 +1,6 @@
 import { revealInFileExplorerIPC, openInVsCodeIPC, openFileIPC, readDirIPC, openUrlIPC } from '../../ambiverts/filesystem';
 import { logger } from '../../../utility/logger';
-import type { FileInfo } from '../../../types/media';
+import type { FileInfo } from "../../../types/core";
 
 export const openFileInExplorer = async (path: string): Promise<boolean> => {
     try {

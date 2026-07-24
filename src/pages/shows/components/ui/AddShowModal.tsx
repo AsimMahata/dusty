@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Plus, Check } from 'lucide-react';
 import { searchShow, saveSelectedShow } from '../../../../personalities/introverts/show/imdb';
-import type { ShowData } from "../../../../types/shows";
+import type { ShowData } from '../../types/types';
 
 interface AddShowModalProps {
     onClose: () => void;
@@ -74,7 +74,7 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
         setIsSubmitting(true);
         setStatusMessage(null);
 
-        
+
         await saveSelectedShow([show]);
 
         try {

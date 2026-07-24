@@ -1,11 +1,11 @@
-import type { PdfSortMode } from "../../../types/pdf";
+import type { MiscSortMode } from "../../misc/types/types";
 
-export const SORT_OPTIONS: { mode: PdfSortMode; label: string }[] = [
-    { mode: 'name',      label: 'A → Z' },
+export const SORT_OPTIONS: { mode: MiscSortMode; label: string }[] = [
+    { mode: 'name', label: 'A → Z' },
     { mode: 'name-desc', label: 'Z → A' },
-    { mode: 'size',      label: 'Largest' },
-    { mode: 'size-asc',  label: 'Smallest' },
-    { mode: 'type',      label: 'Type' },
+    { mode: 'size', label: 'Largest' },
+    { mode: 'size-asc', label: 'Smallest' },
+    { mode: 'type', label: 'Type' },
 ];
 
 export const PDF_TITLE = 'PDF Documents';

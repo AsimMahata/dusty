@@ -1,7 +1,7 @@
 import React from 'react';
 import { ContextMenu } from '../../../../ui/ContextMenu';
 import { getMediaSourceMenuActions } from '../../../actions/menuActions';
-import type { MediaSourceItem } from "../../../../../types/media";
+import type { MediaSourceItem } from "../../../types/types";
 
 interface MediaSourceContextMenuProps {
     x: number;
@@ -19,11 +19,11 @@ export const MediaSourceContextMenu: React.FC<MediaSourceContextMenuProps> = ({
     const actions = getMediaSourceMenuActions(item, isPinned, onOpen, onPinToggle, onClose);
 
     return (
-        <ContextMenu 
-            x={x} 
-            y={y} 
-            actions={actions} 
-            onClose={onClose} 
+        <ContextMenu
+            x={x}
+            y={y}
+            actions={actions}
+            onClose={onClose}
         />
     );
 };

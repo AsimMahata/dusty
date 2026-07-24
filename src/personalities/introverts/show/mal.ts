@@ -2,8 +2,8 @@ import { getAnimeInfoFromMalIPC, addAnimeInfoToMalIPC } from "../../ambiverts/ma
 import { getAnimeInfoTENRAI } from "../../extroverts/tenrai";
 import { logger } from "../../../utility/logger";
 import { COLORS } from "../../../constants/color";
-import type { ShowResult } from "../../../types/shows";
-import type { ShowMetaData } from "../../../types/shows";
+import type { ShowResult } from '../../../pages/shows/types/types';
+import type { ShowMetaData } from '../../../pages/shows/types/types';
 
 export async function getAnimeInfoFromMal(id: number | null): Promise<string | null> {
     if (!id) {

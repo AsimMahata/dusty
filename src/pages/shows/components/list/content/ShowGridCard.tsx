@@ -3,9 +3,9 @@ import { getShowMetaData, getStatusColor, calculateProgressPercentage } from '..
 import { ShowPoster } from './ShowPoster';
 import { ShowActions } from './ShowActions';
 import { ShowProgress } from './ShowProgress';
-import type { ShowResult } from "../../../../../types/shows";
+import type { ShowResult } from '../../../types/types';
 import type { ActionItem } from "../../../../../types/core";
-import type { ShowMetaData as ShowMetaDataInterface } from "../../../../../types/shows";
+import type { ShowMetaData as ShowMetaDataInterface } from '../../../types/types';
 import { ShowMetaData } from "./ShowMetaData";
 
 interface ShowGridCardProps {

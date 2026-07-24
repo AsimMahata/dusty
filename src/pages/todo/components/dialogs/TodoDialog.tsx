@@ -1,5 +1,5 @@
 import React from 'react';
-import type { TodoItem, TodoPriority } from '../../../../types/todo';
+import type { TodoItem, TodoPriority } from '../../types/types';
 import { useTodoDialog } from './hooks/useTodoDialog';
 
 interface TodoDialogProps {

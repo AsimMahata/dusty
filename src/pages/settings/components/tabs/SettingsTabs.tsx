@@ -1,5 +1,5 @@
 import React from 'react';
-import { TYPE_GENERAL, TYPE_DATA, TITLE_GENERAL, TITLE_DATA } from '../../../../constants/tabs';
+import { TYPE_GENERAL, TYPE_DATA, TITLE_GENERAL, TITLE_DATA } from '../../constants';
 
 interface SettingsTabsProps {
     activeTab: typeof TYPE_GENERAL | typeof TYPE_DATA;

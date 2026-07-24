@@ -25,7 +25,7 @@ export const DatabaseViewer: React.FC = () => {
     const filteredRows = activeRows.filter(row => {
         if (!searchFilter.trim()) return true;
         const query = searchFilter.toLowerCase();
-        return Object.values(row).some(val => 
+        return Object.values(row).some(val =>
             String(val ?? '').toLowerCase().includes(query)
         );
     });

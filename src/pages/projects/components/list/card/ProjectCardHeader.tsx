@@ -1,6 +1,6 @@
 import React from 'react';
-import { GIT_STATUS, PROJECT_STATUS } from '../../../../../constants/projectStatus';
-import type { Project } from "../../../../../types/projects";
+import type { Project } from '../../../types/types';
+import { GIT_STATUS, PROJECT_STATUS } from '../../../constants/constants';
 
 interface ProjectCardHeaderProps {
     project: Project;

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { getProjectContextMenuItems } from '../../actions/menuActions';
-import type { Project } from "../../../../types/projects";
+import type { Project } from '../../types/types';
 
 interface ProjectContextMenuProps {
     project: Project;
@@ -55,9 +55,9 @@ export const ProjectContextMenu: React.FC<ProjectContextMenuProps> = ({
                     return <div key={index} className="context-menu-separator" />;
                 }
                 return (
-                    <div 
-                        key={index} 
-                        className={`context-menu-item ${item.danger ? 'danger' : ''}`} 
+                    <div
+                        key={index}
+                        className={`context-menu-item ${item.danger ? 'danger' : ''}`}
                         onClick={item.onClick}
                     >
                         <span className="context-menu-icon">{item.icon}</span>

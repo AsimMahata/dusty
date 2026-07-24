@@ -1,15 +1,10 @@
 import { openFileInExplorer, openInVsCode } from '../../../personalities/introverts/filesystem/filesystem';
 import { openTerminal } from '../../../personalities/introverts/terminal/terminal';
-import {
-    PROJECT_MENU_STAR_ICON, PROJECT_MENU_STAR_FILLED_ICON,
-    PROJECT_MENU_STATUS_ICON, PROJECT_MENU_EXPLORER_ICON,
-    PROJECT_MENU_TERMINAL_ICON, PROJECT_MENU_VSCODE_ICON,
-    PROJECT_MENU_GITHUB_ICON, PROJECT_MENU_TAGS_ICON,
-    PROJECT_MENU_RENAME_ICON, PROJECT_MENU_DELETE_ICON
-} from '../../../constants/icon';
-import type { Project } from "../../../types/projects";
-import type { ContextMenuItem } from "../../../types/projects";
+
+import type { Project } from '../types/types';
+import type { ContextMenuItem } from '../types/types';
 import { openProjectGithub } from '../../../personalities/introverts/projects/projects';
+import { PROJECT_MENU_DELETE_ICON, PROJECT_MENU_EXPLORER_ICON, PROJECT_MENU_GITHUB_ICON, PROJECT_MENU_RENAME_ICON, PROJECT_MENU_STAR_FILLED_ICON, PROJECT_MENU_STAR_ICON, PROJECT_MENU_STATUS_ICON, PROJECT_MENU_TAGS_ICON, PROJECT_MENU_TERMINAL_ICON, PROJECT_MENU_VSCODE_ICON } from '../constants/constants';
 export const getProjectContextMenuItems = (
     project: Project,
     onClose: () => void,

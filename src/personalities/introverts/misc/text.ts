@@ -1,6 +1,6 @@
 import { scanMiscIPC, syncScanMiscIPC, scanMiscTreeIPC, syncScanMiscTreeIPC, resetMiscCacheIPC } from '../../ambiverts/misc';
-import type { FileInfo } from "../../../types/media";
-import type { TextDir } from "../../../types/text";
+import type { MiscDir } from "../../../pages/misc/types/types";
+import type { FileInfo } from '../../../types/core';
 
 export async function scanText(sync: boolean = false): Promise<FileInfo[]> {
     if (sync) {
@@ -9,11 +9,11 @@ export async function scanText(sync: boolean = false): Promise<FileInfo[]> {
     return await scanMiscIPC("text");
 }
 
-export async function scanTextTree(sync: boolean = false): Promise<TextDir[]> {
+export async function scanTextTree(sync: boolean = false): Promise<MiscDir[]> {
     if (sync) {
-        return await syncScanMiscTreeIPC<TextDir>("text");
+        return await syncScanMiscTreeIPC<MiscDir>("text");
     }
-    return await scanMiscTreeIPC<TextDir>("text");
+    return await scanMiscTreeIPC<MiscDir>("text");
 }
 
 export async function syncScanText(): Promise<FileInfo[]> {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu } from 'lucide-react';
-import { SIDEBAR_NAV_ITEMS } from '../../constants/ui';
+import { SIDEBAR_NAV_ITEMS } from './constants/ui';
 
 interface SidebarProps {
   isCollapsed: boolean;

@@ -1,6 +1,6 @@
 import { logger } from "../../utility/logger";
 import { fetch } from "@tauri-apps/plugin-http";
-import { ApiProvider } from "../../types/shows";
+import { ApiProvider } from '../../pages/shows/types/types';
 
 export const IMDB_BASE_API = 'https://imdb.iamidiotareyoutoo.com';
 

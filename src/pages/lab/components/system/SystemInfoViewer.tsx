@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Cpu, HardDrive, Server, RefreshCw, Search } from 'lucide-react';
 import { getSystemInfo } from '../../../../personalities/introverts/system/system';
-import type { SystemInfoData } from '../../../../types/system';
+import type { SystemInfoData } from '../../../home/types/types';
 
 export const SystemInfoViewer: React.FC = () => {
     const [systemData, setSystemData] = useState<SystemInfoData | null>(null);

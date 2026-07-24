@@ -1,10 +1,10 @@
-import type { ZipSortMode } from "../../../types/zip";
-export const SORT_OPTIONS: { mode: ZipSortMode; label: string }[] = [
-    { mode: 'name',      label: 'A → Z' },
+import type { MiscSortMode } from "../../misc/types/types";
+export const SORT_OPTIONS: { mode: MiscSortMode; label: string }[] = [
+    { mode: 'name', label: 'A → Z' },
     { mode: 'name-desc', label: 'Z → A' },
-    { mode: 'size',      label: 'Largest' },
-    { mode: 'size-asc',  label: 'Smallest' },
-    { mode: 'type',      label: 'Type' },
+    { mode: 'size', label: 'Largest' },
+    { mode: 'size-asc', label: 'Smallest' },
+    { mode: 'type', label: 'Type' },
 ];
 
 export const ZIP_TITLE = 'ZIP Archives';

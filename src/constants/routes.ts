@@ -15,4 +15,3 @@ export const ROUTES = {
     TERMINAL: "/terminal"
 } as const;
 
-export const CONTINUE_WATCHING_TO_SHOW_PAGE = 'continue-watching-to-show-page';

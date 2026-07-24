@@ -1,11 +1,11 @@
 import React from 'react';
 import { SortOptions } from '../../../../components/ui/sortUi/SortOptions';
-import type { ZipSortMode } from "../../../../types/zip";
+import type { MiscSortMode } from "../../../misc/types/types";
 import type { SortOption } from '../../../../types/ui';
 
 interface ZipSortBarProps {
-    sortMode: ZipSortMode;
-    onSortChange: (mode: ZipSortMode) => void;
+    sortMode: MiscSortMode;
+    onSortChange: (mode: MiscSortMode) => void;
 }
 
 const ZIP_SORT_OPTIONS: SortOption[] = [

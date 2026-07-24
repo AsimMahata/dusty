@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { Project, ProjectStatus } from "../../types/projects";
+import type { Project, ProjectStatus } from '../../pages/projects/types/types';
 
 /*
 dusty::api::project::scan_projects,

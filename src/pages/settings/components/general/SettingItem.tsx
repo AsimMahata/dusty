@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { SettingItemProps } from "../../../../types/settings";
+import type { SettingItemProps } from "../../types/types";
 export const SettingItem: React.FC<SettingItemProps> = ({ title, desc, type, value, onChange, onClick, buttonText, buttonClass, options }) => {
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
@@ -26,7 +26,7 @@ export const SettingItem: React.FC<SettingItemProps> = ({ title, desc, type, val
                 <p className="settings-item-desc">{desc}</p>
             </div>
             {type === 'select' && options && onChange ? (
-                <select 
+                <select
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     className="settings-select"
@@ -36,15 +36,15 @@ export const SettingItem: React.FC<SettingItemProps> = ({ title, desc, type, val
                     ))}
                 </select>
             ) : type === 'checkbox' && onChange ? (
-                <input 
-                    type="checkbox" 
+                <input
+                    type="checkbox"
                     checked={value}
                     onChange={(e) => onChange(e.target.checked)}
                     className="settings-checkbox"
                 />
             ) : type === 'button' && onClick ? (
                 <div className="settings-button-wrapper">
-                    <button 
+                    <button
                         onClick={handleButtonClick}
                         disabled={status === 'loading'}
                         className={`settings-button ${buttonClass || 'settings-button-blue'}`}

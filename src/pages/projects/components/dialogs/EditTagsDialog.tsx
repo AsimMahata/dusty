@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { PROJECT_TAGS } from '../../../../constants/projectTags';
 import { Check, FileText } from 'lucide-react';
-import type { Project } from "../../../../types/projects";
+import type { Project } from '../../types/types';
 import { scanProjectTags } from '../../../../personalities/introverts/projects/projects';
-import { PROJECT_ACTION_LABELS } from '../../constants/constants';
+import { PROJECT_ACTION_LABELS, PROJECT_TAGS } from '../../constants/constants';
 
 interface EditTagsDialogProps {
     project: Project;
@@ -94,7 +93,7 @@ export const EditTagsDialog: React.FC<EditTagsDialogProps> = ({ project, onClose
                     onChange={(event) => setTagSearch(event.target.value)}
                     placeholder={PROJECT_ACTION_LABELS.SEARCH_TAGS_PLACEHOLDER}
                 />
-                
+
                 <div className="tags-dialog-list">
                     {visibleTags.map(tag => {
                         const isSelected = selectedTags.has(tag.id);

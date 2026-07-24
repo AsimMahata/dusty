@@ -1,6 +1,5 @@
 import React from 'react';
-import type { Item } from "../types/core";
-import type { FileInfo } from "../types/media";
+import type { FileInfo, Item } from "../types/core";
 
 export function formatBytes(bytes: number): string {
     const KB = 1024;
@@ -21,16 +20,19 @@ export function formatBytes(bytes: number): string {
     }
 }
 
-
-export const fileInfoToItemData = (files: FileInfo[], defaultFileIcon: React.ReactNode, defaultFolderIcon: React.ReactNode): Item[] => {
+export const fileInfoToItemData = (
+    files: FileInfo[],
+    defaultFileIcon: React.ReactNode,
+    defaultFolderIcon: React.ReactNode
+): Item[] => {
     return files.map((file, i) => ({
         id: `${i}`,
         title: file.name,
         subtitle: file.path,
         size: formatBytes(file.size),
         rawSize: file.size,
-        icon: (file.is_dir ? defaultFolderIcon : defaultFileIcon),
+        icon: file.is_dir ? defaultFolderIcon : defaultFileIcon,
         path: file.path,
-        is_dir: file.is_dir
+        is_dir: file.is_dir,
     }));
 };

@@ -3,21 +3,21 @@ import { ChunkList } from '../../../../components/bazar/ChunkList';
 import { BazarBreadcrumbs } from '../../../../components/bazar/BazarBreadcrumbs';
 import { ICONS } from '../../../../constants/icon';
 import { EXE_FILES_TITLE, EXE_FILES_DESC } from '../../constants/constants';
-import { sortChunks, type MiscSortMode } from '../../actions/sortChunks';
+import { sortChunks } from '../../actions/sortChunks';
 import { ExeSortBar } from './ExeSortBar';
-import { useExeTab } from '../../../../hooks/misc/useExeTab';
-import type { useMisc } from '../../../../hooks/misc/useMisc';
-import type { Chunk, BazarAction } from '../../../../types/bazar';
-import type { ExecutableDir } from '../../../../types/exe';
-import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../../../session/misc/sort';
+import { useExeTab } from '../../hooks/useExeTab';
+import type { useMisc } from '../../hooks/useMisc';
+import type { Chunk, BazarAction } from '../../../../components/bazar/types/types';
+import type { MiscDir, MiscSortMode } from '../../types/types';
+import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../session/sort';
 
 interface ExeFilesTabProps {
     misc: ReturnType<typeof useMisc>;
 }
 
-const getExeDirTags = (dir: ExecutableDir): string[] => {
+const getExeDirTags = (dir: MiscDir): string[] => {
     const extSet = new Set<string>();
-    const collect = (d: ExecutableDir) => {
+    const collect = (d: MiscDir) => {
         for (const f of d.files) {
             if (f.ext) extSet.add(f.ext.toUpperCase());
             else extSet.add('EXE');
@@ -39,7 +39,7 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ misc }) => {
         try {
             const mode = await getSortModeMiscPage();
             setSortModeState(mode);
-        } catch (e) {}
+        } catch (e) { }
     }
 
     useEffect(() => {
@@ -53,7 +53,7 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ misc }) => {
 
     // Build folder chunks and file chunks for current directory level
     const currentChunks: Chunk[] = useMemo(() => {
-        const folderChunks: (Chunk & { rawDir?: ExecutableDir })[] = [];
+        const folderChunks: (Chunk & { rawDir?: MiscDir })[] = [];
         const fileChunks: Chunk[] = [];
 
         if (tab.currentDir) {
@@ -84,9 +84,9 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ misc }) => {
             }
         } else {
             // At Root level: display top-level root folders
-            const rootDirs = tab.exeTree.filter(dir => 
-                !tab.exeTree.some(other => 
-                    other.id !== dir.id && 
+            const rootDirs = tab.exeTree.filter((dir: MiscDir) =>
+                !tab.exeTree.some((other: MiscDir) =>
+                    other.id !== dir.id &&
                     (dir.path.startsWith(other.path + '/') || dir.path.startsWith(other.path + '\\'))
                 )
             );
@@ -118,7 +118,7 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ misc }) => {
     const filteredChunks = useMemo(() => {
         if (!misc.searchQuery.trim()) return currentChunks;
         const q = misc.searchQuery.toLowerCase();
-        return currentChunks.filter(c => 
+        return currentChunks.filter(c =>
             c.name.toLowerCase().includes(q) || c.path.toLowerCase().includes(q)
         );
     }, [currentChunks, misc.searchQuery]);
@@ -133,7 +133,7 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ misc }) => {
     }, [filteredChunks, sortMode]);
 
     const handleItemClick = (chunk: Chunk) => {
-        const rawDir = (chunk as any).rawDir as ExecutableDir | undefined;
+        const rawDir = (chunk as any).rawDir as MiscDir | undefined;
         if (rawDir) {
             tab.handleFolderClick(rawDir);
         } else {
@@ -142,7 +142,7 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ misc }) => {
     };
 
     const getChunkActions = (chunk: Chunk): BazarAction[] => {
-        const rawDir = (chunk as any).rawDir as ExecutableDir | undefined;
+        const rawDir = (chunk as any).rawDir as MiscDir | undefined;
         if (rawDir) {
             return [
                 {
@@ -168,6 +168,7 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ misc }) => {
                 path={tab.currentDir?.path}
                 canGoBack={tab.canGoBack}
                 onGoBack={tab.goBack}
+                count={filteredChunks.filter(c => !(c as any).rawDir).length}
             >
                 <ExeSortBar sortMode={sortMode} onSortChange={setSortMode} />
             </BazarBreadcrumbs>

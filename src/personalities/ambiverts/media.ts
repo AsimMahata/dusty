@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { MediaDir, MediaType } from "../../types/media";
+import type { MediaDir, MediaType } from "../../components/media/types/types";
 
 /*
 dusty::api::media::get_media_of_type,

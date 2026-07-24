@@ -1,0 +1,7 @@
+.misc-coming-soon {
+    display: flex;
+    height: 40vh;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+}

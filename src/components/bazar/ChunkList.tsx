@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChunkItem } from './ChunkItem';
-import type { Chunk, BazarAction } from '../../types/bazar';
+import type { Chunk, BazarAction } from './types/types';
 
 interface ChunkListProps {
     chunks: Chunk[];
@@ -34,7 +34,7 @@ export const ChunkList: React.FC<ChunkListProps> = ({
     return (
         <div className="chunk-list">
             {chunks.map(chunk => (
-                <div 
+                <div
                     key={chunk.id}
                     onClick={() => onItemClick?.(chunk)}
                 >

@@ -1,7 +1,8 @@
+import { NO_EPISODE_AVAILABLE_ICON } from '../../constants/constants';
 import React from 'react';
-import { NO_EPISODE_AVAILABLE_ICON, NO_EPISODE_AVAILABLE_P_TEXT } from '../../../../constants/icon';
+
 import { EpisodeCard } from './EpisodeCard';
-import type { Episode } from "../../../../types/media";
+import type { Episode } from "../../../../components/media/types/types";
 
 interface ShowEpisodesListProps {
     episodes: Episode[];
@@ -21,7 +22,7 @@ export const ShowEpisodesList: React.FC<ShowEpisodesListProps> = ({ episodes, on
             ) : (
                 <div className="show-detail-no-episodes">
                     {NO_EPISODE_AVAILABLE_ICON}
-                    {NO_EPISODE_AVAILABLE_P_TEXT}
+                    <p>No episodes found.</p>
                 </div>
             )}
         </div>

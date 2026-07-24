@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { useShow } from '../../hooks/shows/useShow';
+import { useShow } from './hooks/useShow';
 import { ShowDetailPage } from './components/detail/ShowDetailPage';
 import { ShowTabs } from './components/tabs/ShowTabs';
 import { ShowList } from './components/list/ShowList';
@@ -24,9 +24,9 @@ export const Shows: React.FC = () => {
                 <ShowDetailPage showHook={showHook} />
                 <EditMalNumberModal showHook={showHook} />
                 <EditImdbIdModal showHook={showHook} />
-                {isAddAnimeOpen && <AddAnimeModal 
-                    onClose={() => setIsAddAnimeOpen(false)} 
-                    initialQuery={addAnimeQuery} 
+                {isAddAnimeOpen && <AddAnimeModal
+                    onClose={() => setIsAddAnimeOpen(false)}
+                    initialQuery={addAnimeQuery}
                     targetShowId={addAnimeTargetShowId}
                     onLinkAction={showHook.updateMalIdForShow}
                 />}
@@ -34,9 +34,9 @@ export const Shows: React.FC = () => {
                     onClose={() => setIsScanAnimeOpen(false)}
                     shows={allShows.filter(s => !s.banned)}
                 />}
-                {isAddShowOpen && <AddShowModal 
-                    onClose={() => setIsAddShowOpen(false)} 
-                    initialQuery={addShowQuery} 
+                {isAddShowOpen && <AddShowModal
+                    onClose={() => setIsAddShowOpen(false)}
+                    initialQuery={addShowQuery}
                     targetShowId={addShowTargetShowId}
                     onLinkAction={showHook.updateImdbIdForShow}
                 />}
@@ -52,8 +52,8 @@ export const Shows: React.FC = () => {
             </div>
             <EditMalNumberModal showHook={showHook} />
             <EditImdbIdModal showHook={showHook} />
-            {isAddAnimeOpen && <AddAnimeModal 
-                onClose={() => setIsAddAnimeOpen(false)} 
+            {isAddAnimeOpen && <AddAnimeModal
+                onClose={() => setIsAddAnimeOpen(false)}
                 initialQuery={addAnimeQuery}
                 targetShowId={addAnimeTargetShowId}
                 onLinkAction={showHook.updateMalIdForShow}
@@ -62,9 +62,9 @@ export const Shows: React.FC = () => {
                 onClose={() => setIsScanAnimeOpen(false)}
                 shows={allShows.filter(s => !s.banned)}
             />}
-            {isAddShowOpen && <AddShowModal 
-                onClose={() => setIsAddShowOpen(false)} 
-                initialQuery={addShowQuery} 
+            {isAddShowOpen && <AddShowModal
+                onClose={() => setIsAddShowOpen(false)}
+                initialQuery={addShowQuery}
                 targetShowId={addShowTargetShowId}
                 onLinkAction={showHook.updateImdbIdForShow}
             />}

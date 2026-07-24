@@ -1,12 +1,12 @@
 import React from 'react';
-import { TYPE_COMING_SOON, TYPE_EXE_FILES, TYPE_JSON_FILES, TYPE_TEXT_FILES, TYPE_OFFICE_FILES } from '../../../../constants/tabs';
-import type { useMisc } from '../../../../hooks/misc/useMisc';
+import type { useMisc } from '../../hooks/useMisc';
 import { EmptyDirectoriesTab } from './EmptyDirectoriesTab';
 import { ExeFilesTab } from './ExeFilesTab';
 import { JsonFilesTab } from './JsonFilesTab';
 import { TextFilesTab } from './TextFilesTab';
 import { OfficeFilesTab } from './OfficeFilesTab';
 import { ComingSoonTab } from './ComingSoonTab';
+import { TYPE_COMING_SOON, TYPE_EXE_FILES, TYPE_JSON_FILES, TYPE_OFFICE_FILES, TYPE_TEXT_FILES } from '../../constants/constants';
 
 interface MiscTabContentProps {
     misc: ReturnType<typeof useMisc>;

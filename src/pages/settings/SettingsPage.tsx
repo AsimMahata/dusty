@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { TYPE_GENERAL, TYPE_DATA } from '../../constants/tabs';
+import { TYPE_GENERAL, TYPE_DATA } from './constants';
 import { SettingsTabs } from './components/tabs/SettingsTabs';
 import { GeneralPreferences } from './components/general/GeneralPreferences';
 import { DataManagement } from './components/data/DataManagement';

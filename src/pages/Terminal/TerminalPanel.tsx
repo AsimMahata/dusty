@@ -1,9 +1,10 @@
 import React from 'react';
-import { useTerminal } from '../../hooks/terminal/useTerminal';
+import { useTerminal } from './hooks/useTerminal';
 import { TerminalTabs } from './components/tabs/TerminalTabs';
 import { TerminalContent } from './components/panel/TerminalContent';
+import { Terminal as TerminalIcon, Plus } from 'lucide-react';
 import './css/Terminal.css';
-import type { TerminalTab } from './terminal.options';
+import type { TerminalTab } from './types/types';
 
 export const TerminalPanel: React.FC = () => {
     const {
@@ -36,7 +37,20 @@ export const TerminalPanel: React.FC = () => {
                         ))
                     ) : (
                         <div className="terminal-empty-state">
-                            No terminal tabs open. Click the + button above to open a tab.
+                            <div className="terminal-empty-icon">
+                                <TerminalIcon size={32} />
+                            </div>
+                            <div className="terminal-empty-title">No Terminal Tabs Open</div>
+                            <div className="terminal-empty-desc">
+                                Click the <span>+</span> button above or below to open a new tab.
+                            </div>
+                            <button
+                                type="button"
+                                className="terminal-empty-add-btn"
+                                onClick={addNewTerminalTab}
+                            >
+                                <Plus size={16} /> New Terminal
+                            </button>
                         </div>
                     )
                 }

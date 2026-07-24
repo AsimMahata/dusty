@@ -1,5 +1,6 @@
+import { SHOW_PAGE_FALLBACK_ICON } from '../../../constants/constants';
 import React from 'react';
-import { SHOW_PAGE_FALLBACK_ICON } from '../../../../../constants/icon';
+
 
 interface ShowPosterProps {
     posterUrl: string | undefined;

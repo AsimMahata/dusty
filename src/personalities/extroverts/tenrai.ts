@@ -1,6 +1,6 @@
 import { logger } from "../../utility/logger";
-import type { AnimeData } from "../../types/shows";
-import { ApiProvider } from "../../types/shows";
+import type { AnimeData } from '../../pages/shows/types/types';
+import { ApiProvider } from '../../pages/shows/types/types';
 
 export const TENRAI_BASE_API = 'https://api.tenrai.org/v1';
 

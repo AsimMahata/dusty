@@ -1,7 +1,6 @@
 import React from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { FlaskConical } from 'lucide-react';
-import { useLab } from '../../hooks/lab/useLab';
 import { LabTabs } from './components/tabs/LabTabs';
 import { ApiConsole } from './components/console/ApiConsole';
 import { DatabaseViewer } from './components/database/DatabaseViewer';
@@ -10,6 +9,7 @@ import { TokenizeTest } from './components/tokenizer/TokenizeTest';
 import { SessionInspector } from './components/session/SessionInspector';
 import { ThemeInspector } from './components/theme/ThemeInspector';
 import './css/Lab.css';
+import { useLab } from './hooks/useLab';
 
 export const LabPage: React.FC = () => {
     const { tabs, activeTabId, activeTab, selectTab } = useLab();

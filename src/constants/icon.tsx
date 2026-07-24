@@ -1,18 +1,37 @@
-import { 
+import {
     Clock, List, Pin, Eye, CheckCircle, Calendar, PauseCircle, XCircle, RotateCcw, Ban, ShieldCheck, Home as HomeIcon, Tv, FolderGit2, Box, Music as MusicIcon, Film, Image as ImageIcon, Archive, PackageOpen, FolderX,
     ArrowLeft, ExternalLink, X,
     Folder as LucideFolder, File as LucideFile, FileJson, FileCog, FileCode2, FileText, FileImage, FileAudio, FileVideo, FileArchive, Zap, Edit,
     Code2, Sparkles, Monitor, Server, Palette, GraduationCap, Coffee, Binary,
     Activity, Pause, CheckCircle2, AlertTriangle, Circle, FileEdit, ArrowUpCircle, ArrowDownCircle, GitPullRequest, AlertOctagon, HelpCircle,
+    Folder,
+    ArrowUp, BookOpen,
+    Settings, Database, Search,
+    TerminalIcon,
+    PlayCircle,
+    File,
     Play,
     Check,
-    Folder,
-    Star, FolderOpen, Globe, MoreVertical,
-    ArrowUp, CircleDot, Terminal, Tags, Pencil, Trash2, BookOpen,
-    Tag, CheckSquare, Square, AlertCircle, ClipboardList, ListTodo, Plus, ChevronDown, ArrowDown,
-    Settings, Database, Search,
-    TerminalIcon
+    Star,
+    FolderOpen,
+    CircleDot,
+    Terminal,
+    Tags,
+    Pencil,
+    Trash2,
+    MoreVertical,
+    Tag,
+    CheckSquare,
+    Square,
+    AlertCircle,
+    ClipboardList,
+    ListTodo,
+    Plus,
+    ArrowDown,
+    ChevronDown,
+    Globe
 } from "lucide-react";
+
 import { COLORS } from './color';
 
 export const ICONS = {
@@ -105,63 +124,68 @@ export const BAN_ICON_16 = <Ban size={16} />
 export const SHIELD_CHECK_ICON_16 = <ShieldCheck size={16} />
 export const SEARCH_ICON_16 = <Search size={16} />
 
-//SHOWS
-export const SHOW_PAGE_FALLBACK_ICON = <Tv className="show-grid-fallback-icon" size={48} />
-export const SHOW_WATCHING_ICON = <Play size={12} fill="currentColor" />
-export const SHOW_COMPLETED_ICON = <Check size={12} />
-export const SHOW_PLANNED_ICON = <Clock size={12} />
-export const SHOW_DEFAULT_STATUS_ICON = <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'currentColor' }} />
-
-//Episodes
-export const NO_EPISODE_AVAILABLE_ICON = <Folder size={48} color="var(--text-muted)" />
-export const NO_EPISODE_AVAILABLE_P_TEXT = <p>No episodes found.</p>
-export const EPISODE_PLAY_ICON_18 = <Play size={18} />
-
-// Projects
-export const PROJECT_BANNER_FOLDER_ICON = <Folder size={28} />
-export const PROJECT_PINNED_STAR_ICON_12 = <Star size={12} fill="currentColor" />
-export const PROJECT_PINNED_STAR_ICON_14 = <Star size={14} fill="currentColor" style={{ marginRight: '4px', position: 'relative', top: '2px' }}/>
-export const PROJECT_PINNED_STAR_ICON_16 = <Star size={16} fill="currentColor" />
-export const PROJECT_FALLBACK_FOLDER_ICON_48 = <Folder size={48} opacity={0.8} />
-export const PROJECT_OPEN_VSCODE_ICON = <Monitor size={18} />
-export const PROJECT_OPEN_EXPLORER_ICON = <FolderOpen size={18} />
-export const PROJECT_OPEN_GITHUB_ICON = <Globe size={18} />
-export const PROJECT_OPEN_ZAP_ICON = <Zap size={18} />
-export const PROJECT_MENU_MORE_ICON = <MoreVertical size={18} />
-export const PROJECT_BACK_ARROW_ICON = <ArrowLeft size={14} />
-export const PROJECT_CLOSE_X_ICON = <X size={14} />
-export const PROJECT_EXTERNAL_LINK_ICON = <ExternalLink size={16} />
-
-export const PROJECT_MENU_STAR_ICON = <Star size={16} fill="none" />
-export const PROJECT_MENU_STAR_FILLED_ICON = <Star size={16} fill="currentColor" />
-export const PROJECT_MENU_STATUS_ICON = <CircleDot size={16} />
-export const PROJECT_MENU_EXPLORER_ICON = <FolderOpen size={16} />
-export const PROJECT_MENU_TERMINAL_ICON = <Terminal size={16} />
-export const PROJECT_MENU_VSCODE_ICON = <Monitor size={16} />
-export const PROJECT_MENU_GITHUB_ICON = <Globe size={16} />
-export const PROJECT_MENU_TAGS_ICON = <Tags size={16} />
-export const PROJECT_MENU_RENAME_ICON = <Pencil size={16} />
-export const PROJECT_MENU_DELETE_ICON = <Trash2 size={16} />
 
 // UI Components
 export const SCROLL_TOP_ICON_24 = <ArrowUp size={24} />
 
-// Todo
-export const TODO_MORE_VERTICAL_ICON = <MoreVertical size={18} />
-export const TODO_CALENDAR_ICON = <Calendar size={12} />
-export const TODO_TAG_ICON = <Tag size={12} />
-export const TODO_PIN_ICON = <Pin size={14} color="var(--accent)" />
-export const TODO_CHECK_SQUARE_ICON = <CheckSquare size={20} />
-export const TODO_SQUARE_ICON = <Square size={20} />
-export const TODO_ALERT_CIRCLE_ICON = <AlertCircle size={12} />
-export const TODO_CLIPBOARD_LIST_ICON = <ClipboardList size={48} className="todo-empty-icon" />
-export const TODO_LIST_TODO_ICON = <ListTodo size={16} />
-export const TODO_PLUS_ICON = <Plus size={16} />
-export const TODO_CHEVRON_DOWN_ICON = <ChevronDown size={14} />
-export const TODO_ARROW_UP_ICON = <ArrowUp size={16} />
-export const TODO_ARROW_DOWN_ICON = <ArrowDown size={16} />
 
 // Settings
 export const SETTINGS_GENERAL_ICON = <Settings size={24} />
 export const SETTINGS_DATA_ICON = <Database size={24} />
 export const SETTINGS_DANGER_ICON = <AlertTriangle size={20} />
+
+//Defaults
+export const DEFAULT_ICON = <File size={18} />
+export const DEFAULT_SHOW_ICON = <PlayCircle size={18} />
+export const DEFAULT_FOLDER_ICON = <Folder size={18} />
+export const DEFAULT_FILE_ICON = <File size={18} />
+export const DEFAULT_TV_ICON = <Tv size={24} />
+
+// Centralized Generic Icons
+export const TV_ICON_48 = <Tv size={48} />;
+export const PLAY_ICON_12 = <Play size={12} fill="currentColor" />;
+export const PLAY_ICON_18 = <Play size={18} />;
+export const CHECK_ICON_12 = <Check size={12} />;
+export const CLOCK_ICON_12 = <Clock size={12} />;
+export const FOLDER_ICON_48 = <Folder size={48} color="var(--text-muted)" />;
+export const STATUS_DOT_ICON = <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'currentColor' }} />;
+
+export const FOLDER_ICON_28 = <Folder size={28} />;
+export const STAR_ICON_12 = <Star size={12} fill="currentColor" />;
+export const STAR_ICON_14_MARGIN = <Star size={14} fill="currentColor" style={{ marginRight: '4px', position: 'relative', top: '2px' }} />;
+export const STAR_ICON_16 = <Star size={16} fill="currentColor" />;
+export const FOLDER_ICON_48_OPACITY = <Folder size={48} opacity={0.8} />;
+export const MONITOR_ICON_18 = <Monitor size={18} />;
+export const FOLDER_OPEN_ICON_18 = <FolderOpen size={18} />;
+export const GLOBE_ICON_18 = <Globe size={18} />;
+export const ZAP_ICON_18 = <Zap size={18} />;
+export const MORE_VERTICAL_ICON_18 = <MoreVertical size={18} />;
+export const ARROW_LEFT_ICON_14 = <ArrowLeft size={14} />;
+export const X_ICON_14 = <X size={14} />;
+export const EXTERNAL_LINK_ICON_16 = <ExternalLink size={16} />;
+export const STAR_ICON_16_NONE = <Star size={16} fill="none" />;
+export const CIRCLE_DOT_ICON_16 = <CircleDot size={16} />;
+export const FOLDER_OPEN_ICON_16 = <FolderOpen size={16} />;
+export const TERMINAL_ICON_16 = <Terminal size={16} />;
+export const MONITOR_ICON_16 = <Monitor size={16} />;
+export const GLOBE_ICON_16 = <Globe size={16} />;
+export const TAGS_ICON_16 = <Tags size={16} />;
+export const PENCIL_ICON_16 = <Pencil size={16} />;
+export const TRASH_ICON_16 = <Trash2 size={16} />;
+
+export const CALENDAR_ICON_12 = <Calendar size={12} />;
+export const TAG_ICON_12 = <Tag size={12} />;
+export const PIN_ICON_14_ACCENT = <Pin size={14} color="var(--accent)" />;
+export const CHECK_SQUARE_ICON_20 = <CheckSquare size={20} />;
+export const SQUARE_ICON_20 = <Square size={20} />;
+export const ALERT_CIRCLE_ICON_12 = <AlertCircle size={12} />;
+export const CLIPBOARD_LIST_ICON_48_EMPTY = <ClipboardList size={48} className="todo-empty-icon" />;
+export const LIST_TODO_ICON_16 = <ListTodo size={16} />;
+export const PLUS_ICON_16 = <Plus size={16} />;
+export const CHEVRON_DOWN_ICON_14 = <ChevronDown size={14} />;
+export const ARROW_UP_ICON_16 = <ArrowUp size={16} />;
+export const ARROW_DOWN_ICON_16 = <ArrowDown size={16} />;
+
+
+
+

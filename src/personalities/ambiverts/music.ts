@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { FileInfo } from "../../types/media";
+import type { FileInfo } from "../../types/core";
 
 /*
 dusty::api::music::scan_music,

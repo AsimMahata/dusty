@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { GitInfo } from "../../types/projects";
+import type { GitInfo } from '../../pages/projects/types/types';
 
 /*
 IPC Commands:

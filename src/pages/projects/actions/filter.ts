@@ -1,5 +1,5 @@
-import type { Project } from "../../../types/projects";
-import type { SortOption } from "../../../types/projects";
+import type { Project } from '../types/types';
+import type { SortOption } from '../types/types';
 
 export const filterAndSortProjects = (projects: Project[], searchQuery: string, sortOption: SortOption, sortAscending: boolean = true): Project[] => {
     const query = searchQuery.toLowerCase().trim();

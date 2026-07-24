@@ -1,8 +1,8 @@
 import React from 'react';
-import { PROJECT_STATUS } from '../../../../constants/projectStatus';
 import { Check } from 'lucide-react';
-import type { ProjectWorkflowStatus } from "../../../../types/projects";
-import type { Project } from "../../../../types/projects";
+import type { ProjectWorkflowStatus } from '../../types/types';
+import type { Project } from '../../types/types';
+import { PROJECT_STATUS } from '../../constants/constants';
 
 interface ChangeStatusDialogProps {
     project: Project;
@@ -18,7 +18,7 @@ export const ChangeStatusDialog: React.FC<ChangeStatusDialogProps> = ({ project,
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <h2 className="modal-title">Change Status for {project.title}</h2>
                 <div className="modal-message">Select the current workflow status of this project.</div>
-                
+
                 <div className="status-dialog-list">
                     {statuses.map(status => {
                         const isSelected = project.status === status.id;

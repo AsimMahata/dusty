@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { AnimeData } from "../../types/shows";
+import type { AnimeData } from '../../pages/shows/types/types';
 
 /*
 dusty::api::anime::get_seasonal_anime_with_info,

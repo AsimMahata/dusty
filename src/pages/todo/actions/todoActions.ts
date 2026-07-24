@@ -1,4 +1,4 @@
-import type { TodoItem } from '../../../types/todo';
+import type { TodoItem } from '../types/types';
 
 export const getTodoCardActions = (
     todo: TodoItem, 

@@ -1,15 +1,15 @@
 import React from 'react';
 import { ActionMenu } from '../ui/ActionMenu';
-import type { Chunk } from '../../types/bazar';
-import { getChunkFileIcon } from '../../utility/chunkIcon';
+import type { Chunk } from './types/types';
+import { getChunkFileIcon } from './utility/chunkIcon';
 import { formatBytes } from '../../utility/util';
-import { getExtensionColor } from '../../constants/mediaExtensions';
 import type { ActionItem } from "../../types/core";
+import { getFileExtensionColor } from '../../constants/color';
 
 interface ChunkItemProps {
     chunk?: Chunk;
     actions: ActionItem[];
-    
+
     name?: string;
     icon?: React.ReactNode;
     extLabel?: string | null;
@@ -69,22 +69,22 @@ const arePropsEqual = (prev: ChunkItemProps, next: ChunkItemProps) => {
     return true;
 };
 
-export const ChunkItem: React.FC<ChunkItemProps> = React.memo(({ 
-    chunk, actions, name, icon, extLabel, sizeLabel, path, isPinned, tags, onDoubleClick 
+export const ChunkItem: React.FC<ChunkItemProps> = React.memo(({
+    chunk, actions, name, icon, extLabel, sizeLabel, path, isPinned, tags, onDoubleClick
 }) => {
     const finalName = name ?? chunk?.name ?? '';
     const finalIcon = icon !== undefined ? icon : (chunk?.icon ?? getChunkFileIcon(chunk?.ext));
     const finalSizeLabel = sizeLabel !== undefined ? sizeLabel : (chunk?.size != null ? formatBytes(chunk.size) : null);
     const finalExtLabel = extLabel !== undefined ? extLabel : (chunk?.ext ? chunk.ext.toUpperCase() : null);
     const badgeExt = extLabel !== undefined ? extLabel?.toLowerCase() : chunk?.ext?.toLowerCase();
-    const badgeColor = badgeExt ? getExtensionColor(badgeExt, 'transparent') : undefined;
+    const badgeColor = badgeExt ? getFileExtensionColor(badgeExt, 'transparent') : undefined;
     const finalPath = path !== undefined ? path : chunk?.path;
     const finalPinned = isPinned !== undefined ? isPinned : chunk?.is_pinned;
     const finalTags = tags ?? chunk?.tags;
 
     return (
-        <div 
-            className="chunk-item" 
+        <div
+            className="chunk-item"
             data-pinned={finalPinned ? 'true' : undefined}
             onDoubleClick={onDoubleClick}
         >
@@ -100,11 +100,11 @@ export const ChunkItem: React.FC<ChunkItemProps> = React.memo(({
                 <div className="chunk-meta">
                     {finalTags && finalTags.length > 0 ? (
                         finalTags.map(tag => {
-                            const color = getExtensionColor(tag.toLowerCase(), 'transparent');
+                            const color = getFileExtensionColor(tag.toLowerCase(), 'transparent');
                             return (
-                                <span 
+                                <span
                                     key={tag}
-                                    className="chunk-badge" 
+                                    className="chunk-badge"
                                     data-ext={tag.toLowerCase()}
                                     style={color && color !== 'transparent' ? {
                                         color: color,
@@ -117,8 +117,8 @@ export const ChunkItem: React.FC<ChunkItemProps> = React.memo(({
                             );
                         })
                     ) : finalExtLabel && (
-                        <span 
-                            className="chunk-badge" 
+                        <span
+                            className="chunk-badge"
                             data-ext={badgeExt}
                             style={badgeColor && badgeColor !== 'transparent' ? {
                                 color: badgeColor,

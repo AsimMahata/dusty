@@ -1,6 +1,6 @@
 import React from 'react';
-import { TYPE_COMING_SOON, TYPE_EMPTY_DIRECTORIES, TYPE_EXE_FILES, TYPE_JSON_FILES, TYPE_TEXT_FILES, TYPE_OFFICE_FILES, TITLE_COMING_SOON, TITLE_EMPTY_DIRECTORIES, TITLE_EXE_FILES, TITLE_JSON_FILES, TITLE_TEXT_FILES, TITLE_OFFICE_FILES } from '../../../../constants/tabs';
-import type { useMisc } from '../../../../hooks/misc/useMisc';
+import { TYPE_COMING_SOON, TYPE_EMPTY_DIRECTORIES, TYPE_EXE_FILES, TYPE_JSON_FILES, TYPE_TEXT_FILES, TYPE_OFFICE_FILES, TITLE_COMING_SOON, TITLE_EMPTY_DIRECTORIES, TITLE_EXE_FILES, TITLE_JSON_FILES, TITLE_TEXT_FILES, TITLE_OFFICE_FILES } from '../../constants/constants';
+import type { useMisc } from '../../hooks/useMisc';
 
 interface MiscTabsProps {
     misc: ReturnType<typeof useMisc>;

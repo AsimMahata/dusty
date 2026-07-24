@@ -1,12 +1,14 @@
+import { TODO_ARROW_DOWN_ICON } from '../../constants/constants';
+import { TODO_ARROW_UP_ICON } from '../../constants/constants';
+import { TODO_CHEVRON_DOWN_ICON } from '../../constants/constants';
+import { TODO_PLUS_ICON } from '../../constants/constants';
 import React, { useState } from 'react';
-import { useTodo } from '../../../../hooks/todo/useTodo';
+import { useTodo } from '../../hooks/useTodo';
 import { ContextMenu } from '../../../../components/ui/ContextMenu';
 import { SORT_LABELS } from '../../constants/constants';
 import { getToolbarSortActions } from '../../actions/toolbarActions';
-import { 
-    TODO_PLUS_ICON, TODO_CHEVRON_DOWN_ICON, 
-    TODO_ARROW_UP_ICON, TODO_ARROW_DOWN_ICON 
-} from '../../../../constants/icon';
+import type { SortMethod } from '../../types/types';
+
 
 interface TodoToolbarProps {
     todo: ReturnType<typeof useTodo>;
@@ -14,7 +16,7 @@ interface TodoToolbarProps {
 }
 
 export const TodoToolbar: React.FC<TodoToolbarProps> = ({ todo, onCreateNew }) => {
-    const [sortMenuPos, setSortMenuPos] = useState<{x: number, y: number} | null>(null);
+    const [sortMenuPos, setSortMenuPos] = useState<{ x: number, y: number } | null>(null);
 
     return (
         <div className="todo-toolbar">
@@ -24,7 +26,7 @@ export const TodoToolbar: React.FC<TodoToolbarProps> = ({ todo, onCreateNew }) =
                 </div>
             </div>
             <div className="todo-toolbar-right">
-                <button 
+                <button
                     className="todo-sort-btn"
                     onClick={(e) => {
                         e.stopPropagation();
@@ -35,26 +37,26 @@ export const TodoToolbar: React.FC<TodoToolbarProps> = ({ todo, onCreateNew }) =
                         }
                     }}
                 >
-                    <span style={{ color: 'var(--text-muted)' }}>Sort by:</span> 
-                    {SORT_LABELS[todo.sortMethod]} 
+                    <span style={{ color: 'var(--text-muted)' }}>Sort by:</span>
+                    {SORT_LABELS[todo.sortMethod as SortMethod]}
                     {TODO_CHEVRON_DOWN_ICON}
                 </button>
-                <button 
+                <button
                     className="todo-sort-btn icon-only"
                     onClick={() => todo.setSortDirection(todo.sortDirection === 'asc' ? 'desc' : 'asc')}
                     title="Toggle Direction"
                 >
                     {todo.sortDirection === 'asc' ? TODO_ARROW_UP_ICON : TODO_ARROW_DOWN_ICON}
                 </button>
-                
+
                 <button className="todo-new-btn" onClick={onCreateNew}>
                     {TODO_PLUS_ICON} New Task
                 </button>
 
                 {sortMenuPos && (
-                    <ContextMenu 
-                        x={sortMenuPos.x} 
-                        y={sortMenuPos.y} 
+                    <ContextMenu
+                        x={sortMenuPos.x}
+                        y={sortMenuPos.y}
                         actions={getToolbarSortActions(todo.setSortMethod)}
                         onClose={() => setSortMenuPos(null)}
                     />

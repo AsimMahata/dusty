@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { FileInfo } from "../../types/media";
+import type { FileInfo } from "../../types/core";
 
 const CMD_SCAN_MISC = "scan_misc";
 const CMD_SYNC_SCAN_MISC = "sync_scan_misc";

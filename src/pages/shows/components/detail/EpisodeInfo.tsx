@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Episode } from "../../../../types/media";
+import type { Episode } from "../../../../components/media/types/types";
 
 interface EpisodeInfoProps {
     episode: Episode;

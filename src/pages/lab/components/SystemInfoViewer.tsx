@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getSystemInfo } from '../../../personalities/introverts/system/system';
-import type { SystemInfoData } from '../../../types/system';
+import type { SystemInfoData } from '../../home/types/types';
 
 export const SystemInfoViewer: React.FC = () => {
     const [systemData, setSystemData] = useState<SystemInfoData | null>(null);
@@ -38,7 +38,7 @@ export const SystemInfoViewer: React.FC = () => {
     return (
         <div style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: 'var(--bg-card)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
             <h3 style={{ marginBottom: '1.5rem', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>System Information</h3>
-            
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
                 <div>
                     <h4 style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>General</h4>

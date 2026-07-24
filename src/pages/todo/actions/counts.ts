@@ -1,4 +1,4 @@
-import type { TodoItem } from '../../../types/todo';
+import type { TodoItem } from '../types/types';
 
 export const getTodoCount = (catId: string, todos: TodoItem[]): number => {
     if (catId === 'all') return todos.length;
