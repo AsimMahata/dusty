@@ -25,5 +25,5 @@ export const getChunkFileIcon = (ext?: string): React.ReactNode => {
     else if (['toml', 'ini', 'cfg', 'yaml', 'yml'].includes(lower)) icon = ICONS.FILE.CONFIG;
 
     const color = ext ? getFileExtensionColor(ext) : undefined;
-    return color && color !== 'transparent' ? React.cloneElement(icon as React.ReactElement<any>, { color }) : icon;
+    return color && color !== 'transparent' ? React.cloneElement(icon as React.ReactElement<React.SVGProps<SVGSVGElement>>, { color }) : icon;
 };

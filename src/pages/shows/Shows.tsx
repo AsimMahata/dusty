@@ -14,7 +14,7 @@ import './css/Shows.css';
 export const Shows: React.FC = () => {
     const renderCount = useRef(0);
     renderCount.current++;
-    console.log(`[Shows] rendered: ${renderCount.current}`);
+
     const showHook = useShow();
     const { isAddAnimeOpen, setIsAddAnimeOpen, addAnimeQuery, addAnimeTargetShowId, handleOpenAddAnime, isScanAnimeOpen, setIsScanAnimeOpen, allShows, isAddShowOpen, setIsAddShowOpen, addShowQuery, addShowTargetShowId, handleOpenAddShow } = showHook;
 

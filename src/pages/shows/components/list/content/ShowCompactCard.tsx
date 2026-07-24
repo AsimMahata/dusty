@@ -8,11 +8,11 @@ import type { ShowMetaData } from '../../../types/types';
 
 interface ShowCompactCardProps {
     show: ShowResult;
-    onDoubleClick: (show: ShowResult) => void;
+    onClick: (show: ShowResult) => void;
     actions: ActionItem[];
 }
 
-export const ShowCompactCard: React.FC<ShowCompactCardProps> = ({ show, onDoubleClick, actions }) => {
+export const ShowCompactCard: React.FC<ShowCompactCardProps> = ({ show, onClick, actions }) => {
 
     const [meta, setMeta] = useState<ShowMetaData | null>(null);
 
@@ -40,7 +40,7 @@ export const ShowCompactCard: React.FC<ShowCompactCardProps> = ({ show, onDouble
     const isAiring = !isCompleted && show.num_episodes === 0;
 
     return (
-        <div className="show-card compact" data-pinned={show.pinned ? 'true' : undefined} onDoubleClick={() => onDoubleClick(show)}>
+        <div className="show-card compact" data-pinned={show.pinned ? 'true' : undefined} onClick={() => onClick(show)}>
             <div className="show-card-image-container">
                 <Tv className="show-card-fallback-icon" />
             </div>

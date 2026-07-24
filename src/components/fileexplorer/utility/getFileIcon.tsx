@@ -14,7 +14,7 @@ export const getFileIcon = (filename: string, is_dir: boolean) => {
     if (lowerName.includes('readme') || ext === 'md') return ICONS.FILE.MARKDOWN;
     if (lowerName.includes('vite')) return ICONS.FILE.VITE;
 
-    let icon = ICONS.FILE.DEFAULT;
+    let icon;
 
     switch (ext) {
         case 'html': icon = ICONS.FILE.HTML; break;
@@ -39,5 +39,5 @@ export const getFileIcon = (filename: string, is_dir: boolean) => {
     }
 
     const color = ext ? getFileExtensionColor(ext) : undefined;
-    return color ? React.cloneElement(icon as React.ReactElement<any>, { color }) : icon;
+    return color ? React.cloneElement(icon as React.ReactElement<React.SVGProps<SVGSVGElement>>, { color }) : icon;
 };

@@ -3,7 +3,7 @@ import { ContextMenu } from '../../../ui/ContextMenu';
 import { useMediaItemDetail } from '../../hooks/useMediaItemDetail';
 import { MediaDetailHeader } from './MediaDetailHeader';
 import { MediaDetailList } from './MediaDetailList';
-import type { BaseItem, AnyItem, Item } from "../../../../types/core";
+import type { BaseItem, AnyItem, Item, ActionItem } from "../../../../types/core";
 import type { MediaType } from '../../types/types';
 
 export interface MediaItemDetailPageProps<T extends BaseItem = AnyItem> {
@@ -15,7 +15,7 @@ export interface MediaItemDetailPageProps<T extends BaseItem = AnyItem> {
         defaultIcon?: React.ReactNode;
         handleRename?: (item: T, newTitle: string) => Promise<void>;
         getChildrens?: (item: T) => Promise<Item[]>;
-        getCardActions?: (item: T) => any[];
+        getCardActions?: (item: T) => ActionItem[];
     };
     mediaType?: MediaType;
 }

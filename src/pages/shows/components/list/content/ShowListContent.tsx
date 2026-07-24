@@ -18,19 +18,19 @@ export const ShowListContent: React.FC<ShowListContentProps> = ({ showHook }) =>
                         <ShowGridCard 
                             key={item.id} 
                             show={item} 
-                            onDoubleClick={handleShowOpen}
+                            onClick={handleShowOpen}
                             actions={getActionsForShow(item)}
                         />
                     );
                 }
                 
                 if (item.mal_id) {
-                    console.log(`item that has mal id is ${item.title} and its mal id is ${item.mal_id}`)
+
                     return (
                         <ShowPosterCard 
                             key={item.id} 
                             show={item} 
-                            onDoubleClick={handleShowOpen}
+                            onClick={handleShowOpen}
                             actions={getActionsForShow(item)}
                         />
                     );
@@ -39,7 +39,7 @@ export const ShowListContent: React.FC<ShowListContentProps> = ({ showHook }) =>
                     <ShowCompactCard 
                         key={item.id} 
                         show={item} 
-                        onDoubleClick={handleShowOpen}
+                        onClick={handleShowOpen}
                         actions={getActionsForShow(item)}
                     />
                 );

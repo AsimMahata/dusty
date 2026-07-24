@@ -12,7 +12,7 @@ interface PageLayoutProps {
     isRefreshing: boolean;
     isLoading?: boolean;
     fetchData: (sync?: boolean) => void;
-    selectedItem?: any;
+    selectedItem?: unknown;
     isItemSelected?: boolean;
   };
   searchQuery?: string;

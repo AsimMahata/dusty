@@ -8,11 +8,11 @@ import type { ShowMetaData } from '../../../types/types';
 
 interface ShowPosterCardProps {
     show: ShowResult;
-    onDoubleClick: (show: ShowResult) => void;
+    onClick: (show: ShowResult) => void;
     actions: ActionItem[];
 }
 
-export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onDoubleClick, actions }) => {
+export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onClick, actions }) => {
 
     const [meta, setMeta] = useState<ShowMetaData | null>(null);
 
@@ -41,7 +41,7 @@ export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onDoubleCl
     const isAiring = !isCompleted && show.num_episodes === 0;
 
     return (
-        <div className="show-card" data-pinned={show.pinned ? 'true' : undefined} onDoubleClick={() => onDoubleClick(show)}>
+        <div className="show-card" data-pinned={show.pinned ? 'true' : undefined} onClick={() => onClick(show)}>
             <div className="show-card-image-container">
                 {posterUrl ? (
                     <img src={posterUrl} alt={show.title} className="show-card-poster" />

@@ -45,7 +45,7 @@ export const MediaDetailListChild: React.FC<MediaDetailListChildProps> = ({
         actions.push({ label: 'Mark as Default', icon: CIRCLE_ICON_16, color: 'var(--text-muted)', onClick: () => onUpdateStatus?.(child.id, 'default') });
     }
 
-    const episodeStatus = (child as any).episode_status || 'default';
+    const episodeStatus = (child as Item & { episode_status?: string }).episode_status || 'default';
 
     return (
         <div

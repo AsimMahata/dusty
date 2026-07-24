@@ -10,11 +10,11 @@ import { ShowMetaData } from "./ShowMetaData";
 
 interface ShowGridCardProps {
     show: ShowResult;
-    onDoubleClick: (show: ShowResult) => void;
+    onClick: (show: ShowResult) => void;
     actions: ActionItem[];
 }
 
-export const ShowGridCard: React.FC<ShowGridCardProps> = ({ show, onDoubleClick, actions }) => {
+export const ShowGridCard: React.FC<ShowGridCardProps> = ({ show, onClick, actions }) => {
     const [meta, setMeta] = useState<ShowMetaDataInterface | null>(null);
 
     useEffect(() => {
@@ -36,7 +36,7 @@ export const ShowGridCard: React.FC<ShowGridCardProps> = ({ show, onDoubleClick,
     }, [meta, show]);
 
     return (
-        <div className="show-grid-card" data-pinned={show.pinned ? 'true' : undefined} onDoubleClick={() => onDoubleClick(show)}>
+        <div className="show-grid-card" data-pinned={show.pinned ? 'true' : undefined} onClick={() => onClick(show)}>
             <div className="show-grid-image-container">
                 <ShowPoster posterUrl={posterUrl} title={show.title} />
                 <ShowActions actions={actions} />
