@@ -13,6 +13,7 @@ import {
     ARROW_UP_ICON_16,
     ARROW_DOWN_ICON_16
 } from '../../../constants/icon';
+import { COLORS } from '../../../constants/color';
 import type { TodoCategory, SortMethod } from '../types/types';
 
 export const SORT_LABELS: Record<SortMethod, string> = {
@@ -32,9 +33,9 @@ export const DEFAULT_CATEGORIES: TodoCategory[] = [
 ];
 
 export const PRIORITY_COLORS = {
-    High: 'var(--accent-red, #ef4444)',
-    Medium: 'var(--accent-yellow, #eab308)',
-    Low: 'var(--accent-blue, #3b82f6)'
+    High: COLORS.PRIORITY.HIGH,
+    Medium: COLORS.PRIORITY.MEDIUM,
+    Low: COLORS.PRIORITY.LOW
 };
 
 export const PRIORITY_LEVELS: Record<string, number> = {

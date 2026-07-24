@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Palette, Copy, Check } from 'lucide-react';
 import { COLOR_TOKENS } from '../../constants/constants';
+import { PALETTE_ICON_20_ACCENT, COPY_ICON_14_MUTED, CHECK_ICON_14_GREEN } from '../../../../constants/icon';
+import { COLORS } from '../../../../constants/color';
 
 export const ThemeInspector: React.FC = () => {
     const [copiedToken, setCopiedToken] = useState<string | null>(null);
@@ -15,7 +16,7 @@ export const ThemeInspector: React.FC = () => {
         <div>
             <div className="db-inspector-header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Palette size={20} style={{ color: 'var(--accent)' }} />
+                    {PALETTE_ICON_20_ACCENT}
                     <h3 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1rem', fontWeight: 600 }}>
                         Design System & Theme Tokens
                     </h3>
@@ -26,7 +27,6 @@ export const ThemeInspector: React.FC = () => {
                 Dusty design system CSS variables and typography tokens. Click any token card to copy its `var(...)` CSS reference to the clipboard.
             </p>
 
-            {/* Color Swatches Grid */}
             <h4 className="api-input-label" style={{ marginBottom: '12px' }}>Color Palette Swatches</h4>
             <div className="theme-grid" style={{ marginBottom: '32px' }}>
                 {COLOR_TOKENS.map((token) => (
@@ -44,9 +44,9 @@ export const ThemeInspector: React.FC = () => {
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <code style={{ fontSize: '0.8125rem', color: 'var(--text-primary)' }}>{token.name}</code>
                             {copiedToken === token.name ? (
-                                <Check size={14} style={{ color: '#0dbc79' }} />
+                                CHECK_ICON_14_GREEN
                             ) : (
-                                <Copy size={14} style={{ color: 'var(--text-muted)' }} />
+                                COPY_ICON_14_MUTED
                             )}
                         </div>
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{token.description}</span>
@@ -54,9 +54,8 @@ export const ThemeInspector: React.FC = () => {
                 ))}
             </div>
 
-            {/* Typography Scale */}
             <h4 className="api-input-label" style={{ marginBottom: '12px' }}>Typography Hierarchy</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: COLORS.TRANSPARENT.BLACK_20, border: '1px solid var(--border-color)', borderRadius: '8px', padding: '20px' }}>
                 <div>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>H1 Page Heading (1.25rem / 20px - SemiBold)</span>
                     <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-primary)', margin: '4px 0 0 0' }}>

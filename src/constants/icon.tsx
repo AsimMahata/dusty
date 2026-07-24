@@ -1,13 +1,13 @@
 import {
     Clock, List, Pin, Eye, CheckCircle, Calendar, PauseCircle, XCircle, RotateCcw, Ban, ShieldCheck, Home as HomeIcon, Tv, FolderGit2, Box, Music as MusicIcon, Film, Image as ImageIcon, Archive, PackageOpen, FolderX,
     ArrowLeft, ExternalLink, X,
-    Folder as LucideFolder, File as LucideFile, FileJson, FileCog, FileCode2, FileText, FileImage, FileAudio, FileVideo, FileArchive, Zap, Edit,
+    Folder as LucideFolder, File as LucideFile, FileJson, FileCog, FileCode2, FileText, FileImage, FileAudio, FileVideo, FileArchive, Zap, Edit, Edit2,
     Code2, Sparkles, Monitor, Server, Palette, GraduationCap, Coffee, Binary,
     Activity, Pause, CheckCircle2, AlertTriangle, Circle, FileEdit, ArrowUpCircle, ArrowDownCircle, GitPullRequest, AlertOctagon, HelpCircle,
     Folder,
     ArrowUp, BookOpen,
     Settings, Database, Search,
-    TerminalIcon,
+    Terminal as TerminalIcon,
     PlayCircle,
     File,
     Play,
@@ -29,7 +29,21 @@ import {
     Plus,
     ArrowDown,
     ChevronDown,
-    Globe
+    Globe,
+    EyeOff,
+    ArrowRight,
+    Menu,
+    FlaskConical,
+    RefreshCw,
+    Copy,
+    ChevronLeft,
+    Radio,
+    ListVideo,
+    Grid,
+    Save,
+    Key,
+    Cpu,
+    FileCode,
 } from "lucide-react";
 
 import { COLORS } from './color';
@@ -144,8 +158,11 @@ export const DEFAULT_TV_ICON = <Tv size={24} />
 // Centralized Generic Icons
 export const TV_ICON_48 = <Tv size={48} />;
 export const PLAY_ICON_12 = <Play size={12} fill="currentColor" />;
+export const PLAY_ICON_16 = <Play size={16} />;
+export const PLAY_ICON_16_FILL = <Play size={16} fill="currentColor" />;
 export const PLAY_ICON_18 = <Play size={18} />;
 export const CHECK_ICON_12 = <Check size={12} />;
+export const CHECK_ICON_20 = <Check size={20} />;
 export const CLOCK_ICON_12 = <Clock size={12} />;
 export const FOLDER_ICON_48 = <Folder size={48} color="var(--text-muted)" />;
 export const STATUS_DOT_ICON = <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'currentColor' }} />;
@@ -161,6 +178,7 @@ export const GLOBE_ICON_18 = <Globe size={18} />;
 export const ZAP_ICON_18 = <Zap size={18} />;
 export const MORE_VERTICAL_ICON_18 = <MoreVertical size={18} />;
 export const ARROW_LEFT_ICON_14 = <ArrowLeft size={14} />;
+export const ARROW_LEFT_ICON_20 = <ArrowLeft size={20} />;
 export const X_ICON_14 = <X size={14} />;
 export const EXTERNAL_LINK_ICON_16 = <ExternalLink size={16} />;
 export const STAR_ICON_16_NONE = <Star size={16} fill="none" />;
@@ -186,6 +204,98 @@ export const CHEVRON_DOWN_ICON_14 = <ChevronDown size={14} />;
 export const ARROW_UP_ICON_16 = <ArrowUp size={16} />;
 export const ARROW_DOWN_ICON_16 = <ArrowDown size={16} />;
 
+// Edit Icons
+export const EDIT2_ICON_16 = <Edit2 size={16} />;
 
+// Visibility Icons
+export const EYE_OFF_ICON_16 = <EyeOff size={16} />;
+export const CHECK_CIRCLE_2_ICON_16 = <CheckCircle2 size={16} />;
+export const CHECK_CIRCLE_2_ICON_14 = <CheckCircle2 size={14} />;
+export const CIRCLE_ICON_16 = <Circle size={16} />;
+export const CHECK_CIRCLE_2_ICON_16_WATCHED = <CheckCircle2 size={16} color={COLORS.MEDIA.WATCHED} style={{ marginLeft: 8 }} />;
+export const EYE_OFF_ICON_16_UNWATCHED = <EyeOff size={16} color={COLORS.MEDIA.UNWATCHED} style={{ marginLeft: 8 }} />;
+
+// Navigation & UI Icons
+export const ARROW_RIGHT_ICON_16 = <ArrowRight size={16} />;
+export const CHEVRON_LEFT_ICON_24 = <ChevronLeft size={24} />;
+export const MENU_ICON_20 = <Menu size={20} />;
+
+// Header/Layout Icons
+export const FLASK_CONICAL_ICON_20 = <FlaskConical size={20} />;
+export const FLASK_CONICAL_ICON_24 = <FlaskConical size={24} />;
+export const REFRESH_CW_ICON_20 = <RefreshCw size={20} />;
+
+// Action Icons
+export const COPY_ICON_14 = <Copy size={14} />;
+export const ROTATE_CCW_ICON_12 = <RotateCcw size={12} />;
+export const SAVE_ICON_16 = <Save size={16} />;
+
+// Show/Media Icons
+export const RADIO_ICON_14 = <Radio size={14} />;
+export const LIST_VIDEO_ICON_14 = <ListVideo size={14} />;
+export const CLOCK_ICON_14 = <Clock size={14} />;
+export const FOLDER_ICON_14 = <Folder size={14} />;
+export const CALENDAR_ICON_14 = <Calendar size={14} />;
+export const PLAY_ICON_14 = <Play size={14} fill="currentColor" />;
+export const CHECK_ICON_14 = <Check size={14} />;
+
+// Layout Icons
+export const LIST_ICON_16 = <List size={16} />;
+export const GRID_ICON_16 = <Grid size={16} />;
+
+// Lab Icons
+export const KEY_ICON_16 = <Key size={16} />;
+export const KEY_ICON_20 = <Key size={20} />;
+export const CPU_ICON_16 = <Cpu size={16} />;
+export const FILE_CODE_ICON_16 = <FileCode size={16} />;
+export const DATABASE_ICON_16 = <Database size={16} />;
+export const ALERT_CIRCLE_ICON_14 = <AlertCircle size={14} />;
+export const CHECK_CIRCLE_2_ICON_14_LAB = <CheckCircle2 size={14} />;
+
+// Search
+export const SEARCH_ICON_18 = <Search size={18} />;
+
+// Terminal
+export const TERMINAL_ICON_14 = <Terminal size={14} />;
+export const TERMINAL_ICON_32 = <Terminal size={32} />;
+
+// File Text
+export const FILE_TEXT_ICON_13 = <FileText size={13} />;
+
+// Shows
+export const STAR_ICON_12_CLASS = <Star size={12} className="star-icon" />;
+export const STAR_ICON_16_CLASS = <Star size={16} className="star-icon" />;
+export const TV_ICON_32 = <Tv size={32} />;
+export const TV_ICON_48_MUTED = <Tv size={48} color="var(--text-muted)" />;
+
+// Plus
+export const PLUS_ICON_18 = <Plus size={18} />;
+export const CHECK_ICON_18 = <Check size={18} />;
+export const X_ICON_20 = <X size={20} />;
+export const X_ICON_12 = <X size={12} />;
+export const X_ICON_24 = <X size={24} />;
+export const SEARCH_ICON_16_CLASS = <Search size={16} className="search-icon" />;
+export const MORE_VERTICAL_ICON_16 = <MoreVertical size={16} />;
+export const CHECK_CIRCLE_2_ICON_16_CLASS = <CheckCircle2 size={16} />;
+
+export const PALETTE_ICON_20_ACCENT = <Palette size={20} style={{ color: 'var(--accent)' }} />;
+export const CHECK_ICON_14_GREEN = <Check size={14} style={{ color: COLORS.LAB.GREEN }} />;
+export const COPY_ICON_14_MUTED = <Copy size={14} style={{ color: 'var(--text-muted)' }} />;
+
+export const KEY_ICON_20_ACCENT = <Key size={20} style={{ color: 'var(--accent)' }} />;
+
+export const ARROW_UP_ICON_16_CLASS = <ArrowUp size={16} />;
+
+// PageLayout Icons
+export const SEARCH_ICON_16_SEARCH = <Search size={16} className="search-icon" />;
+export const X_ICON_24_SECONDARY = <X size={24} style={{ cursor: 'pointer', color: 'var(--text-secondary)' }} />;
+export const FLASK_CONICAL_ICON_20_POINTER = <FlaskConical size={20} style={{ cursor: 'pointer' }} />;
+export const LIST_TODO_ICON_20_POINTER = <ListTodo size={20} style={{ cursor: 'pointer' }} />;
+export const SETTINGS_ICON_20_POINTER = <Settings size={20} style={{ cursor: 'pointer' }} />;
+export const getRefreshCwIcon = (isRefreshing: boolean) => (
+    <RefreshCw size={20} style={{ cursor: 'pointer' }} className={isRefreshing ? 'spin-animation' : ''} />
+);
+
+export const ROTATE_CCW_ICON_12_HISTORY = <RotateCcw size={12} className="api-history-time" />;
 
 

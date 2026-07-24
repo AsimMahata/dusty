@@ -1,4 +1,5 @@
 import type { ITerminalOptions } from "@xterm/xterm"
+import { COLORS } from '../../../constants/color';
 
 export const getShellExecutable = (shellName?: string): string => {
     if (!shellName) return 'pwsh.exe';
@@ -11,29 +12,7 @@ export const getShellExecutable = (shellName?: string): string => {
     return `${s}.exe`;
 };
 
-export const terminalTheme = {
-    background: '#1e1e1e',
-    foreground: '#cccccc',
-    cursor: '#ffffff',
-    cursorAccent: '#000000',
-    selectionBackground: '#264f78',
-    black: '#000000',
-    red: '#cd3131',
-    green: '#0dbc79',
-    yellow: '#e5e510',
-    blue: '#2472c8',
-    magenta: '#bc3fbc',
-    cyan: '#11a8cd',
-    white: '#e5e5e5',
-    brightBlack: '#666666',
-    brightRed: '#f14c4c',
-    brightGreen: '#23d18b',
-    brightYellow: '#f5f543',
-    brightBlue: '#3b8eea',
-    brightMagenta: '#d670d6',
-    brightCyan: '#29b8db',
-    brightWhite: '#ffffff',
-}
+export const terminalTheme = COLORS.TERMINAL_THEME;
 
 export const terminalFontFamily =
     '"Cascadia Code NF", "Cascadia Mono NF", "JetBrainsMono Nerd Font", "FiraCode Nerd Font", "MesloLGS NF", "AnonymicePro Nerd Font", "Symbols Nerd Font", "Nerd Fonts Symbols Non-Mono", "Segoe UI Emoji", "Segoe UI Symbol", "Apple Color Emoji", "Noto Color Emoji", "Cascadia Code", Consolas, monospace';

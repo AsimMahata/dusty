@@ -1,3 +1,5 @@
+export { COLOR_TOKENS } from '../../../constants/color';
+
 export interface LabTab {
     id: string;
     label: string;
@@ -72,15 +74,3 @@ export const PRESET_IPC_COMMANDS: IpcCommandPreset[] = [
     }
 ];
 
-export const COLOR_TOKENS = [
-    { name: '--bg-main', value: '#0a0a0c', description: 'Main background' },
-    { name: '--bg-sidebar', value: '#121214', description: 'Sidebar background' },
-    { name: '--bg-card', value: '#18181b', description: 'Card surface background' },
-    { name: '--bg-card-hover', value: '#222227', description: 'Card hover background' },
-    { name: '--text-primary', value: '#f4f4f5', description: 'Primary heading & text' },
-    { name: '--text-secondary', value: '#a1a1aa', description: 'Secondary text & labels' },
-    { name: '--text-muted', value: '#52525b', description: 'Muted captions & icons' },
-    { name: '--accent', value: '#6366f1', description: 'Primary accent color' },
-    { name: '--accent-hover', value: '#4f46e5', description: 'Accent hover color' },
-    { name: '--border-color', value: 'rgba(255, 255, 255, 0.08)', description: 'Border divider stroke' },
-];

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ARROW_RIGHT_ICON_16 } from '../../../../constants/icon';
 import { ROUTES } from '../../../../constants/routes';
 
 export const CWHeader: React.FC = () => {
@@ -10,7 +10,7 @@ export const CWHeader: React.FC = () => {
         <div className="home-card-header">
             <span className="home-card-title">Continue Watching</span>
             <button className="view-all-btn" onClick={() => navigate(ROUTES.SHOWS)}>
-                View All <ArrowRight size={16} />
+                View All {ARROW_RIGHT_ICON_16}
             </button>
         </div>
     );

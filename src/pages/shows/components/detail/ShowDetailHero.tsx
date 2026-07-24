@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ChevronLeft, Tv, Play, Check, Star, Calendar, Radio } from 'lucide-react';
+import { PLAY_ICON_16_FILL, CALENDAR_ICON_14, STAR_ICON_16_CLASS, RADIO_ICON_14, CHEVRON_LEFT_ICON_24, TV_ICON_48_MUTED, CHECK_ICON_14 } from '../../../../constants/icon';
 import { ActionMenu } from '../../../../components/ui/ActionMenu';
 import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../personalities/introverts/show/mal';
 import type { ShowMetaData } from '../../types/types';
@@ -50,7 +50,7 @@ export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActions
             </div>
 
             <button className="show-detail-back-btn" onClick={onBack}>
-                <ChevronLeft size={24} /> Back
+                {CHEVRON_LEFT_ICON_24} Back
             </button>
 
             <div className="show-detail-hero-content">
@@ -59,7 +59,7 @@ export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActions
                         <img src={posterUrl} alt={show.title} className="show-detail-poster" />
                     ) : (
                         <div className="show-detail-poster-fallback">
-                            <Tv size={48} color="var(--text-muted)" />
+                            {TV_ICON_48_MUTED}
                         </div>
                     )}
                 </div>
@@ -77,27 +77,27 @@ export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActions
 
                     <div className="show-detail-meta-row">
                         <div className="show-detail-status" style={{ color: statusColor, borderColor: statusColor }}>
-                            {isWatching && <Play size={14} fill="currentColor" />}
-                            {isCompleted && <Check size={14} />}
+                            {isWatching && PLAY_ICON_16_FILL}
+                            {isCompleted && CHECK_ICON_14}
                             {!isWatching && !isCompleted && <div className="status-dot" style={{ backgroundColor: statusColor }} />}
                             <span style={{ textTransform: 'capitalize' }}>{show.status.replace('_', ' ')}</span>
                         </div>
 
                         {rating > 0 && (
                             <div className="show-detail-rating">
-                                <Star size={16} className="star-icon" /> {rating}
+                                {STAR_ICON_16_CLASS} {rating}
                             </div>
                         )}
 
                         {seasonYear && (
                             <div className="show-detail-meta-item">
-                                <Calendar size={14} /> {seasonYear}
+                                {CALENDAR_ICON_14} {seasonYear}
                             </div>
                         )}
 
                         {!seasonYear && isAiring && (
                             <div className="show-detail-meta-item">
-                                <Radio size={14} /> Airing
+                                {RADIO_ICON_14} Airing
                             </div>
                         )}
                     </div>

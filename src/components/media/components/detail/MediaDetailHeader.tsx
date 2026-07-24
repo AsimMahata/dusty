@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, CheckSquare, CheckCircle2, Circle, EyeOff } from 'lucide-react';
+import { ARROW_LEFT_ICON_20, CHECK_SQUARE_ICON_20, CHECK_CIRCLE_2_ICON_16, EYE_OFF_ICON_16, CIRCLE_ICON_16 } from '../../../../constants/icon';
 import { ActionMenu } from '../../../ui/ActionMenu';
 import { MediaEditTitle } from './MediaEditTitle';
 import { MediaDetailTitle } from './MediaDetailTitle';
@@ -22,7 +22,7 @@ export const MediaDetailHeader: React.FC<MediaDetailHeaderProps> = ({ item, deta
     return (
         <div className="detail-header">
             <button className="back-btn" onClick={onBack} title="Go back">
-                <ArrowLeft size={20} />
+                {ARROW_LEFT_ICON_20}
             </button>
             <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 {detail.isEditing ? (
@@ -70,11 +70,11 @@ export const MediaDetailHeader: React.FC<MediaDetailHeaderProps> = ({ item, deta
                 )}
                 {mediaType === 'video' && !detail.loading && detail.childrens.length > 0 && (
                     <ActionMenu
-                        icon={<CheckSquare size={20} />}
+                        icon={CHECK_SQUARE_ICON_20}
                         actions={[
-                            { label: 'Mark All Watched', icon: <CheckCircle2 size={16} />, color: '#10b981', onClick: () => detail.updateAllChildrenStatus('watched') },
-                            { label: 'Mark All Unwatched', icon: <EyeOff size={16} />, color: '#ef4444', onClick: () => detail.updateAllChildrenStatus('unwatched') },
-                            { label: 'Reset All Statuses', icon: <Circle size={16} />, color: 'var(--text-muted)', onClick: () => detail.updateAllChildrenStatus('default') }
+                            { label: 'Mark All Watched', icon: CHECK_CIRCLE_2_ICON_16, color: COLORS.MEDIA.WATCHED, onClick: () => detail.updateAllChildrenStatus('watched') },
+                            { label: 'Mark All Unwatched', icon: EYE_OFF_ICON_16, color: COLORS.MEDIA.UNWATCHED, onClick: () => detail.updateAllChildrenStatus('unwatched') },
+                            { label: 'Reset All Statuses', icon: CIRCLE_ICON_16, color: 'var(--text-muted)', onClick: () => detail.updateAllChildrenStatus('default') }
                         ]}
                     />
                 )}

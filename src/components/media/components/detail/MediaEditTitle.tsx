@@ -1,5 +1,7 @@
 import React from 'react';
-import { Check, X } from 'lucide-react';
+import { CHECK_ICON_20, X_ICON_20 } from '../../../../constants/icon';
+
+import { COLORS } from '../../../../constants/color';
 
 interface MediaEditTitleProps {
     value: string;
@@ -24,9 +26,9 @@ export const MediaEditTitle: React.FC<MediaEditTitleProps> = ({
                 onChange={(e) => onChange(e.target.value)}
                 autoFocus
                 style={{
-                    background: 'var(--bg-secondary, #2a2a2a)',
-                    color: 'white',
-                    border: '1px solid var(--border-color, #444)',
+                    background: `var(--bg-secondary, ${COLORS.MEDIA.BG_SECONDARY})`,
+                    color: COLORS.BASE.WHITE,
+                    border: `1px solid var(--border-color, ${COLORS.MEDIA.BORDER_FALLBACK})`,
                     borderRadius: '6px',
                     padding: '0.4rem 0.8rem',
                     fontSize: '1.5rem',
@@ -44,16 +46,16 @@ export const MediaEditTitle: React.FC<MediaEditTitleProps> = ({
             <button 
                 onClick={onConfirm} 
                 disabled={disabled} 
-                style={{ background: 'transparent', border: 'none', color: '#4ade80', cursor: 'pointer', padding: '0.2rem', display: 'flex', alignItems: 'center' }}
+                style={{ background: 'transparent', border: 'none', color: COLORS.MEDIA.CONFIRM, cursor: 'pointer', padding: '0.2rem', display: 'flex', alignItems: 'center' }}
             >
-                <Check size={20} />
+                {CHECK_ICON_20}
             </button>
             <button 
                 onClick={onCancel} 
                 disabled={disabled} 
-                style={{ background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer', padding: '0.2rem', display: 'flex', alignItems: 'center' }}
+                style={{ background: 'transparent', border: 'none', color: COLORS.MEDIA.CANCEL, cursor: 'pointer', padding: '0.2rem', display: 'flex', alignItems: 'center' }}
             >
-                <X size={20} />
+                {X_ICON_20}
             </button>
         </div>
     );

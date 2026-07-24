@@ -1,5 +1,5 @@
 import React from 'react';
-import { getFileExtensionColor } from '../../../../../../constants/color';
+import { getFileExtensionColor, COLORS } from '../../../../../../constants/color';
 import '../../../../css/MediaSources.css';
 import type { MediaSourceCategory } from "../../../../types/types";
 
@@ -9,7 +9,7 @@ interface MediaMediaTagProps {
 }
 
 export const MediaMediaTag: React.FC<MediaMediaTagProps> = ({ extension, mediaType }) => {
-    const defaultColor = mediaType === 'music' ? '#d946ef' : mediaType === 'video' ? '#f97316' : '#3b82f6';
+    const defaultColor = mediaType === 'music' ? COLORS.MEDIA.MUSIC : mediaType === 'video' ? COLORS.MEDIA.VIDEO : COLORS.MEDIA.IMAGE;
     const color = getFileExtensionColor(extension, defaultColor);
 
     return (

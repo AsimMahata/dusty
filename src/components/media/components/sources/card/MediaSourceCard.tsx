@@ -7,7 +7,7 @@ import { MediaSourceCardHeader } from './info/MediaSourceCardHeader';
 import { MediaSourceCardTags } from './tags/MediaSourceCardTags';
 import { MediaSourceCardMeta } from './info/MediaSourceCardMeta';
 import { generateExtSideBarGradient } from '../../../../../utility/gradient';
-import { getFileExtensionColor } from '../../../../../constants/color';
+import { getFileExtensionColor, COLORS } from '../../../../../constants/color';
 import { MORE_OPTIONS_ICON } from '../../../constants/icons';
 import '../../../css/MediaSources.css';
 import type { MediaSourceCategory, MediaSourceItem } from '../../../types/types';
@@ -32,7 +32,7 @@ export const MediaSourceCard: React.FC<MediaSourceCardProps> = ({
         setMenuPos({ x: rect.right, y: rect.bottom });
     };
 
-    const defaultColor = mediaType === 'music' ? '#d946ef' : mediaType === 'video' ? '#f97316' : '#3b82f6';
+    const defaultColor = mediaType === 'music' ? COLORS.MEDIA.MUSIC : mediaType === 'video' ? COLORS.MEDIA.VIDEO : COLORS.MEDIA.IMAGE;
     const hoverBorderBg = generateExtSideBarGradient(extensions, defaultColor);
 
     const hoverColor = extensions.length > 0 ? getFileExtensionColor(extensions[0], defaultColor) : defaultColor;

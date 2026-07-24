@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Cpu, HardDrive, Server, RefreshCw, Search } from 'lucide-react';
 import { getSystemInfo } from '../../../../personalities/introverts/system/system';
 import type { SystemInfoData } from '../../../home/types/types';
+import { COLORS } from '../../../../constants/color';
 
 export const SystemInfoViewer: React.FC = () => {
     const [systemData, setSystemData] = useState<SystemInfoData | null>(null);
@@ -73,9 +74,8 @@ export const SystemInfoViewer: React.FC = () => {
                 </button>
             </div>
 
-            {/* Overview Stat Cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '20px' }}>
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '16px' }}>
+                <div style={{ background: COLORS.TRANSPARENT.WHITE_02, border: '1px solid var(--border-color)', borderRadius: '8px', padding: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.8125rem' }}>
                         <Server size={16} />
                         <span>System OS</span>
@@ -88,7 +88,7 @@ export const SystemInfoViewer: React.FC = () => {
                     </div>
                 </div>
 
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '16px' }}>
+                <div style={{ background: COLORS.TRANSPARENT.WHITE_02, border: '1px solid var(--border-color)', borderRadius: '8px', padding: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.8125rem' }}>
                         <Cpu size={16} />
                         <span>RAM Memory Usage</span>
@@ -96,12 +96,12 @@ export const SystemInfoViewer: React.FC = () => {
                     <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                         {formatBytes(systemData.used_memory)} / {formatBytes(systemData.total_memory)} ({memUsedPercent}%)
                     </div>
-                    <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', marginTop: '8px', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${memUsedPercent}%`, background: memUsedPercent > 85 ? '#f14c4c' : 'var(--accent)' }} />
+                    <div style={{ height: '6px', background: COLORS.TRANSPARENT.WHITE_05, borderRadius: '3px', marginTop: '8px', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${memUsedPercent}%`, background: memUsedPercent > 85 ? COLORS.LAB.RED : 'var(--accent)' }} />
                     </div>
                 </div>
 
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '16px' }}>
+                <div style={{ background: COLORS.TRANSPARENT.WHITE_02, border: '1px solid var(--border-color)', borderRadius: '8px', padding: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.8125rem' }}>
                         <HardDrive size={16} />
                         <span>Disks Tracked</span>
@@ -122,7 +122,7 @@ export const SystemInfoViewer: React.FC = () => {
                     const used = disk.total_space - disk.available_space;
                     const pct = disk.total_space > 0 ? Math.round((used / disk.total_space) * 100) : 0;
                     return (
-                        <div key={idx} style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', borderRadius: '6px', padding: '12px' }}>
+                        <div key={idx} style={{ background: COLORS.TRANSPARENT.BLACK_20, border: '1px solid var(--border-color)', borderRadius: '6px', padding: '12px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem', marginBottom: '6px' }}>
                                 <strong style={{ color: 'var(--text-primary)' }}>{disk.name} ({disk.file_system})</strong>
                                 <span style={{ color: 'var(--text-muted)' }}>{pct}%</span>
@@ -130,8 +130,8 @@ export const SystemInfoViewer: React.FC = () => {
                             <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
                                 {formatBytes(used)} used of {formatBytes(disk.total_space)}
                             </div>
-                            <div style={{ height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
-                                <div style={{ height: '100%', width: `${pct}%`, background: '#0dbc79' }} />
+                            <div style={{ height: '4px', background: COLORS.TRANSPARENT.WHITE_05, borderRadius: '2px', overflow: 'hidden' }}>
+                                <div style={{ height: '100%', width: `${pct}%`, background: COLORS.LAB.GREEN }} />
                             </div>
                         </div>
                     );

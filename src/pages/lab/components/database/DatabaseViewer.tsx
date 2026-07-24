@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { RefreshCw, Search, Table, Eye } from 'lucide-react';
 import { useDatabaseViewer } from '../../hooks/useDatabaseViewer';
+import { COLORS } from '../../../../constants/color';
 
 export const DatabaseViewer: React.FC = () => {
     const { data, isLoading, error, fetchData } = useDatabaseViewer();
@@ -77,7 +78,7 @@ export const DatabaseViewer: React.FC = () => {
             </div>
 
             {error && (
-                <div style={{ color: '#f14c4c', background: 'rgba(241,76,76,0.1)', padding: '10px 14px', borderRadius: '6px', marginBottom: '16px', fontSize: '0.875rem' }}>
+                <div style={{ color: COLORS.LAB.RED, background: COLORS.TRANSPARENT.RED_10, padding: '10px 14px', borderRadius: '6px', marginBottom: '16px', fontSize: '0.875rem' }}>
                     Error loading database tables: {error}
                 </div>
             )}
@@ -142,9 +143,8 @@ export const DatabaseViewer: React.FC = () => {
                         )}
                     </div>
 
-                    {/* Selected Row Modal Inspector */}
                     {selectedRow && (
-                        <div style={{ marginTop: '16px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '16px' }}>
+                        <div style={{ marginTop: '16px', background: COLORS.TRANSPARENT.BLACK_30, border: '1px solid var(--border-color)', borderRadius: '8px', padding: '16px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                                 <span className="api-input-label">Row Object Inspector</span>
                                 <button

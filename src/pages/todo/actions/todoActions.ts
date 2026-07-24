@@ -1,11 +1,12 @@
 import type { TodoItem } from '../types/types';
+import { COLORS } from '../../../constants/color';
 
 export const getTodoCardActions = (
-    todo: TodoItem, 
-    onEdit: () => void, 
-    onTogglePin: () => void, 
-    onToggleComplete: () => void, 
-    onDuplicate: () => void, 
+    todo: TodoItem,
+    onEdit: () => void,
+    onTogglePin: () => void,
+    onToggleComplete: () => void,
+    onDuplicate: () => void,
     onDelete: () => void
 ) => {
     return [
@@ -13,6 +14,6 @@ export const getTodoCardActions = (
         { label: todo.pinned ? 'Unpin' : 'Pin', onClick: onTogglePin },
         { label: todo.completed ? 'Mark Active' : 'Mark Complete', onClick: onToggleComplete },
         { label: 'Duplicate', onClick: onDuplicate },
-        { label: 'Delete', onClick: onDelete, color: 'var(--accent-red, #ef4444)' }
+        { label: 'Delete', onClick: onDelete, color: COLORS.DANGER }
     ];
 };

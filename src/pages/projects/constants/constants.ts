@@ -46,7 +46,7 @@ const PROJECT_STATUSES: Record<ProjectWorkflowStatus, StatusDefinition> = {
     completed: { id: "completed", label: "Completed", icon: ICONS.PROJECT_STATUSES.COMPLETED, color: COLORS.BASE.BLUE },
     archived: { id: "archived", label: "Archived", icon: ICONS.PROJECT_STATUSES.ARCHIVED, color: COLORS.BASE.ZINC },
     broken: { id: "broken", label: "Broken", icon: ICONS.PROJECT_STATUSES.BROKEN, color: COLORS.BASE.RED },
-    default: { id: "default", label: "No Status", icon: ICONS.PROJECT_STATUSES.DEFAULT, color: "#a1a1aa" },
+    default: { id: "default", label: "No Status", icon: ICONS.PROJECT_STATUSES.DEFAULT, color: COLORS.BASE.ZINC_400 },
 };
 
 const GIT_STATUSES: Record<GitStatusValue, StatusDefinition> = {
@@ -137,11 +137,11 @@ const getTagDefinition = (tagId: string): TagDefinition => {
         return PREDEFINED_TAGS[normalized];
     }
 
-    // Fallback for unknown tags
+
     return {
         id: tagId,
         label: tagId.charAt(0).toUpperCase() + tagId.slice(1),
-        color: "#52525b" // text-muted
+        color: COLORS.BASE.ZINC_600 
     };
 };
 

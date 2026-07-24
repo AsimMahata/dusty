@@ -3,6 +3,7 @@ import { X, Plus, Check } from 'lucide-react';
 import { scanShowsForAnime, saveSelectedAnime } from '../../../../personalities/introverts/show/anime';
 import type { ScannedAnimeData } from '../../types/types';
 import type { ShowResult } from '../../types/types';
+import { COLORS } from '../../../../constants/color';
 
 interface ScanAnimeModalProps {
     onClose: () => void;
@@ -99,7 +100,7 @@ export const ScanAnimeModal: React.FC<ScanAnimeModalProps> = ({ onClose, shows }
                                                 <span className="add-anime-episodes" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                                                     <span style={{
                                                         background: 'var(--primary-dark)',
-                                                        color: 'white',
+                                                        color: COLORS.BASE.WHITE,
                                                         padding: '0.1rem 0.4rem',
                                                         borderRadius: '4px',
                                                         fontSize: '0.75rem'
@@ -135,7 +136,7 @@ export const ScanAnimeModal: React.FC<ScanAnimeModalProps> = ({ onClose, shows }
                     {statusMessage && (
                         <div style={{
                             marginRight: 'auto',
-                            color: statusMessage.type === 'success' ? '#10b981' : '#ef4444',
+                            color: statusMessage.type === 'success' ? COLORS.BASE.GREEN : COLORS.BASE.RED,
                             display: 'flex',
                             alignItems: 'center',
                             fontWeight: 500,

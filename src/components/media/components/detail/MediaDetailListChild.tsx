@@ -1,8 +1,9 @@
 import React from 'react';
 import { ActionMenu } from '../../../ui/ActionMenu';
-import { CheckCircle2, Circle, EyeOff } from 'lucide-react';
+import { CHECK_CIRCLE_2_ICON_16, EYE_OFF_ICON_16, CIRCLE_ICON_16, CHECK_CIRCLE_2_ICON_16_WATCHED, EYE_OFF_ICON_16_UNWATCHED } from '../../../../constants/icon';
 import type { Item, ActionItem } from "../../../../types/core";
 import type { EpisodeStatus, MediaType } from "../../types/types";
+import { COLORS } from '../../../../constants/color';
 
 interface MediaDetailListChildProps {
     child: Item;
@@ -39,9 +40,9 @@ export const MediaDetailListChild: React.FC<MediaDetailListChildProps> = ({
 
     if (mediaType === 'video') {
         actions.push({ separator: true, label: '', onClick: () => { } });
-        actions.push({ label: 'Mark as Watched', icon: <CheckCircle2 size={16} />, color: '#10b981', onClick: () => onUpdateStatus?.(child.id, 'watched') });
-        actions.push({ label: 'Mark as Unwatched', icon: <EyeOff size={16} />, color: '#ef4444', onClick: () => onUpdateStatus?.(child.id, 'unwatched') });
-        actions.push({ label: 'Mark as Default', icon: <Circle size={16} />, color: 'var(--text-muted)', onClick: () => onUpdateStatus?.(child.id, 'default') });
+        actions.push({ label: 'Mark as Watched', icon: CHECK_CIRCLE_2_ICON_16, color: COLORS.MEDIA.WATCHED, onClick: () => onUpdateStatus?.(child.id, 'watched') });
+        actions.push({ label: 'Mark as Unwatched', icon: EYE_OFF_ICON_16, color: COLORS.MEDIA.UNWATCHED, onClick: () => onUpdateStatus?.(child.id, 'unwatched') });
+        actions.push({ label: 'Mark as Default', icon: CIRCLE_ICON_16, color: 'var(--text-muted)', onClick: () => onUpdateStatus?.(child.id, 'default') });
     }
 
     const episodeStatus = (child as any).episode_status || 'default';
@@ -59,8 +60,8 @@ export const MediaDetailListChild: React.FC<MediaDetailListChildProps> = ({
             <div className="list-item-content">
                 <div className="list-item-title" style={{ display: 'flex', alignItems: 'center' }}>
                     {child.title}
-                    {mediaType === 'video' && episodeStatus === 'watched' && <CheckCircle2 size={16} color="#10b981" style={{ marginLeft: 8 }} />}
-                    {mediaType === 'video' && episodeStatus === 'unwatched' && <EyeOff size={16} color="#ef4444" style={{ marginLeft: 8 }} />}
+                    {mediaType === 'video' && episodeStatus === 'watched' && CHECK_CIRCLE_2_ICON_16_WATCHED}
+                    {mediaType === 'video' && episodeStatus === 'unwatched' && EYE_OFF_ICON_16_UNWATCHED}
                 </div>
                 <div className="list-item-subtitle">{child.subtitle}</div>
             </div>

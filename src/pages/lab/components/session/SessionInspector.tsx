@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { Key, Save, Search, CheckCircle2 } from 'lucide-react';
+import { KEY_ICON_20_ACCENT, SEARCH_ICON_16, CHECK_CIRCLE_2_ICON_16, SAVE_ICON_16 } from '../../../../constants/icon';
 import { useSessionInspector } from '../../hooks/useSessionInspector';
+import { COLORS } from '../../../../constants/color';
 
 const SESSION_PRESET_KEYS = [
     'default_terminal',
@@ -30,7 +31,7 @@ export const SessionInspector: React.FC = () => {
         <div>
             <div className="db-inspector-header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Key size={20} style={{ color: 'var(--accent)' }} />
+                    {KEY_ICON_20_ACCENT}
                     <h3 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1rem', fontWeight: 600 }}>
                         Session & Cache Storage Inspector
                     </h3>
@@ -79,15 +80,15 @@ export const SessionInspector: React.FC = () => {
                         onClick={() => querySessionKey()}
                         disabled={isLoading}
                     >
-                        <Search size={16} />
+                        {SEARCH_ICON_16}
                         <span>{isLoading ? 'Querying...' : 'Query Session Key'}</span>
                     </button>
                 </div>
             </div>
 
             {statusMsg && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#0dbc79', background: 'rgba(13,188,121,0.1)', padding: '10px 14px', borderRadius: '6px', marginBottom: '16px', fontSize: '0.875rem' }}>
-                    <CheckCircle2 size={16} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: COLORS.LAB.GREEN, background: COLORS.TRANSPARENT.GREEN_10, padding: '10px 14px', borderRadius: '6px', marginBottom: '16px', fontSize: '0.875rem' }}>
+                    {CHECK_CIRCLE_2_ICON_16}
                     <span>{statusMsg}</span>
                 </div>
             )}
@@ -116,7 +117,7 @@ export const SessionInspector: React.FC = () => {
                         onClick={saveSessionKey}
                         disabled={isLoading}
                     >
-                        <Save size={16} />
+                        {SAVE_ICON_16}
                         <span>{isLoading ? 'Saving...' : 'Save Session Value'}</span>
                     </button>
                 </div>

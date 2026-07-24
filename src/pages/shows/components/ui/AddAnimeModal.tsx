@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, Plus, Check } from 'lucide-react';
+import { X_ICON_20, SEARCH_ICON_18, CHECK_ICON_18, PLUS_ICON_18 } from '../../../../constants/icon';
 import { searchAnime, saveSelectedAnime } from '../../../../personalities/introverts/show/anime';
 import type { AnimeData } from '../../types/types';
+import { COLORS } from '../../../../constants/color';
 
 interface AddAnimeModalProps {
     onClose: () => void;
@@ -100,7 +101,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
                 <div className="add-anime-modal-header">
                     <h2>{targetShowId ? 'Link Anime to MAL' : 'Add Anime'}</h2>
                     <button className="add-anime-close-btn" onClick={onClose}>
-                        <X size={20} />
+                        {X_ICON_20}
                     </button>
                 </div>
 
@@ -115,7 +116,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                         <button className="add-anime-search-btn">
-                            <Search size={18} />
+                            {SEARCH_ICON_18}
                         </button>
                     </div>
 
@@ -144,7 +145,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
                                                     className={`add-anime-add-btn ${isSelected ? 'selected' : ''}`}
                                                     onClick={() => toggleSelection(anime)}
                                                 >
-                                                    {isSelected ? <Check size={18} /> : <Plus size={18} />}
+                                                    {isSelected ? CHECK_ICON_18 : PLUS_ICON_18}
                                                 </button>
                                                 <button
                                                     className="add-anime-add-btn"
@@ -160,7 +161,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
                                                 className={`add-anime-add-btn ${isSelected ? 'selected' : ''}`}
                                                 onClick={() => toggleSelection(anime)}
                                             >
-                                                {isSelected ? <Check size={18} /> : <Plus size={18} />}
+                                                {isSelected ? CHECK_ICON_18 : PLUS_ICON_18}
                                             </button>
                                         )}
                                     </div>
@@ -178,7 +179,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
                     {statusMessage && (
                         <div style={{
                             marginRight: 'auto',
-                            color: statusMessage.type === 'success' ? '#10b981' : '#ef4444',
+                            color: statusMessage.type === 'success' ? COLORS.BASE.GREEN : COLORS.BASE.RED,
                             display: 'flex',
                             alignItems: 'center',
                             fontWeight: 500,

@@ -1,6 +1,7 @@
 import React from 'react';
 import { FileCode, Sparkles } from 'lucide-react';
 import { useTokenizeTest } from '../../hooks/useTokenizeTest';
+import { COLORS } from '../../../../constants/color';
 
 const SAMPLE_PRESETS = [
     '[Frieren] Episode 18 1080p.mkv',
@@ -74,7 +75,7 @@ export const TokenizeTest: React.FC = () => {
 
             {/* Result Tokens View */}
             {tokenizedResult.length > 0 && (
-                <div style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '16px' }}>
+                <div style={{ background: COLORS.TRANSPARENT.BLACK_20, border: '1px solid var(--border-color)', borderRadius: '8px', padding: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                         <span className="api-input-label">Extracted Tokens ({tokenizedResult.length})</span>
                     </div>
@@ -85,8 +86,8 @@ export const TokenizeTest: React.FC = () => {
                                 key={idx}
                                 style={{
                                     padding: '6px 12px',
-                                    background: 'rgba(99, 102, 241, 0.15)',
-                                    border: '1px solid rgba(99, 102, 241, 0.3)',
+                                    background: COLORS.TRANSPARENT.ACCENT_15,
+                                    border: `1px solid ${COLORS.TRANSPARENT.ACCENT_30}`,
                                     borderRadius: '6px',
                                     color: 'var(--text-primary)',
                                     fontSize: '0.8125rem',

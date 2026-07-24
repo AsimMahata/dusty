@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu } from 'lucide-react';
+import { MENU_ICON_20 } from '../../constants/icon';
 import { SIDEBAR_NAV_ITEMS } from './constants/ui';
 
 interface SidebarProps {
@@ -27,7 +27,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         )}
         <button className="sidebar-toggle" onClick={toggleSidebar} title="Toggle Sidebar">
-          <Menu size={20} />
+          {MENU_ICON_20}
         </button>
       </div>
       

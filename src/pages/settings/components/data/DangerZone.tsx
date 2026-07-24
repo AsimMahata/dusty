@@ -6,6 +6,7 @@ import { SETTINGS_DANGER_ICON } from '../../../../constants/icon';
 import { getAllTables, resetTable, resyncTable } from '../../../../personalities/introverts/table/table';
 import { logger } from '../../../../utility/logger';
 import toast from 'react-hot-toast';
+import { COLORS } from '../../../../constants/color';
 
 export const DangerZone: React.FC = () => {
     const {
@@ -79,7 +80,7 @@ export const DangerZone: React.FC = () => {
                 <h4 style={{ color: 'var(--text-primary)', marginBottom: '1rem', fontSize: '1rem' }}>Individual Table Controls</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     {tables.map(table => (
-                        <div key={table} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
+                        <div key={table} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', backgroundColor: COLORS.TRANSPARENT.WHITE_05, borderRadius: '6px', border: '1px solid var(--border-color)' }}>
                             <span style={{ color: 'var(--text-secondary)', fontFamily: 'monospace' }}>{table}</span>
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                 <button 

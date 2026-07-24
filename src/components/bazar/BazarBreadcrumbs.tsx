@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { COLORS } from '../../constants/color';
 
 interface BazarBreadcrumbsProps {
     path?: string;
@@ -48,7 +49,7 @@ export const BazarBreadcrumbs: React.FC<BazarBreadcrumbsProps> = ({
                     <span 
                         style={{
                             fontSize: '0.88rem',
-                            color: 'var(--text-muted, #94a3b8)',
+                            color: `var(--text-muted, ${COLORS.BASE.TEXT_MUTED_FALLBACK})`,
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',
@@ -62,7 +63,7 @@ export const BazarBreadcrumbs: React.FC<BazarBreadcrumbsProps> = ({
                     <span 
                         style={{
                             fontSize: '0.88rem',
-                            color: 'var(--text-muted, #94a3b8)',
+                            color: `var(--text-muted, ${COLORS.BASE.TEXT_MUTED_FALLBACK})`,
                             fontWeight: 500,
                         }}
                     >

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import type { TerminalTab } from '../terminal.options';
+import type { TerminalTab } from '../types/types';
 
 export const CREATE_TAB_LIMIT = 10;
 const INITIAL_TABS: TerminalTab[] = [];

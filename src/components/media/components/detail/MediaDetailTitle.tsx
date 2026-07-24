@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit2 } from 'lucide-react';
+import { EDIT2_ICON_16 } from '../../../../constants/icon';
 
 interface MediaDetailTitleProps {
     title: string;
@@ -35,7 +35,7 @@ export const MediaDetailTitle: React.FC<MediaDetailTitleProps> = ({
                     onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.5'; e.currentTarget.style.color = 'var(--text-muted)'; }}
                     title="Rename"
                 >
-                    <Edit2 size={16} />
+                    {EDIT2_ICON_16}
                 </button>
             )}
         </div>

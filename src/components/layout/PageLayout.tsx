@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, FlaskConical, Settings, RefreshCw, X, ListTodo } from 'lucide-react';
+import { SEARCH_ICON_16_SEARCH, FLASK_CONICAL_ICON_20_POINTER, SETTINGS_ICON_20_POINTER, getRefreshCwIcon, X_ICON_24_SECONDARY, LIST_TODO_ICON_20_POINTER } from '../../constants/icon';
 import { ROUTES } from '../../constants/routes';
 
 interface PageLayoutProps {
@@ -55,7 +55,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
         <div className="header-actions">
           {!hideSearch && setSearchQuery && (
             <div className="search-container">
-              <Search size={16} className="search-icon" />
+              {SEARCH_ICON_16_SEARCH}
               <input 
                 type="text" 
                 className="search-input" 
@@ -71,27 +71,23 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
               title="Refresh Data"
               style={{ background: 'transparent', border: 'none', color: 'inherit', display: 'flex' }}
             >
-              <RefreshCw 
-                size={20} 
-                style={{ cursor: 'pointer' }} 
-                className={isRefreshing ? 'spin-animation' : ''}
-              />
+              {getRefreshCwIcon(!!isRefreshing)}
             </button>
           )}
           {showCloseButton ? (
-            <span title="Close" style={{ display: 'flex' }}>
-              <X size={24} style={{ cursor: 'pointer', color: 'var(--text-secondary)' }} onClick={() => navigate(lastOpenedPage)} />
+            <span title="Close" style={{ display: 'flex' }} onClick={() => navigate(lastOpenedPage)}>
+              {X_ICON_24_SECONDARY}
             </span>
           ) : (
             <>
-              <span title="Lab / Experiment Zone" style={{ display: 'flex' }}>
-                <FlaskConical size={20} style={{ cursor: 'pointer' }} onClick={() => navigate(ROUTES.LAB)} />
+              <span title="Lab / Experiment Zone" style={{ display: 'flex' }} onClick={() => navigate(ROUTES.LAB)}>
+                {FLASK_CONICAL_ICON_20_POINTER}
               </span>
-              <span title="Todo Tasks" style={{ display: 'flex' }}>
-                <ListTodo size={20} style={{ cursor: 'pointer' }} onClick={() => navigate(ROUTES.TODO)} />
+              <span title="Todo Tasks" style={{ display: 'flex' }} onClick={() => navigate(ROUTES.TODO)}>
+                {LIST_TODO_ICON_20_POINTER}
               </span>
-              <span title="Settings" style={{ display: 'flex' }}>
-                <Settings size={20} style={{ cursor: 'pointer' }} onClick={() => navigate(ROUTES.SETTINGS)} />
+              <span title="Settings" style={{ display: 'flex' }} onClick={() => navigate(ROUTES.SETTINGS)}>
+                {SETTINGS_ICON_20_POINTER}
               </span>
             </>
           )}

@@ -30,7 +30,7 @@ export async function getAnimeInfoFromMal(id: number | null): Promise<string | n
 }
 
 export const getStatusColor = (status: string) => {
-    return COLORS.STATUS.SHOW[status as keyof typeof COLORS.STATUS.SHOW] || '#71717a';
+    return COLORS.STATUS.SHOW[status as keyof typeof COLORS.STATUS.SHOW] || COLORS.BASE.ZINC;
 };
 
 

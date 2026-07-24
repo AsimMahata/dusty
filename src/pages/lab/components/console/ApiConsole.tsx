@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Play, Clock, CheckCircle2, AlertCircle, Copy, Check, RotateCcw } from 'lucide-react';
+import { PLAY_ICON_16, CHECK_CIRCLE_2_ICON_14, ALERT_CIRCLE_ICON_14, CLOCK_ICON_12, CHECK_ICON_14_GREEN, COPY_ICON_14, ROTATE_CCW_ICON_12_HISTORY } from '../../../../constants/icon';
 import { useApiConsole } from '../../hooks/useApiConsole';
+
 
 export const ApiConsole: React.FC = () => {
     const {
@@ -84,7 +85,7 @@ export const ApiConsole: React.FC = () => {
                     onClick={executeIpc}
                     disabled={isExecuting}
                 >
-                    <Play size={16} />
+                    {PLAY_ICON_16}
                     <span>{isExecuting ? 'Invoking Backend...' : 'Execute IPC Command'}</span>
                 </button>
             </div>
@@ -96,11 +97,11 @@ export const ApiConsole: React.FC = () => {
                     {latestResult && (
                         <div className="api-header-badges">
                             <span className={`api-status-badge ${latestResult.success ? 'success' : 'error'}`}>
-                                {latestResult.success ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
+                                {latestResult.success ? CHECK_CIRCLE_2_ICON_14 : ALERT_CIRCLE_ICON_14}
                                 {latestResult.success ? '200 OK' : 'ERROR'}
                             </span>
                             <span className="api-execution-timer">
-                                <Clock size={12} />
+                                {CLOCK_ICON_12}
                                 {latestResult.executionTimeMs} ms
                             </span>
                             <button
@@ -109,7 +110,7 @@ export const ApiConsole: React.FC = () => {
                                 className="api-copy-btn"
                                 title="Copy JSON Response"
                             >
-                                {copied ? <Check size={14} style={{ color: '#0dbc79' }} /> : <Copy size={14} />}
+                                {copied ? CHECK_ICON_14_GREEN : COPY_ICON_14}
                                 {copied ? 'Copied' : 'Copy'}
                             </button>
                         </div>
@@ -139,7 +140,7 @@ export const ApiConsole: React.FC = () => {
                                     title="Click to replay command and reload parameters"
                                 >
                                     <div className="api-history-left">
-                                        <RotateCcw size={12} className="api-history-time" />
+                                        {ROTATE_CCW_ICON_12_HISTORY}
                                         <span className={`api-history-command ${log.success ? '' : 'error'}`}>
                                             {log.command}
                                         </span>

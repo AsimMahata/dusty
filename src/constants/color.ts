@@ -6,6 +6,7 @@ const BASE = {
     YELLOW_400: '#facc15',
     GREEN: '#10b981',
     GREEN_500: '#22c55e',
+    GREEN_BRIGHT: '#4ade80',
     BLUE: '#3b82f6',
     BLUE_HOVER: '#2563eb',
     PURPLE: '#a855f7',
@@ -22,12 +23,17 @@ const BASE = {
     PINK: '#ec4899',
     CYAN: '#06b6d4',
     ZINC: '#71717a',
+    ZINC_400: '#a1a1aa',
+    ZINC_600: '#52525b',
     ROSE: '#f43f5e',
     INDIGO: '#6366f1',
     VIOLET: '#8b5cf6',
     MAGENTA: '#c026d3',
     EMERALD: '#10b981',
-    LIME: '#84cc16'
+    LIME: '#84cc16',
+    WHITE: '#ffffff',
+    BLACK: '#000000',
+    TEXT_MUTED_FALLBACK: '#94a3b8',
 };
 
 const DEFAULT_ACCENT = '#6366f1';
@@ -68,6 +74,14 @@ export const COLORS = {
         DANGER_BORDER: 'rgba(239, 68, 68, 0.2)',
         BLUE_20: 'rgba(59, 130, 246, 0.2)',
         WHITE_08: 'rgba(255, 255, 255, 0.08)',
+        WHITE_02: 'rgba(255, 255, 255, 0.02)',
+        WHITE_05: 'rgba(255, 255, 255, 0.05)',
+        BLACK_20: 'rgba(0, 0, 0, 0.2)',
+        BLACK_30: 'rgba(0, 0, 0, 0.3)',
+        GREEN_10: 'rgba(13, 188, 121, 0.1)',
+        RED_10: 'rgba(241, 76, 76, 0.1)',
+        ACCENT_15: 'rgba(99, 102, 241, 0.15)',
+        ACCENT_30: 'rgba(99, 102, 241, 0.3)',
     },
     STATUS: {
         SHOW: {
@@ -90,7 +104,92 @@ export const COLORS = {
         } as Record<ItemStatus, string>
     },
     PIN: BASE.YELLOW,
-    DEFAULT_ACCENT
+    DEFAULT_ACCENT,
+    DANGER: 'var(--accent-red, #ef4444)',
+    TERMINAL_THEME: {
+        background: '#1e1e1e',
+        foreground: '#cccccc',
+        cursor: BASE.WHITE,
+        cursorAccent: BASE.BLACK,
+        selectionBackground: '#264f78',
+        black: BASE.BLACK,
+        red: '#cd3131',
+        green: '#0dbc79',
+        yellow: '#e5e510',
+        blue: '#2472c8',
+        magenta: '#bc3fbc',
+        cyan: '#11a8cd',
+        white: '#e5e5e5',
+        brightBlack: '#666666',
+        brightRed: '#f14c4c',
+        brightGreen: '#23d18b',
+        brightYellow: '#f5f543',
+        brightBlue: '#3b8eea',
+        brightMagenta: '#d670d6',
+        brightCyan: '#29b8db',
+        brightWhite: BASE.WHITE,
+    },
+    PRIORITY: {
+        HIGH: 'var(--accent-red, #ef4444)',
+        MEDIUM: 'var(--accent-yellow, #eab308)',
+        LOW: 'var(--accent-blue, #3b82f6)',
+        OVERDUE: 'var(--accent-red, #ef4444)',
+    },
+    FRAMEWORK: {
+        React: '#61dafb',
+        'Next.js': BASE.WHITE,
+        Vue: '#42b883',
+        Angular: '#dd0031',
+        Svelte: '#ff3e00',
+        Astro: '#ff5d01',
+        SolidJS: '#446b9e',
+        Tauri: '#ffc107',
+        Electron: '#9feaf9',
+        Flutter: '#02569b',
+        Django: '#092e20',
+        Flask: BASE.WHITE,
+        FastAPI: '#059669',
+        'Spring Boot': '#6db33f',
+        Express: '#828282',
+        NestJS: '#ea2845',
+        Rails: '#cc0000',
+        Laravel: '#ff2d20',
+        '.NET': '#512bd4',
+    } as Record<string, string>,
+    BRANCH: {
+        MAIN: '#4ade80',
+        OTHER: '#a855f7',
+    },
+    HOME: {
+        SHOWS: '#a78bfa',
+        SHOWS_BG: 'rgba(167, 139, 250, 0.1)',
+        PROJECTS: '#34d399',
+        PROJECTS_BG: 'rgba(52, 211, 153, 0.1)',
+        SONGS: '#f43f5e',
+        SONGS_BG: 'rgba(244, 63, 94, 0.1)',
+        VIDEOS: '#60a5fa',
+        VIDEOS_BG: 'rgba(96, 165, 250, 0.1)',
+        STORAGE_CRITICAL: '#ef4444',
+        STORAGE_WARNING: '#f97316',
+        STORAGE_CAUTION: '#fbbf24',
+        STORAGE_OK: '#34d399',
+    },
+    LAB: {
+        GREEN: '#0dbc79',
+        RED: '#f14c4c',
+    },
+
+    MEDIA: {
+        CONFIRM: '#4ade80',
+        CANCEL: '#f87171',
+        WATCHED: '#10b981',
+        UNWATCHED: '#ef4444',
+        MUSIC: '#d946ef',
+        VIDEO: '#f97316',
+        IMAGE: '#3b82f6',
+        BG_SECONDARY: '#2a2a2a',
+        BORDER_FALLBACK: '#444',
+    },
 };
 
 export const ACTIONS_SEPARATOR = { separator: true, label: '', onClick: () => { } };
@@ -137,3 +236,16 @@ export const FILE_EXT_COLORS: Record<string, string> = {
 export const getFileExtensionColor = (ext: string, fallback: string = '#888888') => {
     return FILE_EXT_COLORS[ext.toLowerCase()] || fallback;
 };
+
+export const COLOR_TOKENS = [
+    { name: '--bg-main', value: '#0a0a0c', description: 'Main background' },
+    { name: '--bg-sidebar', value: '#121214', description: 'Sidebar background' },
+    { name: '--bg-card', value: '#18181b', description: 'Card surface background' },
+    { name: '--bg-card-hover', value: '#222227', description: 'Card hover background' },
+    { name: '--text-primary', value: '#f4f4f5', description: 'Primary heading & text' },
+    { name: '--text-secondary', value: '#a1a1aa', description: 'Secondary text & labels' },
+    { name: '--text-muted', value: '#52525b', description: 'Muted captions & icons' },
+    { name: '--accent', value: DEFAULT_ACCENT, description: 'Primary accent color' },
+    { name: '--accent-hover', value: '#4f46e5', description: 'Accent hover color' },
+    { name: '--border-color', value: COLORS.TRANSPARENT.WHITE_08, description: 'Border divider stroke' },
+];

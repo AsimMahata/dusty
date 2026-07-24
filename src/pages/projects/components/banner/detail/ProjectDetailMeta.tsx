@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Project } from '../../../types/types';
+import { COLORS } from '../../../../../constants/color';
 
 interface ProjectDetailMetaProps {
     project: Project;
@@ -7,37 +8,16 @@ interface ProjectDetailMetaProps {
 
 const getFrameworkColor = (framework?: string): string => {
     if (!framework) return 'var(--text-primary)';
-    switch (framework) {
-        case 'React': return '#61dafb';
-        case 'Next.js': return '#ffffff';
-        case 'Vue': return '#42b883';
-        case 'Angular': return '#dd0031';
-        case 'Svelte': return '#ff3e00';
-        case 'Astro': return '#ff5d01';
-        case 'SolidJS': return '#446b9e';
-        case 'Tauri': return '#ffc107';
-        case 'Electron': return '#9feaf9';
-        case 'Flutter': return '#02569b';
-        case 'Django': return '#092e20';
-        case 'Flask': return '#ffffff';
-        case 'FastAPI': return '#059669';
-        case 'Spring Boot': return '#6db33f';
-        case 'Express': return '#828282';
-        case 'NestJS': return '#ea2845';
-        case 'Rails': return '#cc0000';
-        case 'Laravel': return '#ff2d20';
-        case '.NET': return '#512bd4';
-        default: return 'var(--text-primary)';
-    }
+    return COLORS.FRAMEWORK[framework] || 'var(--text-primary)';
 };
 
 const getBranchColor = (branch?: string): string => {
     if (!branch) return 'var(--text-primary)';
     const b = branch.toLowerCase();
     if (b === 'main' || b === 'master' || b === 'production') {
-        return '#4ade80'; // Bright green for main/production branches
+        return COLORS.BRANCH.MAIN;
     }
-    return '#a855f7'; // Purple/violet for other branches
+    return COLORS.BRANCH.OTHER;
 };
 
 export const ProjectDetailMeta: React.FC<ProjectDetailMetaProps> = ({ project }) => {

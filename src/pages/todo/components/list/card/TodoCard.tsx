@@ -11,6 +11,7 @@ import { PRIORITY_COLORS } from '../../../constants/constants';
 import { ContextMenu } from '../../../../../components/ui/ContextMenu';
 import { isTodoOverdue, formatTodoDate } from '../../../actions/todoInfo';
 import { getTodoCardActions } from '../../../actions/todoActions';
+import { COLORS } from '../../../../../constants/color';
 
 
 interface TodoCardProps {
@@ -60,7 +61,7 @@ export const TodoCard: React.FC<TodoCardProps> = ({
                         </span>
                     )}
                     {todo.dueDate && (
-                        <span className="todo-badge" style={{ color: isOverdue ? 'var(--accent-red, #ef4444)' : 'inherit' }}>
+                        <span className="todo-badge" style={{ color: isOverdue ? COLORS.PRIORITY.OVERDUE : 'inherit' }}>
                             {TODO_CALENDAR_ICON} {formatTodoDate(todo.dueDate)}
                         </span>
                     )}
