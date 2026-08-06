@@ -8,7 +8,7 @@ interface AddShowModalProps {
     onClose: () => void;
     initialQuery?: string;
     targetShowId?: string;
-    onLinkAction?: (showId: string, imdbId: string) => Promise<boolean>;
+    onLinkAction?: (showId: string, externalId: string) => Promise<boolean>;
 }
 
 export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuery = '', targetShowId, onLinkAction }) => {
@@ -99,7 +99,7 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
         <div className="add-anime-modal-overlay" onClick={onClose}>
             <div className="add-anime-modal-content" onClick={e => e.stopPropagation()}>
                 <div className="add-anime-modal-header">
-                    <h2>{targetShowId ? 'Link Show to IMDB' : 'Add Show'}</h2>
+                    <h2>{targetShowId ? 'Link Show to IMDB/TMDB' : 'Add Show'}</h2>
                     <button className="add-anime-close-btn" onClick={onClose}>
                         {X_ICON_20}
                     </button>

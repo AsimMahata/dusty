@@ -3,7 +3,7 @@ use rusqlite::Connection;
 use crate::dusty::data::{shows::ShowResult, state::AppState};
 use crate::dusty::db::show::{
     add_shows_in_db, print_all_shows_in_db, reset_show_table_in_db, update_ban_status_in_db,
-    update_mal_id_in_db, update_pin_status_in_db, update_show_status_in_db,
+    update_pin_status_in_db, update_show_id_in_db, update_show_status_in_db,
 };
 use crate::dusty::db::show::{get_show_info, rename_show_in_db};
 use crate::dusty::db::show::{
@@ -35,8 +35,9 @@ pub fn scan_show_using_cached(db: &Connection, root: &PathBuf, cache: bool) -> V
                         show.status = info.status;
                         show.banned = info.banned;
                         show.pinned = info.pinned;
-                        show.mal_id = info.mal_id;
+                        show.show_id = info.show_id;
                         show.airing = info.airing;
+                        show.show_type = info.show_type;
                     }
                     show
                 })
@@ -129,10 +130,14 @@ pub fn reset_shows_table(state: tauri::State<AppState>) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn update_mal_id(state: tauri::State<AppState>, id: String, mal_id: i32) -> Result<(), String> {
+pub fn update_show_id(
+    state: tauri::State<AppState>,
+    id: String,
+    show_id: String,
+) -> Result<(), String> {
     let db = state.db.lock().unwrap();
-    update_mal_id_in_db(&db, id, mal_id)
-        .map_err(|e| format!("Failed to update mal id in db: {}", e))
+    update_show_id_in_db(&db, id, show_id)
+        .map_err(|e| format!("Failed to update show id in db: {}", e))
         .ok();
     Ok(())
 }

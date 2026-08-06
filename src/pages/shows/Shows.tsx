@@ -4,10 +4,8 @@ import { useShow } from './hooks/useShow';
 import { ShowDetailPage } from './components/detail/ShowDetailPage';
 import { ShowTabs } from './components/tabs/ShowTabs';
 import { ShowList } from './components/list/ShowList';
-import { EditMalNumberModal } from './components/ui/EditMalNumberModal';
 import { AddAnimeModal } from './components/ui/AddAnimeModal';
 import { ScanAnimeModal } from './components/ui/ScanAnimeModal';
-import { EditImdbIdModal } from './components/ui/EditImdbIdModal';
 import { AddShowModal } from './components/ui/AddShowModal';
 import './css/Shows.css';
 
@@ -22,13 +20,11 @@ export const Shows: React.FC = () => {
         return (
             <PageLayout hook={showHook} hideSearch={true}>
                 <ShowDetailPage showHook={showHook} />
-                <EditMalNumberModal showHook={showHook} />
-                <EditImdbIdModal showHook={showHook} />
                 {isAddAnimeOpen && <AddAnimeModal
                     onClose={() => setIsAddAnimeOpen(false)}
                     initialQuery={addAnimeQuery}
                     targetShowId={addAnimeTargetShowId}
-                    onLinkAction={showHook.updateMalIdForShow}
+                    onLinkAction={showHook.updateShowIdForShow}
                 />}
                 {isScanAnimeOpen && <ScanAnimeModal
                     onClose={() => setIsScanAnimeOpen(false)}
@@ -38,7 +34,7 @@ export const Shows: React.FC = () => {
                     onClose={() => setIsAddShowOpen(false)}
                     initialQuery={addShowQuery}
                     targetShowId={addShowTargetShowId}
-                    onLinkAction={showHook.updateImdbIdForShow}
+                    onLinkAction={showHook.updateShowIdForShow}
                 />}
             </PageLayout>
         );
@@ -50,13 +46,11 @@ export const Shows: React.FC = () => {
                 <ShowTabs showHook={showHook} onAddAnime={() => handleOpenAddAnime('')} onAddShow={() => handleOpenAddShow('')} />
                 <ShowList showHook={showHook} />
             </div>
-            <EditMalNumberModal showHook={showHook} />
-            <EditImdbIdModal showHook={showHook} />
             {isAddAnimeOpen && <AddAnimeModal
                 onClose={() => setIsAddAnimeOpen(false)}
                 initialQuery={addAnimeQuery}
                 targetShowId={addAnimeTargetShowId}
-                onLinkAction={showHook.updateMalIdForShow}
+                onLinkAction={showHook.updateShowIdForShow}
             />}
             {isScanAnimeOpen && <ScanAnimeModal
                 onClose={() => setIsScanAnimeOpen(false)}
@@ -66,7 +60,7 @@ export const Shows: React.FC = () => {
                 onClose={() => setIsAddShowOpen(false)}
                 initialQuery={addShowQuery}
                 targetShowId={addShowTargetShowId}
-                onLinkAction={showHook.updateImdbIdForShow}
+                onLinkAction={showHook.updateShowIdForShow}
             />}
         </PageLayout>
     );

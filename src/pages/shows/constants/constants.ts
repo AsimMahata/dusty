@@ -85,7 +85,7 @@ export const SORT_OPTIONS: { id: ShowSortMethod; label: string }[] = [
     { id: "status", label: "Status Priority" },
     { id: "last_watched", label: "Last Watched" },
     { id: "random", label: "Random" },
-    { id: "malId", label: "MAL ID" },
+    { id: "showId", label: "Show ID" },
 ];
 
 export const DEFAULT_SORT_METHOD: ShowSortMethod = "title";
@@ -102,9 +102,8 @@ export const SHOW_ACTION_MENU_LABELS = {
     // General Actions
     PIN: "Pin",
     UNPIN: "Unpin",
-    EDIT_MAL_ID: "Edit MAL ID",
     SEARCH_IN_MAL: "Search in MAL",
-
+    SEARCH_IN_IMDB_OR_TMDB:"Search in IMDB/TMDB",
     // Status Updates
     MARK_WATCHING: "Mark as Watching",
     MARK_WORKING: "Mark as Working",

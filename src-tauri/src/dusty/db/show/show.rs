@@ -23,7 +23,7 @@ pub fn add_show_in_db(db: &Connection, show: &ShowResult) -> Result<(), String> 
 fn add_in_show_table(db: &Connection, show: &ShowResult) -> Result<()> {
     db.execute(
         "
-        INSERT OR IGNORE INTO shows (id, title, dir, status, banned, pinned, mal_id, airing, show_type)
+        INSERT OR IGNORE INTO shows (id, title, dir, status, banned, pinned, show_id, airing, show_type)
         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
         ",
         params![
@@ -33,7 +33,7 @@ fn add_in_show_table(db: &Connection, show: &ShowResult) -> Result<()> {
             &show.status,
             &show.banned,
             &show.pinned,
-            &show.mal_id,
+            &show.show_id,
             &show.airing,
             show.show_type.as_str()
         ],
@@ -45,7 +45,7 @@ fn add_in_show_table(db: &Connection, show: &ShowResult) -> Result<()> {
 pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo, String> {
     db.query_row(
         "
-        SELECT title, status, banned, pinned, mal_id, airing, show_type
+        SELECT title, status, banned, pinned, show_id, airing, show_type
         FROM shows
         WHERE id = ?1
         ",
@@ -57,7 +57,7 @@ pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo, String> {
                 status: row.get(1)?,
                 banned: row.get(2)?,
                 pinned: row.get(3)?,
-                mal_id: row.get(4)?,
+                show_id: row.get(4)?,
                 airing: row.get(5)?,
                 show_type: ShowType::from_str(&show_type_str),
             })
@@ -71,7 +71,7 @@ pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo, String> {
 
 pub fn print_all_shows_in_db(db: &Connection) -> Result<(), String> {
     let mut stmt = db
-        .prepare("SELECT id, title, dir, status, banned, pinned, mal_id, airing FROM shows")
+        .prepare("SELECT id, title, dir, status, banned, pinned, show_id, airing FROM shows")
         .map_err(|err| {
             logger::error!("PREPARE_PRINT_SHOWS_FAILED", err);
             err.to_string()
@@ -86,7 +86,7 @@ pub fn print_all_shows_in_db(db: &Connection) -> Result<(), String> {
                 row.get::<_, String>(3)?,
                 row.get::<_, bool>(4)?,
                 row.get::<_, bool>(5)?,
-                row.get::<_, Option<i32>>(6)?,
+                row.get::<_, Option<String>>(6)?,
                 row.get::<_, bool>(7)?,
             ))
         })
@@ -98,7 +98,7 @@ pub fn print_all_shows_in_db(db: &Connection) -> Result<(), String> {
     println!("=== Shows ===");
 
     for row in rows {
-        let (id, title, dir, status, banned, pinned, mal_id, airing) = row.map_err(|err| {
+        let (id, title, dir, status, banned, pinned, show_id, airing) = row.map_err(|err| {
             logger::error!("READ_PRINT_SHOWS_FAILED", err);
             err.to_string()
         })?;
@@ -109,7 +109,7 @@ pub fn print_all_shows_in_db(db: &Connection) -> Result<(), String> {
         println!("Status    : {}", status);
         println!("Is Banned : {}", banned);
         println!("Is Pinned : {}", pinned);
-        println!("Mal ID    : {:?}", mal_id);
+        println!("Show ID   : {:?}", show_id);
         println!("Airing    : {}", airing);
         println!("-------------------------");
     }
@@ -127,7 +127,7 @@ pub fn create_shows_table(conn: &Connection) -> Result<(), String> {
             status TEXT NOT NULL DEFAULT 'default',
             banned INTEGER NOT NULL DEFAULT 0,
             pinned INTEGER NOT NULL DEFAULT 0,
-            mal_id INTEGER DEFAULT NULL,
+            show_id TEXT DEFAULT NULL,
             airing INTEGER NOT NULL DEFAULT 0,
             show_type TEXT NOT NULL DEFAULT 'unknown'
         )
@@ -139,16 +139,19 @@ pub fn create_shows_table(conn: &Connection) -> Result<(), String> {
         err.to_string()
     })?;
 
+    // Migration helper: add show_id column if created under older schema
+    let _ = conn.execute("ALTER TABLE shows ADD COLUMN show_id TEXT DEFAULT NULL;", []);
+
     Ok(())
 }
 
-pub fn update_mal_id_in_db(db: &Connection, id: String, mal_id: i32) -> Result<(), String> {
+pub fn update_show_id_in_db(db: &Connection, id: String, show_id: String) -> Result<(), String> {
     db.execute(
-        "UPDATE shows SET mal_id = ?1 WHERE id = ?2",
-        params![mal_id, id],
+        "UPDATE shows SET show_id = ?1 WHERE id = ?2",
+        params![show_id, id],
     )
     .map_err(|err| {
-        logger::error!("UPDATE_MAL_ID_FAILED", err);
+        logger::error!("UPDATE_SHOW_ID_FAILED", err);
         err.to_string()
     })?;
     Ok(())

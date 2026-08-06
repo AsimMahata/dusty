@@ -21,8 +21,7 @@ const CMD_RENAME_SHOW = "rename_show";
 const CMD_UPDATE_SHOW_STATUS = "update_show_status";
 const CMD_UPDATE_BAN_STATUS = "update_ban_status";
 const CMD_UPDATE_PIN_STATUS = "update_pin_status";
-const CMD_UPDATE_MAL_ID = "update_mal_id";
-const CMD_UPDATE_IMDB_ID = "update_imdb_id";
+const CMD_UPDATE_SHOW_ID = "update_show_id";
 const CMD_RESET_SHOWS_TABLE = "reset_shows_table";
 
 export async function scanShowsIPC(path: string): Promise<ShowResult[]> {
@@ -85,22 +84,12 @@ export async function updateShowPinStatusIPC(showId: string, newPinStatus: boole
     }
 }
 
-export async function updateMalIdIPC(showId: string, newMalId: number): Promise<boolean> {
+export async function updateShowIdIPC(showId: string, externalShowId: string): Promise<boolean> {
     try {
-        let result = await invoke<boolean>(CMD_UPDATE_MAL_ID, { showId, newMalId });
+        let result = await invoke<boolean>(CMD_UPDATE_SHOW_ID, { id: showId, showId: externalShowId });
         return result;
     } catch (error) {
-        logger.error(`updateMalIdIPC error: ${error}`);
-        return false;
-    }
-}
-
-export async function updateImdbIdIPC(showId: string, newImdbId: string): Promise<boolean> {
-    try {
-        let result = await invoke<boolean>(CMD_UPDATE_IMDB_ID, { showId, newImdbId });
-        return result;
-    } catch (error) {
-        logger.error(`updateImdbIdIPC error: ${error}`);
+        logger.error(`updateShowIdIPC error: ${error}`);
         return false;
     }
 }

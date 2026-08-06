@@ -1,5 +1,7 @@
 import type { FileInfo } from "../../../types/core";
 
+export type ShowType = "anime" | "tv_show" | "movie" | "unknown";
+
 export interface ShowResult {
     id: string,
     title: string,
@@ -11,17 +13,18 @@ export interface ShowResult {
     pinned: boolean,
     status: ShowStatus,
     season?: number,
-    mal_id?: number,
-    imdb_id?: string,
+    show_id?: string,
     airing?: boolean,
+    show_type?: ShowType;
 }
 export interface ShowInfo {
     title: string,
     status: string,
     banned: boolean,
     pinned: boolean,
-    mal_id?: number,
+    show_id?: string,
     airing: boolean,
+    show_type?: ShowType;
 }
 export type ShowStatus =
     | "default"
@@ -49,7 +52,7 @@ export interface ShowMetaData {
     statusColor: string;
 }
 export type ShowTabStatus = 'all' | ShowStatus | 'banned' | 'seasonal';
-export type ShowSortMethod = 'title' | 'last_watched' | 'status' | 'random' | 'malId';
+export type ShowSortMethod = 'title' | 'last_watched' | 'status' | 'random' | 'showId';
 export interface AnimeData {
     title: string;
     mal_id: number;

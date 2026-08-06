@@ -49,7 +49,8 @@ export const getNextEpisode = (show: ShowResult) => {
 export async function getShowMetaData(show: ShowResult): Promise<ShowMetaData> {
     let result = null;
     try {
-        const malInfo = await getAnimeInfoFromMal(show.mal_id ?? null);
+        const malIdNum = show.show_id ? parseInt(show.show_id, 10) : null;
+        const malInfo = await getAnimeInfoFromMal(malIdNum && !isNaN(malIdNum) ? malIdNum : null);
         if (malInfo) {
             result = JSON.parse(malInfo);
         }

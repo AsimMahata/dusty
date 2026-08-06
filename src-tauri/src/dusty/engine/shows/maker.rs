@@ -105,7 +105,7 @@ pub fn make_show_results_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut
             banned: false,
             pinned: false,
             status: "default".to_string(),
-            mal_id: None,
+            show_id: None,
             airing: false,
             show_type: ShowType::Unknown,
             episodes: cluster
@@ -147,7 +147,7 @@ pub fn make_shows_with_available_anime_titles(
         let mut episodes: Vec<FileInfo> = Vec::new();
         let banned = false;
         let pinned = false;
-        let mal_id = Some(anime.mal_id);
+        let show_id = Some(anime.mal_id.to_string());
         let season = anime.season;
         let airing = anime.airing;
         let status = "default".to_string();
@@ -178,7 +178,7 @@ pub fn make_shows_with_available_anime_titles(
                 pinned,
                 season,
                 status,
-                mal_id,
+                show_id,
                 airing,
                 show_type: ShowType::Anime,
             });

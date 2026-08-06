@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { updateMalIdForShow as updateMalIdForShowIntrovert } from '../../../personalities/introverts/show/shows';
+import { updateShowIdForShow as updateShowIdForShowIntrovert } from '../../../personalities/introverts/show/shows';
 import { logger } from '../../../utility/logger';
 import type { ShowResult } from "../types/types";
 
@@ -15,17 +15,18 @@ export const useMal = ({ updateShowInState }: UseMalProps) => {
     const handleEditMalId = (show: ShowResult) => {
         setShowEditMalId(true);
         setCurrentEditShow(show);
-        setMalNumber(show.mal_id || null);
+        setMalNumber(show.show_id ? parseInt(show.show_id, 10) : null);
     }
 
-    const updateMalIdForShow = async (showId: string, newMalId: number): Promise<boolean> => {
+    const updateMalIdForShow = async (showId: string, newMalId: string | number): Promise<boolean> => {
         try {
-            await updateMalIdForShowIntrovert(showId, newMalId);
-            logger.info("MAL ID updated successfully", { id: showId, newMalId });
-            updateShowInState(showId, { mal_id: newMalId });
+            const externalIdStr = String(newMalId);
+            await updateShowIdForShowIntrovert(showId, externalIdStr);
+            logger.info("Show ID updated successfully via MAL", { id: showId, externalIdStr });
+            updateShowInState(showId, { show_id: externalIdStr });
             return true;
         } catch (err) {
-            logger.error(`Failed to update mal id for show ${showId}: ${String(err)}`);
+            logger.error(`Failed to update show id for ${showId}: ${String(err)}`);
             return false;
         }
     }

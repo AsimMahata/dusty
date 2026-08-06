@@ -22,7 +22,7 @@ pub fn show_to_show_result(s: &Show) -> ShowResult {
         pinned: false,
         season: s.get_season(),
         status: "default".to_string(),
-        mal_id: None,
+        show_id: None,
         airing: false,
         show_type: ShowType::Unknown,
     }

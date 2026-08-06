@@ -8,7 +8,7 @@ interface AddAnimeModalProps {
     onClose: () => void;
     initialQuery?: string;
     targetShowId?: string;
-    onLinkAction?: (showId: string, malId: number) => Promise<boolean>;
+    onLinkAction?: (showId: string, externalId: string) => Promise<boolean>;
 }
 
 export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQuery = '', targetShowId, onLinkAction }) => {
@@ -79,7 +79,7 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
         await saveSelectedAnime([anime]);
 
         try {
-            const success = await onLinkAction(targetShowId, anime.mal_id);
+            const success = await onLinkAction(targetShowId, anime.mal_id.toString());
             if (success) {
                 setStatusMessage({ type: 'success', text: 'Linked successfully!' });
                 setTimeout(() => {

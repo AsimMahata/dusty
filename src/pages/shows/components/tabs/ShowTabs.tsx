@@ -51,7 +51,7 @@ interface ShowTabsProps {
     onAddShow?: () => void;
 }
 
-export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime, onAddShow: _onAddShow }) => {
+export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime, onAddShow }) => {
     const { activeTab, setActiveTab, getCount } = showHook;
     
     return (
@@ -89,7 +89,7 @@ export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime, onAddS
                                 icon: <Tv size={16} />,
                                 color: COLORS.BASE.ORANGE,
                                 onClick: () => {
-                                    logger.todo('TV Show scan is not implemented yet.');
+                                    showHook.fetchData(true);
                                 }
                             }
                         ]}
@@ -109,9 +109,7 @@ export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime, onAddS
                                 label: 'TV Show',
                                 icon: <Tv size={16} />,
                                 color: COLORS.BASE.ORANGE,
-                                onClick: () => {
-                                    logger.todo('TV Show API is closed. Functionality is disabled.');
-                                }
+                                onClick: onAddShow || (() => showHook.handleOpenAddShow(''))
                             }
                         ]}
                     />

@@ -1,14 +1,12 @@
 import { CONTINUE_WATCHING_TO_SHOW_PAGE, SHOW_ACTION_MENU_LABELS } from '../constants/constants';
 import { useState, useEffect, useMemo } from 'react';
-import { fetchShows, updateBanStatus as updateBanStatusIntrovert, updateShowStatus as updateShowStatusIntrovert, updateShowTitle as updateShowTitleIntrovert, toggleShowPin as toggleShowPinIntrovert } from '../../../personalities/introverts/show/shows';
+import { fetchShows, updateBanStatus as updateBanStatusIntrovert, updateShowStatus as updateShowStatusIntrovert, updateShowTitle as updateShowTitleIntrovert, toggleShowPin as toggleShowPinIntrovert, updateShowIdForShow as updateShowIdForShowIntrovert } from '../../../personalities/introverts/show/shows';
 import { openFile } from '../../../personalities/introverts/filesystem/filesystem';
 import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY } from '../constants/constants';
 import { logger } from '../../../utility/logger';
 import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE_CIRCLE_ICON_16, X_CIRCLE_ICON_16, ROTATE_CCW_ICON_16, BAN_ICON_16, SHIELD_CHECK_ICON_16, ICONS, SEARCH_ICON_16 } from '../../../constants/icon';
 import { COLORS, ACTIONS_SEPARATOR } from '../../../constants/color';
 import { hashString } from '../actions/hashString';
-import { useMal } from './useMal';
-import { useImdb } from './useImdb';
 import { putEpisodeInRecent } from '../../../personalities/introverts/home/recentEp';
 import type { ShowResult, ShowStatus, ShowSortMethod, ShowTab } from "../types/types";
 import type { ActionItem } from "../../../types/core";
@@ -91,7 +89,6 @@ export const useShow = () => {
         setAddShowQuery(query);
         setAddShowTargetShowId(targetShowId);
         setIsAddShowOpen(true);
-        logger.todo('TV Show API is closed. Functionality is disabled.');
     };
 
     const [allShows, setAllShows] = useState<ShowResult[]>([]);
@@ -110,7 +107,6 @@ export const useShow = () => {
                     logger.error(`Failed to fetch shows from ${path}: ${String(err)}`);
                 }
             }
-            // Remove exact duplicates if they somehow exist across drives
             const uniqueShows = Array.from(new Map(allFetchedShows.map(item => [item.id, item])).values());
             setAllShows(uniqueShows);
             logger.info('all shows fetched', uniqueShows);
@@ -140,13 +136,13 @@ export const useShow = () => {
         }
     }, [allShows]);
 
-
     const handleShowOpen = (s: ShowResult) => {
         const newMap = { ...lastWatchedMap, [s.id]: Date.now() };
         setLastWatchedMap(newMap);
         localStorage.setItem(LOCAL_STORAGE_LAST_WATCHED, JSON.stringify(newMap));
         setSelectedShow(s);
     };
+
     const updateBanStatus = async (showId: string, isBanned: boolean): Promise<boolean> => {
         try {
             await updateBanStatusIntrovert(showId, isBanned);
@@ -164,7 +160,7 @@ export const useShow = () => {
 
     const updateShowStatusOnDatabase = async (showId: string, status: ShowStatus): Promise<boolean> => {
         return updateShowStatusIntrovert(showId, status);
-    }
+    };
 
     const updateShowVisualStatus = async (showId: string, status: ShowStatus): Promise<boolean> => {
         try {
@@ -217,41 +213,19 @@ export const useShow = () => {
 
     const getCommonRenderedActions = () => {
         return [];
-    }
+    };
 
-    const malHook = useMal({
-        updateShowInState: (showId, updates) => {
-            const newShows = allShows.map(s => s.id === showId ? { ...s, ...updates } : s);
+    const updateShowIdForShow = async (showId: string, externalShowId: string): Promise<boolean> => {
+        try {
+            await updateShowIdForShowIntrovert(showId, externalShowId);
+            const newShows = allShows.map(s => s.id === showId ? { ...s, show_id: externalShowId } : s);
             setAllShows(newShows);
+            return true;
+        } catch (err) {
+            logger.error(`Failed to update show id for ${showId}: ${String(err)}`);
+            return false;
         }
-    });
-
-    const {
-        showEditMalId,
-        currentEditShow,
-        malNumber,
-        setMalNumber,
-        handleEditMalId,
-        handleSaveMalId,
-        handleCancelEditMalId,
-        updateMalIdForShow } = malHook;
-
-    const imdbHook = useImdb({
-        updateShowInState: (showId, updates) => {
-            const newShows = allShows.map(s => s.id === showId ? { ...s, ...updates } : s);
-            setAllShows(newShows);
-        }
-    });
-
-    const {
-        showEditImdbId,
-        currentEditShowImdb,
-        imdbId,
-        setImdbId,
-        handleEditImdbId,
-        handleSaveImdbId,
-        handleCancelEditImdbId,
-        updateImdbIdForShow } = imdbHook;
+    };
 
     const getActionsForShow = (show: ShowResult): ActionItem[] => {
         const actions: ActionItem[] = [];
@@ -263,45 +237,53 @@ export const useShow = () => {
             onClick: () => handleTogglePin(show.id)
         });
 
-        actions.push(ACTIONS_SEPARATOR);
+        const isAnime = show.show_type === 'anime' || (show.show_id && !show.show_id.startsWith('tt'));
+        const isTvOrMovie = show.show_type === 'tv_show' || show.show_type === 'movie' || (show.show_id && show.show_id.startsWith('tt'));
+        const isUnknown = !isAnime && !isTvOrMovie;
 
-        actions.push({
-            label: SHOW_ACTION_MENU_LABELS.EDIT_MAL_ID,
-            icon: ICONS.GENERAL.EDIT,
-            color: COLORS.BASE.BLUE,
-            onClick: () => {
-                handleEditMalId(show);
-            }
-        });
+        const metadataActions: ActionItem[] = [];
 
-        actions.push({
-            label: SHOW_ACTION_MENU_LABELS.SEARCH_IN_MAL,
-            icon: SEARCH_ICON_16,
-            color: COLORS.BASE.BLUE,
-            onClick: () => {
-                handleOpenAddAnime(show.title, show.id);
-            }
-        });
+        if (isAnime) {
+            metadataActions.push({
+                label: SHOW_ACTION_MENU_LABELS.SEARCH_IN_MAL,
+                icon: SEARCH_ICON_16,
+                color: COLORS.BASE.BLUE,
+                onClick: () => {
+                    handleOpenAddAnime(show.title, show.id);
+                }
+            });
+        } else if (isTvOrMovie) {
+            metadataActions.push({
+                label: 'Search in IMDB',
+                icon: SEARCH_ICON_16,
+                color: COLORS.BASE.ORANGE,
+                onClick: () => {
+                    handleOpenAddShow(show.title, show.id);
+                }
+            });
+        } else if (isUnknown) {
+            metadataActions.push({
+                label: SHOW_ACTION_MENU_LABELS.SEARCH_IN_MAL,
+                icon: SEARCH_ICON_16,
+                color: COLORS.BASE.BLUE,
+                onClick: () => {
+                    handleOpenAddAnime(show.title, show.id);
+                }
+            });
+            metadataActions.push({
+                label: 'Search in IMDB',
+                icon: SEARCH_ICON_16,
+                color: COLORS.BASE.ORANGE,
+                onClick: () => {
+                    handleOpenAddShow(show.title, show.id);
+                }
+            });
+        }
 
-        actions.push(ACTIONS_SEPARATOR);
-
-        actions.push({
-            label: 'Edit IMDB ID',
-            icon: ICONS.GENERAL.EDIT,
-            color: COLORS.BASE.ORANGE,
-            onClick: () => {
-                handleEditImdbId(show);
-            }
-        });
-
-        actions.push({
-            label: 'Search in IMDB',
-            icon: SEARCH_ICON_16,
-            color: COLORS.BASE.ORANGE,
-            onClick: () => {
-                handleOpenAddShow(show.title, show.id);
-            }
-        });
+        if (metadataActions.length > 0) {
+            actions.push(ACTIONS_SEPARATOR);
+            actions.push(...metadataActions);
+        }
 
         actions.push(ACTIONS_SEPARATOR);
 
@@ -398,10 +380,10 @@ export const useShow = () => {
                 if (cmp === 0) cmp = a.title.localeCompare(b.title, undefined, { numeric: true });
             } else if (sortMethod === 'random') {
                 cmp = hashString(a.id + randomSeed) - hashString(b.id + randomSeed);
-            } else if (sortMethod === 'malId') {
-                const malA = a.mal_id || 0;
-                const malB = b.mal_id || 0;
-                cmp = malA - malB;
+            } else if (sortMethod === 'showId') {
+                const sA = a.show_id || '';
+                const sB = b.show_id || '';
+                cmp = sA.localeCompare(sB, undefined, { numeric: true });
                 if (cmp === 0) cmp = a.title.localeCompare(b.title, undefined, { numeric: true });
             } else {
                 cmp = a.title.localeCompare(b.title, undefined, { numeric: true });
@@ -418,7 +400,7 @@ export const useShow = () => {
         if (method === 'random') {
             setRandomSeed(Math.random());
             updateSortAscending(true);
-        } else if (method === 'last_watched' || method === 'malId') {
+        } else if (method === 'last_watched' || method === 'showId') {
             updateSortAscending(false);
         } else {
             updateSortAscending(true);
@@ -469,13 +451,6 @@ export const useShow = () => {
         getActionsForShow,
         getCount,
         filteredShows,
-        handleEditMalId,
-        handleSaveMalId,
-        handleCancelEditMalId,
-        showEditMalId,
-        currentEditShow,
-        malNumber,
-        setMalNumber,
         isAddAnimeOpen,
         setIsAddAnimeOpen,
         isScanAnimeOpen,
@@ -484,21 +459,13 @@ export const useShow = () => {
         setAddAnimeQuery,
         addAnimeTargetShowId,
         handleOpenAddAnime,
-        updateMalIdForShow,
+        updateShowIdForShow,
         isAddShowOpen,
         setIsAddShowOpen,
         addShowQuery,
         setAddShowQuery,
         addShowTargetShowId,
         handleOpenAddShow,
-        handleEditImdbId,
-        handleSaveImdbId,
-        handleCancelEditImdbId,
-        showEditImdbId,
-        currentEditShowImdb,
-        imdbId,
-        setImdbId,
-        updateImdbIdForShow,
         openEpisode
     };
 };

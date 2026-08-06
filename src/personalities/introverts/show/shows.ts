@@ -5,8 +5,7 @@ import {
     updateShowStatusIPC,
     updateBanStatusIPC,
     updateShowPinStatusIPC,
-    updateMalIdIPC,
-    updateImdbIdIPC,
+    updateShowIdIPC,
     resetShowsTableIPC
 } from "../../ambiverts/show";
 import type { ShowResult, ShowStatus } from '../../../pages/shows/types/types';
@@ -34,12 +33,8 @@ export async function toggleShowPin(showId: string, currentPinStatus: boolean): 
     return await updateShowPinStatusIPC(showId, !currentPinStatus);
 }
 
-export async function updateMalIdForShow(showId: string, malId: number): Promise<boolean> {
-    return await updateMalIdIPC(showId, malId);
-}
-
-export async function updateImdbIdForShow(showId: string, imdbId: string): Promise<boolean> {
-    return await updateImdbIdIPC(showId, imdbId);
+export async function updateShowIdForShow(showId: string, externalShowId: string): Promise<boolean> {
+    return await updateShowIdIPC(showId, externalShowId);
 }
 
 export async function resetShowsTable(): Promise<boolean> {

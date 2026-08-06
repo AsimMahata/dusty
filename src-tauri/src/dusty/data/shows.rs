@@ -47,7 +47,7 @@ pub struct ShowResult {
     pub pinned: bool,
     pub season: Option<i32>,
     pub status: String,
-    pub mal_id: Option<i32>,
+    pub show_id: Option<String>,
     #[serde(default)]
     pub airing: bool,
     #[serde(default)]
@@ -59,7 +59,7 @@ pub struct ShowInfo {
     pub status: String,
     pub banned: bool,
     pub pinned: bool,
-    pub mal_id: Option<i32>,
+    pub show_id: Option<String>,
     pub airing: bool,
     pub show_type: ShowType,
 }
