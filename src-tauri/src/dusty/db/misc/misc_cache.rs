@@ -1,51 +1,53 @@
 use crate::dusty::{data::file::FileInfo, logger::logger};
 use rusqlite::{params, Connection};
 
-pub fn create_pdf_cache_table(db: &Connection) -> Result<(), String> {
+pub fn create_misc_cache_table(db: &Connection) -> Result<(), String> {
     db.execute(
-        "CREATE TABLE IF NOT EXISTS pdf_cache (
-        id TEXT PRIMARY KEY,
-        data TEXT NOT NULL
+        "CREATE TABLE IF NOT EXISTS misc_cache (
+        id TEXT NOT NULL,
+        misc_type TEXT NOT NULL,
+        data TEXT NOT NULL,
+        PRIMARY KEY (id, misc_type)
     )",
         [],
     )
     .map_err(|err| {
-        logger::error!("CREATE_TABLE_PDF_CACHE_FAILED", err);
+        logger::error!("CREATE_TABLE_MISC_CACHE_FAILED", err);
         err.to_string()
     })?;
     Ok(())
 }
 
-pub fn add_or_update_pdf_cache(db: &Connection, file: &FileInfo) -> Result<(), String> {
+pub fn add_or_update_misc_cache(db: &Connection, file: &FileInfo, misc_type: &str) -> Result<(), String> {
     let id = file.id.clone();
     let data = serde_json::to_string(file).map_err(|err| {
         logger::error!("SERIALIZE_FILE_INFO_FAILED", err);
         err.to_string()
     })?;
-    
+
     db.execute(
-        "INSERT OR REPLACE INTO pdf_cache (id, data) VALUES (?1, ?2)",
-        params![id, data],
+        "INSERT OR REPLACE INTO misc_cache (id, misc_type, data) VALUES (?1, ?2, ?3)",
+        params![id, misc_type, data],
     )
     .map_err(|err| {
-        logger::error!("INSERT_OR_REPLACE_PDF_CACHE_FAILED", err);
+        logger::error!("INSERT_OR_REPLACE_MISC_CACHE_FAILED", err);
         err.to_string()
     })?;
     Ok(())
 }
 
-pub fn get_pdf_cache(db: &Connection) -> Result<Vec<FileInfo>, String> {
+pub fn get_misc_cache(db: &Connection, misc_type: &str) -> Result<Vec<FileInfo>, String> {
     let mut stmt = db
-        .prepare("SELECT data FROM pdf_cache")
+        .prepare("SELECT data FROM misc_cache WHERE misc_type = ?1")
         .map_err(|err| err.to_string())?;
 
     let file_iter = stmt
-        .query_map([], |row| {
+        .query_map(params![misc_type], |row| {
             let data: String = row.get(0)?;
             Ok(data)
         })
         .map_err(|err| {
-            logger::error!("GET_PDF_CACHE_FAILED", err);
+            logger::error!("GET_MISC_CACHE_FAILED", err);
             err.to_string()
         })?;
 
@@ -57,7 +59,7 @@ pub fn get_pdf_cache(db: &Connection) -> Result<Vec<FileInfo>, String> {
             } else {
                 logger::error!(
                     "PARSE_FILE_INFO_FAILED",
-                    "Failed to parse a row in pdf_cache"
+                    "Failed to parse a row in misc_cache"
                 );
             }
         }
@@ -66,11 +68,11 @@ pub fn get_pdf_cache(db: &Connection) -> Result<Vec<FileInfo>, String> {
     Ok(files)
 }
 
-pub fn reset_pdf_cache(conn: &Connection) -> Result<(), String> {
-    conn.execute("DROP TABLE IF EXISTS pdf_cache", [])
+pub fn reset_misc_cache(conn: &Connection, misc_type: &str) -> Result<(), String> {
+    conn.execute("DELETE FROM misc_cache WHERE misc_type = ?1", params![misc_type])
         .map_err(|err| {
-            logger::error!("RESET_PDF_CACHE_FAILED", err);
+            logger::error!("RESET_MISC_CACHE_FAILED", err);
             err.to_string()
         })?;
-    create_pdf_cache_table(conn)
+    Ok(())
 }

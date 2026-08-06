@@ -5,16 +5,16 @@ use tauri::Manager;
 
 use crate::dusty::data::state::AppState;
 use crate::dusty::db::anime::create_anime_table;
-use crate::dusty::db::mal::create_mal_cache_table;
+use crate::dusty::db::anime::create_mal_cache_table;
 use crate::dusty::db::media::create_media_table;
+use crate::dusty::db::misc::create_empty_dir_cache_table;
+use crate::dusty::db::misc::create_misc_cache_table;
+use crate::dusty::db::misc::create_misc_dir_cache_table;
 use crate::dusty::db::project::create_projects_table;
 use crate::dusty::db::recent::create_recent_ep_table;
+use crate::dusty::db::session::create_session_cache_table;
+use crate::dusty::db::show::create_show_cache_table;
 use crate::dusty::db::show::create_shows_table;
-use crate::dusty::db::show_cache::create_show_cache_table;
-use crate::dusty::db::empty_dir_cache::create_empty_dir_cache_table;
-use crate::dusty::db::misc_cache::create_misc_cache_table;
-use crate::dusty::db::misc_dir_cache::create_misc_dir_cache_table;
-use crate::dusty::db::session_cache::create_session_cache_table;
 use crate::dusty::logger::logger;
 
 #[tauri::command]

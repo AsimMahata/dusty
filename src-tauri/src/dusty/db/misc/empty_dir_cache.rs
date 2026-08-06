@@ -22,7 +22,7 @@ pub fn add_or_update_empty_dir_cache(db: &Connection, file: &FileInfo) -> Result
         logger::error!("SERIALIZE_FILE_INFO_FAILED", err);
         err.to_string()
     })?;
-    
+
     db.execute(
         "INSERT OR REPLACE INTO empty_dir_cache (id, data) VALUES (?1, ?2)",
         params![id, data],

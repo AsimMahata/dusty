@@ -1,8 +1,7 @@
 use crate::dusty::{
-    data::shows::{ShowInfo, ShowResult},
-    db::show_cache::add_to_show_cache_in_db,
+    data::shows::{ShowInfo, ShowResult, ShowType},
+    db::show::add_to_show_cache_in_db,
     logger::logger,
-    utility::sha256_hash::get_sha256_id,
 };
 use rusqlite::{params, Connection, Result};
 
@@ -24,8 +23,8 @@ pub fn add_show_in_db(db: &Connection, show: &ShowResult) -> Result<(), String> 
 fn add_in_show_table(db: &Connection, show: &ShowResult) -> Result<()> {
     db.execute(
         "
-        INSERT OR IGNORE INTO shows (id, title, dir, status, banned, pinned, mal_id, airing)
-        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
+        INSERT OR IGNORE INTO shows (id, title, dir, status, banned, pinned, mal_id, airing, show_type)
+        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
         ",
         params![
             &show.id,
@@ -35,7 +34,8 @@ fn add_in_show_table(db: &Connection, show: &ShowResult) -> Result<()> {
             &show.banned,
             &show.pinned,
             &show.mal_id,
-            &show.airing
+            &show.airing,
+            show.show_type.as_str()
         ],
     )?;
 
@@ -45,12 +45,13 @@ fn add_in_show_table(db: &Connection, show: &ShowResult) -> Result<()> {
 pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo, String> {
     db.query_row(
         "
-        SELECT title, status, banned, pinned, mal_id, airing
+        SELECT title, status, banned, pinned, mal_id, airing, show_type
         FROM shows
         WHERE id = ?1
         ",
         params![id],
         |row| {
+            let show_type_str: String = row.get(6)?;
             Ok(ShowInfo {
                 title: row.get(0)?,
                 status: row.get(1)?,
@@ -58,6 +59,7 @@ pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo, String> {
                 pinned: row.get(3)?,
                 mal_id: row.get(4)?,
                 airing: row.get(5)?,
+                show_type: ShowType::from_str(&show_type_str),
             })
         },
     )
@@ -126,7 +128,8 @@ pub fn create_shows_table(conn: &Connection) -> Result<(), String> {
             banned INTEGER NOT NULL DEFAULT 0,
             pinned INTEGER NOT NULL DEFAULT 0,
             mal_id INTEGER DEFAULT NULL,
-            airing INTEGER NOT NULL DEFAULT 0
+            airing INTEGER NOT NULL DEFAULT 0,
+            show_type TEXT NOT NULL DEFAULT 'unknown'
         )
         ",
         [],

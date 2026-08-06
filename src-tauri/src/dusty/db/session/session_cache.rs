@@ -22,7 +22,7 @@ pub fn add_or_update_session_cache(db: &Connection, session: &Session) -> Result
         logger::error!("SERIALIZE_SESSION_FAILED", err);
         err.to_string()
     })?;
-    
+
     db.execute(
         "INSERT OR REPLACE INTO session_cache (id, data) VALUES (?1, ?2)",
         params![id, data],
@@ -41,7 +41,7 @@ pub fn get_session_cache(db: &Connection, id: String) -> Result<Option<Session>,
             logger::error!("PREPARE_GET_SESSION_CACHE_FAILED", err);
             err.to_string()
         })?;
-    
+
     let result = stmt.query_row(params![id], |row| {
         let data: String = row.get(0)?;
         Ok(data)
