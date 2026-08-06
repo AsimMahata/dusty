@@ -1,5 +1,5 @@
 use crate::dusty::data::state::AppState;
-use crate::dusty::engine::utility::parser::tokenize_string;
+use crate::dusty::engine::utility::tokenizer::tokenize_string;
 use serde_json::{Map, Value};
 use std::collections::HashMap;
 use tauri::State;

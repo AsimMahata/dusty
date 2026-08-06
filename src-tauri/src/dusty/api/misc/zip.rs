@@ -1,8 +1,8 @@
 use crate::dusty::data::file::FileInfo;
 use crate::dusty::data::state::AppState;
 use crate::dusty::data::zip::ZipDir;
-use crate::dusty::db::zip_cache::{add_or_update_zip_cache, get_zip_cache, reset_zip_cache};
-use crate::dusty::db::zip_dir_cache::{get_zip_dir_cache, reset_zip_dir_cache, save_zip_dir_cache};
+use crate::dusty::db::misc::{add_or_update_zip_cache, get_zip_cache, reset_zip_cache};
+use crate::dusty::db::misc::{get_zip_dir_cache, reset_zip_dir_cache, save_zip_dir_cache};
 use crate::dusty::engine::dusty::zip::list_large_zip_files;
 use crate::dusty::logger::logger;
 use crate::dusty::scanners::zip::dfs_zip_dir_scanner;

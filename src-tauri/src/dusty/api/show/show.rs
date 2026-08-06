@@ -6,7 +6,7 @@ use crate::dusty::db::show::{
     update_mal_id_in_db, update_pin_status_in_db, update_show_status_in_db,
 };
 use crate::dusty::db::show::{get_show_info, rename_show_in_db};
-use crate::dusty::db::show_cache::{
+use crate::dusty::db::show::{
     get_all_shows_from_show_cache_in_db, reset_show_cache_table_in_db,
 };
 use crate::dusty::logger::logger;

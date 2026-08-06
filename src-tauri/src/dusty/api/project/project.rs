@@ -1,4 +1,3 @@
-use log::logger;
 use rusqlite::Connection;
 
 use crate::dusty::data::project::{Project, Tag};

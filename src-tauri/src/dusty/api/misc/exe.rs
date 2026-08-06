@@ -1,8 +1,8 @@
 use crate::dusty::data::exe::ExecutableDir;
 use crate::dusty::data::file::FileInfo;
 use crate::dusty::data::state::AppState;
-use crate::dusty::db::exe_cache::{add_or_update_exe_cache, get_exe_cache, reset_exe_cache};
-use crate::dusty::db::exe_dir_cache::{get_exe_dir_cache, reset_exe_dir_cache, save_exe_dir_cache};
+use crate::dusty::db::misc::{add_or_update_exe_cache, get_exe_cache, reset_exe_cache};
+use crate::dusty::db::misc::{get_exe_dir_cache, reset_exe_dir_cache, save_exe_dir_cache};
 use crate::dusty::engine::dusty::exe::list_executables;
 use crate::dusty::logger::logger;
 use crate::dusty::scanners::exe::dfs_exe_dir_scanner;

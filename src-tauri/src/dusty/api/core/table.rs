@@ -21,7 +21,7 @@ pub fn reset_table(state: tauri::State<AppState>, table_name: String) -> Result<
     })?;
     
     // Recreate the table with its latest schema
-    let _ = crate::dusty::db::init::initialize_tables(&db);
+    let _ = crate::dusty::db::core::initialize_tables(&db);
 
     logger::info!("RESET_TABLE_SUCCESS", table_name);
     Ok(())

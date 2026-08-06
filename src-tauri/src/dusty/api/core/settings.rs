@@ -1,6 +1,5 @@
 use crate::dusty::data::state::AppState;
-use crate::dusty::db::clean::delete_all_tables;
-use crate::dusty::db::init::initialize_tables;
+use crate::dusty::db::core::{delete_all_tables, initialize_tables};
 use crate::dusty::logger::logger;
 use tauri::State;
 

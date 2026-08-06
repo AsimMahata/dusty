@@ -1,5 +1,5 @@
 use crate::dusty::data::state::AppState;
-use crate::dusty::db::mal::{
+use crate::dusty::db::anime::{
     add_to_mal_cache_in_db, get_from_mal_cache_in_db, reset_mal_cache_table_in_db,
     update_in_mal_cache_in_db,
 };

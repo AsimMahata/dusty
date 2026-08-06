@@ -1,6 +1,6 @@
 use crate::dusty::data::file::FileInfo;
 use crate::dusty::data::state::AppState;
-use crate::dusty::db::empty_dir_cache::{add_or_update_empty_dir_cache, get_empty_dir_cache, reset_empty_dir_cache};
+use crate::dusty::db::misc::{add_or_update_empty_dir_cache, get_empty_dir_cache, reset_empty_dir_cache};
 use crate::dusty::engine::dusty::empty_dir::list_empty_dirs;
 use crate::dusty::logger::logger;
 use rusqlite::Connection;
