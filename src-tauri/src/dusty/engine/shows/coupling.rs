@@ -1,14 +1,11 @@
 use std::collections::HashMap;
 
-use crate::dusty::{
-    engine::{
-        algo::rolling_hash::{
-            get_common_token_order_using_rolling_hash, get_coupling_vec_using_rolling_hash,
-        },
-        cluster::helper::generate_token_id,
-        utility::parser::{tokenize_file_name, tokenize_string},
+use crate::dusty::engine::{
+    algo::rolling_hash::{
+        get_common_token_order_using_rolling_hash, get_coupling_vec_using_rolling_hash,
     },
-    logger::logger,
+    cluster::helper::generate_token_id,
+    utility::tokenizer::tokenize_string,
 };
 
 pub fn get_coupling_values(parsed_files: &Vec<Vec<String>>) -> Vec<Vec<f32>> {

@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use crate::dusty::engine::utility::parser::get_tokenized_file_names;
+use crate::dusty::engine::utility::tokenizer::get_tokenized_file_names;
 use crate::dusty::{
     engine::{
         algo::levenshtein::edit_dist_string_clusters, cluster::helper::cluster_indices_using_dsu,

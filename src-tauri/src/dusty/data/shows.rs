@@ -4,6 +4,35 @@ use serde::{Deserialize, Serialize};
 
 use crate::dusty::data::file::FileInfo;
 
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum ShowType {
+    Anime,
+    TvShow,
+    Movie,
+    #[default]
+    Unknown,
+}
+
+impl ShowType {
+    pub fn as_str(&self) -> &str {
+        match self {
+            ShowType::Anime => "anime",
+            ShowType::TvShow => "tv_show",
+            ShowType::Movie => "movie",
+            ShowType::Unknown => "unknown",
+        }
+    }
+    pub fn from_str(s: &str) -> Self {
+        match s {
+            "anime" => ShowType::Anime,
+            "tv_show" => ShowType::TvShow,
+            "movie" => ShowType::Movie,
+            _ => ShowType::Unknown,
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ShowResult {
     pub id: String,
@@ -12,12 +41,17 @@ pub struct ShowResult {
     pub num_episodes: Option<usize>,
     pub episodes: Vec<FileInfo>,
     pub dir: Option<String>,
+    #[serde(default)]
     pub banned: bool,
+    #[serde(default)]
     pub pinned: bool,
     pub season: Option<i32>,
     pub status: String,
     pub mal_id: Option<i32>,
+    #[serde(default)]
     pub airing: bool,
+    #[serde(default)]
+    pub show_type: ShowType,
 }
 
 pub struct ShowInfo {
@@ -27,6 +61,7 @@ pub struct ShowInfo {
     pub pinned: bool,
     pub mal_id: Option<i32>,
     pub airing: bool,
+    pub show_type: ShowType,
 }
 
 #[derive(Serialize, Debug)]

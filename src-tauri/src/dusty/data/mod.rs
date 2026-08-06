@@ -7,4 +7,6 @@ pub mod shows;
 pub mod state;
 pub mod session;
 pub mod misc_dir;
-
+pub mod exe;
+pub mod pdf;
+pub mod zip;

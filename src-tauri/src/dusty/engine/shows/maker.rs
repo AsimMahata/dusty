@@ -1,16 +1,12 @@
 use crate::dusty::{
     data::{
-        file::FileInfo,
-        shows::{Show, ShowResult, Shows},
-    },
-    db::anime::Anime,
-    engine::{
+        file::FileInfo, shows::{Show, ShowResult, ShowType, Shows},
+    }, db::anime::Anime, engine::{
         algo::rolling_hash::get_common_token_order_using_rolling_hash,
         cluster::cluster::cluster_files,
         shows::coupling::get_coupling_value_between_anime_title_and_file_name,
-        utility::parser::get_tokenized_file_names_for_title_making,
-    },
-    utility::sha256_hash::get_sha256_id,
+        utility::tokenizer::get_tokenized_file_names_for_title_making,
+    }, utility::sha256_hash::get_sha256_id,
 };
 use rand::rng;
 use rand::seq::SliceRandom;
@@ -111,6 +107,7 @@ pub fn make_show_results_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut
             status: "default".to_string(),
             mal_id: None,
             airing: false,
+            show_type: ShowType::Unknown,
             episodes: cluster
                 .clone()
                 .into_iter()
@@ -183,6 +180,7 @@ pub fn make_shows_with_available_anime_titles(
                 status,
                 mal_id,
                 airing,
+                show_type: ShowType::Anime,
             });
         }
     }

@@ -5,4 +5,7 @@ pub mod recursive_scanner;
 pub mod show_scanner;
 pub mod videos;
 pub mod misc;
+pub mod exe;
+pub mod pdf;
+pub mod zip;
 

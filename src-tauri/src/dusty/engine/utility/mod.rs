@@ -1,3 +1,3 @@
 pub mod calculations;
 pub mod math;
-pub mod parser;
+pub mod tokenizer;

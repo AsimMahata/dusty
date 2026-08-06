@@ -1,7 +1,7 @@
 use crate::dusty::{
     data::{
         file::FileInfo,
-        shows::{Show, ShowResult},
+        shows::{Show, ShowResult, ShowType},
     },
     utility::sha256_hash::get_sha256_id,
 };
@@ -24,5 +24,6 @@ pub fn show_to_show_result(s: &Show) -> ShowResult {
         status: "default".to_string(),
         mal_id: None,
         airing: false,
+        show_type: ShowType::Unknown,
     }
 }

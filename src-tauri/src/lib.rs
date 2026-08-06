@@ -1,5 +1,5 @@
 pub mod dusty;
-use crate::dusty::db::init::init_db_and_os;
+use crate::dusty::db::core::init_db_and_os;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
