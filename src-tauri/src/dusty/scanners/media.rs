@@ -1,9 +1,11 @@
 use mime_guess::mime::Name;
-use std::{fs, path::PathBuf};
+
+use std::path::PathBuf;
 
 use crate::dusty::{
     data::{file::FileInfo, media::MediaDir},
-    utility::info::{check_for_bad_sibling, get_file_type, is_forbidden_folder, is_hidden},
+    filesystem::scan::{list_children, ScanOptions},
+    utility::info::get_file_type,
 };
 
 pub fn dfs_media_dir_scanner(
@@ -12,54 +14,29 @@ pub fn dfs_media_dir_scanner(
     is_root: bool,
     media_type_name: Name<'static>,
 ) -> Vec<MediaDir> {
-    let mut has_media: bool = false;
+    let mut has_media = false;
     let mut valid_child: Vec<MediaDir> = Vec::new();
 
-    if path
-        .file_name()
-        .and_then(|n| n.to_str())
-        .map_or(false, |s| s.starts_with('.'))
-    {
-        println!("BAD_FOLDER found at {:?} SKIPPING ", path);
-        return valid_child;
+    let opts = ScanOptions {
+        is_root,
+        ..ScanOptions::default()
     };
-    if !is_root && is_hidden(path) {
-        println!("HIDDEN_FOLDER found at {:?} SKIPPING ", path);
+    let children = list_children(path, &opts);
+    if children.blocked {
         return valid_child;
     }
-    if is_forbidden_folder(path) {
-        println!("FORBIDDEN FOLDER found at {:?} SKIPPING", path);
-        return valid_child;
-    }
-    let entries = match fs::read_dir(path) {
-        Ok(entries) => entries,
-        Err(e) => {
-            println!("skipping {:?}: {}", path, e);
-            return valid_child;
-        }
-    };
-    let mut childrens: Vec<PathBuf> = Vec::new();
+
     let mut media: Vec<FileInfo> = Vec::new();
-    for entry in entries {
-        let child = entry.expect("something wrong with this child").path();
-        if child.is_dir() {
-            childrens.push(child);
-        } else {
-            if is_media(&child, &media_type_name) {
-                if let Ok(info) = FileInfo::from_pathbuf(&child) {
-                    media.push(info);
-                    has_media = true;
-                }
+    for file in &children.files {
+        if is_media(file, &media_type_name) {
+            if let Ok(info) = FileInfo::from_pathbuf(file) {
+                media.push(info);
+                has_media = true;
             }
         }
     }
-    //Check for BAD_SIBLINGS
-    if check_for_bad_sibling(&childrens) {
-        println!("BAD_SIBLINGS found at {:?} SKIPPING ", path);
-        return valid_child;
-    }
 
-    for child in childrens {
+    for child in children.dirs {
         valid_child.extend(dfs_media_dir_scanner(
             &child,
             media_dirs,
@@ -67,6 +44,7 @@ pub fn dfs_media_dir_scanner(
             media_type_name.clone(),
         ));
     }
+
     if has_media || valid_child.len() > 2 {
         let mut dir = MediaDir::new(
             path.to_string_lossy().to_string(),
@@ -75,15 +53,12 @@ pub fn dfs_media_dir_scanner(
         for child_dir in &valid_child {
             dir.childs.push(child_dir.clone());
         }
-        dir.media.extend(media.clone());
+        dir.media.extend(media);
         media_dirs.push(dir.clone());
     }
-    return valid_child;
+    valid_child
 }
 
 fn is_media(path: &PathBuf, media_type_name: &Name<'static>) -> bool {
-    if let Some(guess) = get_file_type(path) {
-        return guess.eq(media_type_name);
-    }
-    return false;
+    get_file_type(path).map_or(false, |g| g.eq(media_type_name))
 }

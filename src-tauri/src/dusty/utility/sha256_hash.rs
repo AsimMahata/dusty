@@ -1,6 +1,5 @@
-use sha256::digest;
+use crate::dusty::filesystem::hash::sha256_string;
 
 pub fn get_sha256_id(main: String, sub: String) -> String {
-    let input: String = format!("{} {}", main, sub);
-    digest(input)
+    sha256_string(&format!("{} {}", main, sub))
 }

@@ -1,15 +1,9 @@
-use std::{cmp::Reverse, fs, path::PathBuf};
+use std::path::PathBuf;
 
 use crate::dusty::{
     data::file::FileInfo,
-    scanners::dfs::dfs_file_of_type,
-    utility::{
-        info::{
-            check_for_bad_sibling, get_all_valid_source_path, is_forbidden_folder, is_hidden,
-            is_root,
-        },
-        utility::format_size,
-    },
+    filesystem::scan::{list_children, ScanOptions},
+    utility::info::{get_all_valid_source_path, is_root},
 };
 
 pub fn list_large_zip_files() -> Vec<FileInfo> {
@@ -17,59 +11,32 @@ pub fn list_large_zip_files() -> Vec<FileInfo> {
     for drive in get_all_valid_source_path() {
         list.extend(list_large_zip_files_in_path(drive));
     }
-    return list;
+    list
 }
 
 pub fn list_large_zip_files_in_path(path: PathBuf) -> Vec<FileInfo> {
     let mut zips: Vec<FileInfo> = Vec::new();
     dfs_large_zip_scanner(&path, &mut zips, is_root(&path));
-    return zips;
+    zips
 }
 
-fn dfs_large_zip_scanner(path: &PathBuf, zips: &mut Vec<FileInfo>, is_root: bool) {
-    if path
-        .file_name()
-        .and_then(|n| n.to_str())
-        .map_or(false, |s| s.starts_with('.'))
-    {
-        println!("BAD_FOLDER found at {:?} SKIPPING ", path);
-        return;
+fn dfs_large_zip_scanner(path: &PathBuf, zips: &mut Vec<FileInfo>, is_root_path: bool) {
+    let opts = ScanOptions {
+        is_root: is_root_path,
+        ..ScanOptions::default()
     };
-    if !is_root && is_hidden(path) {
-        println!("HIDDEN_FOLDER found at {:?} SKIPPING ", path);
+    let children = list_children(path, &opts);
+    if children.blocked {
         return;
     }
-    if is_forbidden_folder(path) {
-        println!("FORBIDDEN FOLDER found at {:?} SKIPPING", path);
-        return;
-    }
-    let entries = match fs::read_dir(path) {
-        Ok(entries) => entries,
-        Err(e) => {
-            println!("skipping {:?}: {}", path, e);
-            return;
-        }
-    };
-    let mut childrens: Vec<PathBuf> = Vec::new();
-    for entry in entries {
-        let child = entry.expect("something wrong with this child").path();
-        if child.is_dir() {
-            childrens.push(child);
-        } else {
-            if is_zip_file(&child) {
-                let file = FileInfo::from_pathbuf(&child)
-                    .expect("Crashed at zip.rs because cant get fileinfo for this file");
-                zips.push(file);
+    for file in &children.files {
+        if is_zip_file(file) {
+            if let Ok(info) = FileInfo::from_pathbuf(file) {
+                zips.push(info);
             }
         }
     }
-    //Check for BAD_SIBLINGS
-    if check_for_bad_sibling(&childrens) {
-        println!("BAD_SIBLINGS found at {:?} SKIPPING ", path);
-        return;
-    }
-
-    for child in childrens {
+    for child in children.dirs {
         dfs_large_zip_scanner(&child, zips, false);
     }
 }

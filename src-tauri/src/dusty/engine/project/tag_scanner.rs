@@ -1,8 +1,9 @@
-use std::{fs::read_dir, path::PathBuf};
+use std::path::PathBuf;
 
 use crate::dusty::{
     data::project::{Project, Tag},
     engine::project::tag_parser::scan_tags_from_readme,
+    filesystem::read::list_raw,
 };
 
 pub fn scan_tags(project: &Project) -> Vec<Tag> {
@@ -22,34 +23,25 @@ pub fn get_git_ignores(path: &PathBuf) -> Vec<String> {
     }
 }
 
-pub fn scan_tags_from_directory_structure(path: &PathBuf,tags:&mut Vec<Tag>,git_ignores:&mut Vec<String>) {
+pub fn scan_tags_from_directory_structure(path: &PathBuf, tags: &mut Vec<Tag>, git_ignores: &mut Vec<String>) {
     git_ignores.extend(get_git_ignores(path));
-    let entries = match read_dir(path) {
-        Ok(entries) => entries,
-        Err(_) => return,
-    };
     let mut file_names: Vec<String> = Vec::new();
     let mut child_directories: Vec<PathBuf> = Vec::new();
 
-    for entry in entries.filter_map(|e| e.ok()) {
-        let p = entry.path();
+    for p in list_raw(path) {
         let path_str = p.to_str().unwrap_or("").to_string();
         let file_name = p.file_name().and_then(|n| n.to_str()).unwrap_or("").to_string();
 
         if git_ignores.contains(&path_str) || git_ignores.contains(&file_name) {
             continue;
         }
-
         if file_name == "node_modules" || file_name == "target" || file_name == ".git" {
             continue;
         }
-
-        if let Ok(file_type) = entry.file_type() {
-            if file_type.is_file() {
-                file_names.push(file_name);
-            } else if file_type.is_dir() {
-                child_directories.push(p);
-            }
+        if p.is_file() {
+            file_names.push(file_name);
+        } else if p.is_dir() {
+            child_directories.push(p);
         }
     }
 

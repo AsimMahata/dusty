@@ -1,4 +1,10 @@
-import { revealInFileExplorerIPC, openInVsCodeIPC, openFileIPC, readDirIPC, openUrlIPC } from '../../ambiverts/filesystem';
+import { 
+    revealInFileExplorerIPC, openInVsCodeIPC, openFileIPC, readDirIPC, openUrlIPC,
+    readFileIPC, writeFileIPC, appendFileIPC, copyFileIPC, moveFileIPC,
+    renameFileIPC, deleteFileIPC, createDirectoryIPC, deleteDirectoryIPC,
+    existsIPC, getMetadataIPC
+} from '../../ambiverts/filesystem';
+import type { FileMetadata } from '../../ambiverts/filesystem';
 import { logger } from '../../../utility/logger';
 import type { FileInfo } from "../../../types/core";
 
@@ -61,4 +67,52 @@ export const openUrl = async (url: string): Promise<boolean> => {
         logger.error(`Failed to open URL: ${String(err)}`);
         return false;
     }
+};
+
+export const readFile = async (path: string): Promise<string> => {
+    return await readFileIPC(path);
+};
+
+export const writeFile = async (path: string, content: string): Promise<boolean> => {
+    return await writeFileIPC(path, content);
+};
+
+export const appendFile = async (path: string, content: string): Promise<boolean> => {
+    return await appendFileIPC(path, content);
+};
+
+export const copyFile = async (src: string, dst: string): Promise<boolean> => {
+    return await copyFileIPC(src, dst);
+};
+
+export const moveFile = async (src: string, dst: string): Promise<boolean> => {
+    return await moveFileIPC(src, dst);
+};
+
+export const renameFile = async (src: string, dst: string): Promise<boolean> => {
+    return await renameFileIPC(src, dst);
+};
+
+export const deleteFile = async (path: string): Promise<boolean> => {
+    return await deleteFileIPC(path);
+};
+
+export const createDirectory = async (path: string): Promise<boolean> => {
+    return await createDirectoryIPC(path);
+};
+
+export const deleteDirectory = async (path: string, recursive: boolean = false): Promise<boolean> => {
+    return await deleteDirectoryIPC(path, recursive);
+};
+
+export const readDirectory = async (path: string) => {
+    return await readDirIPC(path);
+};
+
+export const exists = async (path: string): Promise<boolean> => {
+    return await existsIPC(path);
+};
+
+export const getMetadata = async (path: string): Promise<FileMetadata | null> => {
+    return await getMetadataIPC(path);
 };

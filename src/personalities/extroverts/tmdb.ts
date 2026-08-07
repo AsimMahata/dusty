@@ -23,9 +23,8 @@ export async function searchShowTMDB(query: string, retryCount = 0): Promise<{ d
     };
 
     try {
-        const url = `${TMDB_API_BASE_URL}/search/tv?query=${encodeURIComponent(query)}`;
+        const url = `${TMDB_API_BASE_URL}/search/multi?query=${encodeURIComponent(query)}`;
         const res = await fetch(url, fetchOptions);
-        console.debug('--------------------',res);
         if (res.status === 429 && retryCount < 2) {
             logger.warn(`TMDB API Rate Limited. Retrying in 2 seconds...`);
             await new Promise(resolve => setTimeout(resolve, 2000));
@@ -38,7 +37,7 @@ export async function searchShowTMDB(query: string, retryCount = 0): Promise<{ d
         }
 
         const data = await res.json();
-
+        console.log('gotten resutl',data);
         if (!data || !Array.isArray(data.results)) {
             logger.error(`SEARCH_SHOW_API_RETURNED_ERROR`, data);
             return { data: [], source: ApiProvider.TMDB };

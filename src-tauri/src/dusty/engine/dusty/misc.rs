@@ -1,11 +1,9 @@
-use std::{fs, path::PathBuf};
+use std::path::PathBuf;
 
 use crate::dusty::{
     data::file::FileInfo,
-    utility::info::{
-        check_for_bad_sibling, get_all_valid_source_path, is_forbidden_folder, is_hidden,
-        is_root,
-    },
+    filesystem::scan::{list_children, ScanOptions},
+    utility::info::{get_all_valid_source_path, is_root},
 };
 
 pub fn list_misc_files(misc_type: &str) -> Vec<FileInfo> {
@@ -13,59 +11,32 @@ pub fn list_misc_files(misc_type: &str) -> Vec<FileInfo> {
     for root in get_all_valid_source_path() {
         list.extend(list_misc_files_in_path(root, misc_type));
     }
-    return list;
+    list
 }
 
 pub fn list_misc_files_in_path(path: PathBuf, misc_type: &str) -> Vec<FileInfo> {
     let mut files: Vec<FileInfo> = Vec::new();
     dfs_misc_scanner(&path, &mut files, is_root(&path), misc_type);
-    return files;
+    files
 }
 
-fn dfs_misc_scanner(path: &PathBuf, files: &mut Vec<FileInfo>, is_root: bool, misc_type: &str) {
-    if path
-        .file_name()
-        .and_then(|n| n.to_str())
-        .map_or(false, |s| s.starts_with('.'))
-    {
-        println!("BAD_FOLDER found at {:?} SKIPPING ", path);
-        return;
+fn dfs_misc_scanner(path: &PathBuf, files: &mut Vec<FileInfo>, is_root_path: bool, misc_type: &str) {
+    let opts = ScanOptions {
+        is_root: is_root_path,
+        ..ScanOptions::default()
     };
-    if !is_root && is_hidden(path) {
-        println!("HIDDEN_FOLDER found at {:?} SKIPPING ", path);
+    let children = list_children(path, &opts);
+    if children.blocked {
         return;
     }
-    if is_forbidden_folder(path) {
-        println!("FORBIDDEN FOLDER found at {:?} SKIPPING", path);
-        return;
-    }
-    let entries = match fs::read_dir(path) {
-        Ok(entries) => entries,
-        Err(e) => {
-            println!("skipping {:?}: {}", path, e);
-            return;
-        }
-    };
-    let mut childrens: Vec<PathBuf> = Vec::new();
-    for entry in entries {
-        let child = entry.expect("something wrong with this child").path();
-        if child.is_dir() {
-            childrens.push(child);
-        } else {
-            if is_misc_file(&child, misc_type) {
-                if let Ok(file) = FileInfo::from_pathbuf(&child) {
-                    files.push(file);
-                }
+    for file in &children.files {
+        if is_misc_file(file, misc_type) {
+            if let Ok(info) = FileInfo::from_pathbuf(file) {
+                files.push(info);
             }
         }
     }
-    //Check for BAD_SIBLINGS
-    if check_for_bad_sibling(&childrens) {
-        println!("BAD_SIBLINGS found at {:?} SKIPPING ", path);
-        return;
-    }
-
-    for child in childrens {
+    for child in children.dirs {
         dfs_misc_scanner(&child, files, false, misc_type);
     }
 }

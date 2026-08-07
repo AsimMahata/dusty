@@ -1,5 +1,6 @@
 pub mod anime;
 pub mod core;
+pub mod filesystem;
 pub mod lab;
 pub mod media;
 pub mod misc;
@@ -11,6 +12,7 @@ pub mod system;
 
 pub use anime::*;
 pub use core::*;
+pub use filesystem::*;
 pub use lab::*;
 pub use media::*;
 pub use misc::*;

@@ -1,6 +1,6 @@
-#[cfg(target_os = "windows")]
-use std::os::windows::prelude::*;
-use std::{env::home_dir, fs, path::PathBuf};
+use std::{env::home_dir, path::PathBuf};
+
+use crate::dusty::filesystem::metadata;
 use sysinfo::Disks;
 
 use mime_guess::mime::{self, Name};
@@ -51,20 +51,8 @@ pub fn is_forbidden_folder(path: &PathBuf) -> bool {
     return get_forbidden_folders().iter().any(|f| f.eq(path));
 }
 
-#[cfg(target_os = "windows")]
 pub fn is_hidden(file_path: &PathBuf) -> bool {
-    fs::metadata(file_path)
-        .map(|m| (m.file_attributes() & 0x2) > 0)
-        .unwrap_or(true)
-}
-
-#[cfg(target_os = "linux")]
-pub fn is_hidden(file_path: &PathBuf) -> bool {
-    file_path
-        .file_name()
-        .and_then(|name| name.to_str())
-        .map(|name| name.starts_with('.'))
-        .unwrap_or(false)
+    metadata::is_hidden(file_path)
 }
 
 pub fn check_for_bad_sibling(childrens: &Vec<PathBuf>) -> bool {

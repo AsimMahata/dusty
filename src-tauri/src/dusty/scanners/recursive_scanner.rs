@@ -1,13 +1,7 @@
-use std::path::{self, PathBuf};
-
+use std::path::PathBuf;
 use mime_guess::mime::{self, Name};
-
-use crate::dusty::{
-    data::shows::Shows,
-    engine::{cluster::cluster::cluster_files, shows::maker::make_shows_from_clusters},
-    scanners::dfs::dfs_file_of_type,
-    utility::info::is_root,
-};
+use crate::dusty::scanners::dfs::dfs_file_of_type;
+use crate::dusty::utility::info::is_root;
 
 fn get_file_of_type_rec(root_path: &PathBuf, type_: Name<'static>) -> Vec<PathBuf> {
     let mut list: Vec<PathBuf> = Vec::new();

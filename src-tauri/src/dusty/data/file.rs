@@ -1,12 +1,11 @@
 use std::{
-    fs::metadata,
     io::{Error, ErrorKind},
     path::PathBuf,
 };
 
 use serde::{Deserialize, Serialize};
 
-use crate::dusty::utility::sha256_hash::get_sha256_id;
+use crate::dusty::{filesystem::metadata as fs_meta, utility::sha256_hash::get_sha256_id};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct FileInfo {
@@ -31,7 +30,7 @@ impl FileInfo {
         }
     }
     pub fn from_pathbuf(path: &PathBuf) -> Result<Self, Error> {
-        let size = metadata(path).map(|m| m.len()).unwrap_or(0);
+        let size = fs_meta::size(path);
 
         let name = path
             .file_name()
