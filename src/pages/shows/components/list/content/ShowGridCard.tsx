@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { getShowMetaData, getStatusColor, calculateProgressPercentage } from '../../../../../personalities/introverts/show/mal';
+import { getShowMetaData, getStatusColor, calculateProgressPercentage } from '../../../../../personalities/introverts/show/metadata';
 import { ShowPoster } from './ShowPoster';
 import { ShowActions } from './ShowActions';
 import { ShowProgress } from './ShowProgress';

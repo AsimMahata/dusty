@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Play, Check, Calendar, ListVideo, Folder, Star, Radio, Clock, Tv } from 'lucide-react';
-import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../../personalities/introverts/show/mal';
+import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../../personalities/introverts/show/metadata';
 import { ActionMenu } from '../../../../../components/ui/ActionMenu';
 import type { ShowResult } from '../../../types/types';
 import type { ActionItem } from "../../../../../types/core";
 import type { ShowMetaData } from '../../../types/types';
+import { logger } from '../../../../../utility/logger';
 
 interface ShowPosterCardProps {
     show: ShowResult;
@@ -20,6 +21,7 @@ export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onClick, a
         let mounted = true;
         getShowMetaData(show).then(data => {
             if (mounted) setMeta(data);
+            logger.info("GOT METADATA", data);
         });
         return () => { mounted = false; };
     }, [show]);

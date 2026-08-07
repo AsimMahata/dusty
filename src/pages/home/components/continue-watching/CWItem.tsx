@@ -1,7 +1,7 @@
 import { CONTINUE_WATCHING_TO_SHOW_PAGE } from '../../../shows/constants/constants';
 import React, { useEffect, useState } from 'react';
 import { Play, MoreVertical } from 'lucide-react';
-import { getShowMetaData } from '../../../../personalities/introverts/show/mal';
+import { getShowMetaData } from '../../../../personalities/introverts/show/metadata';
 import { logger } from '../../../../utility/logger';
 import { RecentEpisodeTitle, RecentEpisodeSubtitle } from '../../../../components/ui/RecentEpisodeText';
 import type { ShowMetaData } from '../../../shows/types/types';

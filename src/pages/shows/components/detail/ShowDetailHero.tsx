@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { PLAY_ICON_16_FILL, CALENDAR_ICON_14, STAR_ICON_16_CLASS, RADIO_ICON_14, CHEVRON_LEFT_ICON_24, TV_ICON_48_MUTED, CHECK_ICON_14 } from '../../../../constants/icon';
 import { ActionMenu } from '../../../../components/ui/ActionMenu';
-import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../personalities/introverts/show/mal';
+import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../personalities/introverts/show/metadata';
 import type { ShowMetaData } from '../../types/types';
 import type { ActionItem } from "../../../../types/core";
 import type { ShowResult } from '../../types/types';

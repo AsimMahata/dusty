@@ -70,6 +70,11 @@ export interface ShowData {
     imdb_id: string;
     year: number | null;
     image_url?: string;
+    show_type?: ShowType;
+}
+export interface ScannedShowData extends ShowData {
+    priority: number;
+    sourceQuery: string;
 }
 
 export const ApiProvider = {

@@ -53,3 +53,61 @@ export async function searchShowTMDB(query: string, retryCount = 0): Promise<{ d
         return searchShowIMDB(query, retryCount);
     }
 }
+
+export async function getTvShowDetailsTMDB(id: string, retryCount = 0): Promise<any | null> {
+    const tmdbKey = import.meta.env.VITE_TMDB_API_KEY || import.meta.env.TMDB_API_KEY;
+    if (!tmdbKey) return null;
+
+    const fetchOptions: RequestInit = {
+        method: 'GET',
+        headers: {
+            'User-Agent': 'Dusty-File-Manager/1.0',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${tmdbKey}`
+        }
+    };
+
+    try {
+        const url = `${TMDB_API_BASE_URL}/tv/${id}`;
+        const res = await fetch(url, fetchOptions);
+        if (res.status === 429 && retryCount < 2) {
+            logger.warn(`TMDB API Rate Limited. Retrying in 2 seconds...`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            return getTvShowDetailsTMDB(id, retryCount + 1);
+        }
+        if (!res.ok) return null;
+        return await res.json();
+    } catch (err) {
+        logger.error(`getTvShowDetailsTMDB error: ${err}`);
+        return null;
+    }
+}
+
+export async function getMovieDetailsTMDB(id: string, retryCount = 0): Promise<any | null> {
+    const tmdbKey = import.meta.env.VITE_TMDB_API_KEY || import.meta.env.TMDB_API_KEY;
+    if (!tmdbKey) return null;
+
+    const fetchOptions: RequestInit = {
+        method: 'GET',
+        headers: {
+            'User-Agent': 'Dusty-File-Manager/1.0',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${tmdbKey}`
+        }
+    };
+
+    try {
+        const url = `${TMDB_API_BASE_URL}/movie/${id}`;
+        const res = await fetch(url, fetchOptions);
+        if (res.status === 429 && retryCount < 2) {
+            logger.warn(`TMDB API Rate Limited. Retrying in 2 seconds...`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            return getMovieDetailsTMDB(id, retryCount + 1);
+        }
+        if (!res.ok) return null;
+        return await res.json();
+    } catch (err) {
+        logger.error(`getMovieDetailsTMDB error: ${err}`);
+        return null;
+    }
+}

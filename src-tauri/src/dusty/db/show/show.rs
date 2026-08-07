@@ -141,15 +141,29 @@ pub fn create_shows_table(conn: &Connection) -> Result<(), String> {
 
     // Migration helper: add show_id column if created under older schema
     let _ = conn.execute("ALTER TABLE shows ADD COLUMN show_id TEXT DEFAULT NULL;", []);
+    // Migration helper: drop mal_id column if it exists from older schema
+    let _ = conn.execute("ALTER TABLE shows DROP COLUMN mal_id;", []);
 
     Ok(())
 }
 
-pub fn update_show_id_in_db(db: &Connection, id: String, show_id: String) -> Result<(), String> {
-    db.execute(
-        "UPDATE shows SET show_id = ?1 WHERE id = ?2",
-        params![show_id, id],
-    )
+pub fn update_show_id_in_db(
+    db: &Connection,
+    id: String,
+    show_id: String,
+    show_type: Option<String>,
+) -> Result<(), String> {
+    if let Some(st) = show_type {
+        db.execute(
+            "UPDATE shows SET show_id = ?1, show_type = ?2 WHERE id = ?3",
+            params![show_id, st, id],
+        )
+    } else {
+        db.execute(
+            "UPDATE shows SET show_id = ?1 WHERE id = ?2",
+            params![show_id, id],
+        )
+    }
     .map_err(|err| {
         logger::error!("UPDATE_SHOW_ID_FAILED", err);
         err.to_string()

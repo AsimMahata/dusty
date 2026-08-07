@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X_ICON_20, SEARCH_ICON_18, CHECK_ICON_18, PLUS_ICON_18 } from '../../../../constants/icon';
 import { searchAnime, saveSelectedAnime } from '../../../../personalities/introverts/show/anime';
-import type { AnimeData } from '../../types/types';
+import type { AnimeData, ShowType } from '../../types/types';
 import { COLORS } from '../../../../constants/color';
 
 interface AddAnimeModalProps {
     onClose: () => void;
     initialQuery?: string;
     targetShowId?: string;
-    onLinkAction?: (showId: string, externalId: string) => Promise<boolean>;
+    onLinkAction?: (showId: string, externalId: string, showType?: ShowType) => Promise<boolean>;
 }
 
 export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQuery = '', targetShowId, onLinkAction }) => {
@@ -75,11 +75,8 @@ export const AddAnimeModal: React.FC<AddAnimeModalProps> = ({ onClose, initialQu
         setIsSubmitting(true);
         setStatusMessage(null);
 
-        // Add to DB first so it is cached
-        await saveSelectedAnime([anime]);
-
         try {
-            const success = await onLinkAction(targetShowId, anime.mal_id.toString());
+            const success = await onLinkAction(targetShowId, anime.mal_id.toString(), 'anime');
             if (success) {
                 setStatusMessage({ type: 'success', text: 'Linked successfully!' });
                 setTimeout(() => {

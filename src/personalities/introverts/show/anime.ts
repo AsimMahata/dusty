@@ -1,6 +1,6 @@
 import { logger } from "../../../utility/logger";
 import { getSeasonalAnimeTENRAI, searchAnimeTENRAI } from "../../extroverts/tenrai";
-import { addSeasonalAnimeIPC, getSeasonalAnimeFromIPC, getAllAnimeFromIPC } from "../../ambiverts/anime";
+import { addAnimeIPC, getSeasonalAnimeFromIPC, getAllAnimeFromIPC } from "../../ambiverts/anime";
 import { getCouplingValueBetweenQueryAndResultTitleIPC } from "../../ambiverts/utility";
 import type { ShowResult } from '../../../pages/shows/types/types';
 import type { AnimeData, ScannedAnimeData } from '../../../pages/shows/types/types';
@@ -17,7 +17,7 @@ export async function addSeasonalAnime(): Promise<boolean> {
         let data = res?.data || null;
         logger.info('Seasonal anime fetched from API.', data);
         if (data && data.length > 0) {
-            return await addSeasonalAnimeIPC(data);
+            return await addAnimeIPC(data);
         }
         logger.error('Failed to fetch seasonal anime from API or list is empty.');
         return false;
@@ -27,8 +27,21 @@ export async function addSeasonalAnime(): Promise<boolean> {
     }
 }
 
+import { getAnimeInfoFromMal } from "./metadata";
+
 export async function saveSelectedAnime(data: AnimeData[]): Promise<boolean> {
-    return await addSeasonalAnimeIPC(data);
+    const success = await addAnimeIPC(data);
+    if (success) {
+        // Pre-cache metadata in the background
+        for (const anime of data) {
+            try {
+                await getAnimeInfoFromMal(anime.mal_id);
+            } catch (err) {
+                logger.error(`Failed to pre-cache MAL info for anime ${anime.mal_id}: ${err}`);
+            }
+        }
+    }
+    return success;
 }
 
 export async function searchAnime(query: string): Promise<AnimeData[]> {
@@ -55,8 +68,8 @@ export async function scanShowsForAnime(
     onResultsUpdated: (results: ScannedAnimeData[]) => void,
     isMounted: () => boolean
 ): Promise<void> {
-    // Filter to only scan shows that DO NOT have a mal_id
-    const showsToScan = shows.filter(s => !s.mal_id);
+    // Filter to only scan shows that are unknown
+    const showsToScan = shows.filter(s => s.show_type ==='unknown');
 
     if (showsToScan.length === 0) {
         return;

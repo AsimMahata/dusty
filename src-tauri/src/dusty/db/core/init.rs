@@ -6,6 +6,7 @@ use tauri::Manager;
 use crate::dusty::data::state::AppState;
 use crate::dusty::db::anime::create_anime_table;
 use crate::dusty::db::anime::create_mal_cache_table;
+use crate::dusty::db::tv_show::{create_tmdb_cache_table, create_tv_show_table};
 use crate::dusty::db::media::create_media_table;
 use crate::dusty::db::misc::create_empty_dir_cache_table;
 use crate::dusty::db::misc::create_misc_cache_table;
@@ -62,6 +63,10 @@ pub fn initialize_tables(conn: &Connection) -> Result<Vec<String>, String> {
     tables.push("mal_cache".to_string());
     create_anime_table(&conn)?;
     tables.push("anime".to_string());
+    create_tv_show_table(&conn)?;
+    tables.push("tv_show".to_string());
+    create_tmdb_cache_table(&conn)?;
+    tables.push("tmdb_cache".to_string());
     create_recent_ep_table(&conn)?;
     tables.push("recent_episodes".to_string());
     create_session_cache_table(&conn)?;

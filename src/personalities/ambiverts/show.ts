@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { ShowResult, ShowStatus } from '../../pages/shows/types/types';
+import type { ShowResult, ShowStatus, ShowType } from '../../pages/shows/types/types';
 
 /*
 IPC Commands:
@@ -84,9 +84,9 @@ export async function updateShowPinStatusIPC(showId: string, newPinStatus: boole
     }
 }
 
-export async function updateShowIdIPC(showId: string, externalShowId: string): Promise<boolean> {
+export async function updateShowIdIPC(showId: string, externalShowId: string, showType?: ShowType): Promise<boolean> {
     try {
-        let result = await invoke<boolean>(CMD_UPDATE_SHOW_ID, { id: showId, showId: externalShowId });
+        let result = await invoke<boolean>(CMD_UPDATE_SHOW_ID, { id: showId, showId: externalShowId, showType });
         return result;
     } catch (error) {
         logger.error(`updateShowIdIPC error: ${error}`);

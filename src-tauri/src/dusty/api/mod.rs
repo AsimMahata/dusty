@@ -10,8 +10,10 @@ pub mod session;
 pub mod show;
 pub mod system;
 pub mod user;
+pub mod tv_show;
 
 pub use anime::*;
+pub use tv_show::*;
 pub use core::*;
 pub use filesystem::*;
 pub use lab::*;

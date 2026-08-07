@@ -8,7 +8,7 @@ import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE
 import { COLORS, ACTIONS_SEPARATOR } from '../../../constants/color';
 import { hashString } from '../actions/hashString';
 import { putEpisodeInRecent } from '../../../personalities/introverts/home/recentEp';
-import type { ShowResult, ShowStatus, ShowSortMethod, ShowTab } from "../types/types";
+import type { ShowResult, ShowStatus, ShowSortMethod, ShowTab, ShowType } from "../types/types";
 import type { ActionItem } from "../../../types/core";
 import type { Episode } from "../../../components/media/types/types";
 import { getActiveTabShowPage, getDefaultTab, setActiveTabShowPage } from '../session/tab';
@@ -82,6 +82,7 @@ export const useShow = () => {
     };
 
     const [isAddShowOpen, setIsAddShowOpen] = useState(false);
+    const [isScanShowOpen, setIsScanShowOpen] = useState(false);
     const [addShowQuery, setAddShowQuery] = useState('');
     const [addShowTargetShowId, setAddShowTargetShowId] = useState<string | undefined>(undefined);
 
@@ -215,10 +216,10 @@ export const useShow = () => {
         return [];
     };
 
-    const updateShowIdForShow = async (showId: string, externalShowId: string): Promise<boolean> => {
+    const updateShowIdForShow = async (showId: string, externalShowId: string, showType?: ShowType) => {
         try {
-            await updateShowIdForShowIntrovert(showId, externalShowId);
-            const newShows = allShows.map(s => s.id === showId ? { ...s, show_id: externalShowId } : s);
+            await updateShowIdForShowIntrovert(showId, externalShowId, showType);
+            const newShows = allShows.map(s => s.id === showId ? { ...s, show_id: externalShowId, show_type: showType || s.show_type } : s);
             setAllShows(newShows);
             return true;
         } catch (err) {
@@ -462,6 +463,8 @@ export const useShow = () => {
         updateShowIdForShow,
         isAddShowOpen,
         setIsAddShowOpen,
+        isScanShowOpen,
+        setIsScanShowOpen,
         addShowQuery,
         setAddShowQuery,
         addShowTargetShowId,

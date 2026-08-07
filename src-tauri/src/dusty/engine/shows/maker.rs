@@ -1,12 +1,16 @@
 use crate::dusty::{
     data::{
-        file::FileInfo, shows::{Show, ShowResult, ShowType, Shows},
-    }, db::anime::Anime, engine::{
+        file::FileInfo,
+        shows::{Show, ShowResult, ShowType, Shows},
+    },
+    db::{anime::Anime, tv_show::TvShow},
+    engine::{
         algo::rolling_hash::get_common_token_order_using_rolling_hash,
         cluster::cluster::cluster_files,
         shows::coupling::get_coupling_value_between_anime_title_and_file_name,
         utility::tokenizer::get_tokenized_file_names_for_title_making,
-    }, utility::sha256_hash::get_sha256_id,
+    },
+    utility::sha256_hash::get_sha256_id,
 };
 use rand::rng;
 use rand::seq::SliceRandom;
@@ -133,66 +137,64 @@ pub fn make_show_results_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut
 //     pub seasonal:bool,
 // }
 
-pub fn make_shows_with_available_anime_titles(
-    videos: &Vec<PathBuf>,
-    anime_list: &Vec<Anime>,
-) -> Vec<ShowResult> {
-    let mut shows: Vec<ShowResult> = Vec::new();
-    let mut vis: Vec<bool> = vec![false; videos.len()];
-    for anime in anime_list {
-        let id = get_sha256_id("SHOW".to_string(), anime.title.clone());
-        let title = &anime.title;
-        let gen_title = title.clone();
-        let num_episodes = anime.num_episodes;
-        let mut episodes: Vec<FileInfo> = Vec::new();
-        let banned = false;
-        let pinned = false;
-        let show_id = Some(anime.mal_id.to_string());
-        let season = anime.season;
-        let airing = anime.airing;
-        let status = "default".to_string();
-        let dir = Some(String::new());
+pub struct TitleInfo {
+    pub title: String,
+    pub show_id: String,
+    pub num_episodes: Option<usize>,
+    pub season: Option<i32>,
+    pub airing: bool,
+    pub show_type: ShowType,
+}
 
-        for (i, video) in videos.iter().enumerate() {
-            if vis[i] {
-                continue;
-            }
-            let file_name = video.file_name().unwrap().to_str().unwrap().to_string();
-            let match_value = check_for_match(title.to_string(), file_name);
-            if match_value > 0.5 {
-                let file_info =
-                    FileInfo::from_pathbuf(&video).expect("Crashed on main inside dusty");
-                episodes.push(file_info);
-                vis[i] = true;
-            };
-        }
+pub fn make_shows_with_available_titles(
+    videos: &Vec<PathBuf>,
+    titles: &Vec<TitleInfo>,
+    done: &mut Vec<bool>,
+    shows: &mut Vec<ShowResult>,
+) {
+    for title_info in titles {
+        let episodes = match_videos_to_title(videos, &title_info.title, done);
         if episodes.len() > 0 {
+            let id = get_sha256_id("SHOW".to_string(), title_info.title.clone());
             shows.push(ShowResult {
                 id,
-                title: title.to_string(),
-                gen_title: gen_title.to_string(),
-                num_episodes,
+                title: title_info.title.clone(),
+                gen_title: title_info.title.clone(),
+                num_episodes: title_info.num_episodes,
                 episodes,
-                dir: dir.clone(),
-                banned,
-                pinned,
-                season,
-                status,
-                show_id,
-                airing,
-                show_type: ShowType::Anime,
+                dir: Some(String::new()),
+                banned: false,
+                pinned: false,
+                season: title_info.season,
+                status: "default".to_string(),
+                show_id: Some(title_info.show_id.clone()),
+                airing: title_info.airing,
+                show_type: title_info.show_type.clone(),
             });
         }
     }
-    let mut leftovers: Vec<PathBuf> = Vec::new();
+}
+
+fn match_videos_to_title(
+    videos: &Vec<PathBuf>,
+    title: &str,
+    done: &mut Vec<bool>,
+) -> Vec<FileInfo> {
+    let mut episodes: Vec<FileInfo> = Vec::new();
     for (i, video) in videos.iter().enumerate() {
-        if !vis[i] {
-            leftovers.push(video.clone());
+        if done[i] {
+            continue;
         }
+        let file_name = video.file_name().unwrap().to_str().unwrap().to_string();
+        let match_value = check_for_match(title.to_string(), file_name);
+        if match_value > 0.5 {
+            let file_info =
+                FileInfo::from_pathbuf(&video).expect("Crashed on main inside dusty");
+            episodes.push(file_info);
+            done[i] = true;
+        };
     }
-    let clusters = cluster_files(&leftovers);
-    make_show_results_from_clusters(&clusters, &mut shows);
-    shows
+    episodes
 }
 
 pub fn check_for_match(anime_title: String, file_name: String) -> f32 {

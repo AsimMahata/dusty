@@ -22,7 +22,7 @@ export async function getAllAnimeFromIPC(): Promise<AnimeData[]> {
         return [];
     }
 }
-export async function addSeasonalAnimeIPC(data: AnimeData[]): Promise<boolean> {
+export async function addAnimeIPC(data: AnimeData[]): Promise<boolean> {
     try {
         logger.info('Successfully fetched seasonal anime from API.');
         let success = await invoke<boolean>(CMD_ADD_SEASONAL_ANIME, { data: data });
@@ -35,7 +35,7 @@ export async function addSeasonalAnimeIPC(data: AnimeData[]): Promise<boolean> {
             return false;
         }
     } catch (error) {
-        logger.error(`addSeasonalAnimeIPC error: ${error}`);
+        logger.error(`addAnimeIPC error: ${error}`);
         return false;
     }
 }

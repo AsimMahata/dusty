@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X_ICON_20, SEARCH_ICON_18, CHECK_ICON_18, PLUS_ICON_18 } from '../../../../constants/icon';
 import { searchShow, saveSelectedShow } from '../../../../personalities/introverts/show/imdb';
-import type { ShowData } from '../../types/types';
+import type { ShowData, ShowType } from '../../types/types';
 import { COLORS } from '../../../../constants/color';
+import { logger } from '../../../../utility/logger';
 
 interface AddShowModalProps {
     onClose: () => void;
     initialQuery?: string;
     targetShowId?: string;
-    onLinkAction?: (showId: string, externalId: string) => Promise<boolean>;
+    onLinkAction?: (showId: string, externalId: string, showType?: ShowType) => Promise<boolean>;
 }
 
 export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuery = '', targetShowId, onLinkAction }) => {
@@ -55,7 +56,7 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
         if (selectedShow.length === 0) return;
         setIsSubmitting(true);
         setStatusMessage(null);
-
+        // logger.info("ADDING SHOWS", selectedShow)
         const success = await saveSelectedShow(selectedShow);
         setIsSubmitting(false);
 
@@ -75,11 +76,8 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
         setIsSubmitting(true);
         setStatusMessage(null);
 
-
-        await saveSelectedShow([show]);
-
         try {
-            const success = await onLinkAction(targetShowId, show.imdb_id);
+            const success = await onLinkAction(targetShowId, show.imdb_id, show.show_type || 'tv_show');
             if (success) {
                 setStatusMessage({ type: 'success', text: 'Linked successfully!' });
                 setTimeout(() => {

@@ -7,6 +7,7 @@ import { ShowList } from './components/list/ShowList';
 import { AddAnimeModal } from './components/ui/AddAnimeModal';
 import { ScanAnimeModal } from './components/ui/ScanAnimeModal';
 import { AddShowModal } from './components/ui/AddShowModal';
+import { ScanShowModal } from './components/ui/ScanShowModal';
 import './css/Shows.css';
 
 export const Shows: React.FC = () => {
@@ -14,7 +15,7 @@ export const Shows: React.FC = () => {
     renderCount.current++;
 
     const showHook = useShow();
-    const { isAddAnimeOpen, setIsAddAnimeOpen, addAnimeQuery, addAnimeTargetShowId, handleOpenAddAnime, isScanAnimeOpen, setIsScanAnimeOpen, allShows, isAddShowOpen, setIsAddShowOpen, addShowQuery, addShowTargetShowId, handleOpenAddShow } = showHook;
+    const { isAddAnimeOpen, setIsAddAnimeOpen, addAnimeQuery, addAnimeTargetShowId, handleOpenAddAnime, isScanAnimeOpen, setIsScanAnimeOpen, allShows, isAddShowOpen, setIsAddShowOpen, isScanShowOpen, setIsScanShowOpen, addShowQuery, addShowTargetShowId, handleOpenAddShow } = showHook;
 
     if (showHook.selectedShow) {
         return (
@@ -28,13 +29,17 @@ export const Shows: React.FC = () => {
                 />}
                 {isScanAnimeOpen && <ScanAnimeModal
                     onClose={() => setIsScanAnimeOpen(false)}
-                    shows={allShows.filter(s => !s.banned)}
+                    shows={allShows.filter(s => !s.banned && s.show_type === 'unknown')}
                 />}
                 {isAddShowOpen && <AddShowModal
                     onClose={() => setIsAddShowOpen(false)}
                     initialQuery={addShowQuery}
                     targetShowId={addShowTargetShowId}
                     onLinkAction={showHook.updateShowIdForShow}
+                />}
+                {isScanShowOpen && <ScanShowModal
+                    onClose={() => setIsScanShowOpen(false)}
+                    shows={allShows.filter(s => !s.banned && s.show_type === 'unknown')}
                 />}
             </PageLayout>
         );
@@ -54,13 +59,17 @@ export const Shows: React.FC = () => {
             />}
             {isScanAnimeOpen && <ScanAnimeModal
                 onClose={() => setIsScanAnimeOpen(false)}
-                shows={allShows.filter(s => !s.banned)}
+                shows={allShows.filter(s => !s.banned && s.show_type === 'unknown')}
             />}
             {isAddShowOpen && <AddShowModal
                 onClose={() => setIsAddShowOpen(false)}
                 initialQuery={addShowQuery}
                 targetShowId={addShowTargetShowId}
                 onLinkAction={showHook.updateShowIdForShow}
+            />}
+            {isScanShowOpen && <ScanShowModal
+                onClose={() => setIsScanShowOpen(false)}
+                shows={allShows.filter(s => !s.banned && s.show_type === 'unknown')}
             />}
         </PageLayout>
     );

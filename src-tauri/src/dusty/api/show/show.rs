@@ -10,7 +10,7 @@ use crate::dusty::db::show::{
     get_all_shows_from_show_cache_in_db, reset_show_cache_table_in_db,
 };
 use crate::dusty::logger::logger;
-use crate::dusty::scanners::show_scanner::scan_for_shows_with_seasons;
+use crate::dusty::scanners::show_scanner::scan_for_shows_using_available_show_titles;
 use std::path::PathBuf;
 
 pub fn scan_show_using_cached(db: &Connection, root: &PathBuf, cache: bool) -> Vec<ShowResult> {
@@ -44,7 +44,7 @@ pub fn scan_show_using_cached(db: &Connection, root: &PathBuf, cache: bool) -> V
                 .collect();
         }
     }
-    let shows = scan_for_shows_with_seasons(&db, &root);
+    let shows = scan_for_shows_using_available_show_titles(&db, &root);
     reset_show_cache_table_in_db(&db).ok();
     add_shows_in_db(&db, &shows).ok();
     return shows;
@@ -134,9 +134,10 @@ pub fn update_show_id(
     state: tauri::State<AppState>,
     id: String,
     show_id: String,
+    show_type: Option<String>,
 ) -> Result<(), String> {
     let db = state.db.lock().unwrap();
-    update_show_id_in_db(&db, id, show_id)
+    update_show_id_in_db(&db, id, show_id, show_type)
         .map_err(|e| format!("Failed to update show id in db: {}", e))
         .ok();
     Ok(())

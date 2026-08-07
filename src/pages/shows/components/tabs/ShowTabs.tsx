@@ -88,9 +88,7 @@ export const ShowTabs: React.FC<ShowTabsProps> = ({ showHook, onAddAnime, onAddS
                                 label: 'TV Show',
                                 icon: <Tv size={16} />,
                                 color: COLORS.BASE.ORANGE,
-                                onClick: () => {
-                                    showHook.fetchData(true);
-                                }
+                                onClick: () => showHook.setIsScanShowOpen(true)
                             }
                         ]}
                     />
