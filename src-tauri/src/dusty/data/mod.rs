@@ -10,3 +10,5 @@ pub mod misc_dir;
 pub mod exe;
 pub mod pdf;
 pub mod zip;
+pub mod user;
+

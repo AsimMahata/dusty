@@ -12,6 +12,8 @@ export const ROUTES = {
     LAB: "/lab",
     TODO: "/todo",
     SETTINGS: "/settings",
-    TERMINAL: "/terminal"
+    TERMINAL: "/terminal",
+    USER: "/user"
 } as const;
+
 

@@ -44,6 +44,12 @@ import {
     Key,
     Cpu,
     FileCode,
+    Network,
+    Users,
+    Shield,
+    Cloud,
+    Edit3,
+    Laptop,
 } from "lucide-react";
 
 import { COLORS } from './color';
@@ -297,5 +303,17 @@ export const getRefreshCwIcon = (isRefreshing: boolean) => (
 );
 
 export const ROTATE_CCW_ICON_12_HISTORY = <RotateCcw size={12} className="api-history-time" />;
+
+// User Page Icons
+export const NETWORK_ICON_18 = <Network size={18} />;
+export const USERS_ICON_14 = <Users size={14} />;
+export const SHIELD_ICON_14 = <Shield size={14} />;
+export const CLOUD_ICON_14 = <Cloud size={14} />;
+export const GLOBE_ICON_14 = <Globe size={14} />;
+export const X_ICON_18 = <X size={18} />;
+export const EDIT3_ICON_14 = <Edit3 size={14} />;
+export const LAPTOP_ICON_16 = <Laptop size={16} />;
+export const ACTIVITY_ICON_18 = <Activity size={18} />;
+export const PALETTE_ICON_18 = <Palette size={18} />;
 
 

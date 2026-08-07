@@ -81,7 +81,17 @@ pub fn run() {
             dusty::api::session::reset_session_cache,
             dusty::api::terminal::get_available_terminals,
             dusty::api::terminal::open_terminal_at_path,
+            dusty::api::user::get_user,
+            dusty::api::user::save_user,
+            dusty::api::user::update_display_name,
+            dusty::api::user::update_avatar,
+            dusty::api::user::reset_user,
+            dusty::api::user::get_device_info,
+            dusty::api::user::select_avatar_file,
+            dusty::api::user::upload_avatar_from_path,
         ])
+
+
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(

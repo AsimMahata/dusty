@@ -9,6 +9,7 @@ pub mod recent;
 pub mod session;
 pub mod show;
 pub mod system;
+pub mod user;
 
 pub use anime::*;
 pub use core::*;
@@ -21,3 +22,5 @@ pub use recent::*;
 pub use session::*;
 pub use show::*;
 pub use system::*;
+pub use user::*;
+

@@ -6,4 +6,6 @@ pub mod project;
 pub mod recent;
 pub mod session;
 pub mod show;
+pub mod user;
+
 

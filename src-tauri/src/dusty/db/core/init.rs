@@ -15,7 +15,9 @@ use crate::dusty::db::recent::create_recent_ep_table;
 use crate::dusty::db::session::create_session_cache_table;
 use crate::dusty::db::show::create_show_cache_table;
 use crate::dusty::db::show::create_shows_table;
+use crate::dusty::db::user::create_user_table;
 use crate::dusty::logger::logger;
+
 
 #[tauri::command]
 pub fn init_db_and_os(app: &mut tauri::App) -> Result<(), String> {
@@ -64,5 +66,8 @@ pub fn initialize_tables(conn: &Connection) -> Result<Vec<String>, String> {
     tables.push("recent_episodes".to_string());
     create_session_cache_table(&conn)?;
     tables.push("session_cache".to_string());
+    create_user_table(&conn)?;
+    tables.push("user".to_string());
     Ok(tables)
 }
+

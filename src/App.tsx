@@ -15,7 +15,9 @@ import { LabPage } from "./pages/lab/LabPage";
 import { SettingsPage } from "./pages/settings/SettingsPage";
 import { TodoPage } from "./pages/todo/TodoPage";
 import { TerminalPage } from "./pages/terminal/TerminalPage";
+import { UserPage } from "./pages/user/UserPage";
 import { ShadowElements } from "./components/ui/ShadowElements";
+
 
 
 
@@ -38,7 +40,9 @@ function App() {
                     <Route path={ROUTES.TODO} element={<TodoPage />} />
                     <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
                     <Route path={ROUTES.TERMINAL} element={<TerminalPage />} />
+                    <Route path={ROUTES.USER} element={<UserPage />} />
                 </Routes>
+
             </main>
         </div>
     );
