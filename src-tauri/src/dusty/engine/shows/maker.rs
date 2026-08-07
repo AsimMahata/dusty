@@ -3,10 +3,8 @@ use crate::dusty::{
         file::FileInfo,
         shows::{Show, ShowResult, ShowType, Shows},
     },
-    db::{anime::Anime, tv_show::TvShow},
     engine::{
         algo::rolling_hash::get_common_token_order_using_rolling_hash,
-        cluster::cluster::cluster_files,
         shows::coupling::get_coupling_value_between_anime_title_and_file_name,
         utility::tokenizer::get_tokenized_file_names_for_title_making,
     },
@@ -101,7 +99,7 @@ pub fn make_show_results_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut
         let num_of_ep: usize = cluster.len();
         let show = ShowResult {
             id: get_sha256_id("SHOW".to_string(), title.clone()),
-            gen_title: title.clone(),
+            get_title: title.clone(),
             title: title.clone(),
             season: season,
             num_episodes: Some(num_of_ep),
@@ -109,7 +107,8 @@ pub fn make_show_results_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut
             banned: false,
             pinned: false,
             status: "default".to_string(),
-            show_id: None,
+            provider: None,
+            provider_id: None,
             airing: false,
             show_type: ShowType::Unknown,
             episodes: cluster
@@ -117,6 +116,8 @@ pub fn make_show_results_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut
                 .into_iter()
                 .map(|p| FileInfo::from_pathbuf(&p).expect("Crashed on main inside dusty"))
                 .collect(),
+            created_at: None,
+            updated_at: None,
         };
         shows.push(show);
     }
@@ -125,7 +126,7 @@ pub fn make_show_results_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut
 // pub struct ShowResult {
 //     pub id: String,
 //     pub title: String,
-//     pub gen_title: String,
+//     pub get_title: String,
 //     pub num_episodes: usize,
 //     pub episodes: Vec<FileInfo>,
 //     pub dir: Option<String>,
@@ -139,7 +140,8 @@ pub fn make_show_results_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut
 
 pub struct TitleInfo {
     pub title: String,
-    pub show_id: String,
+    pub provider: String,
+    pub provider_id: String,
     pub num_episodes: Option<usize>,
     pub season: Option<i32>,
     pub airing: bool,
@@ -159,7 +161,7 @@ pub fn make_shows_with_available_titles(
             shows.push(ShowResult {
                 id,
                 title: title_info.title.clone(),
-                gen_title: title_info.title.clone(),
+                get_title: title_info.title.clone(),
                 num_episodes: title_info.num_episodes,
                 episodes,
                 dir: Some(String::new()),
@@ -167,9 +169,12 @@ pub fn make_shows_with_available_titles(
                 pinned: false,
                 season: title_info.season,
                 status: "default".to_string(),
-                show_id: Some(title_info.show_id.clone()),
+                provider: Some(title_info.provider.clone()),
+                provider_id: Some(title_info.provider_id.clone()),
                 airing: title_info.airing,
                 show_type: title_info.show_type.clone(),
+                created_at: None,
+                updated_at: None,
             });
         }
     }

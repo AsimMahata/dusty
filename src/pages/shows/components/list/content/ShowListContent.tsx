@@ -24,7 +24,7 @@ export const ShowListContent: React.FC<ShowListContentProps> = ({ showHook }) =>
                     );
                 }
                 
-                if (item.show_id) {
+                if (item.provider_id) {
 
                     return (
                         <ShowPosterCard 

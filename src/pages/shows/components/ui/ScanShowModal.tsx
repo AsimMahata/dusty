@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Check } from 'lucide-react';
-import { scanShowsForTvShow, saveSelectedShow } from '../../../../personalities/introverts/show/imdb';
-import type { ScannedShowData } from '../../types/types';
-import type { ShowResult } from '../../types/types';
+import { scanShowsForProvider } from '../../../../personalities/introverts/show/search';
+import { addShowsToDb } from '../../../../personalities/introverts/show/shows';
+import type { ScannedProviderResult, ShowResult } from '../../types/types';
 import { COLORS } from '../../../../constants/color';
 
 interface ScanShowModalProps {
@@ -11,8 +11,8 @@ interface ScanShowModalProps {
 }
 
 export const ScanShowModal: React.FC<ScanShowModalProps> = ({ onClose, shows }) => {
-    const [scannedResults, setScannedResults] = useState<ScannedShowData[]>([]);
-    const [selectedShows, setSelectedShows] = useState<ScannedShowData[]>([]);
+    const [scannedResults, setScannedResults] = useState<ScannedProviderResult[]>([]);
+    const [selectedShows, setSelectedShows] = useState<ScannedProviderResult[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isScanning, setIsScanning] = useState(true);
     const [scanProgress, setScanProgress] = useState({ current: 0, total: shows.length });
@@ -22,8 +22,9 @@ export const ScanShowModal: React.FC<ScanShowModalProps> = ({ onClose, shows }) 
         let isMounted = true;
 
         const scanAll = async () => {
-            await scanShowsForTvShow(
+            await scanShowsForProvider(
                 shows,
+                'tmdb',
                 (current, total) => setScanProgress({ current, total }),
                 (results) => setScannedResults(results),
                 () => isMounted
@@ -37,10 +38,10 @@ export const ScanShowModal: React.FC<ScanShowModalProps> = ({ onClose, shows }) 
         return () => { isMounted = false; };
     }, [shows]);
 
-    const toggleSelection = (showItem: ScannedShowData) => {
+    const toggleSelection = (showItem: ScannedProviderResult) => {
         setSelectedShows(prev =>
-            prev.some(s => s.imdb_id === showItem.imdb_id)
-                ? prev.filter(s => s.imdb_id !== showItem.imdb_id)
+            prev.some(s => s.provider_id === showItem.provider_id)
+                ? prev.filter(s => s.provider_id !== showItem.provider_id)
                 : [...prev, showItem]
         );
         setStatusMessage(null);
@@ -51,7 +52,24 @@ export const ScanShowModal: React.FC<ScanShowModalProps> = ({ onClose, shows }) 
         setIsSubmitting(true);
         setStatusMessage(null);
 
-        const success = await saveSelectedShow(selectedShows);
+        const showsToSave: ShowResult[] = selectedShows.map(showItem => ({
+            id: '',
+            title: showItem.title,
+            get_title: showItem.title,
+            num_episodes: showItem.num_episodes || 0,
+            episodes: [],
+            dir: '',
+            banned: false,
+            pinned: false,
+            status: 'default',
+            provider: 'tmdb',
+            provider_id: showItem.provider_id,
+            airing: showItem.airing || false,
+            show_type: 'movie_tv',
+            raw_payload: showItem.raw_payload
+        }));
+
+        const success = await addShowsToDb(showsToSave);
         setIsSubmitting(false);
 
         if (success) {
@@ -86,9 +104,9 @@ export const ScanShowModal: React.FC<ScanShowModalProps> = ({ onClose, shows }) 
                     <div className="add-anime-list" style={{ maxHeight: '60vh' }}>
                         {scannedResults.length > 0 ? (
                             scannedResults.map((showItem) => {
-                                const isSelected = selectedShows.some(s => s.imdb_id === showItem.imdb_id);
+                                const isSelected = selectedShows.some(s => s.provider_id === showItem.provider_id);
                                 return (
-                                    <div key={showItem.imdb_id} className={`add-anime-item ${isSelected ? 'selected' : ''}`}>
+                                    <div key={showItem.provider_id} className={`add-anime-item ${isSelected ? 'selected' : ''}`}>
                                         <div className="add-anime-info-container">
                                             {showItem.image_url ? (
                                                 <img src={showItem.image_url} alt={showItem.title} className="add-anime-banner" />

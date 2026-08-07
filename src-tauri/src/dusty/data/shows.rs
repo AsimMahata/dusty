@@ -8,8 +8,7 @@ use crate::dusty::data::file::FileInfo;
 #[serde(rename_all = "snake_case")]
 pub enum ShowType {
     Anime,
-    TvShow,
-    Movie,
+    MovieTv,
     #[default]
     Unknown,
 }
@@ -18,26 +17,24 @@ impl ShowType {
     pub fn as_str(&self) -> &str {
         match self {
             ShowType::Anime => "anime",
-            ShowType::TvShow => "tv_show",
-            ShowType::Movie => "movie",
+            ShowType::MovieTv => "movie_tv",
             ShowType::Unknown => "unknown",
         }
     }
     pub fn from_str(s: &str) -> Self {
         match s {
             "anime" => ShowType::Anime,
-            "tv_show" => ShowType::TvShow,
-            "movie" => ShowType::Movie,
+            "movie_tv" => ShowType::MovieTv,
             _ => ShowType::Unknown,
         }
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ShowResult {
     pub id: String,
     pub title: String,
-    pub gen_title: String,
+    pub get_title: String,
     pub num_episodes: Option<usize>,
     pub episodes: Vec<FileInfo>,
     pub dir: Option<String>,
@@ -47,19 +44,24 @@ pub struct ShowResult {
     pub pinned: bool,
     pub season: Option<i32>,
     pub status: String,
-    pub show_id: Option<String>,
+    pub provider: Option<String>,
+    pub provider_id: Option<String>,
     #[serde(default)]
     pub airing: bool,
     #[serde(default)]
     pub show_type: ShowType,
+    pub created_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
+#[derive(Clone, Debug)]
 pub struct ShowInfo {
     pub title: String,
     pub status: String,
     pub banned: bool,
     pub pinned: bool,
-    pub show_id: Option<String>,
+    pub provider: Option<String>,
+    pub provider_id: Option<String>,
     pub airing: bool,
     pub show_type: ShowType,
 }

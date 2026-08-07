@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X_ICON_20, SEARCH_ICON_18, CHECK_ICON_18, PLUS_ICON_18 } from '../../../../constants/icon';
-import { searchShow, saveSelectedShow } from '../../../../personalities/introverts/show/imdb';
-import type { ShowData, ShowType } from '../../types/types';
+import { searchProvider } from '../../../../personalities/introverts/show/search';
+import type { ProviderSearchResult, ShowType, ShowResult } from '../../types/types';
 import { COLORS } from '../../../../constants/color';
-import { logger } from '../../../../utility/logger';
+import { addShowsToDb } from '../../../../personalities/introverts/show/shows';
 
 interface AddShowModalProps {
     onClose: () => void;
@@ -14,8 +14,8 @@ interface AddShowModalProps {
 
 export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuery = '', targetShowId, onLinkAction }) => {
     const [searchQuery, setSearchQuery] = useState(initialQuery);
-    const [searchResults, setSearchResults] = useState<ShowData[]>([]);
-    const [selectedShow, setSelectedShow] = useState<ShowData[]>([]);
+    const [searchResults, setSearchResults] = useState<ProviderSearchResult[]>([]);
+    const [selectedShow, setSelectedShow] = useState<ProviderSearchResult[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
     const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
@@ -33,7 +33,7 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
             if (query.length >= 3) {
                 setIsSearching(true);
                 setStatusMessage(null);
-                const results = await searchShow(query);
+                const results = await searchProvider(query, 'tmdb');
                 setSearchResults(results);
                 setIsSearching(false);
             } else {
@@ -43,10 +43,10 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
         return () => clearTimeout(handler);
     }, [searchQuery]);
 
-    const toggleSelection = (show: ShowData) => {
+    const toggleSelection = (show: ProviderSearchResult) => {
         setSelectedShow(prev =>
-            prev.some(a => a.imdb_id === show.imdb_id)
-                ? prev.filter(a => a.imdb_id !== show.imdb_id)
+            prev.some(a => a.provider_id === show.provider_id)
+                ? prev.filter(a => a.provider_id !== show.provider_id)
                 : [...prev, show]
         );
         setStatusMessage(null);
@@ -56,8 +56,25 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
         if (selectedShow.length === 0) return;
         setIsSubmitting(true);
         setStatusMessage(null);
-        // logger.info("ADDING SHOWS", selectedShow)
-        const success = await saveSelectedShow(selectedShow);
+
+        const showsToSave: ShowResult[] = selectedShow.map(show => ({
+            id: '',
+            title: show.title,
+            get_title: show.title,
+            num_episodes: 0,
+            episodes: [],
+            dir: '',
+            banned: false,
+            pinned: false,
+            status: 'default',
+            provider: 'tmdb',
+            provider_id: show.provider_id,
+            airing: show.airing || false,
+            show_type: show.show_type || 'movie_tv',
+            raw_payload: show.raw_payload
+        }));
+
+        const success = await addShowsToDb(showsToSave);
         setIsSubmitting(false);
 
         if (success) {
@@ -71,13 +88,13 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
         }
     };
 
-    const handleLinkToIMDB = async (show: ShowData) => {
+    const handleLinkToIMDB = async (show: ProviderSearchResult) => {
         if (!targetShowId || !onLinkAction) return;
         setIsSubmitting(true);
         setStatusMessage(null);
 
         try {
-            const success = await onLinkAction(targetShowId, show.imdb_id, show.show_type || 'tv_show');
+            const success = await onLinkAction(targetShowId, show.provider_id, show.show_type || 'movie_tv');
             if (success) {
                 setStatusMessage({ type: 'success', text: 'Linked successfully!' });
                 setTimeout(() => {
@@ -123,9 +140,9 @@ export const AddShowModal: React.FC<AddShowModalProps> = ({ onClose, initialQuer
                             <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>Searching...</div>
                         ) : searchResults.length > 0 ? (
                             searchResults.map((show) => {
-                                const isSelected = selectedShow.some(a => a.imdb_id === show.imdb_id);
+                                const isSelected = selectedShow.some(a => a.provider_id === show.provider_id);
                                 return (
-                                    <div key={show.imdb_id} className={`add-anime-item ${isSelected ? 'selected' : ''}`}>
+                                    <div key={show.provider_id} className={`add-anime-item ${isSelected ? 'selected' : ''}`}>
                                         <div className="add-anime-info-container">
                                             {show.image_url ? (
                                                 <img src={show.image_url} alt={show.title} className="add-anime-banner" />

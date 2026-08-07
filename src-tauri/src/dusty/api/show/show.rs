@@ -1,32 +1,21 @@
 use rusqlite::Connection;
+use std::path::PathBuf;
 
 use crate::dusty::data::{shows::ShowResult, state::AppState};
+use crate::dusty::utility::sha256_hash::get_sha256_id;
 use crate::dusty::db::show::{
-    add_shows_in_db, print_all_shows_in_db, reset_show_table_in_db, update_ban_status_in_db,
-    update_pin_status_in_db, update_show_id_in_db, update_show_status_in_db,
-};
-use crate::dusty::db::show::{get_show_info, rename_show_in_db};
-use crate::dusty::db::show::{
-    get_all_shows_from_show_cache_in_db, reset_show_cache_table_in_db,
+    add_scan_to_cache, add_show_in_db, add_shows_in_db, get_from_show_cache_in_db,
+    get_scan_from_cache, get_show_info, rename_show_in_db, reset_show_cache_table_in_db,
+    reset_show_table_in_db, update_ban_status_in_db, update_pin_status_in_db,
+    update_show_provider_in_db, update_show_status_in_db, upsert_show_cache_in_db,
 };
 use crate::dusty::logger::logger;
 use crate::dusty::scanners::show_scanner::scan_for_shows_using_available_show_titles;
-use std::path::PathBuf;
 
 pub fn scan_show_using_cached(db: &Connection, root: &PathBuf, cache: bool) -> Vec<ShowResult> {
+    let scan_root_str = root.to_string_lossy().into_owned();
     if cache {
-        let cached_shows = get_all_shows_from_show_cache_in_db(&db);
-        let shows = match cached_shows {
-            Ok(shows) => {
-                logger::debug!("scanned shows:", shows.len());
-                shows
-            }
-            Err(err) => {
-                logger::error!("GET_ALL_SHOWS_FROM_SHOW_CACHE_FAILED", err);
-                Vec::new()
-            }
-        };
-        if !shows.is_empty() {
+        if let Ok(Some(shows)) = get_scan_from_cache(db, &scan_root_str) {
             return shows
                 .into_iter()
                 .map(|mut show| {
@@ -35,7 +24,8 @@ pub fn scan_show_using_cached(db: &Connection, root: &PathBuf, cache: bool) -> V
                         show.status = info.status;
                         show.banned = info.banned;
                         show.pinned = info.pinned;
-                        show.show_id = info.show_id;
+                        show.provider = info.provider;
+                        show.provider_id = info.provider_id;
                         show.airing = info.airing;
                         show.show_type = info.show_type;
                     }
@@ -44,10 +34,10 @@ pub fn scan_show_using_cached(db: &Connection, root: &PathBuf, cache: bool) -> V
                 .collect();
         }
     }
-    let shows = scan_for_shows_using_available_show_titles(&db, &root);
-    reset_show_cache_table_in_db(&db).ok();
-    add_shows_in_db(&db, &shows).ok();
-    return shows;
+    let shows = scan_for_shows_using_available_show_titles(db, root);
+    let _ = add_shows_in_db(db, &shows);
+    let _ = add_scan_to_cache(db, &scan_root_str, &shows);
+    shows
 }
 
 #[tauri::command]
@@ -56,6 +46,7 @@ pub fn scan_shows(state: tauri::State<AppState>, path: String) -> Vec<ShowResult
     let root = PathBuf::from(&path);
     scan_show_using_cached(&db, &root, true)
 }
+
 #[tauri::command]
 pub fn sync_scan_shows(state: tauri::State<AppState>, path: String) -> Vec<ShowResult> {
     let db = state.db.lock().unwrap();
@@ -125,7 +116,6 @@ pub fn reset_shows_table(state: tauri::State<AppState>) -> Result<(), String> {
     reset_show_table_in_db(&db)
         .map_err(|e| format!("Failed to reset shows table: {}", e))
         .ok();
-    print_all_shows_in_db(&db).ok();
     Ok(())
 }
 
@@ -133,12 +123,57 @@ pub fn reset_shows_table(state: tauri::State<AppState>) -> Result<(), String> {
 pub fn update_show_id(
     state: tauri::State<AppState>,
     id: String,
-    show_id: String,
+    provider: String,
+    provider_id: String,
     show_type: Option<String>,
 ) -> Result<(), String> {
     let db = state.db.lock().unwrap();
-    update_show_id_in_db(&db, id, show_id, show_type)
-        .map_err(|e| format!("Failed to update show id in db: {}", e))
-        .ok();
+    update_show_provider_in_db(&db, id, provider, provider_id, show_type)
+        .map_err(|e| format!("Failed to update show provider in db: {}", e))?;
     Ok(())
+}
+
+#[tauri::command]
+pub fn get_show_cache(
+    state: tauri::State<AppState>,
+    show_id: String,
+    provider: String,
+) -> Result<Option<String>, String> {
+    let db = state.db.lock().unwrap();
+    get_from_show_cache_in_db(&db, show_id, provider)
+}
+
+#[tauri::command]
+pub fn upsert_show_cache(
+    state: tauri::State<AppState>,
+    show_id: String,
+    provider: String,
+    payload: String,
+) -> Result<(), String> {
+    let db = state.db.lock().unwrap();
+    upsert_show_cache_in_db(&db, show_id, provider, payload)
+}
+
+#[tauri::command]
+pub fn reset_show_cache(state: tauri::State<AppState>) -> Result<(), String> {
+    let db = state.db.lock().unwrap();
+    reset_show_cache_table_in_db(&db)
+}
+
+#[tauri::command]
+pub fn add_shows_to_db(state: tauri::State<AppState>, shows: Vec<ShowResult>) -> bool {
+    let db = state.db.lock().unwrap();
+    let mut success = true;
+    for show in shows {
+        if let Err(e) = add_show_in_db(&db, &show) {
+            logger::error!("FAILED_TO_ADD_SHOW_TO_DB", e);
+            success = false;
+        }
+    }
+    success
+}
+
+#[tauri::command]
+pub fn get_show_cache_key(title: String) -> String {
+    get_sha256_id("SHOW".to_string(), title)
 }

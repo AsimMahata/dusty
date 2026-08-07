@@ -1,10 +1,10 @@
 import { logger } from "../../utility/logger";
-import type { AnimeData } from '../../pages/shows/types/types';
+import type { ProviderSearchResult } from '../../pages/shows/types/types';
 import { ApiProvider } from '../../pages/shows/types/types';
 
 export const TENRAI_BASE_API = 'https://api.tenrai.org/v1';
 
-export async function getSeasonalAnimeTENRAI(): Promise<{ data: AnimeData[]; source: typeof ApiProvider.TENRAI } | null> {
+export async function getSeasonalAnimeTENRAI(): Promise<{ data: ProviderSearchResult[]; source: typeof ApiProvider.TENRAI } | null> {
     try {
         const res = await fetch(`${TENRAI_BASE_API}/seasons/now`);
         if (!res.ok) {
@@ -14,17 +14,17 @@ export async function getSeasonalAnimeTENRAI(): Promise<{ data: AnimeData[]; sou
         const json = await res.json();
         const data = json?.data || null;
         logger.info(`SEASONAL_ANIME_FROM_API_SUCESS`, data.length, data);
-        const animeList: AnimeData[] = data.map((animePayLoad: any) => {
-            const animeData: AnimeData = {
-                title: animePayLoad.title_english || animePayLoad.title,
-                mal_id: animePayLoad.mal_id,
-                num_episodes: animePayLoad.episodes,
-                season: findSeason(animePayLoad.title) || 1,
-                airing: animePayLoad.airing || false,
-                image_url: animePayLoad.images?.jpg?.image_url || animePayLoad.images?.webp?.image_url,
-            };
-            return animeData;
-        });
+        const animeList: ProviderSearchResult[] = data.map((animePayLoad: any) => ({
+            title: animePayLoad.title_english || animePayLoad.title,
+            provider_id: String(animePayLoad.mal_id),
+            provider: 'mal',
+            num_episodes: animePayLoad.episodes,
+            season: findSeason(animePayLoad.title) || 1,
+            airing: animePayLoad.airing || false,
+            image_url: animePayLoad.images?.jpg?.image_url || animePayLoad.images?.webp?.image_url,
+            show_type: 'anime',
+            raw_payload: JSON.stringify(animePayLoad),
+        } as ProviderSearchResult));
 
         logger.info('SEASONAL_ANIME_API_PARSED', animeList.length, animeList);
         return {
@@ -37,7 +37,7 @@ export async function getSeasonalAnimeTENRAI(): Promise<{ data: AnimeData[]; sou
     }
 }
 
-export async function searchAnimeTENRAI(query: string): Promise<{ data: AnimeData[]; source: typeof ApiProvider.TENRAI } | null> {
+export async function searchAnimeTENRAI(query: string): Promise<{ data: ProviderSearchResult[]; source: typeof ApiProvider.TENRAI } | null> {
     try {
         const res = await fetch(`${TENRAI_BASE_API}/anime?q=${encodeURIComponent(query)}&limit=15`);
         if (!res.ok) {
@@ -50,17 +50,17 @@ export async function searchAnimeTENRAI(query: string): Promise<{ data: AnimeDat
 
         if (!data) return { data: [], source: ApiProvider.TENRAI };
 
-        const animeList: AnimeData[] = data.map((animePayLoad: any) => {
-            const animeData: AnimeData = {
-                title: animePayLoad.title_english || animePayLoad.title,
-                mal_id: animePayLoad.mal_id,
-                num_episodes: animePayLoad.episodes,
-                season: findSeason(animePayLoad.title) || 1,
-                airing: animePayLoad.airing || false,
-                image_url: animePayLoad.images?.jpg?.image_url || animePayLoad.images?.webp?.image_url,
-            };
-            return animeData;
-        });
+        const animeList: ProviderSearchResult[] = data.map((animePayLoad: any) => ({
+            title: animePayLoad.title_english || animePayLoad.title,
+            provider_id: String(animePayLoad.mal_id),
+            provider: 'mal',
+            num_episodes: animePayLoad.episodes,
+            season: findSeason(animePayLoad.title) || 1,
+            airing: animePayLoad.airing || false,
+            image_url: animePayLoad.images?.jpg?.image_url || animePayLoad.images?.webp?.image_url,
+            show_type: 'anime',
+            raw_payload: JSON.stringify(animePayLoad),
+        } as ProviderSearchResult));
 
         return {
             data: animeList,

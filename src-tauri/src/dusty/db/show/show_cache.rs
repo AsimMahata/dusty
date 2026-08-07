@@ -1,12 +1,15 @@
-use crate::dusty::{data::shows::ShowResult, logger::logger, utility::sha256_hash::get_sha256_id};
+use crate::dusty::logger::logger;
 use rusqlite::{params, Connection};
 
 pub fn create_show_cache_table(db: &Connection) -> Result<(), String> {
     db.execute(
         "CREATE TABLE IF NOT EXISTS show_cache (
-        id TEXT PRIMARY KEY,
-        data TEXT NOT NULL
-    )",
+            show_id TEXT NOT NULL,
+            provider TEXT NOT NULL,
+            payload TEXT NOT NULL,
+            updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+            PRIMARY KEY (show_id, provider)
+        )",
         [],
     )
     .map_err(|err| {
@@ -16,25 +19,37 @@ pub fn create_show_cache_table(db: &Connection) -> Result<(), String> {
     Ok(())
 }
 
-pub fn add_to_show_cache_in_db(db: &Connection, id: String, data: String) -> Result<(), String> {
+pub fn upsert_show_cache_in_db(
+    db: &Connection,
+    show_id: String,
+    provider: String,
+    payload: String,
+) -> Result<(), String> {
     db.execute(
-        "INSERT OR REPLACE INTO show_cache (id, data) VALUES (?1, ?2)",
-        params![id, data],
+        "INSERT OR REPLACE INTO show_cache (show_id, provider, payload, updated_at) VALUES (?1, ?2, ?3, datetime('now'))",
+        params![show_id, provider, payload],
     )
-    .map_err(|err| err.to_string())?;
+    .map_err(|err| {
+        logger::error!("UPSERT_SHOW_CACHE_FAILED", err);
+        err.to_string()
+    })?;
     Ok(())
 }
 
-pub fn get_from_show_cache_in_db(db: &Connection, id: String) -> Result<Option<String>, String> {
+pub fn get_from_show_cache_in_db(
+    db: &Connection,
+    show_id: String,
+    provider: String,
+) -> Result<Option<String>, String> {
     let mut stmt = db
-        .prepare("SELECT data FROM show_cache WHERE id = ?1")
+        .prepare("SELECT payload FROM show_cache WHERE show_id = ?1 AND provider = ?2")
         .map_err(|err| {
             logger::error!("PREPARE_GET_FROM_SHOW_CACHE_FAILED", err);
             err.to_string()
         })?;
-    let result = stmt.query_row(params![id], |row| row.get(0));
+    let result = stmt.query_row(params![show_id, provider], |row| row.get(0));
     match result {
-        Ok(data) => Ok(Some(data)),
+        Ok(payload) => Ok(Some(payload)),
         Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
         Err(err) => {
             logger::error!("QUERY_GET_FROM_SHOW_CACHE_FAILED", err);
@@ -43,46 +58,17 @@ pub fn get_from_show_cache_in_db(db: &Connection, id: String) -> Result<Option<S
     }
 }
 
-pub fn get_all_shows_from_show_cache_in_db(db: &Connection) -> Result<Vec<ShowResult>, String> {
-    let mut stmt = db
-        .prepare("SELECT data FROM show_cache")
-        .map_err(|err| err.to_string())?;
-
-    let show_iter = stmt
-        .query_map([], |row| {
-            let data: String = row.get(0)?;
-            Ok(data)
-        })
-        .map_err(|err| {
-            logger::error!("GET_ALL_SHOWS_FROM_DB_FAILED", err);
-            err.to_string()
-        })?;
-
-    let mut shows = Vec::new();
-    for data_result in show_iter {
-        if let Ok(json_data) = data_result {
-            if let Ok(show) = serde_json::from_str::<ShowResult>(&json_data) {
-                shows.push(show);
-            } else {
-                logger::error!(
-                    "PARSE_SHOW_RESULT_FAILED",
-                    "Failed to parse a row in show_cache"
-                );
-            }
-        }
-    }
-
-    Ok(shows)
-}
-
-pub fn update_in_show_cache_in_db(db: &Connection, id: String, data: String) -> Result<(), String> {
-    let id = get_sha256_id("show".to_string(), id.clone());
+pub fn delete_from_show_cache_in_db(
+    db: &Connection,
+    show_id: String,
+    provider: String,
+) -> Result<(), String> {
     db.execute(
-        "UPDATE show_cache SET data = ?1 WHERE id = ?2",
-        params![data, id],
+        "DELETE FROM show_cache WHERE show_id = ?1 AND provider = ?2",
+        params![show_id, provider],
     )
     .map_err(|err| {
-        logger::error!("UPDATE_IN_SHOW_CACHE_FAILED", err);
+        logger::error!("DELETE_FROM_SHOW_CACHE_FAILED", err);
         err.to_string()
     })?;
     Ok(())
@@ -94,8 +80,5 @@ pub fn reset_show_cache_table_in_db(conn: &Connection) -> Result<(), String> {
             logger::error!("RESET_SHOW_CACHE_TABLE_FAILED", err);
             err.to_string()
         })?;
-    create_show_cache_table(conn).map_err(|err| {
-        logger::error!("RESET_MAL_CACHE_TABLE_CREATE_FAILED", err);
-        err.to_string()
-    })
+    create_show_cache_table(conn)
 }

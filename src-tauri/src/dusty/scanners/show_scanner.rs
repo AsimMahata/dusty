@@ -4,11 +4,7 @@ use mime_guess::mime;
 use rusqlite::Connection;
 
 use crate::dusty::{
-    data::{
-        shows::{ShowResult, ShowType, Shows},
-        state::AppState,
-    },
-    db::{anime::Anime, tv_show::TvShow},
+    data::shows::{ShowResult, ShowType, Shows},
     engine::{
         cluster::cluster::cluster_files,
         shows::maker::{
@@ -16,7 +12,7 @@ use crate::dusty::{
             make_shows_with_available_titles, TitleInfo,
         },
     },
-    helpers::{anime::get_all_anime_titles, tv_show::get_all_tv_show_titles},
+    logger::logger,
     scanners::{
         dfs::{dfs_file_of_type, dfs_show_scanner},
         videos::list_all_videos,
@@ -41,6 +37,45 @@ pub fn scan_for_shows_rec(path: &PathBuf) -> Shows {
     return shows;
 }
 
+pub fn get_all_linked_shows(db: &Connection) -> Vec<TitleInfo> {
+    let mut stmt = match db.prepare("SELECT title, provider, provider_id, season, airing, show_type FROM shows WHERE provider IS NOT NULL") {
+        Ok(s) => s,
+        Err(err) => {
+            logger::error!("PREPARE_GET_ALL_LINKED_SHOWS_FAILED", err);
+            return Vec::new();
+        }
+    };
+
+    let show_iter = match stmt.query_map([], |row| {
+        let show_type_str: String = row.get(5)?;
+        let provider: String = row.get(1)?;
+        let provider_id: String = row.get(2)?;
+        Ok(TitleInfo {
+            title: row.get(0)?,
+            provider,
+            provider_id,
+            num_episodes: None,
+            season: row.get(3)?,
+            airing: row.get::<_, i32>(4)? != 0,
+            show_type: ShowType::from_str(&show_type_str),
+        })
+    }) {
+        Ok(iter) => iter,
+        Err(err) => {
+            logger::error!("QUERY_GET_ALL_LINKED_SHOWS_FAILED", err);
+            return Vec::new();
+        }
+    };
+
+    let mut titles = Vec::new();
+    for t in show_iter {
+        if let Ok(title) = t {
+            titles.push(title);
+        }
+    }
+    titles
+}
+
 pub fn scan_for_shows_using_available_show_titles(
     db: &Connection,
     root: &PathBuf,
@@ -51,31 +86,7 @@ pub fn scan_for_shows_using_available_show_titles(
     // done or not
     let mut done: Vec<bool> = vec![false; videos.len()];
 
-    let mut titles: Vec<TitleInfo> = Vec::new();
-
-    // Map anime titles
-    for anime in get_all_anime_titles(db) {
-        titles.push(TitleInfo {
-            title: anime.title,
-            show_id: anime.mal_id.to_string(),
-            num_episodes: anime.num_episodes,
-            season: anime.season,
-            airing: anime.airing,
-            show_type: ShowType::Anime,
-        });
-    }
-
-    // Map tv_show titles
-    for tv_show in get_all_tv_show_titles(db) {
-        titles.push(TitleInfo {
-            title: tv_show.title,
-            show_id: tv_show.imdb_id,
-            num_episodes: None,
-            season: None,
-            airing: false,
-            show_type: ShowType::TvShow,
-        });
-    }
+    let titles: Vec<TitleInfo> = get_all_linked_shows(db);
 
     let mut shows: Vec<ShowResult> = Vec::new();
     make_shows_with_available_titles(&videos, &titles, &mut done, &mut shows);

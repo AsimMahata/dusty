@@ -28,7 +28,7 @@ export const CWItem: React.FC<CWItemProps> = ({ item }) => {
             }
         }
         getMetaData();
-    }, [item.show.show_id]);
+    }, [item.show.id]);
     const navigate = useNavigate();
     const continueWatchingRecentShowHandleClick = () => {
         localStorage.setItem(CONTINUE_WATCHING_TO_SHOW_PAGE, item.show.id);

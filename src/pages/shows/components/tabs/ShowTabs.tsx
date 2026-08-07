@@ -4,7 +4,7 @@ import { useShow } from '../../hooks/useShow';
 import { ContextMenu } from '../../../../components/ui/ContextMenu';
 import { Play, Tv, ChevronDown } from 'lucide-react';
 import { COLORS } from '../../../../constants/color';
-import { logger } from '../../../../utility/logger';
+
 import { useState, useRef } from 'react';
 import type { ActionItem } from "../../../../types/core";
 

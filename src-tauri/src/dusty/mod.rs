@@ -4,7 +4,6 @@ pub mod data_structures;
 pub mod db;
 pub mod engine;
 pub mod filesystem;
-pub mod helpers;
 pub mod logger;
 pub mod scanners;
 pub mod system;

@@ -1,5 +1,5 @@
 import type { SettingItemProps } from "../types/types";
-import { addSeasonalAnime } from "../../../personalities/introverts/show/anime";
+import { addSeasonalShows } from "../../../personalities/introverts/show/search";
 
 export const getGeneralPreferencesList = (): SettingItemProps[] => {
     return [
@@ -12,7 +12,7 @@ export const getGeneralPreferencesList = (): SettingItemProps[] => {
             buttonClass: 'settings-button-blue',
             onClick: async () => {
                 try {
-                    const success = await addSeasonalAnime();
+                    const success = await addSeasonalShows();
                     return success;
                 } catch (e) {
                     console.error('Failed to invoke addSeasonalAnime', e);

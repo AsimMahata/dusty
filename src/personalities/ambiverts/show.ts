@@ -10,9 +10,12 @@ dusty::api::show::rename_show
 dusty::api::show::update_show_status
 dusty::api::show::update_ban_status
 dusty::api::show::update_pin_status
-dusty::api::show::update_mal_id
-dusty::api::show::update_imdb_id
+dusty::api::show::update_show_id (calls update_show_provider)
 dusty::api::show::reset_shows_table
+dusty::api::show::get_show_cache
+dusty::api::show::get_show_cache_key
+dusty::api::show::upsert_show_cache
+dusty::api::show::reset_show_cache
 */
 
 const CMD_SCAN_SHOWS = "scan_shows";
@@ -23,6 +26,10 @@ const CMD_UPDATE_BAN_STATUS = "update_ban_status";
 const CMD_UPDATE_PIN_STATUS = "update_pin_status";
 const CMD_UPDATE_SHOW_ID = "update_show_id";
 const CMD_RESET_SHOWS_TABLE = "reset_shows_table";
+const CMD_GET_SHOW_CACHE = "get_show_cache";
+const CMD_UPSERT_SHOW_CACHE = "upsert_show_cache";
+const CMD_RESET_SHOW_CACHE = "reset_show_cache";
+const CMD_GET_SHOW_CACHE_KEY = "get_show_cache_key";
 
 export async function scanShowsIPC(path: string): Promise<ShowResult[]> {
     try {
@@ -84,12 +91,17 @@ export async function updateShowPinStatusIPC(showId: string, newPinStatus: boole
     }
 }
 
-export async function updateShowIdIPC(showId: string, externalShowId: string, showType?: ShowType): Promise<boolean> {
+export async function updateShowProviderIPC(
+    showId: string,
+    provider: string,
+    providerId: string,
+    showType?: ShowType
+): Promise<boolean> {
     try {
-        let result = await invoke<boolean>(CMD_UPDATE_SHOW_ID, { id: showId, showId: externalShowId, showType });
-        return result;
+        await invoke(CMD_UPDATE_SHOW_ID, { id: showId, provider, providerId, showType });
+        return true;
     } catch (error) {
-        logger.error(`updateShowIdIPC error: ${error}`);
+        logger.error(`updateShowProviderIPC error: ${error}`);
         return false;
     }
 }
@@ -101,5 +113,54 @@ export async function resetShowsTableIPC(): Promise<boolean> {
     } catch (error) {
         logger.error(`resetShowsTableIPC error: ${error}`);
         return false;
+    }
+}
+
+export async function getShowCacheIPC(showId: string, provider: string): Promise<string> {
+    try {
+        let result = await invoke<string>(CMD_GET_SHOW_CACHE, { showId, provider });
+        return result;
+    } catch (error) {
+        logger.error(`getShowCacheIPC error: ${error}`);
+        return '';
+    }
+}
+
+export async function upsertShowCacheIPC(showId: string, provider: string, payload: string): Promise<boolean> {
+    try {
+        await invoke(CMD_UPSERT_SHOW_CACHE, { showId, provider, payload });
+        return true;
+    } catch (error) {
+        logger.error(`upsertShowCacheIPC error: ${error}`);
+        return false;
+    }
+}
+
+export async function resetShowCacheIPC(): Promise<boolean> {
+    try {
+        await invoke(CMD_RESET_SHOW_CACHE);
+        return true;
+    } catch (error) {
+        logger.error(`resetShowCacheIPC error: ${error}`);
+        return false;
+    }
+}
+
+export async function addShowsToDbIPC(shows: ShowResult[]): Promise<boolean> {
+    try {
+        let result = await invoke<boolean>("add_shows_to_db", { shows });
+        return result;
+    } catch (error) {
+        logger.error(`addShowsToDbIPC error: ${error}`);
+        return false;
+    }
+}
+
+export async function getShowCacheKeyIPC(title: string): Promise<string> {
+    try {
+        return await invoke<string>(CMD_GET_SHOW_CACHE_KEY, { title });
+    } catch (error) {
+        logger.error(`getShowCacheKeyIPC error: ${error}`);
+        return '';
     }
 }

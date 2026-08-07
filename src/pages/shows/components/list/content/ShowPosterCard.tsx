@@ -5,7 +5,7 @@ import { ActionMenu } from '../../../../../components/ui/ActionMenu';
 import type { ShowResult } from '../../../types/types';
 import type { ActionItem } from "../../../../../types/core";
 import type { ShowMetaData } from '../../../types/types';
-import { logger } from '../../../../../utility/logger';
+
 
 interface ShowPosterCardProps {
     show: ShowResult;
@@ -21,7 +21,6 @@ export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onClick, a
         let mounted = true;
         getShowMetaData(show).then(data => {
             if (mounted) setMeta(data);
-            logger.info("GOT METADATA", data);
         });
         return () => { mounted = false; };
     }, [show]);

@@ -4,7 +4,7 @@ import { fetchShows, updateBanStatus as updateBanStatusIntrovert, updateShowStat
 import { openFile } from '../../../personalities/introverts/filesystem/filesystem';
 import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY } from '../constants/constants';
 import { logger } from '../../../utility/logger';
-import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE_CIRCLE_ICON_16, X_CIRCLE_ICON_16, ROTATE_CCW_ICON_16, BAN_ICON_16, SHIELD_CHECK_ICON_16, ICONS, SEARCH_ICON_16 } from '../../../constants/icon';
+import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE_CIRCLE_ICON_16, X_CIRCLE_ICON_16, ROTATE_CCW_ICON_16, BAN_ICON_16, SHIELD_CHECK_ICON_16, SEARCH_ICON_16 } from '../../../constants/icon';
 import { COLORS, ACTIONS_SEPARATOR } from '../../../constants/color';
 import { hashString } from '../actions/hashString';
 import { putEpisodeInRecent } from '../../../personalities/introverts/home/recentEp';
@@ -17,10 +17,7 @@ import { getIsGridLayoutShowPage, getDefaultIsGridLayout, setIsGridLayoutShowPag
 import { DEFAULT_STARTING_PATHS } from '../../../constants/path';
 import { useCommon } from '../../../hooks/useCommon';
 
-
-
 export const useShow = () => {
-
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
 
     const [activeTab, setActiveTab] = useState<ShowTab>(getDefaultTab());
@@ -35,10 +32,17 @@ export const useShow = () => {
     const [selectedShow, setSelectedShow] = useState<ShowResult | null>(null);
     const [isItemSelected, setIsItemSelected] = useState(false);
 
+    // Anime Modal UI states
     const [isAddAnimeOpen, setIsAddAnimeOpen] = useState(false);
     const [isScanAnimeOpen, setIsScanAnimeOpen] = useState(false);
     const [addAnimeQuery, setAddAnimeQuery] = useState('');
     const [addAnimeTargetShowId, setAddAnimeTargetShowId] = useState<string | undefined>(undefined);
+
+    // TV Show / Movie Modal UI states
+    const [isAddShowOpen, setIsAddShowOpen] = useState(false);
+    const [isScanShowOpen, setIsScanShowOpen] = useState(false);
+    const [addShowQuery, setAddShowQuery] = useState('');
+    const [addShowTargetShowId, setAddShowTargetShowId] = useState<string | undefined>(undefined);
 
     async function fetchSessionData() {
         try {
@@ -58,6 +62,7 @@ export const useShow = () => {
             setIsGridLayout(gridLayout);
         } catch (e) { }
     }
+
     function updateActiveTab(tab: ShowTab) {
         setActiveTab(tab);
         void setActiveTabShowPage(tab);
@@ -80,11 +85,6 @@ export const useShow = () => {
         setAddAnimeTargetShowId(targetShowId);
         setIsAddAnimeOpen(true);
     };
-
-    const [isAddShowOpen, setIsAddShowOpen] = useState(false);
-    const [isScanShowOpen, setIsScanShowOpen] = useState(false);
-    const [addShowQuery, setAddShowQuery] = useState('');
-    const [addShowTargetShowId, setAddShowTargetShowId] = useState<string | undefined>(undefined);
 
     const handleOpenAddShow = (query: string = '', targetShowId?: string) => {
         setAddShowQuery(query);
@@ -218,8 +218,10 @@ export const useShow = () => {
 
     const updateShowIdForShow = async (showId: string, externalShowId: string, showType?: ShowType) => {
         try {
-            await updateShowIdForShowIntrovert(showId, externalShowId, showType);
-            const newShows = allShows.map(s => s.id === showId ? { ...s, show_id: externalShowId, show_type: showType || s.show_type } : s);
+            const provider = showType === 'anime' ? 'mal' : 'tmdb';
+            const mappedShowType = showType || (provider === 'mal' ? 'anime' : 'movie_tv');
+            await updateShowIdForShowIntrovert(showId, provider, externalShowId, mappedShowType);
+            const newShows = allShows.map(s => s.id === showId ? { ...s, provider, provider_id: externalShowId, show_type: mappedShowType } : s);
             setAllShows(newShows);
             return true;
         } catch (err) {
@@ -238,8 +240,8 @@ export const useShow = () => {
             onClick: () => handleTogglePin(show.id)
         });
 
-        const isAnime = show.show_type === 'anime' || (show.show_id && !show.show_id.startsWith('tt'));
-        const isTvOrMovie = show.show_type === 'tv_show' || show.show_type === 'movie' || (show.show_id && show.show_id.startsWith('tt'));
+        const isAnime = show.show_type === 'anime' || (show.provider === 'mal');
+        const isTvOrMovie = show.show_type === 'movie_tv' || (show.provider === 'tmdb');
         const isUnknown = !isAnime && !isTvOrMovie;
 
         const metadataActions: ActionItem[] = [];
@@ -358,7 +360,6 @@ export const useShow = () => {
         return baseShows;
     }, [allShows, activeTab, searchQuery]);
 
-
     const lastWatchedDep =
         sortMethod === "last_watched" ? lastWatchedMap : null;
 
@@ -382,8 +383,8 @@ export const useShow = () => {
             } else if (sortMethod === 'random') {
                 cmp = hashString(a.id + randomSeed) - hashString(b.id + randomSeed);
             } else if (sortMethod === 'showId') {
-                const sA = a.show_id || '';
-                const sB = b.show_id || '';
+                const sA = a.provider_id || '';
+                const sB = b.provider_id || '';
                 cmp = sA.localeCompare(sB, undefined, { numeric: true });
                 if (cmp === 0) cmp = a.title.localeCompare(b.title, undefined, { numeric: true });
             } else {
