@@ -54,9 +54,11 @@ pub fn dfs_project_scanner(path: &PathBuf, projects: &mut Vec<Project>, is_root:
 
     let mut childrens: Vec<PathBuf> = Vec::new();
     for entry in entries {
-        let child = entry.expect("something wrong with this child").path();
-        if child.is_dir() {
-            childrens.push(child);
+        if let Ok(entry) = entry {
+            let child = entry.path();
+            if child.is_dir() {
+                childrens.push(child);
+            }
         }
     }
 

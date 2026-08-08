@@ -5,9 +5,8 @@ use crate::dusty::{data::project::Project, utility::sha256_hash::get_sha256_id};
 pub fn make_project(path: &PathBuf) -> Project {
     let title: String = path
         .file_name()
-        .expect("Failed to get file name from path")
-        .to_string_lossy()
-        .into_owned();
+        .map(|n| n.to_string_lossy().into_owned())
+        .unwrap_or_else(|| path.to_string_lossy().into_owned());
     let path_str = path.to_string_lossy().into_owned();
 
     let p: Project = Project {

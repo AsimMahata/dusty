@@ -67,24 +67,48 @@ pub fn scan_pdf_tree_using_cache(db: &Connection, use_cache: bool) -> Vec<PdfDir
 
 #[tauri::command]
 pub fn scan_pdf(state: tauri::State<AppState>) -> Vec<FileInfo> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_pdf_using_cache(&db, true)
 }
 
 #[tauri::command]
 pub fn sync_scan_pdf(state: tauri::State<AppState>) -> Vec<FileInfo> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_pdf_using_cache(&db, false)
 }
 
 #[tauri::command]
 pub fn scan_pdf_tree(state: tauri::State<AppState>) -> Vec<PdfDir> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_pdf_tree_using_cache(&db, true)
 }
 
 #[tauri::command]
 pub fn sync_scan_pdf_tree(state: tauri::State<AppState>) -> Vec<PdfDir> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_pdf_tree_using_cache(&db, false)
 }

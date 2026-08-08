@@ -41,7 +41,8 @@ pub fn open_terminal_at(path: &Path, terminal: &String) -> std::io::Result<()> {
     let mut cmd = Command::new(terminal);
     
     if terminal == "wt" {
-        cmd.args(["-d", path.to_str().unwrap()]);
+        let path_str = path.to_string_lossy();
+        cmd.args(["-d", path_str.as_ref()]);
     } else if terminal == "powershell" || terminal == "pwsh" {
         cmd.args(["-NoExit", "-Command", &format!("Set-Location '{}'", path.display())]);
     } else {

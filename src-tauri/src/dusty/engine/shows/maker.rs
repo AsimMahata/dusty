@@ -103,7 +103,7 @@ pub fn make_show_results_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut
             title: title.clone(),
             season: season,
             num_episodes: Some(num_of_ep),
-            dir: Some(cluster[0].to_str().unwrap().to_string()),
+            dir: Some(cluster[0].to_string_lossy().into_owned()),
             banned: false,
             pinned: false,
             status: "default".to_string(),
@@ -114,7 +114,7 @@ pub fn make_show_results_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut
             episodes: cluster
                 .clone()
                 .into_iter()
-                .map(|p| FileInfo::from_pathbuf(&p).expect("Crashed on main inside dusty"))
+                .filter_map(|p| FileInfo::from_pathbuf(&p).ok())
                 .collect(),
             created_at: None,
             updated_at: None,
@@ -190,13 +190,16 @@ fn match_videos_to_title(
         if done[i] {
             continue;
         }
-        let file_name = video.file_name().unwrap().to_str().unwrap().to_string();
+        let file_name = match video.file_name().and_then(|n| n.to_str()) {
+            Some(f) => f.to_string(),
+            None => continue,
+        };
         let match_value = check_for_match(title.to_string(), file_name);
         if match_value > 0.5 {
-            let file_info =
-                FileInfo::from_pathbuf(&video).expect("Crashed on main inside dusty");
-            episodes.push(file_info);
-            done[i] = true;
+            if let Ok(file_info) = FileInfo::from_pathbuf(&video) {
+                episodes.push(file_info);
+                done[i] = true;
+            }
         };
     }
     episodes

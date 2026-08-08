@@ -35,8 +35,10 @@ pub fn edit_dist_string_clusters(batch: Vec<String>) -> Vec<Vec<i32>> {
     let n = batch.len();
     for i in 0..n {
         for j in i + 1..n {
-            let file1 = batch.get(i).expect("This should not crash");
-            let file2 = batch.get(j).expect("This should not crash");
+            let (file1, file2) = match (batch.get(i), batch.get(j)) {
+                (Some(f1), Some(f2)) => (f1, f2),
+                _ => continue,
+            };
             let dist = levenshtein_distance(file1, file2);
             all_dist.push((dist, i as i32, j as i32));
         }

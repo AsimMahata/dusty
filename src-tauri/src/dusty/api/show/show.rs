@@ -66,19 +66,37 @@ pub fn scan_show_using_cached(
 
 #[tauri::command]
 pub fn scan_shows(state: tauri::State<AppState>, path: Option<String>) -> Vec<ShowResult> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_show_using_cached(&db, path, true)
 }
 
 #[tauri::command]
 pub fn sync_scan_shows(state: tauri::State<AppState>, path: Option<String>) -> Vec<ShowResult> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_show_using_cached(&db, path, false)
 }
 
 #[tauri::command]
 pub fn rename_show(state: tauri::State<AppState>, show_id: String, new_name: String) -> bool {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return false;
+        }
+    };
     if let Err(err) = rename_show_in_db(&db, show_id.clone(), new_name.clone()) {
         logger::error!("RENAME_SHOW_FAILED", err);
         return false;
@@ -93,7 +111,13 @@ pub fn update_show_status(
     show_id: String,
     new_status: String,
 ) -> bool {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return false;
+        }
+    };
     if let Err(err) = update_show_status_in_db(&db, show_id.clone(), new_status.clone()) {
         logger::error!("UPDATE_SHOW_STATUS_FAILED", err);
         return false;
@@ -108,7 +132,13 @@ pub fn update_ban_status(
     show_id: String,
     new_ban_status: bool,
 ) -> bool {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return false;
+        }
+    };
     if let Err(err) = update_ban_status_in_db(&db, show_id.clone(), new_ban_status) {
         logger::error!("UPDATE_BAN_STATUS_FAILED", err);
         return false;
@@ -123,7 +153,13 @@ pub fn update_pin_status(
     show_id: String,
     new_pin_status: bool,
 ) -> bool {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return false;
+        }
+    };
     if let Err(err) = update_pin_status_in_db(&db, show_id.clone(), new_pin_status) {
         logger::error!("UPDATE_PIN_STATUS_FAILED", err);
         return false;
@@ -134,7 +170,10 @@ pub fn update_pin_status(
 
 #[tauri::command]
 pub fn reset_shows_table(state: tauri::State<AppState>) -> Result<(), String> {
-    let db = state.db.lock().unwrap();
+    let db = state.db.lock().map_err(|e| {
+        logger::error!("DB_LOCK_FAILED", e.to_string());
+        e.to_string()
+    })?;
     reset_show_table_in_db(&db)
         .map_err(|e| format!("Failed to reset shows table: {}", e))
         .ok();
@@ -149,7 +188,10 @@ pub fn update_show_id(
     provider_id: String,
     show_type: Option<String>,
 ) -> Result<(), String> {
-    let db = state.db.lock().unwrap();
+    let db = state.db.lock().map_err(|e| {
+        logger::error!("DB_LOCK_FAILED", e.to_string());
+        e.to_string()
+    })?;
     update_show_provider_in_db(&db, id, provider, provider_id, show_type)
         .map_err(|e| format!("Failed to update show provider in db: {}", e))?;
     Ok(())
@@ -161,7 +203,10 @@ pub fn get_show_cache(
     show_id: String,
     provider: String,
 ) -> Result<Option<String>, String> {
-    let db = state.db.lock().unwrap();
+    let db = state.db.lock().map_err(|e| {
+        logger::error!("DB_LOCK_FAILED", e.to_string());
+        e.to_string()
+    })?;
     get_from_show_cache_in_db(&db, show_id, provider)
 }
 
@@ -172,19 +217,31 @@ pub fn upsert_show_cache(
     provider: String,
     payload: String,
 ) -> Result<(), String> {
-    let db = state.db.lock().unwrap();
+    let db = state.db.lock().map_err(|e| {
+        logger::error!("DB_LOCK_FAILED", e.to_string());
+        e.to_string()
+    })?;
     upsert_show_cache_in_db(&db, show_id, provider, payload)
 }
 
 #[tauri::command]
 pub fn reset_show_cache(state: tauri::State<AppState>) -> Result<(), String> {
-    let db = state.db.lock().unwrap();
+    let db = state.db.lock().map_err(|e| {
+        logger::error!("DB_LOCK_FAILED", e.to_string());
+        e.to_string()
+    })?;
     reset_show_cache_table_in_db(&db)
 }
 
 #[tauri::command]
 pub fn add_shows_to_db(state: tauri::State<AppState>, shows: Vec<ShowResult>) -> bool {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return false;
+        }
+    };
     let mut success = true;
     for show in shows {
         if let Err(e) = add_show_in_db(&db, &show) {

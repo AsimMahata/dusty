@@ -67,31 +67,58 @@ pub fn scan_misc_tree_using_cache(db: &Connection, misc_type: String, use_cache:
 
 #[tauri::command]
 pub fn scan_misc(state: tauri::State<AppState>, misc_type: String) -> Vec<FileInfo> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_misc_using_cache(&db, misc_type, true)
 }
 
 #[tauri::command]
 pub fn sync_scan_misc(state: tauri::State<AppState>, misc_type: String) -> Vec<FileInfo> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_misc_using_cache(&db, misc_type, false)
 }
 
 #[tauri::command]
 pub fn scan_misc_tree(state: tauri::State<AppState>, misc_type: String) -> Vec<MiscDir> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_misc_tree_using_cache(&db, misc_type, true)
 }
 
 #[tauri::command]
 pub fn sync_scan_misc_tree(state: tauri::State<AppState>, misc_type: String) -> Vec<MiscDir> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_misc_tree_using_cache(&db, misc_type, false)
 }
 
 #[tauri::command]
 pub fn reset_misc_cache_table(state: tauri::State<AppState>, misc_type: String) -> Result<(), String> {
-    let db = state.db.lock().map_err(|e| e.to_string())?;
+    let db = state.db.lock().map_err(|e| {
+        logger::error!("DB_LOCK_FAILED", e.to_string());
+        e.to_string()
+    })?;
     reset_misc_cache(&db, &misc_type).map_err(|e| e.to_string())?;
     reset_misc_dir_cache(&db, &misc_type).map_err(|e| e.to_string())?;
     Ok(())

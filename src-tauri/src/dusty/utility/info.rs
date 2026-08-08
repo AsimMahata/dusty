@@ -25,8 +25,8 @@ pub fn get_forbidden_folders() -> Vec<PathBuf> {
         PathBuf::from("C:\\msys64\\"),
         PathBuf::from("C:\\Users\\All Users"),
         home_dir()
-            .expect("Some Error inside get is_forbidden_folder")
-            .join("AppData"),
+            .map(|h| h.join("AppData"))
+            .unwrap_or_else(|| PathBuf::from("C:\\Users\\Default\\AppData")),
     ]
 }
 

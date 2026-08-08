@@ -15,8 +15,8 @@ pub fn scan_tags(project: &Project) -> Vec<Tag> {
     tags
 }
 pub fn get_git_ignores(path: &PathBuf) -> Vec<String> {
-    let git_ignore_path = format!("{}/.gitignore", path.to_str().unwrap());
-    let git_ignore = std::fs::read_to_string(git_ignore_path);
+    let git_ignore_path = path.join(".gitignore");
+    let git_ignore = std::fs::read_to_string(&git_ignore_path);
     match git_ignore {
         Ok(git_ignore) => git_ignore.lines().map(|line| line.to_string()).collect(),
         Err(_) => Vec::new(),

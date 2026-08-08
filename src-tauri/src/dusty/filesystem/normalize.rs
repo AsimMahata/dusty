@@ -1,9 +1,7 @@
 use std::path::PathBuf;
 
 pub fn to_string(path: &PathBuf) -> String {
-    path.to_str()
-        .map(|s| s.to_string())
-        .unwrap_or_else(|| "ERROR_PATH".to_string())
+    path.to_string_lossy().into_owned()
 }
 
 pub fn file_name(path: &PathBuf) -> Option<String> {

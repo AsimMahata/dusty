@@ -56,13 +56,25 @@ pub fn scan_projects_using_cache(db: &Connection, cache: bool) -> Vec<Project> {
 
 #[tauri::command]
 pub fn sync_scan_projects(state: tauri::State<AppState>) -> Vec<Project> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_projects_using_cache(&db, false)
 }
 
 #[tauri::command]
 pub fn scan_projects(state: tauri::State<AppState>) -> Vec<Project> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_projects_using_cache(&db, true)
 }
 
@@ -72,7 +84,10 @@ pub fn update_project_pin_status(
     id: String,
     pinned: bool,
 ) -> Result<(), String> {
-    let db = state.db.lock().unwrap();
+    let db = state.db.lock().map_err(|e| {
+        logger::error!("DB_LOCK_FAILED", e.to_string());
+        e.to_string()
+    })?;
     if let Err(err) = update_project_pin_status_in_db(&db, &id, pinned) {
         logger::error!("UPDATE_PROJECT_PIN_STATUS_FAILED", err.clone());
         return Err(err);
@@ -87,7 +102,10 @@ pub fn update_project_status(
     id: String,
     status: String,
 ) -> Result<(), String> {
-    let db = state.db.lock().unwrap();
+    let db = state.db.lock().map_err(|e| {
+        logger::error!("DB_LOCK_FAILED", e.to_string());
+        e.to_string()
+    })?;
     if let Err(err) = update_project_status_in_db(&db, &id, &status) {
         logger::error!("UPDATE_PROJECT_STATUS_FAILED", err.clone());
         return Err(err);
@@ -102,7 +120,10 @@ pub fn update_project_tags(
     id: String,
     tags: Vec<String>,
 ) -> Result<(), String> {
-    let db = state.db.lock().unwrap();
+    let db = state.db.lock().map_err(|e| {
+        logger::error!("DB_LOCK_FAILED", e.to_string());
+        e.to_string()
+    })?;
     let tags = tags
         .iter()
         .filter_map(|tag| Tag::from_string(tag))
@@ -112,7 +133,10 @@ pub fn update_project_tags(
 
 #[tauri::command]
 pub fn reset_project_table(state: tauri::State<AppState>) -> Result<(), String> {
-    let db = state.db.lock().unwrap();
+    let db = state.db.lock().map_err(|e| {
+        logger::error!("DB_LOCK_FAILED", e.to_string());
+        e.to_string()
+    })?;
     reset_project_table_in_db(&db)
         .map_err(|err| logger::error!("RESET_PROJECT_TABLE_IN_DB_FAILED", err))
         .ok();

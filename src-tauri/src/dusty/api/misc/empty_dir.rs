@@ -37,12 +37,24 @@ pub fn scan_empty_dir_using_cache(db: &Connection, use_cache: bool) -> Vec<FileI
 
 #[tauri::command]
 pub fn scan_empty_dir(state: tauri::State<AppState>) -> Vec<FileInfo> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_empty_dir_using_cache(&db, true)
 }
 
 #[tauri::command]
 pub fn sync_scan_empty_dir(state: tauri::State<AppState>) -> Vec<FileInfo> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_empty_dir_using_cache(&db, false)
 }

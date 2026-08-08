@@ -23,7 +23,10 @@ pub struct VideoItem {
 }
 
 pub fn add_recent_episode_in_db(db: &Connection, video: VideoItem) -> Result<(), String> {
-    let data = serde_json::to_string(&video).unwrap();
+    let data = serde_json::to_string(&video).map_err(|err| {
+        logger::error!("SERDE_RECENT_EP_FAILED", err);
+        err.to_string()
+    })?;
     let id = video.episode.id.clone();
     let sql = "INSERT OR REPLACE INTO recent_episodes (id, data) VALUES (?, ?)";
     db.execute(sql, [id, data]).map_err(|err| {

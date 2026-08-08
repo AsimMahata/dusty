@@ -24,7 +24,13 @@ pub fn scan_music_using_cache(
     cache: bool,
 ) -> Vec<FileInfo> {
     let root = PathBuf::from(&path);
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     if cache {
         if let Some(cached_music) = get_cached_music_from_media_cache_db(&db, path) {
             logger::info!("MUSIC_CACHE_LOADED", cached_music.len());

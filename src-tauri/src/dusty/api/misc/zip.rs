@@ -67,24 +67,48 @@ pub fn scan_zip_tree_using_cache(db: &Connection, use_cache: bool) -> Vec<ZipDir
 
 #[tauri::command]
 pub fn scan_zip(state: tauri::State<AppState>) -> Vec<FileInfo> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_zip_using_cache(&db, true)
 }
 
 #[tauri::command]
 pub fn sync_scan_zip(state: tauri::State<AppState>) -> Vec<FileInfo> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_zip_using_cache(&db, false)
 }
 
 #[tauri::command]
 pub fn scan_zip_tree(state: tauri::State<AppState>) -> Vec<ZipDir> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_zip_tree_using_cache(&db, true)
 }
 
 #[tauri::command]
 pub fn sync_scan_zip_tree(state: tauri::State<AppState>) -> Vec<ZipDir> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_zip_tree_using_cache(&db, false)
 }

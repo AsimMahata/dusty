@@ -5,8 +5,17 @@ use crate::types::file_types::Files;
 pub fn what_to_print(files: &Files) {
     let mut buf = String::new();
     println!("1: Video \n2: Audio\n3: Images \n4: Others \n-1: Exit");
-    io::stdin().read_line(&mut buf).expect("failed to read");
-    let num: i32 = buf.trim().parse().expect("failed to parse");
+    if io::stdin().read_line(&mut buf).is_err() {
+        println!("Failed to read input");
+        return;
+    }
+    let num: i32 = match buf.trim().parse() {
+        Ok(n) => n,
+        Err(_) => {
+            println!("Invalid input number");
+            return;
+        }
+    };
     match num {
         1 => println!("{:#?}", files.videos),
         2 => println!("{:#?}", files.audios),

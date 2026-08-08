@@ -15,9 +15,9 @@ pub fn show_to_show_result(s: &Show) -> ShowResult {
         episodes: s
             .get_eps()
             .iter()
-            .map(|p| FileInfo::from_pathbuf(p).expect("Crashed on main inside dusty"))
+            .filter_map(|p| FileInfo::from_pathbuf(p).ok())
             .collect(),
-        dir: Some(s.get_dir().to_str().unwrap().to_string()),
+        dir: Some(s.get_dir().to_string_lossy().into_owned()),
         banned: false,
         pinned: false,
         season: s.get_season(),

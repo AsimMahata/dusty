@@ -9,8 +9,10 @@ pub fn get_all_tables(state: tauri::State<AppState>) -> Result<Vec<String>, Stri
 
 #[tauri::command]
 pub fn reset_table(state: tauri::State<AppState>, table_name: String) -> Result<(), String> {
-    let db = state.db.lock().unwrap();
-    // Use DROP TABLE to wipe data AND clear old schemas
+    let db = state.db.lock().map_err(|e| {
+        logger::error!("DB_LOCK_FAILED", e.to_string());
+        e.to_string()
+    })?;
     let query = format!("DROP TABLE IF EXISTS {}", table_name);
     db.execute(&query, []).map_err(|e| {
         logger::error!(
@@ -19,8 +21,6 @@ pub fn reset_table(state: tauri::State<AppState>, table_name: String) -> Result<
         );
         e.to_string()
     })?;
-    
-    // Recreate the table with its latest schema
     let _ = crate::dusty::db::core::initialize_tables(&db);
 
     logger::info!("RESET_TABLE_SUCCESS", table_name);

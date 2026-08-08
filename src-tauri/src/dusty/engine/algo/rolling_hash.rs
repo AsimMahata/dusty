@@ -27,7 +27,10 @@ pub fn get_hash_indices(
         let mut hash_value: Vec<i64> = vec![1; tokens.len()];
 
         for i in 0..window_size {
-            let token_val = token_id.get(&tokens[i]).expect("crash at hashing");
+            let token_val = match token_id.get(&tokens[i]) {
+                Some(val) => val,
+                None => continue,
+            };
             let prev = if i > 0 { hash_value[i - 1] } else { 0 };
             hash_value[i] = (prev + p_pow[i] * token_val) % m;
         }
@@ -48,7 +51,10 @@ pub fn get_hash_indices(
         }
 
         for i in window_size..tokens.len() {
-            let token_val = token_id.get(&tokens[i]).expect("crash at hashing");
+            let token_val = match token_id.get(&tokens[i]) {
+                Some(val) => val,
+                None => continue,
+            };
 
             let prev = if i > 0 { hash_value[i - 1] } else { 0 };
             hash_value[i] = (prev + p_pow[i] * token_val) % m;

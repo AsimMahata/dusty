@@ -39,8 +39,10 @@ fn is_token_valid(t: &str) -> bool {
 }
 
 fn is_token_valid_for_title(t: &str) -> bool {
-    let regex =
-        EPISODE_REGEX.get_or_init(|| Regex::new(r"^(?i)(e|ep|episode|epsode)\d*$").unwrap());
+    let regex = EPISODE_REGEX.get_or_init(|| {
+        Regex::new(r"^(?i)(e|ep|episode|epsode)\d*$")
+            .unwrap_or_else(|_| Regex::new("a^").expect("Fallback regex failed"))
+    });
 
     if t.is_empty() {
         return false;

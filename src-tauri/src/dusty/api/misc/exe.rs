@@ -67,31 +67,58 @@ pub fn scan_exe_tree_using_cache(db: &Connection, use_cache: bool) -> Vec<Execut
 
 #[tauri::command]
 pub fn scan_exe(state: tauri::State<AppState>) -> Vec<FileInfo> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_exe_using_cache(&db, true)
 }
 
 #[tauri::command]
 pub fn sync_scan_exe(state: tauri::State<AppState>) -> Vec<FileInfo> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_exe_using_cache(&db, false)
 }
 
 #[tauri::command]
 pub fn scan_exe_tree(state: tauri::State<AppState>) -> Vec<ExecutableDir> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_exe_tree_using_cache(&db, true)
 }
 
 #[tauri::command]
 pub fn sync_scan_exe_tree(state: tauri::State<AppState>) -> Vec<ExecutableDir> {
-    let db = state.db.lock().unwrap();
+    let db = match state.db.lock() {
+        Ok(guard) => guard,
+        Err(err) => {
+            logger::error!("DB_LOCK_FAILED", err.to_string());
+            return Vec::new();
+        }
+    };
     scan_exe_tree_using_cache(&db, false)
 }
 
 #[tauri::command]
 pub fn reset_exe_cache_table(state: tauri::State<AppState>) -> Result<(), String> {
-    let db = state.db.lock().map_err(|e| e.to_string())?;
+    let db = state.db.lock().map_err(|e| {
+        logger::error!("DB_LOCK_FAILED", e.to_string());
+        e.to_string()
+    })?;
     reset_exe_cache(&db).map_err(|e| e.to_string())?;
     reset_exe_dir_cache(&db).map_err(|e| e.to_string())?;
     Ok(())

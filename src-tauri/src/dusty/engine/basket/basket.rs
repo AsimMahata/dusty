@@ -74,12 +74,13 @@ pub fn interface_put_in_basket() {
         println!("---------------------------------------------------------------------");
         println!("{:#?}", show);
         print!("Do you want to process this show? (y / [Enter] for no / q to exit): ");
-        io::stdout().flush().unwrap(); // Ensure the prompt prints before waiting for input
+        let _ = io::stdout().flush(); 
 
         let mut input = String::new();
-        io::stdin()
-            .read_line(&mut input)
-            .expect("Failed to read line");
+        if io::stdin().read_line(&mut input).is_err() {
+            println!("Failed to read line");
+            break;
+        }
 
         let trimmed = input.trim();
 
