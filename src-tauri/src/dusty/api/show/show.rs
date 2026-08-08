@@ -12,8 +12,19 @@ use crate::dusty::db::show::{
 use crate::dusty::logger::logger;
 use crate::dusty::scanners::show_scanner::scan_for_shows_using_available_show_titles;
 
-pub fn scan_show_using_cached(db: &Connection, root: &PathBuf, cache: bool) -> Vec<ShowResult> {
-    let scan_root_str = root.to_string_lossy().into_owned();
+use crate::dusty::utility::info::get_all_valid_source_path;
+
+pub fn scan_show_using_cached(
+    db: &Connection,
+    path: Option<String>,
+    cache: bool,
+) -> Vec<ShowResult> {
+    let scan_root_str = path
+        .as_ref()
+        .filter(|p| !p.trim().is_empty())
+        .cloned()
+        .unwrap_or_else(|| "all_valid_sources".to_string());
+
     if cache {
         if let Ok(Some(shows)) = get_scan_from_cache(db, &scan_root_str) {
             return shows
@@ -34,24 +45,35 @@ pub fn scan_show_using_cached(db: &Connection, root: &PathBuf, cache: bool) -> V
                 .collect();
         }
     }
-    let shows = scan_for_shows_using_available_show_titles(db, root);
-    let _ = add_shows_in_db(db, &shows);
-    let _ = add_scan_to_cache(db, &scan_root_str, &shows);
-    shows
+
+    let roots: Vec<PathBuf> = match &path {
+        Some(p) if !p.trim().is_empty() => vec![PathBuf::from(p)],
+        _ => get_all_valid_source_path(),
+    };
+
+    let mut all_shows: Vec<ShowResult> = Vec::new();
+    for root in roots {
+        let shows = scan_for_shows_using_available_show_titles(db, &root);
+        let root_str = root.to_string_lossy().into_owned();
+        let _ = add_scan_to_cache(db, &root_str, &shows);
+        all_shows.extend(shows);
+    }
+
+    let _ = add_shows_in_db(db, &all_shows);
+    let _ = add_scan_to_cache(db, &scan_root_str, &all_shows);
+    all_shows
 }
 
 #[tauri::command]
-pub fn scan_shows(state: tauri::State<AppState>, path: String) -> Vec<ShowResult> {
+pub fn scan_shows(state: tauri::State<AppState>, path: Option<String>) -> Vec<ShowResult> {
     let db = state.db.lock().unwrap();
-    let root = PathBuf::from(&path);
-    scan_show_using_cached(&db, &root, true)
+    scan_show_using_cached(&db, path, true)
 }
 
 #[tauri::command]
-pub fn sync_scan_shows(state: tauri::State<AppState>, path: String) -> Vec<ShowResult> {
+pub fn sync_scan_shows(state: tauri::State<AppState>, path: Option<String>) -> Vec<ShowResult> {
     let db = state.db.lock().unwrap();
-    let root = PathBuf::from(&path);
-    scan_show_using_cached(&db, &root, false)
+    scan_show_using_cached(&db, path, false)
 }
 
 #[tauri::command]

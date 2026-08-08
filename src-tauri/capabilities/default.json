@@ -9,6 +9,7 @@
     "core:default",
     "http:default",
     "pty:default",
+    "log:default",
     {
       "identifier": "http:default",
       "allow": [

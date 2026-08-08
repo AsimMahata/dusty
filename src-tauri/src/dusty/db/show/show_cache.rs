@@ -7,7 +7,8 @@ pub fn create_show_cache_table(db: &Connection) -> Result<(), String> {
             show_id TEXT NOT NULL,
             provider TEXT NOT NULL,
             payload TEXT NOT NULL,
-            updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+            created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+            updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
             PRIMARY KEY (show_id, provider)
         )",
         [],
@@ -16,6 +17,11 @@ pub fn create_show_cache_table(db: &Connection) -> Result<(), String> {
         logger::error!("CREATE_TABLE_SHOW_CACHE_FAILED", err);
         err.to_string()
     })?;
+
+    use crate::dusty::db::core::init::ensure_column_exists;
+    let _ = ensure_column_exists(db, "show_cache", "created_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
+    let _ = ensure_column_exists(db, "show_cache", "updated_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
+
     Ok(())
 }
 

@@ -83,14 +83,13 @@ pub fn get_image_stats(db: &Connection) -> Option<usize> {
 }
 
 pub fn get_zip_stats(db: &Connection) -> Option<usize> {
-    db.query_row("SELECT COUNT(*) FROM zip_cache", [], |row| row.get(0)).ok()
+    db.query_row("SELECT COUNT(*) FROM misc_cache WHERE misc_type = 'zip'", [], |row| row.get(0)).ok()
 }
 
 pub fn get_pdf_stats(db: &Connection) -> Option<usize> {
-    db.query_row("SELECT COUNT(*) FROM pdf_cache", [], |row| row.get(0)).ok()
+    db.query_row("SELECT COUNT(*) FROM misc_cache WHERE misc_type = 'pdf'", [], |row| row.get(0)).ok()
 }
 
-pub fn get_empty_dir_stats(_db: &Connection) -> Option<usize> {
-    logger::info!("TODO GET_EMPTY_DIR_STATS", 0);
-    None
+pub fn get_empty_dir_stats(db: &Connection) -> Option<usize> {
+    db.query_row("SELECT COUNT(*) FROM empty_dir_cache", [], |row| row.get(0)).ok()
 }

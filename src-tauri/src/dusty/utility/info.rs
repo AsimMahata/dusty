@@ -63,14 +63,8 @@ pub fn check_for_bad_sibling(childrens: &Vec<PathBuf>) -> bool {
             .map_or(false, |s| BAD_SIBLINGS.contains(&s))
     })
 }
-#[cfg(target_os = "windows")]
 pub fn is_root(path: &PathBuf) -> bool {
-    return path.eq(&PathBuf::from("C:\\"));
-}
-
-#[cfg(target_os = "linux")]
-pub fn is_root(path: &PathBuf) -> bool {
-    return path.eq(&PathBuf::from("/"));
+    path.parent().is_none() || get_all_valid_source_path().iter().any(|d| d.eq(path))
 }
 
 pub fn get_file_type(file_path: &PathBuf) -> Option<Name<'static>> {
@@ -95,7 +89,6 @@ pub fn get_all_valid_source_path() -> Vec<PathBuf> {
         drives.push(disk.mount_point().to_path_buf());
     }
 
-    // Fallback if no disks are found
     if drives.is_empty() {
         #[cfg(target_os = "windows")]
         drives.push(PathBuf::from("C:\\"));

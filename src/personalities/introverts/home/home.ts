@@ -1,5 +1,6 @@
 import { getSystemInfoIPC } from '../../ambiverts/system';
 import { getOverviewStatsIPC } from '../../ambiverts/overview';
+import { getUserIPC } from '../../ambiverts/user';
 import { logger } from '../../../utility/logger';
 import type { StorageInfo, OverviewStats, HomeDashboardData } from "../../../pages/home/types/types";
 
@@ -15,7 +16,7 @@ export async function fetchHomeDashboardData(): Promise<HomeDashboardData> {
     const defaultStats: OverviewStats = { shows: 0, projects: 0, songs: 0, videos: 0 };
 
     try {
-        const [info, backendStats] = await Promise.all([
+        const [info, backendStats, user] = await Promise.all([
             getSystemInfoIPC().catch(e => {
                 logger.error("Failed to get system info", e);
                 return null;
@@ -23,11 +24,17 @@ export async function fetchHomeDashboardData(): Promise<HomeDashboardData> {
             getOverviewStatsIPC().catch(e => {
                 logger.error("Failed to get overview stats", e);
                 return null;
+            }),
+            getUserIPC().catch(e => {
+                logger.error("Failed to get user from DB", e);
+                return null;
             })
         ]);
 
         let profileName = 'User';
-        if (info && info.username) {
+        if (user && user.display_name) {
+            profileName = user.display_name;
+        } else if (info && info.username) {
             const rawName = info.username as string;
             profileName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
         }
@@ -76,6 +83,7 @@ export async function fetchHomeDashboardData(): Promise<HomeDashboardData> {
 
         return {
             profileName,
+            user,
             systemData: info,
             storageInfo,
             overviewStats
@@ -84,6 +92,7 @@ export async function fetchHomeDashboardData(): Promise<HomeDashboardData> {
         logger.error("Failed to get system info", err);
         return {
             profileName: 'User',
+            user: null,
             systemData: null,
             storageInfo: defaultStorageInfo,
             overviewStats: defaultStats

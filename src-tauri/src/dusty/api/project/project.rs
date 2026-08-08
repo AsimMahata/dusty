@@ -47,6 +47,7 @@ pub fn scan_projects_using_cache(db: &Connection, cache: bool) -> Vec<Project> {
     clear_project_cache(db).ok();
     logger::info!("PROJECT_CACHE_CLEARED", "PROJECT_CACHE_CLEARED");
     let projects = scan_all_projects();
+    logger::info!("PROJECTS_SCANNED", projects.len());
     add_projects_in_db(&db, &projects)
         .map_err(|err| logger::error!("ADD_PROJECTS_IN_DB_FAILED", err))
         .ok();

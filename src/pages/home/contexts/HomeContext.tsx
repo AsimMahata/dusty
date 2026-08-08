@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { fetchHomeDashboardData } from '../../../personalities/introverts/home/home';
+import { convertFileSrcIPC, type User } from '../../../personalities/ambiverts/user';
 import type { MediaItem } from "../../../components/media/types/types";
 import type { UserProfile, StorageInfo, OverviewStats } from "../types/types";
 
 interface HomeContextType {
+    user: User | null;
     profile: UserProfile;
     systemStatus: string;
     heroBanner: string[];
@@ -17,6 +19,7 @@ interface HomeContextType {
 const HomeContext = createContext<HomeContextType | undefined>(undefined);
 
 export const HomeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [user, setUser] = useState<User | null>(null);
     const [profile, setProfile] = useState<UserProfile>({ name: 'User', avatar: '/icon.png' });
     const [storageInfo, setStorageInfo] = useState<StorageInfo>({
         used: '0 B', free: '0 B', total: '0 B',
@@ -30,7 +33,15 @@ export const HomeProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         fetchHomeDashboardData().then(data => {
-            setProfile(prev => ({ ...prev, name: data.profileName }));
+            if (data.user) {
+                setUser(data.user);
+                setProfile({
+                    name: data.user.display_name || data.profileName,
+                    avatar: data.user.avatar ? convertFileSrcIPC(data.user.avatar) : '/icon.png'
+                });
+            } else {
+                setProfile(prev => ({ ...prev, name: data.profileName }));
+            }
             setStorageInfo(data.storageInfo);
             setOverviewStats(data.overviewStats);
         });
@@ -64,7 +75,7 @@ export const HomeProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return (
         <HomeContext.Provider value={{
-            profile, systemStatus, heroBanner, heroLogo, overviewStats, storageInfo, continueWatching, watchEpisode
+            user, profile, systemStatus, heroBanner, heroLogo, overviewStats, storageInfo, continueWatching, watchEpisode
         }}>
             {children}
         </HomeContext.Provider>

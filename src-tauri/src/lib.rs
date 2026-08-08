@@ -7,6 +7,20 @@ pub fn run() {
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_pty::init())
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .max_file_size(50_000)
+                .target(tauri_plugin_log::Target::new(
+                    tauri_plugin_log::TargetKind::Stdout,
+                ))
+                .target(tauri_plugin_log::Target::new(
+                    tauri_plugin_log::TargetKind::LogDir { file_name: None },
+                ))
+                .target(tauri_plugin_log::Target::new(
+                    tauri_plugin_log::TargetKind::Webview,
+                ))
+                .build(),
+        )
         .invoke_handler(tauri::generate_handler![
             dusty::api::git::get_git_info,
             dusty::api::filesystem::read_dir,
@@ -91,13 +105,6 @@ pub fn run() {
 
 
         .setup(|app| {
-            if cfg!(debug_assertions) {
-                app.handle().plugin(
-                    tauri_plugin_log::Builder::default()
-                        .level(log::LevelFilter::Info)
-                        .build(),
-                )?;
-            }
             init_db_and_os(app)?;
             Ok(())
         })

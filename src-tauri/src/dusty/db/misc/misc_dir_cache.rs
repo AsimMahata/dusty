@@ -7,6 +7,8 @@ pub fn create_misc_dir_cache_table(db: &Connection) -> Result<(), String> {
         id TEXT NOT NULL,
         misc_type TEXT NOT NULL,
         data TEXT NOT NULL,
+        created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+        updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
         PRIMARY KEY (id, misc_type)
     )",
         [],

@@ -11,7 +11,9 @@ pub fn create_media_table(conn: &Connection) -> Result<(), String> {
             id TEXT PRIMARY KEY,
             source TEXT NOT NULL,
             media_type TEXT NOT NULL,
-            data TEXT NOT NULL
+            data TEXT NOT NULL,
+            created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+            updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
         )
         ",
         [],
@@ -20,6 +22,10 @@ pub fn create_media_table(conn: &Connection) -> Result<(), String> {
         logger::error!("CREATE_MEDIA_CACHE_TABLE_FAILED", err);
         err.to_string()
     })?;
+
+    use crate::dusty::db::core::init::ensure_column_exists;
+    let _ = ensure_column_exists(conn, "media_cache", "created_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
+    let _ = ensure_column_exists(conn, "media_cache", "updated_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
 
     Ok(())
 }

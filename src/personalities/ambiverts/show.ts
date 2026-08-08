@@ -31,9 +31,9 @@ const CMD_UPSERT_SHOW_CACHE = "upsert_show_cache";
 const CMD_RESET_SHOW_CACHE = "reset_show_cache";
 const CMD_GET_SHOW_CACHE_KEY = "get_show_cache_key";
 
-export async function scanShowsIPC(path: string): Promise<ShowResult[]> {
+export async function scanShowsIPC(path?: string): Promise<ShowResult[]> {
     try {
-        let result = await invoke<ShowResult[]>(CMD_SCAN_SHOWS, { path });
+        let result = await invoke<ShowResult[]>(CMD_SCAN_SHOWS, { path: path || null });
         return result;
     } catch (error) {
         logger.error(`scanShowsIPC error: ${error}`);
@@ -41,9 +41,9 @@ export async function scanShowsIPC(path: string): Promise<ShowResult[]> {
     }
 }
 
-export async function syncScanShowsIPC(path: string): Promise<ShowResult[]> {
+export async function syncScanShowsIPC(path?: string): Promise<ShowResult[]> {
     try {
-        let result = await invoke<ShowResult[]>(CMD_SYNC_SCAN_SHOWS, { path });
+        let result = await invoke<ShowResult[]>(CMD_SYNC_SCAN_SHOWS, { path: path || null });
         return result;
     } catch (error) {
         logger.error(`syncScanShowsIPC error: ${error}`);

@@ -1,4 +1,15 @@
 import toast from 'react-hot-toast';
+import {
+    warn as tauriWarn,
+    debug as tauriDebug,
+    trace as tauriTrace,
+    info as tauriInfo,
+    error as tauriError,
+    attachConsole,
+} from '@tauri-apps/plugin-log';
+
+// Automatically attach console so Rust log messages print to webview console
+attachConsole().catch(() => {});
 
 class Logger {
     private formatMessage(level: string, message: string, ...args: any[]): string {
@@ -52,28 +63,46 @@ class Logger {
     }
 
     info(message: string, ...args: any[]) {
-        console.log(this.formatMessage('INFO', message, ...args));
+        const formatted = this.formatMessage('INFO', message, ...args);
+        console.log(formatted);
+        tauriInfo(formatted).catch(() => {});
     }
 
     warn(message: string, ...args: any[]) {
-        console.warn(this.formatMessage('WARN', message, ...args));
+        const formatted = this.formatMessage('WARN', message, ...args);
+        console.warn(formatted);
+        tauriWarn(formatted).catch(() => {});
     }
 
     error(message: string, ...args: any[]) {
-        console.error(this.formatMessage('ERROR', message, ...args));
+        const formatted = this.formatMessage('ERROR', message, ...args);
+        console.error(formatted);
+        tauriError(formatted).catch(() => {});
     }
 
     debug(message: string, ...args: any[]) {
-        console.debug(this.formatMessage('DEBUG', message, ...args));
+        const formatted = this.formatMessage('DEBUG', message, ...args);
+        console.debug(formatted);
+        tauriDebug(formatted).catch(() => {});
+    }
+
+    trace(message: string, ...args: any[]) {
+        const formatted = this.formatMessage('TRACE', message, ...args);
+        console.trace(formatted);
+        tauriTrace(formatted).catch(() => {});
     }
 
     success(message: string, ...args: any[]) {
-        console.log(this.formatMessage('SUCCESS', message, ...args));
+        const formatted = this.formatMessage('SUCCESS', message, ...args);
+        console.log(formatted);
+        tauriInfo(formatted).catch(() => {});
     }
 
     todo(message: string, ...args: any[]) {
-        console.warn(this.formatMessage('TODO', message, ...args));
+        const formatted = this.formatMessage('TODO', message, ...args);
+        console.warn(formatted);
         toast('TODO: ' + message);
+        tauriWarn(formatted).catch(() => {});
     }
 }
 

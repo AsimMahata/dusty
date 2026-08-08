@@ -1,5 +1,6 @@
 import type { Episode } from "../../../components/media/types/types";
 import type { ShowResult } from "../../shows/types/types";
+import type { User } from "../../../personalities/ambiverts/user";
 
 export interface DiskInfo {
     name: string;
@@ -70,6 +71,7 @@ export interface BackendStats {
 
 export interface HomeDashboardData {
     profileName: string;
+    user: User | null;
     systemData: SystemInfoData | null;
     storageInfo: StorageInfo;
     overviewStats: OverviewStats;

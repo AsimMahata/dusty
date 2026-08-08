@@ -2,12 +2,21 @@ pub struct Logger;
 
 impl Logger {
     pub fn log(level: &str, tag: &str, file: &str, line: u32, pairs: &[(&str, String)]) {
-        println!("[{}] {} (at {}:{})", level, tag, file, line);
-        let width = pairs.iter().map(|(n, _)| n.len()).max().unwrap_or(0);
-        for (name, val) in pairs {
-            println!("    {:<width$} : {}", name, val, width = width);
+        let mut msg = format!("{} (at {}:{})", tag, file, line);
+        if !pairs.is_empty() {
+            let width = pairs.iter().map(|(n, _)| n.len()).max().unwrap_or(0);
+            for (name, val) in pairs {
+                msg.push_str(&format!("\n    {:<width$} : {}", name, val, width = width));
+            }
         }
-        println!();
+
+        match level {
+            "ERROR" => log::error!("{}", msg),
+            "WARN" | "WARNING" | "TODO" => log::warn!("{}", msg),
+            "DEBUG" => log::debug!("{}", msg),
+            "TRACE" => log::trace!("{}", msg),
+            _ => log::info!("{}", msg),
+        }
     }
 }
 

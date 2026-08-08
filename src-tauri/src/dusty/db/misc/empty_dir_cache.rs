@@ -5,7 +5,9 @@ pub fn create_empty_dir_cache_table(db: &Connection) -> Result<(), String> {
     db.execute(
         "CREATE TABLE IF NOT EXISTS empty_dir_cache (
         id TEXT PRIMARY KEY,
-        data TEXT NOT NULL
+        data TEXT NOT NULL,
+        created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+        updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
     )",
         [],
     )

@@ -7,7 +7,8 @@ pub fn create_show_scan_cache_table(db: &Connection) -> Result<(), String> {
             cache_key TEXT PRIMARY KEY,
             scan_root TEXT NOT NULL,
             payload TEXT NOT NULL,
-            updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+            created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+            updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
         )",
         [],
     )
@@ -15,6 +16,11 @@ pub fn create_show_scan_cache_table(db: &Connection) -> Result<(), String> {
         logger::error!("CREATE_TABLE_SHOW_SCAN_CACHE_FAILED", err);
         err.to_string()
     })?;
+
+    use crate::dusty::db::core::init::ensure_column_exists;
+    let _ = ensure_column_exists(db, "show_scan_cache", "created_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
+    let _ = ensure_column_exists(db, "show_scan_cache", "updated_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
+
     Ok(())
 }
 

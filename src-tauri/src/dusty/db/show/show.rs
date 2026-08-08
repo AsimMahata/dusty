@@ -147,52 +147,14 @@ pub fn create_shows_table(conn: &Connection) -> Result<(), String> {
         err.to_string()
     })?;
 
-    // Migration logic
-    let _ = conn.execute("ALTER TABLE shows ADD COLUMN provider TEXT DEFAULT NULL;", []);
-    let _ = conn.execute("ALTER TABLE shows ADD COLUMN provider_id TEXT DEFAULT NULL;", []);
-    let _ = conn.execute("ALTER TABLE shows ADD COLUMN season INTEGER DEFAULT NULL;", []);
-    let _ = conn.execute("ALTER TABLE shows ADD COLUMN created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'));", []);
-    let _ = conn.execute("ALTER TABLE shows ADD COLUMN updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'));", []);
-
-    // If migrating from older DB: map show_id into provider & provider_id
-    // First check if show_id column exists
-    let has_show_id: bool = conn.query_row(
-        "SELECT COUNT(*) FROM pragma_table_info('shows') WHERE name='show_id'",
-        [],
-        |row| row.get(0),
-    ).unwrap_or(0) > 0;
-
-    if has_show_id {
-        // anime mapping: MAL ID
-        let _ = conn.execute(
-            "UPDATE shows SET 
-                provider = 'mal', 
-                provider_id = show_id,
-                show_type = 'anime'
-             WHERE provider IS NULL AND show_id IS NOT NULL AND show_type = 'anime';", 
-            []
-        );
-
-        // tv_show / movie mapping: TMDB ID
-        let _ = conn.execute(
-            "UPDATE shows SET 
-                provider = 'tmdb', 
-                provider_id = show_id,
-                show_type = 'movie_tv'
-             WHERE provider IS NULL AND show_id IS NOT NULL AND (show_type = 'tv_show' OR show_type = 'movie');", 
-            []
-        );
-
-        // Drop show_id column
-        let _ = conn.execute("ALTER TABLE shows DROP COLUMN show_id;", []);
-    }
-
-    // Remap any old show_type values
-    let _ = conn.execute("UPDATE shows SET show_type = 'movie_tv' WHERE show_type = 'tv_show' OR show_type = 'movie';", []);
-    let _ = conn.execute("UPDATE shows SET show_type = 'anime' WHERE show_type = 'anime';", []);
-
-    // Drop old columns if they exist
-    let _ = conn.execute("ALTER TABLE shows DROP COLUMN mal_id;", []);
+    use crate::dusty::db::core::init::ensure_column_exists;
+    let _ = ensure_column_exists(conn, "shows", "provider", "TEXT DEFAULT NULL");
+    let _ = ensure_column_exists(conn, "shows", "provider_id", "TEXT DEFAULT NULL");
+    let _ = ensure_column_exists(conn, "shows", "airing", "INTEGER NOT NULL DEFAULT 0");
+    let _ = ensure_column_exists(conn, "shows", "show_type", "TEXT NOT NULL DEFAULT 'unknown'");
+    let _ = ensure_column_exists(conn, "shows", "season", "INTEGER DEFAULT NULL");
+    let _ = ensure_column_exists(conn, "shows", "created_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
+    let _ = ensure_column_exists(conn, "shows", "updated_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
 
     Ok(())
 }

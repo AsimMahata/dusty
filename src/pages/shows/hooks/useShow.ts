@@ -14,7 +14,6 @@ import type { Episode } from "../../../components/media/types/types";
 import { getActiveTabShowPage, getDefaultTab, setActiveTabShowPage } from '../session/tab';
 import { getSortMethodShowPage, getDefaultSortMethod, setSortMethodShowPage, getSortAscendingShowPage, getDefaultSortAscending, setSortAscendingShowPage } from '../session/sort';
 import { getIsGridLayoutShowPage, getDefaultIsGridLayout, setIsGridLayoutShowPage } from '../session/layout';
-import { DEFAULT_STARTING_PATHS } from '../../../constants/path';
 import { useCommon } from '../../../hooks/useCommon';
 
 export const useShow = () => {
@@ -99,18 +98,10 @@ export const useShow = () => {
         if (allShows.length === 0) setIsLoading(true);
 
         try {
-            let allFetchedShows: ShowResult[] = [];
-            for (const path of DEFAULT_STARTING_PATHS) {
-                try {
-                    const shows: ShowResult[] = await fetchShows(path, sync);
-                    allFetchedShows = [...allFetchedShows, ...shows];
-                } catch (err) {
-                    logger.error(`Failed to fetch shows from ${path}: ${String(err)}`);
-                }
-            }
-            const uniqueShows = Array.from(new Map(allFetchedShows.map(item => [item.id, item])).values());
+            const shows: ShowResult[] = await fetchShows(undefined, sync);
+            const uniqueShows = Array.from(new Map(shows.map(item => [item.id, item])).values());
             setAllShows(uniqueShows);
-            logger.info('all shows fetched', uniqueShows);
+            logger.info('all shows fetched', uniqueShows.length);
         } catch (error) {
             logger.error(`Failed to fetch shows: ${String(error)}`);
         } finally {

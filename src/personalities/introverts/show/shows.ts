@@ -15,7 +15,7 @@ import { getProviderPayload, computeShowCacheKey } from "./metadata";
 import { logger } from "../../../utility/logger";
 
 
-export async function fetchShows(path: string, sync: boolean = false): Promise<ShowResult[]> {
+export async function fetchShows(path?: string, sync: boolean = false): Promise<ShowResult[]> {
     if (sync) {
         return await syncScanShowsIPC(path);
     }

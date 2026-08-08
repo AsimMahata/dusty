@@ -121,7 +121,9 @@ pub fn create_projects_table(db: &Connection) -> Result<(), String> {
             project_type TEXT NOT NULL DEFAULT 'Unknown',
             pinned BOOLEAN NOT NULL DEFAULT 0,
             status TEXT NOT NULL DEFAULT 'default',
-            tags TEXT NOT NULL DEFAULT '[]'
+            tags TEXT NOT NULL DEFAULT '[]',
+            created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+            updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
         )
         ",
         [],
@@ -131,23 +133,13 @@ pub fn create_projects_table(db: &Connection) -> Result<(), String> {
         err.to_string()
     })?;
 
-    let mut columns = db.prepare("PRAGMA table_info(projects)").map_err(|err| err.to_string())?;
-    let has_tags_column = columns
-        .query_map([], |row| row.get::<_, String>(1))
-        .map_err(|err| err.to_string())?
-        .filter_map(Result::ok)
-        .any(|column| column == "tags");
-
-    if !has_tags_column {
-        db.execute("ALTER TABLE projects ADD COLUMN tags TEXT NOT NULL DEFAULT '[]'", [])
-            .map_err(|err| err.to_string())?;
-    }
-
     db.execute(
         "
         CREATE TABLE IF NOT EXISTS project_cache (
             id TEXT PRIMARY KEY,
-            data TEXT NOT NULL
+            data TEXT NOT NULL,
+            created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+            updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
         )
         ",
         [],
@@ -156,6 +148,13 @@ pub fn create_projects_table(db: &Connection) -> Result<(), String> {
         logger::error!("CREATE_PROJECT_CACHE_TABLE_FAILED", err);
         err.to_string()
     })?;
+
+    use crate::dusty::db::core::init::ensure_column_exists;
+    let _ = ensure_column_exists(db, "projects", "tags", "TEXT NOT NULL DEFAULT '[]'");
+    let _ = ensure_column_exists(db, "projects", "created_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
+    let _ = ensure_column_exists(db, "projects", "updated_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
+    let _ = ensure_column_exists(db, "project_cache", "created_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
+    let _ = ensure_column_exists(db, "project_cache", "updated_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
 
     Ok(())
 }

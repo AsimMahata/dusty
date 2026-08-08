@@ -93,7 +93,7 @@ export const useProject = () => {
         try {
             const projects = await getProjects(sync);
             setAllProjects(projects);
-            logger.info('all projects fetched', projects);
+            logger.info('all projects fetched', projects.length);
         } catch (error) {
             logger.error(`Failed to fetch projects: ${String(error)}`);
         } finally {

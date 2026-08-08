@@ -5,7 +5,9 @@ pub fn create_recent_ep_table(db: &Connection) -> Result<(), String> {
     let sql = "CREATE TABLE IF NOT EXISTS recent_episodes (
         id TEXT NOT NULL PRIMARY KEY,
         data TEXT NOT NULL,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+        updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
     )";
     db.execute(sql, []).map_err(|err| {
         logger::error!("CREATE_RECENT_EP_TABLE_FAILED", err);
