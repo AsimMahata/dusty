@@ -1,5 +1,6 @@
 use crate::dusty::{
     data::user::User,
+    error::{DustyError, Result},
     logger::logger,
 };
 use rusqlite::{params, Connection};
@@ -8,7 +9,7 @@ use chrono::Utc;
 use sysinfo::System;
 use std::env;
 
-pub fn create_user_table(conn: &Connection) -> Result<(), String> {
+pub fn create_user_table(conn: &Connection) -> Result<()> {
     conn.execute(
         "CREATE TABLE IF NOT EXISTS user (
             id TEXT PRIMARY KEY,
@@ -21,14 +22,11 @@ pub fn create_user_table(conn: &Connection) -> Result<(), String> {
         )",
         [],
     )
-    .map_err(|err| {
-        logger::error!("CREATE_USER_TABLE_FAILED", err);
-        err.to_string()
-    })?;
+    .map_err(|err| DustyError::db("create_user_table", Some("user".to_string()), err))?;
     Ok(())
 }
 
-pub fn create_default_user(conn: &Connection) -> Result<User, String> {
+pub fn create_default_user(conn: &Connection) -> Result<User> {
     let id = Uuid::new_v4().to_string();
     let display_name = env::var("USERNAME")
         .or_else(|_| env::var("USER"))
@@ -61,18 +59,15 @@ pub fn create_default_user(conn: &Connection) -> Result<User, String> {
             user.updated_at
         ],
     )
-    .map_err(|err| {
-        logger::error!("CREATE_DEFAULT_USER_FAILED", err);
-        err.to_string()
-    })?;
+    .map_err(|err| DustyError::db("create_default_user", Some("user".to_string()), err))?;
 
     Ok(user)
 }
 
-pub fn get_user_in_db(conn: &Connection) -> Result<User, String> {
+pub fn get_user_in_db(conn: &Connection) -> Result<User> {
     let mut stmt = conn
         .prepare("SELECT id, display_name, avatar, hostname, device_name, created_at, updated_at FROM user LIMIT 1")
-        .map_err(|err| err.to_string())?;
+        .map_err(|err| DustyError::db("prepare_get_user", Some("user".to_string()), err))?;
 
     let user_res = stmt.query_row([], |row| {
         Ok(User {
@@ -92,14 +87,11 @@ pub fn get_user_in_db(conn: &Connection) -> Result<User, String> {
             logger::info!("No local user found. Creating a default user identity.", "");
             create_default_user(conn)
         }
-        Err(err) => {
-            logger::error!("GET_USER_FROM_DB_FAILED", err);
-            Err(err.to_string())
-        }
+        Err(err) => Err(DustyError::db("get_user", Some("user".to_string()), err)),
     }
 }
 
-pub fn save_user_in_db(conn: &Connection, user: &User) -> Result<(), String> {
+pub fn save_user_in_db(conn: &Connection, user: &User) -> Result<()> {
     conn.execute(
         "INSERT OR REPLACE INTO user (id, display_name, avatar, hostname, device_name, created_at, updated_at)
          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
@@ -113,43 +105,32 @@ pub fn save_user_in_db(conn: &Connection, user: &User) -> Result<(), String> {
             user.updated_at
         ],
     )
-    .map_err(|err| {
-        logger::error!("SAVE_USER_FAILED", err);
-        err.to_string()
-    })?;
+    .map_err(|err| DustyError::db("save_user", Some("user".to_string()), err))?;
     Ok(())
 }
 
-pub fn update_display_name_in_db(conn: &Connection, display_name: String) -> Result<User, String> {
+pub fn update_display_name_in_db(conn: &Connection, display_name: String) -> Result<User> {
     let now = Utc::now().timestamp();
     conn.execute(
         "UPDATE user SET display_name = ?1, updated_at = ?2",
         params![display_name, now],
     )
-    .map_err(|err| {
-        logger::error!("UPDATE_DISPLAY_NAME_FAILED", err);
-        err.to_string()
-    })?;
+    .map_err(|err| DustyError::db("update_display_name", Some("user".to_string()), err))?;
     get_user_in_db(conn)
 }
 
-pub fn update_avatar_in_db(conn: &Connection, avatar: Option<String>) -> Result<User, String> {
+pub fn update_avatar_in_db(conn: &Connection, avatar: Option<String>) -> Result<User> {
     let now = Utc::now().timestamp();
     conn.execute(
         "UPDATE user SET avatar = ?1, updated_at = ?2",
         params![avatar, now],
     )
-    .map_err(|err| {
-        logger::error!("UPDATE_AVATAR_FAILED", err);
-        err.to_string()
-    })?;
+    .map_err(|err| DustyError::db("update_avatar", Some("user".to_string()), err))?;
     get_user_in_db(conn)
 }
 
-pub fn reset_user_in_db(conn: &Connection) -> Result<User, String> {
-    conn.execute("DELETE FROM user", []).map_err(|err| {
-        logger::error!("DELETE_USER_ROWS_FAILED", err);
-        err.to_string()
-    })?;
+pub fn reset_user_in_db(conn: &Connection) -> Result<User> {
+    conn.execute("DELETE FROM user", [])
+        .map_err(|err| DustyError::db("reset_user_delete", Some("user".to_string()), err))?;
     create_default_user(conn)
 }

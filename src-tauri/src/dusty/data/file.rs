@@ -19,16 +19,18 @@ pub struct FileInfo {
 
 impl FileInfo {
     pub fn new(name: String, path: PathBuf, size: u64, ext: Option<String>, is_dir: bool) -> Self {
-        let id = get_sha256_id(path.to_string_lossy().to_string(), "file".to_string());
+        let path_str = path.to_str().unwrap_or("FAILED_TO_PARSE");
+        let id = get_sha256_id(path_str.to_string(), "file".to_string());
         Self {
             id,
-            name: name,
-            path: path,
-            size: size,
-            ext: ext,
-            is_dir: is_dir,
+            name,
+            path,
+            size,
+            ext,
+            is_dir,
         }
     }
+
     pub fn from_pathbuf(path: &PathBuf) -> Result<Self, Error> {
         let size = fs_meta::size(path);
 
@@ -45,7 +47,11 @@ impl FileInfo {
 
         let is_dir: bool = path.is_dir();
 
-        let id = get_sha256_id(path.to_string_lossy().to_string(), "file".to_string());
+        let path_str = path
+            .to_str()
+            .ok_or_else(|| Error::new(ErrorKind::InvalidData, "Path is not valid UTF-8"))?;
+
+        let id = get_sha256_id(path_str.to_string(), "file".to_string());
 
         Ok(Self {
             id,
@@ -56,9 +62,11 @@ impl FileInfo {
             is_dir,
         })
     }
+
     pub fn get_size(&self) -> u64 {
         self.size
     }
+
     pub fn get_name(&self) -> String {
         self.name.clone()
     }

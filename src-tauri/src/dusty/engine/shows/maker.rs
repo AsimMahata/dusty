@@ -103,7 +103,7 @@ pub fn make_show_results_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut
             title: title.clone(),
             season: season,
             num_episodes: Some(num_of_ep),
-            dir: Some(cluster[0].to_string_lossy().into_owned()),
+            dir: cluster[0].to_str().map(|s| s.to_string()),
             banned: false,
             pinned: false,
             status: "default".to_string(),

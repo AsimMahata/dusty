@@ -1,6 +1,5 @@
 use std::sync::Mutex;
-
-use rusqlite::{Connection, Result};
+use rusqlite::Connection;
 use tauri::Manager;
 
 use crate::dusty::data::state::AppState;
@@ -15,20 +14,35 @@ use crate::dusty::db::show::create_show_cache_table;
 use crate::dusty::db::show::create_show_scan_cache_table;
 use crate::dusty::db::show::create_shows_table;
 use crate::dusty::db::user::create_user_table;
+use crate::dusty::error::{DustyError, Result as DustyResult};
 use crate::dusty::logger::logger;
 
-#[tauri::command]
 pub fn init_db_and_os(app: &mut tauri::App) -> Result<(), String> {
-    let app_data_dir = app.path().app_local_data_dir().map_err(|e| e.to_string())?;
+    let app_data_dir = app.path().app_local_data_dir().map_err(|e| {
+        let err = DustyError::io_op("get_app_local_data_dir", std::io::Error::new(std::io::ErrorKind::Other, e.to_string()));
+        logger::error!("INIT_DB_AND_OS_FAILED", err.log_details());
+        err.to_user_message()
+    })?;
     let db_dir = app_data_dir.join("database");
-    std::fs::create_dir_all(&db_dir).map_err(|e| e.to_string())?;
+    std::fs::create_dir_all(&db_dir).map_err(|e| {
+        let err = DustyError::io("create_db_directory", &db_dir, e);
+        logger::error!("INIT_DB_AND_OS_FAILED", err.log_details());
+        err.to_user_message()
+    })?;
 
     let db_path = db_dir.join("dusty.db");
     logger::info!("DB path: {:?}", db_path);
 
-    let conn = rusqlite::Connection::open(db_path).map_err(|e| e.to_string())?;
+    let conn = rusqlite::Connection::open(&db_path).map_err(|e| {
+        let err = DustyError::db("open_db_connection", None, e);
+        logger::error!("INIT_DB_AND_OS_FAILED", err.log_details());
+        err.to_user_message()
+    })?;
 
-    let tables: Vec<String> = initialize_tables(&conn)?;
+    let tables: Vec<String> = initialize_tables(&conn).map_err(|e| {
+        logger::error!("INIT_DB_TABLES_FAILED", e.log_details());
+        e.to_user_message()
+    })?;
     logger::info!("Tables initialized: {:?}", tables);
     app.manage(AppState {
         db: Mutex::new(conn),
@@ -39,7 +53,7 @@ pub fn init_db_and_os(app: &mut tauri::App) -> Result<(), String> {
     Ok(())
 }
 
-pub fn initialize_tables(conn: &Connection) -> Result<Vec<String>, String> {
+pub fn initialize_tables(conn: &Connection) -> DustyResult<Vec<String>> {
     let mut tables: Vec<String> = Vec::new();
 
     create_shows_table(conn)?;
@@ -84,18 +98,20 @@ pub fn ensure_column_exists(
     table: &str,
     column: &str,
     column_def: &str,
-) -> Result<(), String> {
+) -> DustyResult<()> {
     let pragma_sql = format!("PRAGMA table_info({})", table);
-    let mut stmt = conn.prepare(&pragma_sql).map_err(|e| e.to_string())?;
+    let mut stmt = conn.prepare(&pragma_sql)
+        .map_err(|err| DustyError::db("prepare_pragma_table_info", Some(table.to_string()), err))?;
     let has_column = stmt
         .query_map([], |row| row.get::<_, String>(1))
-        .map_err(|e| e.to_string())?
-        .filter_map(Result::ok)
+        .map_err(|err| DustyError::db("query_pragma_table_info", Some(table.to_string()), err))?
+        .filter_map(std::result::Result::ok)
         .any(|col| col == column);
 
     if !has_column {
         let alter_sql = format!("ALTER TABLE {} ADD COLUMN {} {}", table, column, column_def);
-        conn.execute(&alter_sql, []).map_err(|e| e.to_string())?;
+        conn.execute(&alter_sql, [])
+            .map_err(|err| DustyError::db("alter_table_add_column", Some(table.to_string()), err))?;
     }
     Ok(())
 }

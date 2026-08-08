@@ -47,7 +47,7 @@ pub fn dfs_media_dir_scanner(
 
     if has_media || valid_child.len() > 2 {
         let mut dir = MediaDir::new(
-            path.to_string_lossy().to_string(),
+            path.clone(),
             Some(media_type_name.as_str().to_string()),
         );
         for child_dir in &valid_child {

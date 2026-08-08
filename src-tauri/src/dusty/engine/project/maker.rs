@@ -5,13 +5,14 @@ use crate::dusty::{data::project::Project, utility::sha256_hash::get_sha256_id};
 pub fn make_project(path: &PathBuf) -> Project {
     let title: String = path
         .file_name()
-        .map(|n| n.to_string_lossy().into_owned())
-        .unwrap_or_else(|| path.to_string_lossy().into_owned());
-    let path_str = path.to_string_lossy().into_owned();
+        .and_then(|n| n.to_str())
+        .map(|s| s.to_string())
+        .unwrap_or_else(|| path.to_str().unwrap_or("FAILED_TO_PARSE").to_string());
+    let path_str = path.to_str().unwrap_or("FAILED_TO_PARSE").to_string();
 
-    let p: Project = Project {
+    Project {
         id: make_project_id_sha256(&path_str, &title),
-        title: title,
+        title,
         path: path_str,
         project_type: None,
         pinned: false,
@@ -25,8 +26,7 @@ pub fn make_project(path: &PathBuf) -> Project {
         description: None,
         size: None,
         git_info: None,
-    };
-    return p;
+    }
 }
 
 fn make_project_id_sha256(path_str: &String, title: &String) -> String {

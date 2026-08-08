@@ -51,9 +51,9 @@ pub fn get_system_info() -> Result<SystemInfoData, String> {
     let mut disks = Vec::new();
     for disk in disks_info.list() {
         disks.push(DiskInfo {
-            name: disk.name().to_string_lossy().to_string(),
+            name: disk.name().to_str().unwrap_or("Unknown").to_string(),
             kind: format!("{:?}", disk.kind()),
-            file_system: disk.file_system().to_string_lossy().to_string(),
+            file_system: disk.file_system().to_str().unwrap_or("Unknown").to_string(),
             total_space: disk.total_space(),
             available_space: disk.available_space(),
             is_removable: disk.is_removable(),

@@ -1,21 +1,26 @@
 use std::path::PathBuf;
 use std::process::Command;
+use crate::dusty::error::{DustyError, Result};
 
-pub fn reveal_in_file_explorer(path: &PathBuf) -> Result<(), std::io::Error> {
-    let path_str = path.to_string_lossy();
+pub fn reveal_in_file_explorer(path: &PathBuf) -> Result<()> {
+    let path_str = path.to_str().ok_or_else(|| {
+        DustyError::invalid_path(path, "Path to reveal in file explorer is not valid UTF-8")
+    })?;
     
     #[cfg(target_os = "windows")]
     {
         Command::new("explorer")
-            .args(["/select,", &path_str])
-            .spawn()?;
+            .args(["/select,", path_str])
+            .spawn()
+            .map_err(|e| DustyError::io("reveal_in_file_explorer", path, e))?;
     }
     
     #[cfg(target_os = "macos")]
     {
         Command::new("open")
-            .args(["-R", &path_str])
-            .spawn()?;
+            .args(["-R", path_str])
+            .spawn()
+            .map_err(|e| DustyError::io("reveal_in_file_explorer", path, e))?;
     }
     
     #[cfg(target_os = "linux")]
@@ -23,7 +28,8 @@ pub fn reveal_in_file_explorer(path: &PathBuf) -> Result<(), std::io::Error> {
         if let Some(parent) = path.parent() {
             Command::new("xdg-open")
                 .arg(parent)
-                .spawn()?;
+                .spawn()
+                .map_err(|e| DustyError::io("reveal_in_file_explorer", path, e))?;
         }
     }
     

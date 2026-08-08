@@ -38,7 +38,7 @@ pub fn get_git_info_sys(path: &String) -> GitInfo {
     };
 
     if let Some(workdir) = repo.workdir() {
-        info.git_repo_path = Some(workdir.to_string_lossy().to_string());
+        info.git_repo_path = workdir.to_str().map(|s| s.to_string());
     }
 
     if let Ok(head) = repo.head() {

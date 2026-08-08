@@ -4,6 +4,7 @@ use crate::dusty::data::state::AppState;
 use crate::dusty::db::misc::{add_or_update_misc_cache, get_misc_cache, reset_misc_cache};
 use crate::dusty::db::misc::{get_misc_dir_cache, reset_misc_dir_cache, save_misc_dir_cache};
 use crate::dusty::engine::dusty::misc::list_misc_files;
+use crate::dusty::error::DustyError;
 use crate::dusty::logger::logger;
 use crate::dusty::scanners::misc::dfs_misc_dir_scanner;
 use crate::dusty::utility::info::{get_all_valid_source_path, is_root};
@@ -19,7 +20,7 @@ pub fn scan_misc_using_cache(db: &Connection, misc_type: String, use_cache: bool
                 }
             }
             Err(err) => {
-                logger::error!("GET_MISC_CACHE_FAILED", err);
+                logger::error!("GET_MISC_CACHE_FAILED", err.log_details());
             }
         }
     }
@@ -27,12 +28,12 @@ pub fn scan_misc_using_cache(db: &Connection, misc_type: String, use_cache: bool
     let files = list_misc_files(&misc_type);
 
     if let Err(err) = reset_misc_cache(db, &misc_type) {
-        logger::error!("RESET_MISC_CACHE_FAILED", err);
+        logger::error!("RESET_MISC_CACHE_FAILED", err.log_details());
     }
 
     for file in &files {
         if let Err(err) = add_or_update_misc_cache(db, file, &misc_type) {
-            logger::error!("ADD_MISC_CACHE_FAILED", err);
+            logger::error!("ADD_MISC_CACHE_FAILED", err.log_details());
         }
     }
 
@@ -49,7 +50,7 @@ pub fn scan_misc_tree_using_cache(db: &Connection, misc_type: String, use_cache:
                 }
             }
             Err(err) => {
-                logger::error!("GET_MISC_DIR_CACHE_FAILED", err);
+                logger::error!("GET_MISC_DIR_CACHE_FAILED", err.log_details());
             }
         }
     }
@@ -59,8 +60,12 @@ pub fn scan_misc_tree_using_cache(db: &Connection, misc_type: String, use_cache:
         dfs_misc_dir_scanner(&root, &mut misc_dirs, is_root(&root), &misc_type);
     }
 
-    reset_misc_dir_cache(db, &misc_type).ok();
-    save_misc_dir_cache(db, &misc_dirs, &misc_type).ok();
+    if let Err(err) = reset_misc_dir_cache(db, &misc_type) {
+        logger::error!("RESET_MISC_DIR_CACHE_FAILED", err.log_details());
+    }
+    if let Err(err) = save_misc_dir_cache(db, &misc_dirs, &misc_type) {
+        logger::error!("SAVE_MISC_DIR_CACHE_FAILED", err.log_details());
+    }
 
     misc_dirs
 }
@@ -69,8 +74,9 @@ pub fn scan_misc_tree_using_cache(db: &Connection, misc_type: String, use_cache:
 pub fn scan_misc(state: tauri::State<AppState>, misc_type: String) -> Vec<FileInfo> {
     let db = match state.db.lock() {
         Ok(guard) => guard,
-        Err(err) => {
-            logger::error!("DB_LOCK_FAILED", err.to_string());
+        Err(_) => {
+            let err = DustyError::lock("scan_misc");
+            logger::error!("DB_LOCK_FAILED", err.log_details());
             return Vec::new();
         }
     };
@@ -81,8 +87,9 @@ pub fn scan_misc(state: tauri::State<AppState>, misc_type: String) -> Vec<FileIn
 pub fn sync_scan_misc(state: tauri::State<AppState>, misc_type: String) -> Vec<FileInfo> {
     let db = match state.db.lock() {
         Ok(guard) => guard,
-        Err(err) => {
-            logger::error!("DB_LOCK_FAILED", err.to_string());
+        Err(_) => {
+            let err = DustyError::lock("sync_scan_misc");
+            logger::error!("DB_LOCK_FAILED", err.log_details());
             return Vec::new();
         }
     };
@@ -93,8 +100,9 @@ pub fn sync_scan_misc(state: tauri::State<AppState>, misc_type: String) -> Vec<F
 pub fn scan_misc_tree(state: tauri::State<AppState>, misc_type: String) -> Vec<MiscDir> {
     let db = match state.db.lock() {
         Ok(guard) => guard,
-        Err(err) => {
-            logger::error!("DB_LOCK_FAILED", err.to_string());
+        Err(_) => {
+            let err = DustyError::lock("scan_misc_tree");
+            logger::error!("DB_LOCK_FAILED", err.log_details());
             return Vec::new();
         }
     };
@@ -105,8 +113,9 @@ pub fn scan_misc_tree(state: tauri::State<AppState>, misc_type: String) -> Vec<M
 pub fn sync_scan_misc_tree(state: tauri::State<AppState>, misc_type: String) -> Vec<MiscDir> {
     let db = match state.db.lock() {
         Ok(guard) => guard,
-        Err(err) => {
-            logger::error!("DB_LOCK_FAILED", err.to_string());
+        Err(_) => {
+            let err = DustyError::lock("sync_scan_misc_tree");
+            logger::error!("DB_LOCK_FAILED", err.log_details());
             return Vec::new();
         }
     };
@@ -115,11 +124,18 @@ pub fn sync_scan_misc_tree(state: tauri::State<AppState>, misc_type: String) -> 
 
 #[tauri::command]
 pub fn reset_misc_cache_table(state: tauri::State<AppState>, misc_type: String) -> Result<(), String> {
-    let db = state.db.lock().map_err(|e| {
-        logger::error!("DB_LOCK_FAILED", e.to_string());
-        e.to_string()
+    let db = state.db.lock().map_err(|_| {
+        let err = DustyError::lock("reset_misc_cache_table");
+        logger::error!("DB_LOCK_FAILED", err.log_details());
+        err.to_user_message()
     })?;
-    reset_misc_cache(&db, &misc_type).map_err(|e| e.to_string())?;
-    reset_misc_dir_cache(&db, &misc_type).map_err(|e| e.to_string())?;
+    reset_misc_cache(&db, &misc_type).map_err(|e| {
+        logger::error!("RESET_MISC_CACHE_FAILED", e.log_details());
+        e.to_user_message()
+    })?;
+    reset_misc_dir_cache(&db, &misc_type).map_err(|e| {
+        logger::error!("RESET_MISC_DIR_CACHE_FAILED", e.log_details());
+        e.to_user_message()
+    })?;
     Ok(())
 }

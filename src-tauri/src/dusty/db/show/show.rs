@@ -1,20 +1,19 @@
 use crate::dusty::{
     data::shows::{ShowInfo, ShowResult, ShowType},
-    logger::logger,
+    error::{DustyError, Result},
     utility::sha256_hash::get_sha256_id,
 };
-use rusqlite::{params, Connection, Result};
+use rusqlite::{params, Connection};
 
 pub fn add_shows_in_db(db: &Connection, shows: &Vec<ShowResult>) -> Result<()> {
     for show in shows {
-        add_show_in_db(db, show).ok();
+        add_show_in_db(db, show)?;
     }
     Ok(())
 }
 
-pub fn add_show_in_db(db: &Connection, show: &ShowResult) -> Result<(), String> {
-    add_in_show_table(db, show).map_err(|err| err.to_string())?;
-    Ok(())
+pub fn add_show_in_db(db: &Connection, show: &ShowResult) -> Result<()> {
+    add_in_show_table(db, show)
 }
 
 fn add_in_show_table(db: &Connection, show: &ShowResult) -> Result<()> {
@@ -37,11 +36,12 @@ fn add_in_show_table(db: &Connection, show: &ShowResult) -> Result<()> {
             show.show_type.as_str(),
             &show.season
         ],
-    )?;
+    )
+    .map_err(|err| DustyError::db("add_in_show_table", Some("shows".to_string()), err))?;
     Ok(())
 }
 
-pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo, String> {
+pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo> {
     db.query_row(
         "
         SELECT title, status, banned, pinned, provider, provider_id, airing, show_type
@@ -65,19 +65,13 @@ pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo, String> {
             })
         },
     )
-    .map_err(|err| {
-        logger::error!("GET_SHOW_INFO_FAILED", err);
-        err.to_string()
-    })
+    .map_err(|err| DustyError::db("get_show_info", Some("shows".to_string()), err))
 }
 
-pub fn print_all_shows_in_db(db: &Connection) -> Result<(), String> {
+pub fn print_all_shows_in_db(db: &Connection) -> Result<()> {
     let mut stmt = db
         .prepare("SELECT id, title, dir, status, banned, pinned, provider, provider_id, airing, show_type FROM shows")
-        .map_err(|err| {
-            logger::error!("PREPARE_PRINT_SHOWS_FAILED", err);
-            err.to_string()
-        })?;
+        .map_err(|err| DustyError::db("prepare_print_shows", Some("shows".to_string()), err))?;
 
     let rows = stmt
         .query_map([], |row| {
@@ -94,17 +88,12 @@ pub fn print_all_shows_in_db(db: &Connection) -> Result<(), String> {
                 row.get::<_, String>(9)?,
             ))
         })
-        .map_err(|err| {
-            logger::error!("QUERY_PRINT_SHOWS_FAILED", err);
-            err.to_string()
-        })?;
+        .map_err(|err| DustyError::db("query_print_shows", Some("shows".to_string()), err))?;
 
     println!("=== Shows ===");
     for row in rows {
-        let (id, title, dir, status, banned, pinned, provider, provider_id, airing, show_type) = row.map_err(|err| {
-            logger::error!("READ_PRINT_SHOWS_FAILED", err);
-            err.to_string()
-        })?;
+        let (id, title, dir, status, banned, pinned, provider, provider_id, airing, show_type) = row
+            .map_err(|err| DustyError::db("read_print_shows_row", Some("shows".to_string()), err))?;
 
         println!("ID          : {}", id);
         println!("Title       : {}", title);
@@ -121,7 +110,7 @@ pub fn print_all_shows_in_db(db: &Connection) -> Result<(), String> {
     Ok(())
 }
 
-pub fn create_shows_table(conn: &Connection) -> Result<(), String> {
+pub fn create_shows_table(conn: &Connection) -> Result<()> {
     conn.execute(
         "
         CREATE TABLE IF NOT EXISTS shows (
@@ -142,19 +131,16 @@ pub fn create_shows_table(conn: &Connection) -> Result<(), String> {
         ",
         [],
     )
-    .map_err(|err| {
-        logger::error!("CREATE_SHOWS_TABLE_FAILED", err);
-        err.to_string()
-    })?;
+    .map_err(|err| DustyError::db("create_shows_table", Some("shows".to_string()), err))?;
 
     use crate::dusty::db::core::init::ensure_column_exists;
-    let _ = ensure_column_exists(conn, "shows", "provider", "TEXT DEFAULT NULL");
-    let _ = ensure_column_exists(conn, "shows", "provider_id", "TEXT DEFAULT NULL");
-    let _ = ensure_column_exists(conn, "shows", "airing", "INTEGER NOT NULL DEFAULT 0");
-    let _ = ensure_column_exists(conn, "shows", "show_type", "TEXT NOT NULL DEFAULT 'unknown'");
-    let _ = ensure_column_exists(conn, "shows", "season", "INTEGER DEFAULT NULL");
-    let _ = ensure_column_exists(conn, "shows", "created_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
-    let _ = ensure_column_exists(conn, "shows", "updated_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))");
+    ensure_column_exists(conn, "shows", "provider", "TEXT DEFAULT NULL")?;
+    ensure_column_exists(conn, "shows", "provider_id", "TEXT DEFAULT NULL")?;
+    ensure_column_exists(conn, "shows", "airing", "INTEGER NOT NULL DEFAULT 0")?;
+    ensure_column_exists(conn, "shows", "show_type", "TEXT NOT NULL DEFAULT 'unknown'")?;
+    ensure_column_exists(conn, "shows", "season", "INTEGER DEFAULT NULL")?;
+    ensure_column_exists(conn, "shows", "created_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")?;
+    ensure_column_exists(conn, "shows", "updated_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")?;
 
     Ok(())
 }
@@ -165,8 +151,8 @@ pub fn update_show_provider_in_db(
     provider: String,
     provider_id: String,
     show_type: Option<String>,
-) -> Result<(), String> {
-    if let Some(st) = show_type {
+) -> Result<()> {
+    let res = if let Some(st) = show_type {
         db.execute(
             "UPDATE shows SET provider = ?1, provider_id = ?2, show_type = ?3, updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE id = ?4",
             params![provider, provider_id, st, id],
@@ -176,23 +162,17 @@ pub fn update_show_provider_in_db(
             "UPDATE shows SET provider = ?1, provider_id = ?2, updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE id = ?3",
             params![provider, provider_id, id],
         )
-    }
-    .map_err(|err| {
-        logger::error!("UPDATE_SHOW_PROVIDER_FAILED", err);
-        err.to_string()
-    })?;
+    };
+    res.map_err(|err| DustyError::db("update_show_provider", Some("shows".to_string()), err))?;
     Ok(())
 }
 
-pub fn rename_show_in_db(db: &Connection, id: String, new_name: String) -> Result<(), String> {
+pub fn rename_show_in_db(db: &Connection, id: String, new_name: String) -> Result<()> {
     db.execute(
         "UPDATE shows SET title = ?1, updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE id = ?2",
         params![new_name, id],
     )
-    .map_err(|err| {
-        logger::error!("RENAME_SHOW_FAILED", err);
-        err.to_string()
-    })?;
+    .map_err(|err| DustyError::db("rename_show", Some("shows".to_string()), err))?;
     Ok(())
 }
 
@@ -200,15 +180,12 @@ pub fn update_show_status_in_db(
     db: &Connection,
     id: String,
     new_status: String,
-) -> Result<(), String> {
+) -> Result<()> {
     db.execute(
         "UPDATE shows SET status = ?1, updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE id = ?2",
         params![new_status, id],
     )
-    .map_err(|err| {
-        logger::error!("UPDATE_SHOW_STATUS_FAILED", err);
-        err.to_string()
-    })?;
+    .map_err(|err| DustyError::db("update_show_status", Some("shows".to_string()), err))?;
     Ok(())
 }
 
@@ -216,15 +193,12 @@ pub fn update_ban_status_in_db(
     db: &Connection,
     id: String,
     new_ban_status: bool,
-) -> Result<(), String> {
+) -> Result<()> {
     db.execute(
         "UPDATE shows SET banned = ?1, updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE id = ?2",
         params![new_ban_status, id],
     )
-    .map_err(|err| {
-        logger::error!("UPDATE_BAN_STATUS_FAILED", err);
-        err.to_string()
-    })?;
+    .map_err(|err| DustyError::db("update_ban_status", Some("shows".to_string()), err))?;
     Ok(())
 }
 
@@ -232,26 +206,17 @@ pub fn update_pin_status_in_db(
     db: &Connection,
     id: String,
     new_pin_status: bool,
-) -> Result<(), String> {
+) -> Result<()> {
     db.execute(
         "UPDATE shows SET pinned = ?1, updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE id = ?2",
         params![new_pin_status, id],
     )
-    .map_err(|err| {
-        logger::error!("UPDATE_PIN_STATUS_FAILED", err);
-        err.to_string()
-    })?;
+    .map_err(|err| DustyError::db("update_pin_status", Some("shows".to_string()), err))?;
     Ok(())
 }
 
-pub fn reset_show_table_in_db(conn: &Connection) -> Result<(), String> {
+pub fn reset_show_table_in_db(conn: &Connection) -> Result<()> {
     conn.execute("DROP TABLE IF EXISTS shows", [])
-        .map_err(|err| {
-            logger::error!("RESET_SHOWS_TABLE_FAILED", err);
-            err.to_string()
-        })?;
-    create_shows_table(conn).map_err(|err| {
-        logger::error!("RESET_SHOWS_TABLE_CREATE_FAILED", err);
-        err.to_string()
-    })
+        .map_err(|err| DustyError::db("reset_show_table_drop", Some("shows".to_string()), err))?;
+    create_shows_table(conn)
 }

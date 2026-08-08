@@ -7,8 +7,9 @@ use crate::dusty::{
 };
 
 pub fn show_to_show_result(s: &Show) -> ShowResult {
+    let dir_str = s.get_dir().to_str().unwrap_or("FAILED_TO_PARSE").to_string();
     ShowResult {
-        id: get_sha256_id(s.get_dir().to_string_lossy().into_owned(), s.get_title()),
+        id: get_sha256_id(dir_str.clone(), s.get_title()),
         title: s.get_title(),
         get_title: s.get_title(),
         num_episodes: Some(s.get_number_of_ep()),
@@ -17,7 +18,7 @@ pub fn show_to_show_result(s: &Show) -> ShowResult {
             .iter()
             .filter_map(|p| FileInfo::from_pathbuf(p).ok())
             .collect(),
-        dir: Some(s.get_dir().to_string_lossy().into_owned()),
+        dir: Some(dir_str),
         banned: false,
         pinned: false,
         season: s.get_season(),

@@ -39,7 +39,7 @@ pub fn dfs_misc_dir_scanner(
     }
 
     if has_match || valid_child.len() > 2 {
-        let mut dir = MiscDir::new(path.to_string_lossy().to_string(), misc_type);
+        let mut dir = MiscDir::new(path.clone(), misc_type);
         let mut total_size: u64 = files.iter().map(|f| f.get_size()).sum();
         for child_dir in &valid_child {
             dir.childs.push(child_dir.clone());

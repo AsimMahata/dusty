@@ -12,7 +12,7 @@ use crate::dusty::{
             make_shows_with_available_titles, TitleInfo,
         },
     },
-    logger::logger,
+    error::{DustyError, Result as DustyResult},
     scanners::{
         dfs::{dfs_file_of_type, dfs_show_scanner},
         videos::list_all_videos,
@@ -37,35 +37,27 @@ pub fn scan_for_shows_rec(path: &PathBuf) -> Shows {
     return shows;
 }
 
-pub fn get_all_linked_shows(db: &Connection) -> Vec<TitleInfo> {
-    let mut stmt = match db.prepare("SELECT title, provider, provider_id, season, airing, show_type FROM shows WHERE provider IS NOT NULL") {
-        Ok(s) => s,
-        Err(err) => {
-            logger::error!("PREPARE_GET_ALL_LINKED_SHOWS_FAILED", err);
-            return Vec::new();
-        }
-    };
+pub fn get_all_linked_shows(db: &Connection) -> DustyResult<Vec<TitleInfo>> {
+    let mut stmt = db
+        .prepare("SELECT title, provider, provider_id, season, airing, show_type FROM shows WHERE provider IS NOT NULL")
+        .map_err(|err| DustyError::db("prepare_get_all_linked_shows", Some("shows".to_string()), err))?;
 
-    let show_iter = match stmt.query_map([], |row| {
-        let show_type_str: String = row.get(5)?;
-        let provider: String = row.get(1)?;
-        let provider_id: String = row.get(2)?;
-        Ok(TitleInfo {
-            title: row.get(0)?,
-            provider,
-            provider_id,
-            num_episodes: None,
-            season: row.get(3)?,
-            airing: row.get::<_, i32>(4)? != 0,
-            show_type: ShowType::from_str(&show_type_str),
+    let show_iter = stmt
+        .query_map([], |row| {
+            let show_type_str: String = row.get(5)?;
+            let provider: String = row.get(1)?;
+            let provider_id: String = row.get(2)?;
+            Ok(TitleInfo {
+                title: row.get(0)?,
+                provider,
+                provider_id,
+                num_episodes: None,
+                season: row.get(3)?,
+                airing: row.get::<_, i32>(4)? != 0,
+                show_type: ShowType::from_str(&show_type_str),
+            })
         })
-    }) {
-        Ok(iter) => iter,
-        Err(err) => {
-            logger::error!("QUERY_GET_ALL_LINKED_SHOWS_FAILED", err);
-            return Vec::new();
-        }
-    };
+        .map_err(|err| DustyError::db("query_get_all_linked_shows", Some("shows".to_string()), err))?;
 
     let mut titles = Vec::new();
     for t in show_iter {
@@ -73,7 +65,7 @@ pub fn get_all_linked_shows(db: &Connection) -> Vec<TitleInfo> {
             titles.push(title);
         }
     }
-    titles
+    Ok(titles)
 }
 
 pub fn scan_for_shows_using_available_show_titles(
@@ -83,10 +75,9 @@ pub fn scan_for_shows_using_available_show_titles(
     let mut videos: Vec<PathBuf> = Vec::new();
     dfs_file_of_type(&root, mime::VIDEO, &mut videos, is_root(&root));
 
-    // done or not
     let mut done: Vec<bool> = vec![false; videos.len()];
 
-    let titles: Vec<TitleInfo> = get_all_linked_shows(db);
+    let titles: Vec<TitleInfo> = get_all_linked_shows(db).unwrap_or_default();
 
     let mut shows: Vec<ShowResult> = Vec::new();
     make_shows_with_available_titles(&videos, &titles, &mut done, &mut shows);

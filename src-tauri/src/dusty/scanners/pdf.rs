@@ -38,7 +38,7 @@ pub fn dfs_pdf_dir_scanner(
     }
 
     if has_pdf || valid_child.len() > 2 {
-        let mut dir = PdfDir::new(path.to_string_lossy().to_string());
+        let mut dir = PdfDir::new(path.clone());
         let mut total_size: u64 = files.iter().map(|f| f.get_size()).sum();
         for child_dir in &valid_child {
             dir.childs.push(child_dir.clone());

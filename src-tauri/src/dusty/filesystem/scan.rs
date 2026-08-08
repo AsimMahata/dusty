@@ -2,6 +2,7 @@ use std::{fs, path::PathBuf};
 use crate::dusty::data::file::FileInfo;
 
 use crate::dusty::{
+    error::Result,
     filesystem::{metadata, normalize},
     utility::info::{check_for_bad_sibling, is_forbidden_folder},
 };
@@ -168,15 +169,11 @@ fn walk_files_inner(
     result
 }
 
-pub fn scan_dir(dir: &PathBuf) -> Vec<FileInfo> {
-    crate::dusty::filesystem::read::list_raw(dir)
+pub fn scan_dir(dir: &PathBuf) -> Result<Vec<FileInfo>> {
+    let paths = crate::dusty::filesystem::read::list_raw(dir)?;
+    let file_infos = paths
         .into_iter()
-        .filter_map(|p| match FileInfo::from_pathbuf(&p) {
-            Ok(info) => Some(info),
-            Err(e) => {
-                eprintln!("Failed to process {}: {}", p.display(), e);
-                None
-            }
-        })
-        .collect::<_>()
+        .filter_map(|p| FileInfo::from_pathbuf(&p).ok())
+        .collect();
+    Ok(file_infos)
 }

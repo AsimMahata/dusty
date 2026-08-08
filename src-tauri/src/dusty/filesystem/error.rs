@@ -1,15 +1,4 @@
-use std::io;
+use crate::dusty::error::DustyError;
 
-pub type FsResult<T> = Result<T, FsError>;
-
-#[derive(Debug)]
-pub enum FsError {
-    Io(io::Error),
-    InvalidPath(String),
-}
-
-impl From<io::Error> for FsError {
-    fn from(e: io::Error) -> Self {
-        FsError::Io(e)
-    }
-}
+pub type FsError = DustyError;
+pub type FsResult<T> = std::result::Result<T, FsError>;

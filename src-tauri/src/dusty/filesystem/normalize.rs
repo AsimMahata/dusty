@@ -1,7 +1,10 @@
 use std::path::PathBuf;
+use crate::dusty::error::{DustyError, Result};
 
-pub fn to_string(path: &PathBuf) -> String {
-    path.to_string_lossy().into_owned()
+pub fn to_string(path: &PathBuf) -> Result<String> {
+    path.to_str()
+        .map(|s| s.to_string())
+        .ok_or_else(|| DustyError::invalid_path(path, "Path is not valid UTF-8"))
 }
 
 pub fn file_name(path: &PathBuf) -> Option<String> {

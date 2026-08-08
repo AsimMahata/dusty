@@ -41,10 +41,15 @@ pub fn open_terminal_at(path: &Path, terminal: &String) -> std::io::Result<()> {
     let mut cmd = Command::new(terminal);
     
     if terminal == "wt" {
-        let path_str = path.to_string_lossy();
-        cmd.args(["-d", path_str.as_ref()]);
+        let path_str = path.to_str().ok_or_else(|| {
+            std::io::Error::new(std::io::ErrorKind::InvalidData, "Terminal path is not valid UTF-8")
+        })?;
+        cmd.args(["-d", path_str]);
     } else if terminal == "powershell" || terminal == "pwsh" {
-        cmd.args(["-NoExit", "-Command", &format!("Set-Location '{}'", path.display())]);
+        let path_str = path.to_str().ok_or_else(|| {
+            std::io::Error::new(std::io::ErrorKind::InvalidData, "Terminal path is not valid UTF-8")
+        })?;
+        cmd.args(["-NoExit", "-Command", &format!("Set-Location '{}'", path_str)]);
     } else {
         cmd.current_dir(path);
     }
@@ -59,4 +64,3 @@ pub fn open_terminal_at(path: &Path, terminal: &String) -> std::io::Result<()> {
 
     Ok(())
 }
-

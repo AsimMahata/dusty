@@ -14,11 +14,17 @@ pub fn scan_tags(project: &Project) -> Vec<Tag> {
     tags.dedup();
     tags
 }
+
 pub fn get_git_ignores(path: &PathBuf) -> Vec<String> {
     let git_ignore_path = path.join(".gitignore");
     let git_ignore = std::fs::read_to_string(&git_ignore_path);
     match git_ignore {
-        Ok(git_ignore) => git_ignore.lines().map(|line| line.to_string()).collect(),
+        Ok(git_ignore) => git_ignore
+            .lines()
+            .map(|line| line.trim())
+            .filter(|line| !line.is_empty() && !line.starts_with('#'))
+            .map(|line| line.to_string())
+            .collect(),
         Err(_) => Vec::new(),
     }
 }
@@ -28,9 +34,13 @@ pub fn scan_tags_from_directory_structure(path: &PathBuf, tags: &mut Vec<Tag>, g
     let mut file_names: Vec<String> = Vec::new();
     let mut child_directories: Vec<PathBuf> = Vec::new();
 
-    for p in list_raw(path) {
-        let path_str = p.to_str().unwrap_or("").to_string();
-        let file_name = p.file_name().and_then(|n| n.to_str()).unwrap_or("").to_string();
+    for p in list_raw(path).unwrap_or_default() {
+        let path_str = p.to_str().unwrap_or("FAILED_TO_PARSE").to_string();
+        let file_name = p
+            .file_name()
+            .and_then(|n| n.to_str())
+            .unwrap_or("FAILED_TO_PARSE")
+            .to_string();
 
         if git_ignores.contains(&path_str) || git_ignores.contains(&file_name) {
             continue;
@@ -44,7 +54,6 @@ pub fn scan_tags_from_directory_structure(path: &PathBuf, tags: &mut Vec<Tag>, g
             child_directories.push(p);
         }
     }
-
 
     for name in &file_names {
         match name.as_str() {
@@ -101,13 +110,13 @@ pub fn scan_tags_from_directory_structure(path: &PathBuf, tags: &mut Vec<Tag>, g
     }
 
     for child in &child_directories {
-        scan_tags_from_directory_structure(child,tags,git_ignores);
+        scan_tags_from_directory_structure(child, tags, git_ignores);
     }
 }
 
 pub fn scan_tags_from_structure(project: &Project) -> Vec<Tag> {
     let mut tags: Vec<Tag> = Vec::new();
     let mut git_ignores = Vec::new();
-    scan_tags_from_directory_structure(&PathBuf::from(project.path.clone()),&mut tags,&mut git_ignores);
+    scan_tags_from_directory_structure(&PathBuf::from(project.path.clone()), &mut tags, &mut git_ignores);
     tags
 }

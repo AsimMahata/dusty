@@ -1,6 +1,6 @@
 use rusqlite::{params, Connection};
 
-use crate::dusty::{data::state::AppState, logger::logger};
+use crate::dusty::{data::state::AppState, error::DustyError, logger::logger};
 
 #[derive(serde::Serialize)]
 pub struct Stats {
@@ -16,7 +16,11 @@ pub struct Stats {
 
 #[tauri::command]
 pub fn get_stats(state: tauri::State<AppState>) -> Result<Stats, String> {
-    let db = state.db.lock().map_err(|e| e.to_string())?;
+    let db = state.db.lock().map_err(|_| {
+        let err = DustyError::lock("get_stats");
+        logger::error!("DB_LOCK_FAILED", err.log_details());
+        err.to_user_message()
+    })?;
     Ok(Stats {
         shows: get_show_stats(&db),
         projects: get_project_stats(&db),
@@ -35,20 +39,11 @@ pub fn get_show_stats(db: &Connection) -> Option<usize> {
         params!["banned".to_string()],
         |row| row.get(0),
     )
-    .map_err(|e| {
-        logger::error!("GET_SHOW_STATS_FAILED", e);
-        e
-    })
     .ok()
 }
 
 pub fn get_project_stats(db: &Connection) -> Option<usize> {
-    db.query_row("SELECT COUNT(*) FROM projects", [], |row| row.get(0))
-        .map_err(|e| {
-            logger::error!("GET_PROJECT_STATS_FAILED", e);
-            e
-        })
-        .ok()
+    db.query_row("SELECT COUNT(*) FROM projects", [], |row| row.get(0)).ok()
 }
 
 fn get_flat_media_stats(db: &Connection, media_type: &str) -> Option<usize> {
