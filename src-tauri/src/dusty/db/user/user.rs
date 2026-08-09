@@ -1,5 +1,5 @@
 use crate::dusty::{
-    data::user::User,
+    model::user::User,
     error::{DustyError, Result},
     logger::logger,
 };

@@ -12,7 +12,7 @@ export const LAB_TABS: LabTab[] = [
     { id: 'database', label: 'Database Browser', description: 'Inspect SQLite tables, row data, and schema stats', category: 'database' },
     { id: 'system', label: 'System Monitor', description: 'Live CPU, Memory, Disk usage, and process details', category: 'system' },
     { id: 'tokenizer', label: 'Tokenizer Suite', description: 'Filename and string token parser test utility', category: 'utils' },
-    { id: 'session', label: 'Session Keys', description: 'SQLite session storage inspector and value updates', category: 'database' },
+    { id: 'config', label: 'Config Keys', description: 'JSON user config storage inspector and value updates', category: 'core' },
     { id: 'theme', label: 'Theme Inspector', description: 'Color palette, design system tokens, and typography preview', category: 'utils' },
 ];
 
@@ -61,9 +61,9 @@ export const PRESET_IPC_COMMANDS: IpcCommandPreset[] = [
         defaultArgs: {}
     },
     {
-        name: 'Get Session Value',
-        command: 'get_value_by_session_id',
-        description: 'Reads a value from SQLite session storage by session ID',
+        name: 'Get Config Value',
+        command: 'get_config_value',
+        description: 'Reads a value from JSON config storage by config ID',
         defaultArgs: { id: 'default_terminal' }
     },
     {
@@ -73,4 +73,3 @@ export const PRESET_IPC_COMMANDS: IpcCommandPreset[] = [
         defaultArgs: {}
     }
 ];
-

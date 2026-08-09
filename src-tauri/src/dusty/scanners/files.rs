@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use crate::dusty::{
-    data::file::FileInfo,
+    models::file::FileInfo,
     filesystem::read::list_raw,
 };
 

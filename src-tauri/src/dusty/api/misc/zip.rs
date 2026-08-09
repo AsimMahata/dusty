@@ -1,6 +1,6 @@
-use crate::dusty::data::file::FileInfo;
-use crate::dusty::data::state::AppState;
-use crate::dusty::data::zip::ZipDir;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::state::AppState;
+use crate::dusty::models::zip::ZipDir;
 use crate::dusty::db::misc::{add_or_update_zip_cache, get_zip_cache, reset_zip_cache};
 use crate::dusty::db::misc::{get_zip_dir_cache, reset_zip_dir_cache, save_zip_dir_cache};
 use crate::dusty::engine::dusty::zip::list_large_zip_files;

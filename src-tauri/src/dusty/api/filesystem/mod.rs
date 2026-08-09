@@ -1,4 +1,4 @@
-use crate::dusty::data::file::FileInfo;
+use crate::dusty::models::file::FileInfo;
 use crate::dusty::filesystem::{
     copy, delete, metadata::{self, FileMetadata}, read, rename, reveal, scan, write,
 };

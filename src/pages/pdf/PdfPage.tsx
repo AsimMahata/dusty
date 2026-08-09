@@ -3,7 +3,7 @@ import { PageLayout } from '../../components/layout/PageLayout';
 import { PdfHeader } from './components/header/PdfHeader';
 import { PdfTabContent } from './components/tab/PdfTabContent';
 import { usePdf } from './hooks/usePdf';
-import { getDefaultSortMode, getSortModePdfPage, setSortModePdfPage } from './session/sort';
+import { getDefaultSortMode, getSortModePdfPage, setSortModePdfPage } from './config/sort';
 import type { MiscSortMode } from "../misc/types/types";
 
 export const PdfPage: React.FC = () => {
@@ -11,7 +11,7 @@ export const PdfPage: React.FC = () => {
     const count = pdf.chunks.length;
     const [sortMode, setSortModeState] = useState<MiscSortMode>(getDefaultSortMode());
 
-    async function fetchSessionData() {
+    async function fetchConfigData() {
         try {
             const mode = await getSortModePdfPage();
             setSortModeState(mode);
@@ -19,7 +19,7 @@ export const PdfPage: React.FC = () => {
     }
 
     useEffect(() => {
-        fetchSessionData();
+        fetchConfigData();
     }, []);
 
     const setSortMode = (mode: MiscSortMode) => {

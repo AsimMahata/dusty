@@ -1,4 +1,4 @@
-use crate::dusty::{data::zip::ZipDir, logger::logger};
+use crate::dusty::{models::zip::ZipDir, logger::logger};
 use rusqlite::{params, Connection};
 
 pub fn create_zip_dir_cache_table(db: &Connection) -> Result<(), String> {

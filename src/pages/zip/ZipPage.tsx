@@ -4,14 +4,14 @@ import { useZip } from './hooks/useZip';
 import { ZipHeader } from './components/header/ZipHeader';
 import { ZipTabContent } from './components/tab/ZipTabContent';
 import type { MiscSortMode } from "../misc/types/types";
-import { getSortModeZipPage, getDefaultSortMode, setSortModeZipPage } from './session/sort';
+import { getSortModeZipPage, getDefaultSortMode, setSortModeZipPage } from './config/sort';
 
 export const ZipPage: React.FC = () => {
     const zip = useZip();
     const count = zip.chunks.length;
     const [sortMode, setSortModeState] = useState<MiscSortMode>(getDefaultSortMode());
 
-    async function fetchSessionData() {
+    async function fetchConfigData() {
         try {
             const mode = await getSortModeZipPage();
             setSortModeState(mode);
@@ -19,7 +19,7 @@ export const ZipPage: React.FC = () => {
     }
 
     useEffect(() => {
-        fetchSessionData();
+        fetchConfigData();
     }, []);
 
     const setSortMode = (mode: MiscSortMode) => {

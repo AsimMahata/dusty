@@ -1,4 +1,4 @@
-use crate::dusty::data::state::AppState;
+use crate::dusty::models::state::AppState;
 use crate::dusty::engine::utility::tokenizer::tokenize_string;
 use serde_json::{Map, Value};
 use std::collections::HashMap;

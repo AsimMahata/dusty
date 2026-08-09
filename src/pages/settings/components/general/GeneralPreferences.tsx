@@ -3,7 +3,7 @@ import { SETTINGS_GENERAL_ICON } from '../../../../constants/icon';
 import { getGeneralPreferencesList } from '../../actions/getGeneralPreferencesList';
 import { SettingItem } from './SettingItem';
 import { getAvailableTerminalsIPC } from '../../../../personalities/ambiverts/terminal';
-import { getValueBySessionIdIPC, addOrUpdateBySessionIdIPC } from '../../../../personalities/ambiverts/session';
+import { getConfigValueIPC, addOrUpdateConfigValueIPC } from '../../../../personalities/ambiverts/config';
 
 export const GeneralPreferences: React.FC = () => {
     const [availableTerminals, setAvailableTerminals] = useState<string[]>([]);
@@ -19,13 +19,15 @@ export const GeneralPreferences: React.FC = () => {
 
                 let saved = '';
                 try {
-                    const res = await getValueBySessionIdIPC('default_terminal');
+                    const res = await getConfigValueIPC('default_terminal');
                     if (res) {
                         try {
                             saved = JSON.parse(res);
                         } catch {
                             saved = res;
                         }
+                    } else if (terms.length > 0) {
+                        saved = terms[0];
                     }
                 } catch (e) {
                     if (terms.length > 0) {
@@ -48,7 +50,7 @@ export const GeneralPreferences: React.FC = () => {
     const handleTerminalChange = async (v: string) => {
         setSelectedTerminal(v);
         try {
-            await addOrUpdateBySessionIdIPC('default_terminal', JSON.stringify(v));
+            await addOrUpdateConfigValueIPC('default_terminal', JSON.stringify(v));
         } catch (e) {
             console.error("Failed to save default terminal in backend", e);
         }

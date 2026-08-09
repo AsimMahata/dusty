@@ -11,9 +11,9 @@ import { putEpisodeInRecent } from '../../../personalities/introverts/home/recen
 import type { ShowResult, ShowStatus, ShowSortMethod, ShowTab, ShowType } from "../types/types";
 import type { ActionItem } from "../../../types/core";
 import type { Episode } from "../../../components/media/types/types";
-import { getActiveTabShowPage, getDefaultTab, setActiveTabShowPage } from '../session/tab';
-import { getSortMethodShowPage, getDefaultSortMethod, setSortMethodShowPage, getSortAscendingShowPage, getDefaultSortAscending, setSortAscendingShowPage } from '../session/sort';
-import { getIsGridLayoutShowPage, getDefaultIsGridLayout, setIsGridLayoutShowPage } from '../session/layout';
+import { getActiveTabShowPage, getDefaultTab, setActiveTabShowPage } from '../config/tab';
+import { getSortMethodShowPage, getDefaultSortMethod, setSortMethodShowPage, getSortAscendingShowPage, getDefaultSortAscending, setSortAscendingShowPage } from '../config/sort';
+import { getIsGridLayoutShowPage, getDefaultIsGridLayout, setIsGridLayoutShowPage } from '../config/layout';
 import { useCommon } from '../../../hooks/useCommon';
 
 export const useShow = () => {
@@ -43,7 +43,7 @@ export const useShow = () => {
     const [addShowQuery, setAddShowQuery] = useState('');
     const [addShowTargetShowId, setAddShowTargetShowId] = useState<string | undefined>(undefined);
 
-    async function fetchSessionData() {
+    async function fetchConfigData() {
         try {
             const tab = await getActiveTabShowPage();
             setActiveTab(tab);
@@ -111,7 +111,7 @@ export const useShow = () => {
     };
 
     useEffect(() => {
-        fetchSessionData();
+        fetchConfigData();
         fetchData();
     }, []);
 

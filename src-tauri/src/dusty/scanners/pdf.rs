@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use crate::dusty::{
-    data::{file::FileInfo, pdf::PdfDir},
+    models::{file::FileInfo, pdf::PdfDir},
     engine::dusty::pdf::is_pdf_file,
     filesystem::scan::{list_children, ScanOptions},
 };

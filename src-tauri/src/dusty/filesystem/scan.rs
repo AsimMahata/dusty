@@ -1,5 +1,5 @@
 use std::{fs, path::PathBuf};
-use crate::dusty::data::file::FileInfo;
+use crate::dusty::models::file::FileInfo;
 
 use crate::dusty::{
     error::Result,

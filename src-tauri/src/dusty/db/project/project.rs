@@ -1,7 +1,7 @@
 use rusqlite::{params, Connection};
 
 use crate::dusty::{
-    data::project::{Framework, Project, ProjectInfo, Tag},
+    models::project::{Framework, Project, ProjectInfo, Tag},
     error::{DustyError, Result},
 };
 

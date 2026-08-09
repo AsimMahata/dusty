@@ -1,5 +1,5 @@
 use crate::dusty::{
-    data::{
+    models::{
         file::FileInfo,
         shows::{Show, ShowResult, ShowType, Shows},
     },

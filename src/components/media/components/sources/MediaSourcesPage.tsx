@@ -7,7 +7,7 @@ import '../../css/MediaSources.css';
 import type { MediaDir } from "../../types/types";
 import type { MediaSortMethod } from "../../types/types";
 import type { MediaSourceItem } from "../../types/types";
-import { getSortMethodMediaSourcesPage, getDefaultSourcesSortMethod, setSortMethodMediaSourcesPage, getSortAscendingMediaSourcesPage, getDefaultSourcesSortAscending, setSortAscendingMediaSourcesPage } from '../../session/sort';
+import { getSortMethodMediaSourcesPage, getDefaultSourcesSortMethod, setSortMethodMediaSourcesPage, getSortAscendingMediaSourcesPage, getDefaultSourcesSortAscending, setSortAscendingMediaSourcesPage } from '../../config/sort';
 
 interface MediaSourcesPageProps {
     media: ReturnType<typeof useMedia>;
@@ -30,7 +30,7 @@ export const MediaSourcesPage: React.FC<MediaSourcesPageProps> = ({ media }) => 
     const [sortAscending, setSortAscendingState] = useState<boolean>(getDefaultSourcesSortAscending());
     const [randomSeed, setRandomSeed] = useState<number>(Math.random());
 
-    async function fetchSessionData() {
+    async function fetchConfigData() {
         try {
             const method = await getSortMethodMediaSourcesPage();
             setSortMethodState(method);
@@ -42,7 +42,7 @@ export const MediaSourcesPage: React.FC<MediaSourcesPageProps> = ({ media }) => 
     }
 
     useEffect(() => {
-        fetchSessionData();
+        fetchConfigData();
     }, []);
 
     const setSortMethod = (method: MediaSortMethod) => {

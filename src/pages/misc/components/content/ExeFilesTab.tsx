@@ -9,7 +9,7 @@ import { useExeTab } from '../../hooks/useExeTab';
 import type { useMisc } from '../../hooks/useMisc';
 import type { Chunk, BazarAction } from '../../../../components/bazar/types/types';
 import type { MiscDir, MiscSortMode } from '../../types/types';
-import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../session/sort';
+import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../config/sort';
 
 interface ExeFilesTabProps {
     misc: ReturnType<typeof useMisc>;
@@ -35,7 +35,7 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ misc }) => {
     const tab = useExeTab(misc);
     const [sortMode, setSortModeState] = useState<MiscSortMode>(getDefaultSortMode());
 
-    async function fetchSessionData() {
+    async function fetchConfigData() {
         try {
             const mode = await getSortModeMiscPage();
             setSortModeState(mode);
@@ -43,7 +43,7 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ misc }) => {
     }
 
     useEffect(() => {
-        fetchSessionData();
+        fetchConfigData();
     }, []);
 
     const setSortMode = (mode: MiscSortMode) => {

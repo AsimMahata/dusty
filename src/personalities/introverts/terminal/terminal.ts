@@ -1,12 +1,12 @@
 import { getAvailableTerminalsIPC, openTerminalAtPathIPC } from "../../ambiverts/terminal";
-import { getValueBySessionIdIPC } from "../../ambiverts/session";
+import { getConfigValueIPC } from "../../ambiverts/config";
 import { logger } from "../../../utility/logger";
 
-const SESSION_KEY_DEFAULT_TERMINAL = "default_terminal";
+const CONFIG_KEY_DEFAULT_TERMINAL = "default_terminal";
 
 export const getSelectedTerminal = async (): Promise<string> => {
     try {
-        const saved = await getValueBySessionIdIPC(SESSION_KEY_DEFAULT_TERMINAL);
+        const saved = await getConfigValueIPC(CONFIG_KEY_DEFAULT_TERMINAL);
         if (saved) {
             try {
                 return JSON.parse(saved);
@@ -15,7 +15,7 @@ export const getSelectedTerminal = async (): Promise<string> => {
             }
         }
     } catch (e) {
-        // Suppress expected error when session key is not initialized yet
+        // Suppress expected error when config key is not initialized yet
     }
 
     const terminals = await getAvailableTerminalsIPC();
@@ -38,4 +38,3 @@ export const openTerminal = async (path: string): Promise<boolean> => {
         return false;
     }
 };
-

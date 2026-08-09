@@ -1,6 +1,6 @@
 use rusqlite::Connection;
-use crate::dusty::data::project::{Project, Tag};
-use crate::dusty::data::state::AppState;
+use crate::dusty::models::project::{Project, Tag};
+use crate::dusty::models::state::AppState;
 use crate::dusty::db::project::{
     add_projects_in_db, clear_project_cache, get_project_cache_from_db, get_project_info_from_db,
     reset_project_table_in_db, update_project_pin_status_in_db, update_project_status_in_db,

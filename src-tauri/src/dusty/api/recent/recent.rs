@@ -1,4 +1,4 @@
-use crate::dusty::data::state::AppState;
+use crate::dusty::models::state::AppState;
 use crate::dusty::db::recent::{
     VideoItem, add_recent_episode_in_db, get_recent_episodes_from_db, reset_recent_episodes_table_in_db,
 };

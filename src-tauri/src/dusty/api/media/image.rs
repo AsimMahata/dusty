@@ -1,5 +1,5 @@
-use crate::dusty::data::file::FileInfo;
-use crate::dusty::data::state::AppState;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::state::AppState;
 use crate::dusty::error::{DustyError, Result as DustyResult};
 use crate::dusty::logger::logger;
 use crate::dusty::scanners::dfs::dfs_file_of_type;

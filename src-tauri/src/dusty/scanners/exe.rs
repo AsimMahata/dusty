@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use crate::dusty::{
-    data::{exe::ExecutableDir, file::FileInfo},
+    models::{exe::ExecutableDir, file::FileInfo},
     engine::dusty::exe::is_exe_file,
     filesystem::scan::{list_children, ScanOptions},
 };

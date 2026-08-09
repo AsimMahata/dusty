@@ -7,7 +7,7 @@ import type { BaseItem, AnyItem, ActionItem } from "../../../../types/core";
 import type { MediaSortMode } from "../../types/types";
 import type { SortOption } from '../../../../types/ui';
 
-import { getSortModeMediaListPage, getDefaultListSortMode, setSortModeMediaListPage } from '../../session/sort';
+import { getSortModeMediaListPage, getDefaultListSortMode, setSortModeMediaListPage } from '../../config/sort';
 
 export interface MediaListProps<T extends BaseItem = AnyItem> {
     tab: {
@@ -40,7 +40,7 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
     const [sortMode, setSortModeState] = useState<MediaSortMode>(getDefaultListSortMode());
     const [visibleCount, setVisibleCount] = useState(VISIBLE_COUNT);
 
-    async function fetchSessionData() {
+    async function fetchConfigData() {
         try {
             const mode = await getSortModeMediaListPage();
             setSortModeState(mode);
@@ -48,7 +48,7 @@ export function MediaList<T extends BaseItem>({ tab }: MediaListProps<T>) {
     }
 
     React.useEffect(() => {
-        fetchSessionData();
+        fetchConfigData();
     }, []);
 
     const setSortMode = (mode: MediaSortMode) => {

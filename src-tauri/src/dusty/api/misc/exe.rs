@@ -1,6 +1,6 @@
-use crate::dusty::data::exe::ExecutableDir;
-use crate::dusty::data::file::FileInfo;
-use crate::dusty::data::state::AppState;
+use crate::dusty::models::exe::ExecutableDir;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::state::AppState;
 use crate::dusty::db::misc::{add_or_update_exe_cache, get_exe_cache, reset_exe_cache};
 use crate::dusty::db::misc::{get_exe_dir_cache, reset_exe_dir_cache, save_exe_dir_cache};
 use crate::dusty::engine::dusty::exe::list_executables;

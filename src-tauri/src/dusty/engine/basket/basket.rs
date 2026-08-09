@@ -5,7 +5,7 @@ use std::{
 };
 
 use crate::dusty::{
-    data::shows::{Show, Shows},
+    models::shows::{Show, Shows},
     scanners::show_scanner::scan_for_shows_rec,
 };
 

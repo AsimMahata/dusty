@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use crate::dusty::{data::project::Project, utility::sha256_hash::get_sha256_id};
+use crate::dusty::{models::project::Project, utility::sha256_hash::get_sha256_id};
 
 pub fn make_project(path: &PathBuf) -> Project {
     let title: String = path

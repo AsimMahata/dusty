@@ -1,6 +1,6 @@
 pub mod error;
 pub mod api;
-pub mod data;
+pub mod models;
 pub mod data_structures;
 pub mod db;
 pub mod engine;
@@ -8,8 +8,6 @@ pub mod filesystem;
 pub mod logger;
 pub mod scanners;
 pub mod system;
-pub mod test;
-pub mod types;
 pub mod utility;
 pub mod multithreading;
-
+pub mod config;

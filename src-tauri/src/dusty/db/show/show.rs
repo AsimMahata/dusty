@@ -1,5 +1,5 @@
 use crate::dusty::{
-    data::shows::{ShowInfo, ShowResult, ShowType},
+    models::shows::{ShowInfo, ShowResult, ShowType},
     error::{DustyError, Result},
     utility::sha256_hash::get_sha256_id,
 };

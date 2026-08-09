@@ -1,5 +1,5 @@
 use std::sync::atomic::Ordering;
-use crate::dusty::data::state::AppState;
+use crate::dusty::models::state::AppState;
 use crate::dusty::logger::logger;
 
 #[tauri::command]

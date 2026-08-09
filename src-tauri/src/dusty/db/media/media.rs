@@ -1,7 +1,7 @@
 use std::{collections::HashMap, path::PathBuf};
 
 use crate::dusty::{
-    data::media::MediaDir,
+    models::media::MediaDir,
     error::{DustyError, Result},
     utility::sha256_hash::get_sha256_id,
 };

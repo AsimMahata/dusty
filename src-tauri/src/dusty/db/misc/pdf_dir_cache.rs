@@ -1,4 +1,4 @@
-use crate::dusty::{data::pdf::PdfDir, logger::logger};
+use crate::dusty::{models::pdf::PdfDir, logger::logger};
 use rusqlite::{params, Connection};
 
 pub fn create_pdf_dir_cache_table(db: &Connection) -> Result<(), String> {

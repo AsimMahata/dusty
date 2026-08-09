@@ -4,7 +4,7 @@ use mime_guess::mime;
 use rusqlite::Connection;
 
 use crate::dusty::{
-    data::shows::{ShowResult, ShowType, Shows},
+    models::shows::{ShowResult, ShowType, Shows},
     engine::{
         cluster::cluster::cluster_files,
         shows::maker::{

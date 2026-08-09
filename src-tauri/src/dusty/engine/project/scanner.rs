@@ -4,7 +4,7 @@ use std::{
 };
 
 use crate::dusty::{
-    data::project::Project,
+    models::project::Project,
     engine::project::maker::make_project,
     utility::info::{
         get_all_valid_source_path, is_forbidden_folder, is_git_repo, is_hidden, is_root,

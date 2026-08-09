@@ -1,5 +1,5 @@
 use crate::dusty::{
-    data::file::FileInfo,
+    models::file::FileInfo,
     error::{DustyError, Result},
 };
 use rusqlite::{params, Connection};

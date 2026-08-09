@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use crate::dusty::{
-    data::project::{Project, Tag},
+    models::project::{Project, Tag},
     engine::project::tag_parser::scan_tags_from_readme,
     filesystem::read::list_raw,
 };

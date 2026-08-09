@@ -7,7 +7,7 @@ import { filterAndSortProjects } from '../actions/filter';
 import type { GitInfo, Project, ProjectStatus } from '../types/types';
 import type { SortOption } from '../types/types';
 
-import { getSortOptionProjectsPage, getDefaultSortOption, setSortOptionProjectsPage, getSortAscendingProjectsPage, getDefaultSortAscending, setSortAscendingProjectsPage } from '../session/sort';
+import { getSortOptionProjectsPage, getDefaultSortOption, setSortOptionProjectsPage, getSortAscendingProjectsPage, getDefaultSortAscending, setSortAscendingProjectsPage } from '../config/sort';
 
 export const useProject = () => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
@@ -16,7 +16,7 @@ export const useProject = () => {
     const [sortOption, setSortOptionState] = useState<SortOption>(getDefaultSortOption());
     const [sortAscending, setSortAscendingState] = useState<boolean>(getDefaultSortAscending());
 
-    async function fetchSessionData() {
+    async function fetchConfigData() {
         try {
             const option = await getSortOptionProjectsPage();
             setSortOptionState(option);
@@ -103,7 +103,7 @@ export const useProject = () => {
     };
 
     useEffect(() => {
-        fetchSessionData();
+        fetchConfigData();
         fetchData();
     }, []);
 

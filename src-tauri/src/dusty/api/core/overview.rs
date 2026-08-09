@@ -1,6 +1,6 @@
 use rusqlite::{params, Connection};
 
-use crate::dusty::{data::state::AppState, error::DustyError, logger::logger};
+use crate::dusty::{models::state::AppState, error::DustyError, logger::logger};
 
 #[derive(serde::Serialize)]
 pub struct Stats {

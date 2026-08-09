@@ -2,18 +2,16 @@ use rusqlite::Connection;
 use std::path::PathBuf;
 use tauri::Manager;
 
-use crate::dusty::data::state::AppState;
+use crate::dusty::models::state::AppState;
 use crate::dusty::db::media::create_media_table;
 use crate::dusty::db::misc::{
     create_empty_dir_cache_table, create_misc_cache_table, create_misc_dir_cache_table,
 };
 use crate::dusty::db::project::create_projects_table;
 use crate::dusty::db::recent::create_recent_ep_table;
-use crate::dusty::db::session::create_session_cache_table;
 use crate::dusty::db::show::create_show_cache_table;
 use crate::dusty::db::show::create_show_scan_cache_table;
 use crate::dusty::db::show::create_shows_table;
-use crate::dusty::db::user::create_user_table;
 use crate::dusty::error::{DustyError, Result as DustyResult};
 use crate::dusty::logger::logger;
 use crate::dusty::multithreading::{DbWorker, ThreadPool};
@@ -100,12 +98,6 @@ pub fn initialize_tables(conn: &Connection) -> DustyResult<Vec<String>> {
 
     create_recent_ep_table(conn)?;
     tables.push("recent_episodes".to_string());
-
-    create_session_cache_table(conn)?;
-    tables.push("session_cache".to_string());
-
-    create_user_table(conn)?;
-    tables.push("user".to_string());
 
     Ok(tables)
 }

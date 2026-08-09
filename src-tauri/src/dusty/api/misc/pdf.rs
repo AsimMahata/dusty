@@ -1,6 +1,6 @@
-use crate::dusty::data::file::FileInfo;
-use crate::dusty::data::pdf::PdfDir;
-use crate::dusty::data::state::AppState;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::pdf::PdfDir;
+use crate::dusty::models::state::AppState;
 use crate::dusty::db::misc::{add_or_update_pdf_cache, get_pdf_cache, reset_pdf_cache};
 use crate::dusty::db::misc::{get_pdf_dir_cache, reset_pdf_dir_cache, save_pdf_dir_cache};
 use crate::dusty::engine::dusty::pdf::list_pdfs;

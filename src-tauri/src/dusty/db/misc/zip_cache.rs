@@ -1,4 +1,4 @@
-use crate::dusty::{data::file::FileInfo, logger::logger};
+use crate::dusty::{models::file::FileInfo, logger::logger};
 use rusqlite::{params, Connection};
 
 pub fn create_zip_cache_table(db: &Connection) -> Result<(), String> {

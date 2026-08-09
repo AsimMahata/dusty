@@ -1,6 +1,6 @@
 use std::path::Path;
 use crate::dusty::{
-    data::shows::ShowResult,
+    models::shows::ShowResult,
     error::{DustyError, Result},
     utility::sha256_hash::get_sha256_id,
 };

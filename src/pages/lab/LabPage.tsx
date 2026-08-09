@@ -6,7 +6,7 @@ import { ApiConsole } from './components/console/ApiConsole';
 import { DatabaseViewer } from './components/database/DatabaseViewer';
 import { SystemInfoViewer } from './components/system/SystemInfoViewer';
 import { TokenizeTest } from './components/tokenizer/TokenizeTest';
-import { SessionInspector } from './components/session/SessionInspector';
+import { ConfigInspector } from './components/config/ConfigInspector';
 import { ThemeInspector } from './components/theme/ThemeInspector';
 import './css/Lab.css';
 import { useLab } from './hooks/useLab';
@@ -24,8 +24,8 @@ export const LabPage: React.FC = () => {
                 return <SystemInfoViewer />;
             case 'tokenizer':
                 return <TokenizeTest />;
-            case 'session':
-                return <SessionInspector />;
+            case 'config':
+                return <ConfigInspector />;
             case 'theme':
                 return <ThemeInspector />;
             default:

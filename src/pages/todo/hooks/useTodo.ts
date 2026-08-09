@@ -3,7 +3,7 @@ import { useCommon } from '../../../hooks/useCommon';
 import type { TodoItem, SortMethod, SortDirection } from '../types/types';
 import { fetchTodos, createTodo, updateTodo, deleteTodo } from '../actions/todoStorage';
 import { PRIORITY_LEVELS } from '../constants/constants';
-import { getSortMethodTodoPage, getDefaultSortMethod, setSortMethodTodoPage, getSortDirectionTodoPage, getDefaultSortDirection, setSortDirectionTodoPage } from '../session/sort';
+import { getSortMethodTodoPage, getDefaultSortMethod, setSortMethodTodoPage, getSortDirectionTodoPage, getDefaultSortDirection, setSortDirectionTodoPage } from '../config/sort';
 
 export const useTodo = () => {
     const common = useCommon();
@@ -12,7 +12,7 @@ export const useTodo = () => {
     const [sortMethod, setSortMethodState] = useState<SortMethod>(getDefaultSortMethod());
     const [sortDirection, setSortDirectionState] = useState<SortDirection>(getDefaultSortDirection());
 
-    async function fetchSessionData() {
+    async function fetchConfigData() {
         try {
             const method = await getSortMethodTodoPage();
             setSortMethodState(method);
@@ -52,7 +52,7 @@ export const useTodo = () => {
     };
 
     useEffect(() => {
-        fetchSessionData();
+        fetchConfigData();
         loadTodos();
     }, []);
 

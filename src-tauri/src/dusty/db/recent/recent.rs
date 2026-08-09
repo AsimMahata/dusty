@@ -1,6 +1,6 @@
 use rusqlite::Connection;
 use crate::dusty::{
-    data::{file::FileInfo, shows::ShowResult},
+    models::{file::FileInfo, shows::ShowResult},
     error::{DustyError, Result},
 };
 

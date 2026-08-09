@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use crate::dusty::{
-    data::file::FileInfo,
+    models::file::FileInfo,
     filesystem::scan::{list_children, ScanOptions},
     utility::info::{get_all_valid_source_path, is_root},
 };

@@ -1,4 +1,4 @@
-use crate::dusty::{data::exe::ExecutableDir, logger::logger};
+use crate::dusty::{models::exe::ExecutableDir, logger::logger};
 use rusqlite::{params, Connection};
 
 pub fn create_exe_dir_cache_table(db: &Connection) -> Result<(), String> {

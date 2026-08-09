@@ -8,7 +8,7 @@ import { ExeSortBar } from './ExeSortBar'; // Reusable sort bar
 import type { useMisc } from '../../hooks/useMisc';
 import type { Chunk, BazarAction } from '../../../../components/bazar/types/types';
 import type { MiscDir, MiscSortMode } from '../../types/types';
-import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../session/sort';
+import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../config/sort';
 import { useOfficeTab } from '../../hooks/useOfficeTab';
 
 interface OfficeFilesTabProps {
@@ -35,7 +35,7 @@ export const OfficeFilesTab: React.FC<OfficeFilesTabProps> = ({ misc }) => {
     const tab = useOfficeTab(misc);
     const [sortMode, setSortModeState] = useState<MiscSortMode>(getDefaultSortMode());
 
-    async function fetchSessionData() {
+    async function fetchConfigData() {
         try {
             const mode = await getSortModeMiscPage();
             setSortModeState(mode);
@@ -43,7 +43,7 @@ export const OfficeFilesTab: React.FC<OfficeFilesTabProps> = ({ misc }) => {
     }
 
     useEffect(() => {
-        fetchSessionData();
+        fetchConfigData();
     }, []);
 
     const setSortMode = (mode: MiscSortMode) => {

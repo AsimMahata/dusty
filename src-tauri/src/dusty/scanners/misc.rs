@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use crate::dusty::{
-    data::{file::FileInfo, misc_dir::MiscDir},
+    models::{file::FileInfo, misc_dir::MiscDir},
     engine::dusty::misc::is_misc_file,
     filesystem::scan::{list_children, ScanOptions},
 };

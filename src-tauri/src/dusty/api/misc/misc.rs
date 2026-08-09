@@ -1,6 +1,6 @@
-use crate::dusty::data::misc_dir::MiscDir;
-use crate::dusty::data::file::FileInfo;
-use crate::dusty::data::state::AppState;
+use crate::dusty::models::misc_dir::MiscDir;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::state::AppState;
 use crate::dusty::db::misc::{add_or_update_misc_cache, get_misc_cache, reset_misc_cache};
 use crate::dusty::db::misc::{get_misc_dir_cache, reset_misc_dir_cache, save_misc_dir_cache};
 use crate::dusty::engine::dusty::misc::list_misc_files;

@@ -1,5 +1,5 @@
 use crate::dusty::{
-    data::{media::MediaDir, state::AppState},
+    models::{media::MediaDir, state::AppState},
     db::media::{
         get_media_from_db, reset_media_cache_table_in_db, save_media_to_db, sync_media_to_db,
     },

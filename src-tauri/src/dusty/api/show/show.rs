@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use crate::dusty::data::{shows::ShowResult, state::AppState};
+use crate::dusty::models::{shows::ShowResult, state::AppState};
 use crate::dusty::db::show::{
     add_scan_to_cache, add_shows_in_db, get_from_show_cache_in_db,
     get_scan_from_cache, get_show_info, rename_show_in_db, reset_show_cache_table_in_db,

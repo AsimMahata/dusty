@@ -1,4 +1,4 @@
-use crate::dusty::data::state::AppState;
+use crate::dusty::models::state::AppState;
 use crate::dusty::db::core::initialize_tables;
 use crate::dusty::error::DustyError;
 use crate::dusty::logger::logger;

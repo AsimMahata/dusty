@@ -3,7 +3,7 @@ use mime_guess::mime::Name;
 use std::path::PathBuf;
 
 use crate::dusty::{
-    data::{file::FileInfo, media::MediaDir},
+    models::{file::FileInfo, media::MediaDir},
     filesystem::scan::{list_children, ScanOptions},
     utility::info::get_file_type,
 };

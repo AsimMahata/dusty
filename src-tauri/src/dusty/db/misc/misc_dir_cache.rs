@@ -1,5 +1,5 @@
 use crate::dusty::{
-    data::misc_dir::MiscDir,
+    models::misc_dir::MiscDir,
     error::{DustyError, Result},
 };
 use rusqlite::{params, Connection};
