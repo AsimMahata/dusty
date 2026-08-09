@@ -37,5 +37,6 @@ which = "8.0.5"
 tauri-plugin-pty = "0.3.1"
 uuid = { version = "1.10.0", features = ["v4", "serde"] }
 rfd = "0.15"
+tokio = { version = "1", features = ["sync"] }
 
 

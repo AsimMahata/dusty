@@ -15,22 +15,20 @@ pub struct Stats {
 }
 
 #[tauri::command]
-pub fn get_stats(state: tauri::State<AppState>) -> Result<Stats, String> {
-    let db = state.db.lock().map_err(|_| {
-        let err = DustyError::lock("get_stats");
-        logger::error!("DB_LOCK_FAILED", err.log_details());
-        err.to_user_message()
-    })?;
-    Ok(Stats {
-        shows: get_show_stats(&db),
-        projects: get_project_stats(&db),
-        songs: get_song_stats(&db),
-        videos: get_video_stats(&db),
-        images: get_image_stats(&db),
-        zips: get_zip_stats(&db),
-        pdfs: get_pdf_stats(&db),
-        empty_dir: get_empty_dir_stats(&db),
-    })
+pub async fn get_stats(state: tauri::State<'_, AppState>) -> Result<Stats, String> {
+    state
+        .db_worker
+        .run(|db| Stats {
+            shows: get_show_stats(db),
+            projects: get_project_stats(db),
+            songs: get_song_stats(db),
+            videos: get_video_stats(db),
+            images: get_image_stats(db),
+            zips: get_zip_stats(db),
+            pdfs: get_pdf_stats(db),
+            empty_dir: get_empty_dir_stats(db),
+        })
+        .await
 }
 
 pub fn get_show_stats(db: &Connection) -> Option<usize> {

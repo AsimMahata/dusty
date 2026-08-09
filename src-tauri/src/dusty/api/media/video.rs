@@ -8,33 +8,49 @@ use crate::dusty::utility::sha256_hash::get_sha256_id;
 use mime_guess::mime;
 use rusqlite::{params, Connection};
 use std::path::PathBuf;
+use std::sync::{Arc, Mutex};
+
+use crate::dusty::multithreading::DbWorker;
 
 #[tauri::command]
-pub fn scan_video(state: tauri::State<AppState>, path: String) -> Vec<FileInfo> {
-    scan_video_using_cache(&state, &path, true)
+pub async fn scan_video(
+    state: tauri::State<'_, AppState>,
+    path: String,
+) -> Result<Vec<FileInfo>, String> {
+    let db_worker = state.db_worker.clone();
+    state
+        .thread_pool
+        .execute_with_result("scan_video", move || {
+            scan_video_using_cache(&db_worker, &path, true)
+        })
+        .await
 }
 
 #[tauri::command]
-pub fn sync_scan_video(state: tauri::State<AppState>, path: String) -> Vec<FileInfo> {
-    scan_video_using_cache(&state, &path, false)
+pub async fn sync_scan_video(
+    state: tauri::State<'_, AppState>,
+    path: String,
+) -> Result<Vec<FileInfo>, String> {
+    let db_worker = state.db_worker.clone();
+    state
+        .thread_pool
+        .execute_with_result("sync_scan_video", move || {
+            scan_video_using_cache(&db_worker, &path, false)
+        })
+        .await
 }
 
 pub fn scan_video_using_cache(
-    state: &tauri::State<AppState>,
+    db_worker: &DbWorker,
     path: &String,
     cache: bool,
 ) -> Vec<FileInfo> {
     let root = PathBuf::from(&path);
-    let db = match state.db.lock() {
-        Ok(guard) => guard,
-        Err(_) => {
-            let err = DustyError::lock("scan_video_using_cache");
-            logger::error!("DB_LOCK_FAILED", err.log_details());
-            return Vec::new();
-        }
-    };
     if cache {
-        if let Ok(Some(cached_videos)) = get_cached_videos_from_media_cache_db(&db, path) {
+        let path_clone = path.clone();
+        if let Ok(Ok(Some(cached_videos))) = db_worker.run_sync(move |conn| {
+            get_cached_videos_from_media_cache_db(conn, &path_clone)
+        }) {
             logger::info!("VIDEO_CACHE_LOADED", cached_videos.len());
             if !cached_videos.is_empty() {
                 logger::info!("VIDEO_CACHE_NOT_EMPTY", cached_videos.len());
@@ -43,6 +59,7 @@ pub fn scan_video_using_cache(
             logger::info!("VIDEO_CACHE_IS_EMPTY", cached_videos.len());
         }
     }
+
     let mut list = Vec::new();
     dfs_file_of_type(&root, mime::VIDEO, &mut list, is_root(&root));
     logger::info!("media found", list.len());
@@ -52,9 +69,13 @@ pub fn scan_video_using_cache(
         .filter_map(|p| FileInfo::from_pathbuf(&p).ok())
         .collect();
 
-    if let Err(err) = add_videos_in_media_cache_table(&db, path, &file_info_list) {
-        logger::warning!("ADD_VIDEOS_IN_CACHE_ERROR", err.log_details());
-    }
+    let path_clone = path.clone();
+    let file_info_clone = file_info_list.clone();
+    let _ = db_worker.run_sync(move |conn| {
+        if let Err(err) = add_videos_in_media_cache_table(conn, &path_clone, &file_info_clone) {
+            logger::warning!("ADD_VIDEOS_IN_CACHE_ERROR", err.log_details());
+        }
+    });
 
     file_info_list
 }

@@ -1,5 +1,5 @@
 pub mod dusty;
-use crate::dusty::db::core::init_db_and_os;
+use crate::dusty::db::core::initialize_dusty;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -101,11 +101,10 @@ pub fn run() {
             dusty::api::user::get_device_info,
             dusty::api::user::select_avatar_file,
             dusty::api::user::upload_avatar_from_path,
+            dusty::api::core::page_changed,
         ])
-
-
         .setup(|app| {
-            init_db_and_os(app)?;
+            initialize_dusty(app)?;
             Ok(())
         })
         .run(tauri::generate_context!())

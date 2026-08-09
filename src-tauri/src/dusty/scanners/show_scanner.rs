@@ -69,7 +69,7 @@ pub fn get_all_linked_shows(db: &Connection) -> DustyResult<Vec<TitleInfo>> {
 }
 
 pub fn scan_for_shows_using_available_show_titles(
-    db: &Connection,
+    titles: &Vec<TitleInfo>,
     root: &PathBuf,
 ) -> Vec<ShowResult> {
     let mut videos: Vec<PathBuf> = Vec::new();
@@ -77,10 +77,8 @@ pub fn scan_for_shows_using_available_show_titles(
 
     let mut done: Vec<bool> = vec![false; videos.len()];
 
-    let titles: Vec<TitleInfo> = get_all_linked_shows(db).unwrap_or_default();
-
     let mut shows: Vec<ShowResult> = Vec::new();
-    make_shows_with_available_titles(&videos, &titles, &mut done, &mut shows);
+    make_shows_with_available_titles(&videos, titles, &mut done, &mut shows);
 
     let mut leftovers: Vec<PathBuf> = Vec::new();
     for (i, video) in videos.iter().enumerate() {

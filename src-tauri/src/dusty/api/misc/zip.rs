@@ -7,49 +7,44 @@ use crate::dusty::engine::dusty::zip::list_large_zip_files;
 use crate::dusty::logger::logger;
 use crate::dusty::scanners::zip::dfs_zip_dir_scanner;
 use crate::dusty::utility::info::{get_all_valid_source_path, is_root};
-use rusqlite::Connection;
 
-pub fn scan_zip_using_cache(db: &Connection, use_cache: bool) -> Vec<FileInfo> {
+
+use crate::dusty::multithreading::DbWorker;
+
+pub fn scan_zip_using_cache(db_worker: &DbWorker, use_cache: bool) -> Vec<FileInfo> {
     if use_cache {
-        match get_zip_cache(db) {
-            Ok(cached_files) => {
-                if !cached_files.is_empty() {
-                    logger::debug!("scanned zip files from cache:", cached_files.len());
-                    return cached_files;
-                }
-            }
-            Err(err) => {
-                logger::error!("GET_ZIP_CACHE_FAILED", err);
+        if let Ok(Ok(cached_files)) = db_worker.run_sync(|conn| get_zip_cache(conn)) {
+            if !cached_files.is_empty() {
+                logger::debug!("scanned zip files from cache:", cached_files.len());
+                return cached_files;
             }
         }
     }
 
     let files = list_large_zip_files();
     
-    if let Err(err) = reset_zip_cache(db) {
-        logger::error!("RESET_ZIP_CACHE_FAILED", err);
-    }
-    
-    for file in &files {
-        if let Err(err) = add_or_update_zip_cache(db, file) {
-            logger::error!("ADD_ZIP_CACHE_FAILED", err);
+    let files_clone = files.clone();
+    let _ = db_worker.run_sync(move |conn| {
+        if let Err(err) = reset_zip_cache(conn) {
+            logger::error!("RESET_ZIP_CACHE_FAILED", err.to_string());
         }
-    }
+        
+        for file in &files_clone {
+            if let Err(err) = add_or_update_zip_cache(conn, file) {
+                logger::error!("ADD_ZIP_CACHE_FAILED", err.to_string());
+            }
+        }
+    });
     
     files
 }
 
-pub fn scan_zip_tree_using_cache(db: &Connection, use_cache: bool) -> Vec<ZipDir> {
+pub fn scan_zip_tree_using_cache(db_worker: &DbWorker, use_cache: bool) -> Vec<ZipDir> {
     if use_cache {
-        match get_zip_dir_cache(db) {
-            Ok(cached_dirs) => {
-                if !cached_dirs.is_empty() {
-                    logger::debug!("scanned zip tree from cache:", cached_dirs.len());
-                    return cached_dirs;
-                }
-            }
-            Err(err) => {
-                logger::error!("GET_ZIP_DIR_CACHE_FAILED", err);
+        if let Ok(Ok(cached_dirs)) = db_worker.run_sync(|conn| get_zip_dir_cache(conn)) {
+            if !cached_dirs.is_empty() {
+                logger::debug!("scanned zip tree from cache:", cached_dirs.len());
+                return cached_dirs;
             }
         }
     }
@@ -59,56 +54,55 @@ pub fn scan_zip_tree_using_cache(db: &Connection, use_cache: bool) -> Vec<ZipDir
         dfs_zip_dir_scanner(&root, &mut zip_dirs, is_root(&root));
     }
 
-    reset_zip_dir_cache(db).ok();
-    save_zip_dir_cache(db, &zip_dirs).ok();
+    let zip_dirs_clone = zip_dirs.clone();
+    let _ = db_worker.run_sync(move |conn| {
+        reset_zip_dir_cache(conn).ok();
+        save_zip_dir_cache(conn, &zip_dirs_clone).ok();
+    });
 
     zip_dirs
 }
 
 #[tauri::command]
-pub fn scan_zip(state: tauri::State<AppState>) -> Vec<FileInfo> {
-    let db = match state.db.lock() {
-        Ok(guard) => guard,
-        Err(err) => {
-            logger::error!("DB_LOCK_FAILED", err.to_string());
-            return Vec::new();
-        }
-    };
-    scan_zip_using_cache(&db, true)
+pub async fn scan_zip(state: tauri::State<'_, AppState>) -> Result<Vec<FileInfo>, String> {
+    let db_worker = state.db_worker.clone();
+    state
+        .thread_pool
+        .execute_with_result("scan_zip", move || {
+            scan_zip_using_cache(&db_worker, true)
+        })
+        .await
 }
 
 #[tauri::command]
-pub fn sync_scan_zip(state: tauri::State<AppState>) -> Vec<FileInfo> {
-    let db = match state.db.lock() {
-        Ok(guard) => guard,
-        Err(err) => {
-            logger::error!("DB_LOCK_FAILED", err.to_string());
-            return Vec::new();
-        }
-    };
-    scan_zip_using_cache(&db, false)
+pub async fn sync_scan_zip(state: tauri::State<'_, AppState>) -> Result<Vec<FileInfo>, String> {
+    let db_worker = state.db_worker.clone();
+    state
+        .thread_pool
+        .execute_with_result("sync_scan_zip", move || {
+            scan_zip_using_cache(&db_worker, false)
+        })
+        .await
 }
 
 #[tauri::command]
-pub fn scan_zip_tree(state: tauri::State<AppState>) -> Vec<ZipDir> {
-    let db = match state.db.lock() {
-        Ok(guard) => guard,
-        Err(err) => {
-            logger::error!("DB_LOCK_FAILED", err.to_string());
-            return Vec::new();
-        }
-    };
-    scan_zip_tree_using_cache(&db, true)
+pub async fn scan_zip_tree(state: tauri::State<'_, AppState>) -> Result<Vec<ZipDir>, String> {
+    let db_worker = state.db_worker.clone();
+    state
+        .thread_pool
+        .execute_with_result("scan_zip_tree", move || {
+            scan_zip_tree_using_cache(&db_worker, true)
+        })
+        .await
 }
 
 #[tauri::command]
-pub fn sync_scan_zip_tree(state: tauri::State<AppState>) -> Vec<ZipDir> {
-    let db = match state.db.lock() {
-        Ok(guard) => guard,
-        Err(err) => {
-            logger::error!("DB_LOCK_FAILED", err.to_string());
-            return Vec::new();
-        }
-    };
-    scan_zip_tree_using_cache(&db, false)
+pub async fn sync_scan_zip_tree(state: tauri::State<'_, AppState>) -> Result<Vec<ZipDir>, String> {
+    let db_worker = state.db_worker.clone();
+    state
+        .thread_pool
+        .execute_with_result("sync_scan_zip_tree", move || {
+            scan_zip_tree_using_cache(&db_worker, false)
+        })
+        .await
 }

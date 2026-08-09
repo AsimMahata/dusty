@@ -288,7 +288,7 @@ impl std::fmt::Display for Framework {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Project {
     pub id: String,
     pub title: String,

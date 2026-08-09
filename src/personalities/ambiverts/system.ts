@@ -7,6 +7,7 @@ dusty::api::system::get_system_info,
 */
 
 const CMD_GET_SYSTEM_INFO = 'get_system_info';
+const CMD_PAGE_CHANGED = 'page_changed';
 
 export async function getSystemInfoIPC(): Promise<SystemInfoData> {
     try {
@@ -17,3 +18,12 @@ export async function getSystemInfoIPC(): Promise<SystemInfoData> {
         return null as any;
     }
 }
+
+export async function notifyPageChangedIPC(): Promise<void> {
+    try {
+        await invoke(CMD_PAGE_CHANGED);
+    } catch (error) {
+        logger.error(`notifyPageChangedIPC error: ${error}`);
+    }
+}
+

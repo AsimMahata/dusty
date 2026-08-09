@@ -18,9 +18,6 @@ import { TerminalPage } from "./pages/terminal/TerminalPage";
 import { UserPage } from "./pages/user/UserPage";
 import { ShadowElements } from "./components/ui/ShadowElements";
 
-
-
-
 function App() {
     return (
         <div className="app-container">

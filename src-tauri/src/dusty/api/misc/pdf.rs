@@ -7,49 +7,44 @@ use crate::dusty::engine::dusty::pdf::list_pdfs;
 use crate::dusty::logger::logger;
 use crate::dusty::scanners::pdf::dfs_pdf_dir_scanner;
 use crate::dusty::utility::info::{get_all_valid_source_path, is_root};
-use rusqlite::Connection;
 
-pub fn scan_pdf_using_cache(db: &Connection, use_cache: bool) -> Vec<FileInfo> {
+
+use crate::dusty::multithreading::DbWorker;
+
+pub fn scan_pdf_using_cache(db_worker: &DbWorker, use_cache: bool) -> Vec<FileInfo> {
     if use_cache {
-        match get_pdf_cache(db) {
-            Ok(cached_files) => {
-                if !cached_files.is_empty() {
-                    logger::debug!("scanned pdf files from cache:", cached_files.len());
-                    return cached_files;
-                }
-            }
-            Err(err) => {
-                logger::error!("GET_PDF_CACHE_FAILED", err);
+        if let Ok(Ok(cached_files)) = db_worker.run_sync(|conn| get_pdf_cache(conn)) {
+            if !cached_files.is_empty() {
+                logger::debug!("scanned pdf files from cache:", cached_files.len());
+                return cached_files;
             }
         }
     }
 
     let files = list_pdfs();
     
-    if let Err(err) = reset_pdf_cache(db) {
-        logger::error!("RESET_PDF_CACHE_FAILED", err);
-    }
-    
-    for file in &files {
-        if let Err(err) = add_or_update_pdf_cache(db, file) {
-            logger::error!("ADD_PDF_CACHE_FAILED", err);
+    let files_clone = files.clone();
+    let _ = db_worker.run_sync(move |conn| {
+        if let Err(err) = reset_pdf_cache(conn) {
+            logger::error!("RESET_PDF_CACHE_FAILED", err.to_string());
         }
-    }
+        
+        for file in &files_clone {
+            if let Err(err) = add_or_update_pdf_cache(conn, file) {
+                logger::error!("ADD_PDF_CACHE_FAILED", err.to_string());
+            }
+        }
+    });
     
     files
 }
 
-pub fn scan_pdf_tree_using_cache(db: &Connection, use_cache: bool) -> Vec<PdfDir> {
+pub fn scan_pdf_tree_using_cache(db_worker: &DbWorker, use_cache: bool) -> Vec<PdfDir> {
     if use_cache {
-        match get_pdf_dir_cache(db) {
-            Ok(cached_dirs) => {
-                if !cached_dirs.is_empty() {
-                    logger::debug!("scanned pdf tree from cache:", cached_dirs.len());
-                    return cached_dirs;
-                }
-            }
-            Err(err) => {
-                logger::error!("GET_PDF_DIR_CACHE_FAILED", err);
+        if let Ok(Ok(cached_dirs)) = db_worker.run_sync(|conn| get_pdf_dir_cache(conn)) {
+            if !cached_dirs.is_empty() {
+                logger::debug!("scanned pdf tree from cache:", cached_dirs.len());
+                return cached_dirs;
             }
         }
     }
@@ -59,56 +54,55 @@ pub fn scan_pdf_tree_using_cache(db: &Connection, use_cache: bool) -> Vec<PdfDir
         dfs_pdf_dir_scanner(&root, &mut pdf_dirs, is_root(&root));
     }
 
-    reset_pdf_dir_cache(db).ok();
-    save_pdf_dir_cache(db, &pdf_dirs).ok();
+    let pdf_dirs_clone = pdf_dirs.clone();
+    let _ = db_worker.run_sync(move |conn| {
+        reset_pdf_dir_cache(conn).ok();
+        save_pdf_dir_cache(conn, &pdf_dirs_clone).ok();
+    });
 
     pdf_dirs
 }
 
 #[tauri::command]
-pub fn scan_pdf(state: tauri::State<AppState>) -> Vec<FileInfo> {
-    let db = match state.db.lock() {
-        Ok(guard) => guard,
-        Err(err) => {
-            logger::error!("DB_LOCK_FAILED", err.to_string());
-            return Vec::new();
-        }
-    };
-    scan_pdf_using_cache(&db, true)
+pub async fn scan_pdf(state: tauri::State<'_, AppState>) -> Result<Vec<FileInfo>, String> {
+    let db_worker = state.db_worker.clone();
+    state
+        .thread_pool
+        .execute_with_result("scan_pdf", move || {
+            scan_pdf_using_cache(&db_worker, true)
+        })
+        .await
 }
 
 #[tauri::command]
-pub fn sync_scan_pdf(state: tauri::State<AppState>) -> Vec<FileInfo> {
-    let db = match state.db.lock() {
-        Ok(guard) => guard,
-        Err(err) => {
-            logger::error!("DB_LOCK_FAILED", err.to_string());
-            return Vec::new();
-        }
-    };
-    scan_pdf_using_cache(&db, false)
+pub async fn sync_scan_pdf(state: tauri::State<'_, AppState>) -> Result<Vec<FileInfo>, String> {
+    let db_worker = state.db_worker.clone();
+    state
+        .thread_pool
+        .execute_with_result("sync_scan_pdf", move || {
+            scan_pdf_using_cache(&db_worker, false)
+        })
+        .await
 }
 
 #[tauri::command]
-pub fn scan_pdf_tree(state: tauri::State<AppState>) -> Vec<PdfDir> {
-    let db = match state.db.lock() {
-        Ok(guard) => guard,
-        Err(err) => {
-            logger::error!("DB_LOCK_FAILED", err.to_string());
-            return Vec::new();
-        }
-    };
-    scan_pdf_tree_using_cache(&db, true)
+pub async fn scan_pdf_tree(state: tauri::State<'_, AppState>) -> Result<Vec<PdfDir>, String> {
+    let db_worker = state.db_worker.clone();
+    state
+        .thread_pool
+        .execute_with_result("scan_pdf_tree", move || {
+            scan_pdf_tree_using_cache(&db_worker, true)
+        })
+        .await
 }
 
 #[tauri::command]
-pub fn sync_scan_pdf_tree(state: tauri::State<AppState>) -> Vec<PdfDir> {
-    let db = match state.db.lock() {
-        Ok(guard) => guard,
-        Err(err) => {
-            logger::error!("DB_LOCK_FAILED", err.to_string());
-            return Vec::new();
-        }
-    };
-    scan_pdf_tree_using_cache(&db, false)
+pub async fn sync_scan_pdf_tree(state: tauri::State<'_, AppState>) -> Result<Vec<PdfDir>, String> {
+    let db_worker = state.db_worker.clone();
+    state
+        .thread_pool
+        .execute_with_result("sync_scan_pdf_tree", move || {
+            scan_pdf_tree_using_cache(&db_worker, false)
+        })
+        .await
 }

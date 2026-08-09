@@ -1,5 +1,4 @@
 use rusqlite::Connection;
-
 use crate::dusty::data::project::{Project, Tag};
 use crate::dusty::data::state::AppState;
 use crate::dusty::db::project::{
@@ -9,7 +8,6 @@ use crate::dusty::db::project::{
 };
 use crate::dusty::engine::project::scanner::scan_all_projects;
 use crate::dusty::engine::project::tag_scanner::scan_tags;
-use crate::dusty::error::DustyError;
 use crate::dusty::logger::logger;
 
 pub fn sanitize_projects(db: &Connection, projects: Vec<Project>) -> Vec<Project> {
@@ -28,131 +26,145 @@ pub fn sanitize_projects(db: &Connection, projects: Vec<Project>) -> Vec<Project
         .collect()
 }
 
-pub fn scan_projects_using_cache(db: &Connection, cache: bool) -> Vec<Project> {
+use crate::dusty::multithreading::DbWorker;
+
+pub fn scan_projects_using_cache(db_worker: &DbWorker, cache: bool) -> Vec<Project> {
     if cache {
-        let cached_project = match get_project_cache_from_db(db) {
-            Ok(cached_projects) => cached_projects,
-            Err(err) => {
-                logger::error!("PROJECT_CACHE_FROM_DB_ERROR", err.log_details());
-                Vec::new()
+        if let Ok(Ok(cached_projects)) = db_worker.run_sync(|conn| get_project_cache_from_db(conn)) {
+            logger::info!("PROJECT_CACHE_LOADED", cached_projects.len());
+            if !cached_projects.is_empty() {
+                logger::info!("PROJECT_CACHE_NOT_EMPTY", cached_projects.len());
+                if let Ok(sanitized) = db_worker.run_sync(|conn| sanitize_projects(conn, cached_projects)) {
+                    return sanitized;
+                }
             }
-        };
-        logger::info!("PROJECT_CACHE_LOADED", cached_project.len());
-        if !cached_project.is_empty() {
-            logger::info!("PROJECT_CACHE_NOT_EMPTY", cached_project.len());
-            return sanitize_projects(&db, cached_project);
+            logger::info!("PROJECT_CACHE_IS_EMPTY", 0);
         }
-        logger::info!("PROJECT_CACHE_IS_EMPTY", cached_project.len());
     }
     
-    if let Err(err) = clear_project_cache(db) {
-        logger::error!("CLEAR_PROJECT_CACHE_FAILED", err.log_details());
-    }
+    let _ = db_worker.run_sync(|conn| {
+        if let Err(err) = clear_project_cache(conn) {
+            logger::error!("CLEAR_PROJECT_CACHE_FAILED", err.log_details());
+        }
+    });
     logger::info!("PROJECT_CACHE_CLEARED", "PROJECT_CACHE_CLEARED");
+
     let projects = scan_all_projects();
     logger::info!("PROJECTS_SCANNED", projects.len());
-    if let Err(err) = add_projects_in_db(&db, &projects) {
-        logger::error!("ADD_PROJECTS_IN_DB_FAILED", err.log_details());
+
+    let projects_to_save = projects.clone();
+    if let Ok(sanitized) = db_worker.run_sync(move |conn| {
+        if let Err(err) = add_projects_in_db(conn, &projects_to_save) {
+            logger::error!("ADD_PROJECTS_IN_DB_FAILED", err.log_details());
+        }
+        sanitize_projects(conn, projects_to_save)
+    }) {
+        return sanitized;
     }
-    sanitize_projects(&db, projects)
+
+    projects
 }
 
 #[tauri::command]
-pub fn sync_scan_projects(state: tauri::State<AppState>) -> Vec<Project> {
-    let db = match state.db.lock() {
-        Ok(guard) => guard,
-        Err(_) => {
-            let err = DustyError::lock("sync_scan_projects");
-            logger::error!("DB_LOCK_FAILED", err.log_details());
-            return Vec::new();
-        }
-    };
-    scan_projects_using_cache(&db, false)
+pub async fn sync_scan_projects(
+    state: tauri::State<'_, AppState>,
+) -> Result<Vec<Project>, String> {
+    let db_worker = state.db_worker.clone();
+    state
+        .thread_pool
+        .execute_with_result("sync_scan_projects", move || {
+            scan_projects_using_cache(&db_worker, false)
+        })
+        .await
 }
 
 #[tauri::command]
-pub fn scan_projects(state: tauri::State<AppState>) -> Vec<Project> {
-    let db = match state.db.lock() {
-        Ok(guard) => guard,
-        Err(_) => {
-            let err = DustyError::lock("scan_projects");
-            logger::error!("DB_LOCK_FAILED", err.log_details());
-            return Vec::new();
-        }
-    };
-    scan_projects_using_cache(&db, true)
+pub async fn scan_projects(
+    state: tauri::State<'_, AppState>,
+) -> Result<Vec<Project>, String> {
+    let db_worker = state.db_worker.clone();
+    state
+        .thread_pool
+        .execute_with_result("scan_projects", move || {
+            scan_projects_using_cache(&db_worker, true)
+        })
+        .await
 }
 
 #[tauri::command]
-pub fn update_project_pin_status(
-    state: tauri::State<AppState>,
+pub async fn update_project_pin_status(
+    state: tauri::State<'_, AppState>,
     id: String,
     pinned: bool,
 ) -> Result<(), String> {
-    let db = state.db.lock().map_err(|_| {
-        let err = DustyError::lock("update_project_pin_status");
-        logger::error!("DB_LOCK_FAILED", err.log_details());
-        err.to_user_message()
-    })?;
-    update_project_pin_status_in_db(&db, &id, pinned).map_err(|err| {
-        logger::error!("UPDATE_PROJECT_PIN_STATUS_FAILED", err.log_details());
-        err.to_user_message()
-    })?;
-    logger::info!("UPDATE_PROJECT_PIN_STATUS_SUCCESS", id, pinned);
-    Ok(())
+    state
+        .db_worker
+        .run(move |conn| {
+            update_project_pin_status_in_db(conn, &id, pinned).map_err(|err| {
+                logger::error!("UPDATE_PROJECT_PIN_STATUS_FAILED", err.log_details());
+                err.to_user_message()
+            })?;
+            logger::info!("UPDATE_PROJECT_PIN_STATUS_SUCCESS", id, pinned);
+            Ok(())
+        })
+        .await
+        .map_err(|e| e)?
 }
 
 #[tauri::command]
-pub fn update_project_status(
-    state: tauri::State<AppState>,
+pub async fn update_project_status(
+    state: tauri::State<'_, AppState>,
     id: String,
     status: String,
 ) -> Result<(), String> {
-    let db = state.db.lock().map_err(|_| {
-        let err = DustyError::lock("update_project_status");
-        logger::error!("DB_LOCK_FAILED", err.log_details());
-        err.to_user_message()
-    })?;
-    update_project_status_in_db(&db, &id, &status).map_err(|err| {
-        logger::error!("UPDATE_PROJECT_STATUS_FAILED", err.log_details());
-        err.to_user_message()
-    })?;
-    logger::info!("UPDATE_PROJECT_STATUS_SUCCESS", id, status);
-    Ok(())
+    state
+        .db_worker
+        .run(move |conn| {
+            update_project_status_in_db(conn, &id, &status).map_err(|err| {
+                logger::error!("UPDATE_PROJECT_STATUS_FAILED", err.log_details());
+                err.to_user_message()
+            })?;
+            logger::info!("UPDATE_PROJECT_STATUS_SUCCESS", id, status);
+            Ok(())
+        })
+        .await
+        .map_err(|e| e)?
 }
 
 #[tauri::command]
-pub fn update_project_tags(
-    state: tauri::State<AppState>,
+pub async fn update_project_tags(
+    state: tauri::State<'_, AppState>,
     id: String,
     tags: Vec<String>,
 ) -> Result<(), String> {
-    let db = state.db.lock().map_err(|_| {
-        let err = DustyError::lock("update_project_tags");
-        logger::error!("DB_LOCK_FAILED", err.log_details());
-        err.to_user_message()
-    })?;
-    let tags = tags
-        .iter()
-        .filter_map(|tag| Tag::from_string(tag))
-        .collect();
-    update_project_tags_in_db(&db, &id, &tags).map_err(|err| {
-        logger::error!("UPDATE_PROJECT_TAGS_FAILED", err.log_details());
-        err.to_user_message()
-    })
+    state
+        .db_worker
+        .run(move |conn| {
+            let tags = tags
+                .iter()
+                .filter_map(|tag| Tag::from_string(tag))
+                .collect();
+            update_project_tags_in_db(conn, &id, &tags).map_err(|err| {
+                logger::error!("UPDATE_PROJECT_TAGS_FAILED", err.log_details());
+                err.to_user_message()
+            })
+        })
+        .await
+        .map_err(|e| e)?
 }
 
 #[tauri::command]
-pub fn reset_project_table(state: tauri::State<AppState>) -> Result<(), String> {
-    let db = state.db.lock().map_err(|_| {
-        let err = DustyError::lock("reset_project_table");
-        logger::error!("DB_LOCK_FAILED", err.log_details());
-        err.to_user_message()
-    })?;
-    reset_project_table_in_db(&db).map_err(|err| {
-        logger::error!("RESET_PROJECT_TABLE_FAILED", err.log_details());
-        err.to_user_message()
-    })
+pub async fn reset_project_table(state: tauri::State<'_, AppState>) -> Result<(), String> {
+    state
+        .db_worker
+        .run(|conn| {
+            reset_project_table_in_db(conn).map_err(|err| {
+                logger::error!("RESET_PROJECT_TABLE_FAILED", err.log_details());
+                err.to_user_message()
+            })
+        })
+        .await
+        .map_err(|e| e)?
 }
 
 #[tauri::command]

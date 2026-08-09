@@ -1,5 +1,5 @@
-use std::sync::Mutex;
 use rusqlite::Connection;
+use std::path::PathBuf;
 use tauri::Manager;
 
 use crate::dusty::data::state::AppState;
@@ -16,38 +16,55 @@ use crate::dusty::db::show::create_shows_table;
 use crate::dusty::db::user::create_user_table;
 use crate::dusty::error::{DustyError, Result as DustyResult};
 use crate::dusty::logger::logger;
+use crate::dusty::multithreading::{DbWorker, ThreadPool};
+use std::sync::{atomic::AtomicU64, Arc};
 
-pub fn init_db_and_os(app: &mut tauri::App) -> Result<(), String> {
+fn init_fs_related_task(app: &mut tauri::App) -> DustyResult<PathBuf> {
     let app_data_dir = app.path().app_local_data_dir().map_err(|e| {
-        let err = DustyError::io_op("get_app_local_data_dir", std::io::Error::new(std::io::ErrorKind::Other, e.to_string()));
+        let err = DustyError::io_op(
+            "get_app_local_data_dir",
+            std::io::Error::new(std::io::ErrorKind::Other, e.to_string()),
+        );
         logger::error!("INIT_DB_AND_OS_FAILED", err.log_details());
-        err.to_user_message()
+        err
     })?;
     let db_dir = app_data_dir.join("database");
     std::fs::create_dir_all(&db_dir).map_err(|e| {
         let err = DustyError::io("create_db_directory", &db_dir, e);
         logger::error!("INIT_DB_AND_OS_FAILED", err.log_details());
-        err.to_user_message()
+        err
     })?;
 
     let db_path = db_dir.join("dusty.db");
     logger::info!("DB path: {:?}", db_path);
+    Ok(db_path)
+}
+
+pub fn initialize_dusty(app: &mut tauri::App) -> Result<(), DustyError> {
+    let db_path = init_fs_related_task(app)?;
 
     let conn = rusqlite::Connection::open(&db_path).map_err(|e| {
         let err = DustyError::db("open_db_connection", None, e);
         logger::error!("INIT_DB_AND_OS_FAILED", err.log_details());
-        err.to_user_message()
+        err
     })?;
 
     let tables: Vec<String> = initialize_tables(&conn).map_err(|e| {
         logger::error!("INIT_DB_TABLES_FAILED", e.log_details());
-        e.to_user_message()
+        e
     })?;
+
+    let view_epoch = Arc::new(AtomicU64::new(0));
+    let db_worker = DbWorker::new(conn, Arc::clone(&view_epoch));
+    let thread_pool = ThreadPool::new(3, Arc::clone(&view_epoch));
+
     logger::info!("Tables initialized: {:?}", tables);
     app.manage(AppState {
-        db: Mutex::new(conn),
+        db_worker,
         tables: tables,
         os: std::env::consts::OS.to_string(),
+        thread_pool,
+        view_epoch,
     });
 
     Ok(())
@@ -100,7 +117,8 @@ pub fn ensure_column_exists(
     column_def: &str,
 ) -> DustyResult<()> {
     let pragma_sql = format!("PRAGMA table_info({})", table);
-    let mut stmt = conn.prepare(&pragma_sql)
+    let mut stmt = conn
+        .prepare(&pragma_sql)
         .map_err(|err| DustyError::db("prepare_pragma_table_info", Some(table.to_string()), err))?;
     let has_column = stmt
         .query_map([], |row| row.get::<_, String>(1))
@@ -110,8 +128,9 @@ pub fn ensure_column_exists(
 
     if !has_column {
         let alter_sql = format!("ALTER TABLE {} ADD COLUMN {} {}", table, column, column_def);
-        conn.execute(&alter_sql, [])
-            .map_err(|err| DustyError::db("alter_table_add_column", Some(table.to_string()), err))?;
+        conn.execute(&alter_sql, []).map_err(|err| {
+            DustyError::db("alter_table_add_column", Some(table.to_string()), err)
+        })?;
     }
     Ok(())
 }

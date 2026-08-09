@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { Sidebar } from "../layout/Sidebar";
 import { FloatingScrollTop } from "./FloatingScrollTop";
+import { notifyPageChangedIPC } from "../../personalities/ambiverts/system";
 
 const RouteTracker: React.FC = () => {
     const location = useLocation();
@@ -12,6 +13,7 @@ const RouteTracker: React.FC = () => {
         if (path !== "/settings" && path !== "/lab" && path !== "/todo") {
             localStorage.setItem("last_opened_page", path);
         }
+        notifyPageChangedIPC();
     }, [location.pathname]);
 
     return null;

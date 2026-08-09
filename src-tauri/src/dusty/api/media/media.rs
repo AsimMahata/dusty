@@ -12,18 +12,18 @@ use mime_guess::mime;
 use std::path::PathBuf;
 
 #[tauri::command]
-pub fn get_media_of_type(
+pub async fn get_media_of_type(
     path: String,
     media_type: String,
-    state: tauri::State<AppState>,
+    state: tauri::State<'_, AppState>,
 ) -> Result<Vec<MediaDir>, String> {
-    let db = state.db.lock().map_err(|_| {
-        let err = DustyError::lock("get_media_of_type");
-        logger::error!("DB_LOCK_FAILED", err.log_details());
-        err.to_user_message()
-    })?;
-
-    if let Ok(Some(cached_media)) = get_media_from_db(&db, &path, &media_type) {
+    let path_clone = path.clone();
+    let media_type_clone = media_type.clone();
+    if let Ok(Ok(Some(cached_media))) = state
+        .db_worker
+        .run(move |conn| get_media_from_db(conn, &path_clone, &media_type_clone))
+        .await
+    {
         logger::info!("MEDIA_TREE_CACHE_LOADED", cached_media.len());
         if !cached_media.is_empty() {
             logger::info!("MEDIA_TREE_CACHE_NOT_EMPTY", cached_media.len());
@@ -47,23 +47,27 @@ pub fn get_media_of_type(
     let mut media_dirs = Vec::new();
     dfs_media_dir_scanner(&root, &mut media_dirs, is_root(&root), mime_type);
 
-    if let Err(err) = save_media_to_db(&db, &path, &media_type, &media_dirs) {
-        logger::error!("SAVE_MEDIA_TO_DB_FAILED", err.log_details());
-    }
+    let path_clone = path.clone();
+    let media_type_clone = media_type.clone();
+    let media_dirs_clone = media_dirs.clone();
+    let _ = state
+        .db_worker
+        .run(move |conn| {
+            if let Err(err) = save_media_to_db(conn, &path_clone, &media_type_clone, &media_dirs_clone) {
+                logger::error!("SAVE_MEDIA_TO_DB_FAILED", err.log_details());
+            }
+        })
+        .await;
+
     Ok(media_dirs)
 }
 
 #[tauri::command]
-pub fn sync_media_database(
-    state: tauri::State<AppState>,
+pub async fn sync_media_database(
+    state: tauri::State<'_, AppState>,
     path: String,
     media_type: String,
 ) -> Result<Vec<MediaDir>, String> {
-    let db = state.db.lock().map_err(|_| {
-        let err = DustyError::lock("sync_media_database");
-        logger::error!("DB_LOCK_FAILED", err.log_details());
-        err.to_user_message()
-    })?;
     let root = PathBuf::from(&path);
     let mime_type = match media_type.as_str() {
         "music" => mime::AUDIO,
@@ -79,21 +83,31 @@ pub fn sync_media_database(
     let mut media_dirs = Vec::new();
     dfs_media_dir_scanner(&root, &mut media_dirs, is_root(&root), mime_type);
 
-    if let Err(err) = sync_media_to_db(&db, &path, &media_type, &media_dirs) {
-        logger::error!("SYNC_MEDIA_TO_DB_FAILED", err.log_details());
-    }
+    let path_clone = path.clone();
+    let media_type_clone = media_type.clone();
+    let media_dirs_clone = media_dirs.clone();
+    let _ = state
+        .db_worker
+        .run(move |conn| {
+            if let Err(err) = sync_media_to_db(conn, &path_clone, &media_type_clone, &media_dirs_clone) {
+                logger::error!("SYNC_MEDIA_TO_DB_FAILED", err.log_details());
+            }
+        })
+        .await;
+
     Ok(media_dirs)
 }
 
 #[tauri::command]
-pub fn reset_media_cache_table(state: tauri::State<AppState>) -> Result<(), String> {
-    let db = state.db.lock().map_err(|_| {
-        let err = DustyError::lock("reset_media_cache_table");
-        logger::error!("DB_LOCK_FAILED", err.log_details());
-        err.to_user_message()
-    })?;
-    reset_media_cache_table_in_db(&db).map_err(|e| {
-        logger::error!("RESET_MEDIA_CACHE_TABLE_FAILED", e.log_details());
-        e.to_user_message()
-    })
+pub async fn reset_media_cache_table(state: tauri::State<'_, AppState>) -> Result<(), String> {
+    state
+        .db_worker
+        .run(|conn| {
+            reset_media_cache_table_in_db(conn).map_err(|e| {
+                logger::error!("RESET_MEDIA_CACHE_TABLE_FAILED", e.log_details());
+                e.to_user_message()
+            })
+        })
+        .await
+        .map_err(|e| e)?
 }
