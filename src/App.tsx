@@ -16,6 +16,7 @@ import { SettingsPage } from "./pages/settings/SettingsPage";
 import { TodoPage } from "./pages/todo/TodoPage";
 import { TerminalPage } from "./pages/terminal/TerminalPage";
 import { UserPage } from "./pages/user/UserPage";
+import { P2PPage } from "./pages/p2p/P2PPage";
 import { ShadowElements } from "./components/ui/ShadowElements";
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <main className="main-content">
                 <Routes>
                     <Route path={ROUTES.HOME} element={<Home />} />
+                    <Route path={ROUTES.P2P} element={<P2PPage />} />
                     <Route path={ROUTES.SHOWS} element={<Shows />} />
                     <Route path={ROUTES.PROJECTS} element={<ProjectsPage />} />
                     <Route path={ROUTES.MUSIC} element={<Music />} />

@@ -13,7 +13,8 @@ export const ROUTES = {
     TODO: "/todo",
     SETTINGS: "/settings",
     TERMINAL: "/terminal",
-    USER: "/user"
+    USER: "/user",
+    P2P: "/p2p"
 } as const;
 
 

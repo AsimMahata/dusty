@@ -9,6 +9,7 @@ pub mod config;
 pub mod show;
 pub mod system;
 pub mod user;
+pub mod p2p;
 
 pub use core::*;
 pub use filesystem::*;
@@ -21,4 +22,4 @@ pub use config::*;
 pub use show::*;
 pub use system::*;
 pub use user::*;
-
+pub use p2p::*;

@@ -102,6 +102,14 @@ pub fn run() {
             dusty::api::user::select_avatar_file,
             dusty::api::user::upload_avatar_from_path,
             dusty::api::core::page_changed,
+            dusty::api::p2p::get_p2p_state,
+            dusty::api::p2p::select_send_files,
+            dusty::api::p2p::start_send,
+            dusty::api::p2p::search_for_senders,
+            dusty::api::p2p::get_pending_transfers,
+            dusty::api::p2p::accept_transfer,
+            dusty::api::p2p::reject_transfer,
+            dusty::api::p2p::cancel_transfer,
         ])
         .setup(|app| {
             initialize_dusty(app)?;

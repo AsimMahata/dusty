@@ -2,7 +2,7 @@ import {
     Clock, List, Pin, Eye, CheckCircle, Calendar, PauseCircle, XCircle, RotateCcw, Ban, ShieldCheck, Home as HomeIcon, Tv, FolderGit2, Box, Music as MusicIcon, Film, Image as ImageIcon, Archive, PackageOpen, FolderX,
     ArrowLeft, ExternalLink, X,
     Folder as LucideFolder, File as LucideFile, FileJson, FileCog, FileCode2, FileText, FileImage, FileAudio, FileVideo, FileArchive, Zap, Edit, Edit2,
-    Code2, Sparkles, Monitor, Server, Palette, GraduationCap, Coffee, Binary,
+    Code2, Sparkles, Monitor, Server, Palette, GraduationCap, Coffee, Binary, Share2,
     Activity, Pause, CheckCircle2, AlertTriangle, Circle, FileEdit, ArrowUpCircle, ArrowDownCircle, GitPullRequest, AlertOctagon, HelpCircle,
     Folder,
     ArrowUp, BookOpen,
@@ -131,6 +131,7 @@ export const NAV_IMAGES_ICON = <ImageIcon size={20} />
 export const NAV_ZIP_ICON = <Archive size={20} />
 export const NAV_PDF_ICON = <BookOpen size={20} />
 export const NAV_MISC_ICON = <Box size={20} />
+export const NAV_P2P_ICON = <Share2 size={20} />
 
 // Action Icons (16px)
 export const PIN_ICON_16 = <Pin size={16} />
