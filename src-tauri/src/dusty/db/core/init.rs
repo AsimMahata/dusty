@@ -14,7 +14,7 @@ use crate::dusty::db::show::create_show_scan_cache_table;
 use crate::dusty::db::show::create_shows_table;
 use crate::dusty::error::{DustyError, Result as DustyResult};
 use crate::dusty::logger::logger;
-use crate::dusty::multithreading::{DbWorker, ThreadPool};
+use crate::dusty::multithreading::{DbWorker, P2PWorker, ThreadPool};
 use std::sync::{atomic::AtomicU64, Arc};
 
 fn init_fs_related_task(app: &mut tauri::App) -> DustyResult<PathBuf> {
@@ -54,7 +54,8 @@ pub fn initialize_dusty(app: &mut tauri::App) -> Result<(), DustyError> {
 
     let view_epoch = Arc::new(AtomicU64::new(0));
     let db_worker = DbWorker::new(conn, Arc::clone(&view_epoch));
-    let thread_pool = ThreadPool::new(3, Arc::clone(&view_epoch));
+    let thread_pool = ThreadPool::new(2, Arc::clone(&view_epoch));
+    let p2p_worker = P2PWorker::new();
 
     logger::info!("Tables initialized: {:?}", tables);
     app.manage(AppState {
@@ -63,6 +64,7 @@ pub fn initialize_dusty(app: &mut tauri::App) -> Result<(), DustyError> {
         os: std::env::consts::OS.to_string(),
         thread_pool,
         view_epoch,
+        p2p_worker,
     });
 
     Ok(())

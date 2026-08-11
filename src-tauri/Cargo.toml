@@ -38,5 +38,7 @@ tauri-plugin-pty = "0.3.1"
 uuid = { version = "1.10.0", features = ["v4", "serde"] }
 rfd = "0.15"
 tokio = { version = "1", features = ["sync"] }
-
+mdns-sd = "0.20.3"
+local-ip-address = "0.6.13"
+dirs = "6.0.0"
 

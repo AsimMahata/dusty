@@ -3,7 +3,7 @@ import { File, Trash2 } from "lucide-react";
 
 interface SendFileListProps {
     files: string[];
-    onRemoveFile: (index: number) => void;
+    onRemoveFile?: (index: number) => void;
 }
 
 export const SendFileList: React.FC<SendFileListProps> = ({ files, onRemoveFile }) => {
@@ -21,13 +21,15 @@ export const SendFileList: React.FC<SendFileListProps> = ({ files, onRemoveFile 
                             </div>
                             <span className="file-item-name" title={file}>{file}</span>
                         </div>
-                        <button
-                            className="file-remove-btn"
-                            onClick={() => onRemoveFile(idx)}
-                            title="Remove file"
-                        >
-                            <Trash2 size={15} />
-                        </button>
+                        {onRemoveFile && (
+                            <button
+                                className="file-remove-btn"
+                                onClick={() => onRemoveFile(idx)}
+                                title="Remove file"
+                            >
+                                <Trash2 size={15} />
+                            </button>
+                        )}
                     </div>
                 ))}
             </div>

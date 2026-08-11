@@ -11,14 +11,29 @@ export interface TransferFileProgress {
 export interface ActiveTransfer {
     id: string;
     sender_name: string;
+    receiver_name?: string;
     files: TransferFileProgress[];
     overall_progress: number;
     status: string;
+    role?: "sender" | "receiver" | string;
+    total_time_secs?: number | null;
+    destination_path?: string | null;
+    total_bytes?: number | null;
+}
+
+export interface OutgoingRequestState {
+    id: string;
+    files: string[];
+    status: string;
+    created_at: number;
+    timeout_secs: number;
+    receiver_name?: string | null;
 }
 
 export interface P2PBackendState {
     mode: P2PStateMode;
     active_transfer: ActiveTransfer | null;
+    outgoing_request?: OutgoingRequestState | null;
 }
 
 export interface PendingTransfer {

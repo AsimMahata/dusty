@@ -66,7 +66,14 @@ export const P2PPage: React.FC = () => {
 
                 {/* Main Tab Content */}
                 <div className="tab-content">
-                    {activeTab === "send" ? <SendView /> : <ReceiveView />}
+                    {activeTab === "send" ? (
+                        <SendView
+                            outgoingRequest={backendState.outgoing_request}
+                            onRefreshState={fetchState}
+                        />
+                    ) : (
+                        <ReceiveView />
+                    )}
                 </div>
             </div>
         </PageLayout>

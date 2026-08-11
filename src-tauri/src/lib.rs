@@ -9,6 +9,9 @@ pub fn run() {
         .plugin(tauri_plugin_pty::init())
         .plugin(
             tauri_plugin_log::Builder::new()
+                .level(log::LevelFilter::Info)
+                .level_for("mdns_sd", log::LevelFilter::Warn)
+                .level_for("mio", log::LevelFilter::Warn)
                 .max_file_size(50_000)
                 .target(tauri_plugin_log::Target::new(
                     tauri_plugin_log::TargetKind::Stdout,
@@ -21,6 +24,8 @@ pub fn run() {
                 ))
                 .build(),
         )
+
+
         .invoke_handler(tauri::generate_handler![
             dusty::api::git::get_git_info,
             dusty::api::filesystem::read_dir,

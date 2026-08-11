@@ -90,14 +90,20 @@ export async function rejectTransfer(id: string): Promise<boolean> {
     }
 }
 
-export async function cancelTransfer(): Promise<boolean> {
+export async function cancelTransfer(silent = false): Promise<boolean> {
     try {
         await cancelTransferIPC();
-        toast("Transfer cancelled", { icon: "🛑" });
+        if (!silent) {
+            toast("Transfer cancelled", { icon: "🛑" });
+        }
         return true;
     } catch (err) {
         logger.error("Failed to cancel transfer", err);
         toast.error("Failed to cancel transfer");
         return false;
     }
+}
+
+export async function finishTransfer(): Promise<boolean> {
+    return cancelTransfer(true);
 }

@@ -1,32 +1,33 @@
-import React, { useState } from "react";
-import { Send, Plus, UploadCloud } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Send, Plus, UploadCloud, Clock, XCircle, CheckCircle2, RotateCcw } from "lucide-react";
 import { SendEmptyState } from "./SendEmptyState";
-import { SendFileList } from "./SendFileList";
-import { startSend, selectSendFiles } from "../../../../personalities/introverts/p2p/p2p";
+import { startSend, selectSendFiles, cancelTransfer } from "../../../../personalities/introverts/p2p/p2p";
 import { P2P_STRINGS } from "../../constants/constants";
+import type { OutgoingRequestState } from "../../../../personalities/ambiverts/p2p";
+import { SendFileList } from "./SendFileList";
 
-export const SendView: React.FC = () => {
+interface SendViewProps {
+    outgoingRequest?: OutgoingRequestState | null;
+    onRefreshState?: () => void;
+}
+
+export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshState }) => {
     const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
     const [isSending, setIsSending] = useState(false);
+    const [nowSecs, setNowSecs] = useState<number>(Math.floor(Date.now() / 1000));
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setNowSecs(Math.floor(Date.now() / 1000));
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
 
     const handleSelectFiles = async () => {
         const picked = await selectSendFiles();
         if (picked && picked.length > 0) {
             setSelectedFiles((prev) => Array.from(new Set([...prev, ...picked])));
-            return;
         }
-
-        const input = document.createElement("input");
-        input.type = "file";
-        input.multiple = true;
-        input.onchange = (e: Event) => {
-            const target = e.target as HTMLInputElement;
-            if (target.files) {
-                const filenames = Array.from(target.files).map((f) => f.name);
-                setSelectedFiles((prev) => Array.from(new Set([...prev, ...filenames])));
-            }
-        };
-        input.click();
     };
 
     const handleRemoveFile = (index: number) => {
@@ -37,12 +38,154 @@ export const SendView: React.FC = () => {
         if (selectedFiles.length === 0) return;
         setIsSending(true);
         try {
-            await startSend(selectedFiles);
+            const success = await startSend(selectedFiles);
+            if (success) {
+                onRefreshState?.();
+            }
         } finally {
             setIsSending(false);
         }
     };
 
+    const handleCancelRequest = async () => {
+        await cancelTransfer();
+        onRefreshState?.();
+    };
+
+    const handleRetry = async () => {
+        if (!outgoingRequest || outgoingRequest.files.length === 0) return;
+        const filesToRetry = [...outgoingRequest.files];
+        await cancelTransfer();
+        const success = await startSend(filesToRetry);
+        if (success) {
+            onRefreshState?.();
+        }
+    };
+
+    // If there is an active/persisted outgoing request in stash
+    if (outgoingRequest) {
+        const deadline = outgoingRequest.created_at + outgoingRequest.timeout_secs;
+        const remainingSecs = Math.max(0, deadline - nowSecs);
+        const isTimedOut = outgoingRequest.status === "TIMED_OUT" || remainingSecs <= 0;
+        const isAccepted = outgoingRequest.status === "ACCEPTED" || outgoingRequest.status === "INITIALIZING_TRANSFER";
+
+        return (
+            <div className="p2p-card">
+                <div className="p2p-card-header">
+                    <div>
+                        <h3 className="p2p-card-title">
+                            <UploadCloud size={20} style={{ color: "var(--accent)" }} />
+                            Active Outgoing Request
+                        </h3>
+                        <p className="p2p-subtitle">Request state persisted from backend</p>
+                    </div>
+
+                    {!isTimedOut && !isAccepted && (
+                        <div className="p2p-status-badge warning" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                            <Clock size={14} />
+                            Timeout: {remainingSecs}s
+                        </div>
+                    )}
+                </div>
+
+                {isTimedOut ? (
+                    <div style={{
+                        padding: "16px",
+                        marginBottom: "16px",
+                        borderRadius: "8px",
+                        backgroundColor: "rgba(239, 68, 68, 0.1)",
+                        border: "1px solid rgba(239, 68, 68, 0.3)",
+                        color: "#ef4444",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px"
+                    }}>
+                        <XCircle size={24} />
+                        <div>
+                            <div style={{ fontWeight: 600 }}>Request timed out</div>
+                            <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                                No receiver connected within the 60-second deadline.
+                            </div>
+                        </div>
+                    </div>
+                ) : isAccepted ? (
+                    <div style={{
+                        padding: "16px",
+                        marginBottom: "16px",
+                        borderRadius: "8px",
+                        backgroundColor: "rgba(34, 197, 94, 0.1)",
+                        border: "1px solid rgba(34, 197, 94, 0.3)",
+                        color: "#22c55e",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px"
+                    }}>
+                        <CheckCircle2 size={24} />
+                        <div>
+                            <div style={{ fontWeight: 600 }}>
+                                {outgoingRequest.receiver_name || "Receiver"} has accepted the request.
+                            </div>
+                            <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                                Initializing transfer...
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div style={{
+                        padding: "16px",
+                        marginBottom: "16px",
+                        borderRadius: "8px",
+                        backgroundColor: "rgba(59, 130, 246, 0.1)",
+                        border: "1px solid rgba(59, 130, 246, 0.3)",
+                        color: "#3b82f6",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px"
+                    }}>
+                        <Clock size={24} />
+                        <div>
+                            <div style={{ fontWeight: 600 }}>Request sent - Waiting for acceptance...</div>
+                            <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                                Waiting for a receiver to accept your files on the local network.
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <SendFileList files={outgoingRequest.files} />
+
+                <div className="p2p-action-group" style={{ marginTop: "16px", display: "flex", gap: "12px" }}>
+                    {isTimedOut ? (
+                        <>
+                            <button
+                                className="p2p-btn p2p-btn-primary p2p-btn-lg"
+                                onClick={handleRetry}
+                            >
+                                <RotateCcw size={16} />
+                                Retry Request
+                            </button>
+                            <button
+                                className="p2p-btn p2p-btn-secondary p2p-btn-lg"
+                                onClick={handleCancelRequest}
+                            >
+                                Cancel
+                            </button>
+                        </>
+                    ) : !isAccepted ? (
+                        <button
+                            className="p2p-btn p2p-btn-secondary p2p-btn-lg"
+                            onClick={handleCancelRequest}
+                        >
+                            <XCircle size={16} />
+                            Cancel Request
+                        </button>
+                    ) : null}
+                </div>
+            </div>
+        );
+    }
+
+    // Default Normal Send UI (when no active request exists)
     return (
         <div className="p2p-card">
             <div className="p2p-card-header">
@@ -81,4 +224,3 @@ export const SendView: React.FC = () => {
         </div>
     );
 };
-
