@@ -17,4 +17,6 @@ pub struct DeviceInfo {
     pub hostname: String,
     pub os: String,
     pub device_name: String,
+    pub arch: String,
+    pub local_ip: Option<String>,
 }

@@ -15,6 +15,8 @@ export interface DeviceInfo {
     hostname: string;
     os: string;
     device_name: string;
+    arch?: string;
+    local_ip?: string | null;
 }
 
 const CMD_GET_USER = "get_user";

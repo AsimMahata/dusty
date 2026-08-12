@@ -9,11 +9,13 @@
     <img src="https://img.shields.io/badge/License-MIT-2EA043" alt="License" />
   </p>
 </div>
-A desktop app powered by Rust that scans your filesystem to figure out what's actually in it. It clusters TV shows scattered across random folders, finds your old projects, and surfaces files you forgot you downloaded.
+
+Dusty is a desktop app built with Rust and React that helps you discover and organize the files, media, shows, anime, and projects on your system. It also lets you share files directly with other Dusty devices over your local network using P2P.
 
 **Download:** See the latest release in the [Releases](https://github.com/AsimMahata/dusty/releases) section.
 
-I originally started building this because I kept losing track of what shows and files I already had stored somewhere on my PC. I figured it was easier to build a tool to track them down than to keep manually digging through folders.
+> **Note:** I originally started building Dusty because I kept losing track of what shows and files I already had stored somewhere on my PC. I figured it was easier to build a tool to track them down than to keep manually digging through folders. Over time, Dusty grew beyond that original idea into a broader tool for managing files, media, shows, and projects.
+
 <p align="center">
   <img src="screenshots/home.png" alt="Dusty Home">
 </p>
@@ -26,8 +28,23 @@ I originally started building this because I kept losing track of what shows and
 - **Storage Cleanup:** Helps free up space by identifying large archive files, image-heavy directories, and completely **empty folders**.
 - **Terminal Integration:** Quickly launch your preferred system terminals directly at the path of any project or directory.
 - **Desktop UI:** Uses a Rust backend and a React frontend, wired together with Tauri IPC for real-time scan results. You can open your files directly from the app.
+- **Multithreading & Background Workers:** Uses multithreading and background workers for heavy operations that can run independently without blocking the main thread.
+- **P2P & Local File Sharing:** Sends files directly to other Dusty devices over your local network. Files can be added to a sending stash and transferred over TCP with transfer progress and speed tracking. Supports both automatic local network discovery and direct IP connections.
 
-## 📸 More Screenshots
+## 🔄 Local P2P Sharing
+
+Dusty includes a peer-to-peer file sharing feature built for local networks:
+
+1. **Stash Files:** Add files to your sending stash.
+2. **Automatic Peer Discovery:** Devices running Dusty on the same local network discover each other automatically using mDNS.
+3. **Send & Receive:** Select a target peer and send a transfer request. The receiver can accept or reject the incoming transfer.
+4. **Direct IP Connection:** If automatic discovery doesn't find a peer, use the manual connection flow:
+   - Receiver starts **Manual Receive**.
+   - Dusty displays the receiver's local IP address.
+   - Receiver provides the IP to the sender.
+   - Sender enters the IP and connects directly over the local network.
+
+## 📸 Screenshots
 
 <details>
 <summary>Shows</summary>
@@ -78,92 +95,134 @@ I originally started building this because I kept losing track of what shows and
 
 </details>
 
+<details>
+<summary>P2P Sharing</summary>
+
+![P2P](screenshots/p2p.png)
+
+</details>
+
+<details>
+<summary>User Profile</summary>
+
+![User Profile](screenshots/user.png)
+
+</details>
+
 ## 🏗️ Architecture
 
-This is a Tauri-based application with a Rust backend and React frontend.
+Dusty is a Tauri-based application built with a Rust backend and a React frontend.
 
 ### Backend (Rust)
 
-- **Filesystem Engine:** High-performance scanners for media, projects, archives, and documents.
-- **Show Clustering:** Rolling-hash and union-find algorithms for grouping TV shows.
-- **SQLite Caching:** Persistent scan cache for fast rescans.
-- **Modular Commands:** Tauri command handlers separated by domain.
+- **Filesystem Engine & Scanners:** Scans and categorizes media, projects, archives, and documents.
+- **P2P & Network Engine:** Uses mDNS to discover devices on the local network and TCP connections to transfer files between them.
+- **Multithreading & Background Workers:** Uses dedicated workers for database operations, background tasks, and P2P operations, along with thread pools for parallel workloads. This keeps heavier operations from blocking the UI.
+- **Show Clustering:** Uses rolling-hash and union-find algorithms to group video files belonging to the same TV show.
+- **SQLite Database & Storage:** Uses SQLite and persistent local storage for scan results, cached information, configuration, and other application data.
+- **Logging System:** Application logging powered by `tauri-plugin-log`.
 
 ### Frontend (React)
 
 - **Feature-Based Modules:** Each page owns its components, hooks, types, constants, and session logic.
 - **Hook-Driven State:** Feature hooks manage state without global stores.
-- **Three-Layer Bridge:** Ambiverts (IPC), Introverts (business logic), and Extroverts (external APIs).
+- **Three-Layer Architecture:** **Ambiverts** handle Tauri IPC, **Introverts** handle frontend business logic, and **Extroverts** handle external API integrations such as TMDB and MyAnimeList.
+- **Backend Integration:** Frontend code communicates with the Rust backend through Tauri commands.
 - **Modern UI:** Built with React, TypeScript, and reusable components.
 
 ## 💻 Tech Stack
 
 - Rust
-- Tauri
+- Tauri v2
 - React (TypeScript)
+- Vite
+- SQLite
 
 ## 📁 Folder Structure
 
 ```text
 dusty/
+├── .env.example                  # Environment configuration template
+├── public/                       # Static web assets and icons
+├── screenshots/                  # Documentation screenshots
 ├── src/                          # React + TypeScript frontend
-│   ├── components/               # Reusable UI components shared across features
-│   ├── constants/                # Global constants, icons, colors, and routes
-│   ├── hooks/                    # Shared custom React hooks
-│   ├── pages/                    # Feature modules (each page owns its components,
-│   │                              hooks, types, styles, constants, and session logic)
-│   ├── personalities/            # Communication layer
-│   │   ├── ambiverts/            # Raw Tauri IPC wrappers
-│   │   ├── introverts/           # Frontend business logic & caching
-│   │   └── extroverts/           # External API clients
-│   ├── providers/                # Global React providers
+│   ├── components/               # Reusable UI components
+│   ├── constants/                # Constants, icons, and routes
+│   ├── hooks/                    # Custom React hooks
+│   ├── pages/                    # Feature modules and pages
+│   ├── personalities/            # Frontend communication and API layers
+│   │   ├── ambiverts/            # Tauri IPC wrappers
+│   │   ├── introverts/           # Frontend business logic
+│   │   └── extroverts/           # External API integrations
 │   ├── types/                    # Shared TypeScript types
-│   └── utility/                  # Pure utility/helper functions
+│   └── utility/                  # Utility functions
 │
-├── src-tauri/                    # Rust + Tauri backend
-│   └── src/dusty/
-│       ├── api/                  # Tauri command handlers
-│       ├── cache/                # SQLite-based persistent caches
-│       ├── database/             # Database initialization and access
-│       ├── engine/               # Core business logic
-│       ├── scanners/             # Filesystem, media, and project scanners
-│       ├── models/               # Domain models
-│       └── utility/              # Shared Rust utilities
-│
-└── public/                       # Static assets (icons, images, etc.)
+└── src-tauri/                    # Rust + Tauri backend
+    └── src/dusty/
+        ├── api/                  # Tauri command handlers
+        ├── db/                   # Database access
+        ├── engine/               # Core business logic
+        ├── filesystem/           # Filesystem operations
+        ├── logger/               # Logging
+        ├── models/               # Data structures and domain models
+        ├── multithreading/       # Workers and thread pools
+        ├── p2p/                  # P2P discovery, connections, and transfers
+        ├── scanners/             # Filesystem and media scanners
+        ├── system/               # OS integration
+        └── utility/              # Rust utility functions
 ```
 
 ## 🛠️ Installation & Setup
 
-You'll need a few things installed before you can run or build the app:
+### Prerequisites
 
-- [Rust](https://www.rust-lang.org/tools/install) (1.70+)
-- [Node.js](https://nodejs.org/) (v16+)
-- Tauri's OS-specific build tools — check their [prerequisites guide](https://tauri.app/v1/guides/getting-started/prerequisites) for details. If you're on Windows, you'll need the MSVC build tools.
+- [Rust](https://www.rust-lang.org/tools/install) (1.77+)
+- [Node.js](https://nodejs.org/) (v18+)
+- Tauri OS prerequisites (on Windows, Microsoft Visual C++ Build Tools are required).
 
 ### 🏃 Running locally
 
-To spin up the development environment:
+1. Clone the repository and navigate into the project root:
 
-```bash
-git clone https://github.com/AsimMahata/dusty.git
-cd dusty/dusty-gui
-npm install
-npm run tauri dev
-```
+   ```bash
+   git clone https://github.com/AsimMahata/dusty.git
+   cd dusty
+   ```
 
-*Note: You don't need to manually run `cargo build` or `cargo run`. The `tauri dev` command automatically compiles the Rust backend and starts the React development server for you.*
+2. Install frontend dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables:
+
+   Copy `.env.example` to `.env`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Configure `VITE_TMDB_API_KEY` in `.env` if you wish to enable TMDB show metadata lookup.
+
+4. Start the development app:
+
+   ```bash
+   npm run dev
+   ```
+
+   *(Note: You can also use `npx tauri dev` to compile the backend and start the dev server).*
 
 ### 📦 Building a release binary
 
-When you're ready to build a standalone executable:
+To build a standalone executable:
 
 ```bash
-npm run tauri build
+npm run build
 ```
 
-You can find the output binary in `dusty-gui/src-tauri/target/release/`.
+The compiled release binary will be generated in `src-tauri/target/release/`.
 
 ## 📄 License
 
-MIT
+Dusty is licensed under the MIT License. See the [LICENSE](LICENSE) for more details.

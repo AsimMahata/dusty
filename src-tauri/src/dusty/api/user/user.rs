@@ -61,11 +61,15 @@ pub fn get_device_info() -> Result<DeviceInfo, String> {
     .trim()
     .to_string();
     let device_name = System::host_name().unwrap_or_else(|| "Unknown Device".to_string());
+    let arch = std::env::consts::ARCH.to_string();
+    let local_ip = crate::dusty::p2p::get_usable_local_ip().ok();
 
     Ok(DeviceInfo {
         hostname,
         os,
         device_name,
+        arch,
+        local_ip,
     })
 }
 

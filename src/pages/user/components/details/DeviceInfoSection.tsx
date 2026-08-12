@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { UserPageHook } from '../../hooks/useUserPage';
 import { MONITOR_ICON_18 } from '../../../../constants/icon';
-
+import { Eye, EyeOff } from 'lucide-react';
 
 interface DeviceInfoSectionProps {
   hook: UserPageHook;
@@ -9,6 +9,9 @@ interface DeviceInfoSectionProps {
 
 export const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({ hook }) => {
   const { deviceInfo } = hook;
+  const [showIp, setShowIp] = useState(false);
+
+  const rawIp = deviceInfo?.local_ip;
 
   return (
     <div className="dashboard-card">
@@ -31,11 +34,33 @@ export const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({ hook }) =>
         </div>
         <div className="details-row">
           <span className="details-label">Architecture</span>
-          <span className="details-value">x86_64 (64-bit)</span>
+          <span className="details-value">{deviceInfo?.arch || 'Unknown'}</span>
         </div>
         <div className="details-row">
           <span className="details-label">Local IP</span>
-          <span className="details-value details-value-muted">192.168.1.42</span>
+          <div className="details-value-container" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="details-value details-value-muted">
+              {!rawIp ? 'Unavailable' : showIp ? rawIp : '••••••••'}
+            </span>
+            {rawIp && (
+              <button
+                type="button"
+                onClick={() => setShowIp(!showIp)}
+                title={showIp ? "Hide Local IP" : "Show Local IP"}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '2px',
+                }}
+              >
+                {showIp ? <EyeOff size={15} /> : <Eye size={15} />}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
