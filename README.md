@@ -14,7 +14,7 @@ Dusty is a desktop app built with Rust and React that helps you discover and org
 
 **Download:** See the latest release in the [Releases](https://github.com/AsimMahata/dusty/releases) section.
 
-> **Note:** I originally started building Dusty because I kept losing track of what shows and files I already had stored somewhere on my PC. I figured it was easier to build a tool to track them down than to keep manually digging through folders. Over time, Dusty grew beyond that original idea into a broader tool for managing files, media, shows, and projects.
+> **Note:** I originally started building Dusty because I kept losing track of what shows and files I already had on my PC. I figured it was much easier to build a tool to track them down than to keep manually digging through folders. Over time, Dusty grew into a broader tool for managing files, media, shows, and projects. But at its core, it's still about discovering files sitting on your system collecting **dust**.
 
 <p align="center">
   <img src="screenshots/home.png" alt="Dusty Home">
