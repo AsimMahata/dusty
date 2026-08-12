@@ -30,7 +30,7 @@ export const ShowGridCard: React.FC<ShowGridCardProps> = ({ show, onClick, actio
             posterUrl: meta?.posterUrl || '',
             rating: typeof meta?.rating === 'number' ? meta.rating : 0,
             totalEpisodes: meta?.totalEpisodes || show.num_episodes,
-            progress: meta ? meta.progress : calculateProgressPercentage(show.episodes?.length || 0, show.num_episodes),
+            progress: meta ? meta.progress : calculateProgressPercentage(show.episodes_watched || 0, show.num_episodes),
             statusColor: meta ? meta.statusColor : getStatusColor(show.status),
         };
     }, [meta, show]);

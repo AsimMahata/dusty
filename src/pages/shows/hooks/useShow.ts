@@ -1,6 +1,6 @@
 import { CONTINUE_WATCHING_TO_SHOW_PAGE, SHOW_ACTION_MENU_LABELS } from '../constants/constants';
 import { useState, useEffect, useMemo } from 'react';
-import { fetchShows, updateBanStatus as updateBanStatusIntrovert, updateShowStatus as updateShowStatusIntrovert, updateShowTitle as updateShowTitleIntrovert, toggleShowPin as toggleShowPinIntrovert, updateShowIdForShow as updateShowIdForShowIntrovert } from '../../../personalities/introverts/show/shows';
+import { fetchShows, updateBanStatus as updateBanStatusIntrovert, updateShowStatus as updateShowStatusIntrovert, updateShowTitle as updateShowTitleIntrovert, toggleShowPin as toggleShowPinIntrovert, updateShowIdForShow as updateShowIdForShowIntrovert, updateEpisodesWatched as updateEpisodesWatchedIntrovert } from '../../../personalities/introverts/show/shows';
 import { openFile } from '../../../personalities/introverts/filesystem/filesystem';
 import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY } from '../constants/constants';
 import { logger } from '../../../utility/logger';
@@ -168,6 +168,35 @@ export const useShow = () => {
             logger.error("SHOW_STATUS_UPDATE_FAILED", err);
             return false;
         }
+    };
+
+    const updateEpisodesWatchedVisual = async (showId: string, episodesWatched: number): Promise<boolean> => {
+        try {
+            await updateEpisodesWatchedIntrovert(showId, episodesWatched);
+            setAllShows(prevShows => prevShows.map(show =>
+                show.id === showId ? { ...show, episodes_watched: episodesWatched } : show
+            ));
+            setSelectedShow(prev => (prev && prev.id === showId) ? { ...prev, episodes_watched: episodesWatched } : prev);
+            logger.info("SHOW_EPISODES_WATCHED_UPDATE_SUCCESS", showId, episodesWatched);
+            return true;
+        } catch (err) {
+            logger.error("SHOW_EPISODES_WATCHED_UPDATE_FAILED", err);
+            return false;
+        }
+    };
+
+    const incrementEpisodesWatched = async (showId: string, maxEpisodes?: number) => {
+        const show = allShows.find(s => s.id === showId) || selectedShow;
+        if (!show) return;
+        const currentCount = show.episodes_watched || 0;
+        const total = typeof maxEpisodes === 'number' && maxEpisodes > 0
+            ? maxEpisodes
+            : (typeof show.num_episodes === 'number' && show.num_episodes > 0 ? show.num_episodes : null);
+
+        if (total !== null && currentCount >= total) {
+            return;
+        }
+        await updateEpisodesWatchedVisual(showId, currentCount + 1);
     };
 
     const updateShowTitle = async (showId: string, newTitle: string) => {
@@ -470,6 +499,8 @@ export const useShow = () => {
         setAddShowQuery,
         addShowTargetShowId,
         handleOpenAddShow,
-        openEpisode
+        openEpisode,
+        updateEpisodesWatched: updateEpisodesWatchedVisual,
+        incrementEpisodesWatched
     };
 };

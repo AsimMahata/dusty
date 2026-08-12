@@ -9,6 +9,7 @@ use crate::dusty::db::show::rename_show_in_db;
 use crate::dusty::db::show::reset_show_cache_table_in_db;
 use crate::dusty::db::show::reset_show_table_in_db;
 use crate::dusty::db::show::update_ban_status_in_db;
+use crate::dusty::db::show::update_episodes_watched_in_db;
 use crate::dusty::db::show::update_pin_status_in_db;
 use crate::dusty::db::show::update_show_provider_in_db;
 use crate::dusty::db::show::update_show_status_in_db;
@@ -50,6 +51,7 @@ pub fn scan_show_using_cached(
                             show.provider_id = info.provider_id;
                             show.airing = info.airing;
                             show.show_type = info.show_type;
+                            show.episodes_watched = info.episodes_watched;
                         }
                         show
                     })
@@ -201,6 +203,26 @@ pub async fn update_pin_status(
                 false
             } else {
                 logger::info!("UPDATE_PIN_STATUS_SUCCESS", show_id, new_pin_status);
+                true
+            }
+        })
+        .await
+}
+
+#[tauri::command]
+pub async fn update_episodes_watched(
+    state: tauri::State<'_, AppState>,
+    show_id: String,
+    episodes_watched: usize,
+) -> Result<bool, String> {
+    state
+        .db_worker
+        .run(move |conn| {
+            if let Err(err) = update_episodes_watched_in_db(conn, show_id.clone(), episodes_watched) {
+                logger::error!("UPDATE_EPISODES_WATCHED_FAILED", err.log_details());
+                false
+            } else {
+                logger::info!("UPDATE_EPISODES_WATCHED_SUCCESS", show_id, episodes_watched);
                 true
             }
         })

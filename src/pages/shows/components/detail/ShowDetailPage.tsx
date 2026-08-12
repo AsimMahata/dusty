@@ -30,7 +30,12 @@ export const ShowDetailPage: React.FC<ShowDetailPageProps> = ({ showHook }) => {
 
     return (
         <div className="show-detail-page">
-            <ShowDetailHero show={show} getActionsForShow={showHook.getActionsForShow} onBack={onBack} />
+            <ShowDetailHero
+                show={show}
+                getActionsForShow={showHook.getActionsForShow}
+                onBack={onBack}
+                onUpdateEpisodesWatched={(count) => showHook.updateEpisodesWatched(show.id, count)}
+            />
             <ShowEpisodesList episodes={episodes} onEpisodeClick={showHook.openEpisode} />
         </div>
     );

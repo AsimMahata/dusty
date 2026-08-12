@@ -32,7 +32,7 @@ export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onClick, a
             totalEpisodes: meta?.totalEpisodes || show.num_episodes,
             nextEpisode: meta ? meta.nextEpisode : getNextEpisode(show),
             seasonYear: meta?.seasonYear || '',
-            progress: meta ? meta.progress : calculateProgressPercentage(show.episodes?.length || 0, show.num_episodes),
+            progress: meta ? meta.progress : calculateProgressPercentage(show.episodes_watched || 0, show.num_episodes),
             statusColor: meta ? meta.statusColor : getStatusColor(show.status),
         };
     }, [meta, show]);
@@ -40,6 +40,10 @@ export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onClick, a
     const isWatching = show.status === 'watching';
     const isCompleted = show.status === 'completed';
     const isAiring = !isCompleted && show.num_episodes === 0;
+
+    const hasKnownTotal = (typeof totalEpisodes === 'number' && totalEpisodes > 0) || (typeof totalEpisodes === 'string' && totalEpisodes !== '0' && totalEpisodes !== '' && totalEpisodes !== '?');
+    const displayTotal = hasKnownTotal ? totalEpisodes : '?';
+    const displayProgress = hasKnownTotal ? `${progress}%` : '?';
 
     return (
         <div className="show-card" data-pinned={show.pinned ? 'true' : undefined} onClick={() => onClick(show)}>
@@ -81,10 +85,10 @@ export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onClick, a
                     </div>
                     <div className="show-card-progress-text">
                         <span className="show-card-progress-episodes">
-                            EP {show.episodes?.length || 0} / {totalEpisodes}
+                            EP {show.episodes_watched || 0} / {displayTotal}
                         </span>
                         <span className="show-card-progress-percentage" style={{ color: statusColor }}>
-                            {progress}%
+                            {displayProgress}
                         </span>
                     </div>
                 </div>
@@ -102,7 +106,7 @@ export const ShowPosterCard: React.FC<ShowPosterCardProps> = ({ show, onClick, a
                             </div>
                         )}
                         <div className="show-card-meta-item">
-                            <ListVideo size={14} /> {totalEpisodes} Episodes
+                            <ListVideo size={14} /> {displayTotal} Episodes
                         </div>
                         {isCompleted ? (
                             <div className="show-card-meta-item">

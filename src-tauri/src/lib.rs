@@ -48,6 +48,7 @@ pub fn run() {
             dusty::api::show::update_show_status,
             dusty::api::show::update_ban_status,
             dusty::api::show::update_pin_status,
+            dusty::api::show::update_episodes_watched,
             dusty::api::show::update_show_id,
             dusty::api::show::reset_shows_table,
             dusty::api::show::add_shows_to_db,

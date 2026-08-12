@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { Plus, Minus } from 'lucide-react';
 import { PLAY_ICON_16_FILL, CALENDAR_ICON_14, STAR_ICON_16_CLASS, RADIO_ICON_14, CHEVRON_LEFT_ICON_24, TV_ICON_48_MUTED, CHECK_ICON_14 } from '../../../../constants/icon';
 import { ActionMenu } from '../../../../components/ui/ActionMenu';
 import { getShowMetaData, getStatusColor, calculateProgressPercentage, getNextEpisode } from '../../../../personalities/introverts/show/metadata';
@@ -10,10 +11,20 @@ interface ShowDetailHeroProps {
     show: ShowResult;
     getActionsForShow: (show: ShowResult) => ActionItem[];
     onBack: () => void;
+    onUpdateEpisodesWatched?: (episodesWatched: number) => Promise<boolean> | void;
 }
 
-export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActionsForShow, onBack }) => {
+export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActionsForShow, onBack, onUpdateEpisodesWatched }) => {
     const [meta, setMeta] = useState<ShowMetaData | null>(null);
+
+    const [watchedCount, setWatchedCount] = useState<number>(show.episodes_watched || 0);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [editValue, setEditValue] = useState<string>('');
+    const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        setWatchedCount(show.episodes_watched || 0);
+    }, [show.episodes_watched]);
 
     useEffect(() => {
         let mounted = true;
@@ -23,7 +34,7 @@ export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActions
         return () => { mounted = false; };
     }, [show]);
 
-    const { bannerUrl, posterUrl, rating, totalEpisodes, nextEpisode, seasonYear, progress, statusColor } = useMemo(() => {
+    const { bannerUrl, posterUrl, rating, totalEpisodes, nextEpisode, seasonYear, statusColor } = useMemo(() => {
         return {
             bannerUrl: meta?.bannerUrl || '',
             posterUrl: meta?.posterUrl || '',
@@ -31,14 +42,66 @@ export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActions
             totalEpisodes: meta?.totalEpisodes || show.num_episodes,
             nextEpisode: meta ? meta.nextEpisode : getNextEpisode(show),
             seasonYear: meta?.seasonYear || '',
-            progress: meta ? meta.progress : calculateProgressPercentage(show.episodes?.length || 0, show.num_episodes),
             statusColor: meta ? meta.statusColor : getStatusColor(show.status),
         };
     }, [meta, show]);
 
+    const dynamicProgress = calculateProgressPercentage(
+        watchedCount,
+        typeof totalEpisodes === 'number' && totalEpisodes > 0 ? totalEpisodes : (show.num_episodes || 0)
+    );
+
+    const hasKnownTotal = typeof totalEpisodes === 'number' && totalEpisodes > 0;
+    const totalEpisodesDisplay = hasKnownTotal ? totalEpisodes : '?';
+    const displayProgressText = hasKnownTotal ? `${dynamicProgress}%` : '?';
+
     const isWatching = show.status === 'watching';
     const isCompleted = show.status === 'completed';
-    const isAiring = !isCompleted && show.num_episodes === 0;
+    const isAiring = !isCompleted && (!hasKnownTotal || show.num_episodes === 0);
+
+    const isMaxReached = hasKnownTotal && watchedCount >= totalEpisodes;
+
+    const saveToDbDebounced = (newCount: number) => {
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+        }
+        debounceTimerRef.current = setTimeout(() => {
+            if (onUpdateEpisodesWatched) {
+                void onUpdateEpisodesWatched(newCount);
+            }
+        }, 350);
+    };
+
+    const handleIncrement = () => {
+        const max = typeof totalEpisodes === 'number' && totalEpisodes > 0 ? totalEpisodes : Infinity;
+        if (watchedCount >= max) return;
+        const next = watchedCount + 1;
+        setWatchedCount(next);
+        saveToDbDebounced(next);
+    };
+
+    const handleDecrement = () => {
+        if (watchedCount <= 0) return;
+        const next = watchedCount - 1;
+        setWatchedCount(next);
+        saveToDbDebounced(next);
+    };
+
+    const handleCommitInput = () => {
+        setIsEditing(false);
+        let val = parseInt(editValue, 10);
+        if (isNaN(val) || val < 0) val = 0;
+        const max = typeof totalEpisodes === 'number' && totalEpisodes > 0 ? totalEpisodes : null;
+        if (max !== null && val > max) val = max;
+
+        setWatchedCount(val);
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+        }
+        if (onUpdateEpisodesWatched) {
+            void onUpdateEpisodesWatched(val);
+        }
+    };
 
     return (
         <div className="show-detail-hero">
@@ -107,17 +170,70 @@ export const ShowDetailHero: React.FC<ShowDetailHeroProps> = ({ show, getActions
                             <div
                                 className="show-detail-progress-bar"
                                 style={{
-                                    width: `${progress}%`,
+                                    width: `${dynamicProgress}%`,
                                     backgroundColor: statusColor
                                 }}
                             />
                         </div>
                         <div className="show-detail-progress-text">
-                            <span className="show-detail-progress-episodes">
-                                EP {show.episodes?.length || 0} / {totalEpisodes}
-                            </span>
+                            <div className="show-detail-episodes-control">
+                                <button
+                                    className="show-detail-ep-btn decrement"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDecrement();
+                                    }}
+                                    disabled={watchedCount <= 0}
+                                    title="Decrease watched episode"
+                                >
+                                    <Minus size={13} />
+                                </button>
+
+                                {isEditing ? (
+                                    <input
+                                        type="number"
+                                        className="show-detail-ep-input"
+                                        value={editValue}
+                                        onChange={(e) => setEditValue(e.target.value)}
+                                        onBlur={handleCommitInput}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') handleCommitInput();
+                                            if (e.key === 'Escape') setIsEditing(false);
+                                        }}
+                                        autoFocus
+                                        min={0}
+                                        max={typeof totalEpisodes === 'number' && totalEpisodes > 0 ? totalEpisodes : undefined}
+                                    />
+                                ) : (
+                                    <span
+                                        className="show-detail-ep-number"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setEditValue(watchedCount.toString());
+                                            setIsEditing(true);
+                                        }}
+                                        title="Click to edit watched episode count directly"
+                                    >
+                                        EP {watchedCount}
+                                    </span>
+                                )}
+
+                                <span className="show-detail-ep-total">/ {totalEpisodesDisplay}</span>
+
+                                <button
+                                    className="show-detail-ep-btn increment"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleIncrement();
+                                    }}
+                                    disabled={isMaxReached}
+                                    title="Increase watched episode"
+                                >
+                                    <Plus size={13} />
+                                </button>
+                            </div>
                             <span className="show-detail-progress-percentage" style={{ color: statusColor }}>
-                                {progress}%
+                                {displayProgressText}
                             </span>
                         </div>
                     </div>

@@ -5,6 +5,7 @@ import {
     updateShowStatusIPC,
     updateBanStatusIPC,
     updateShowPinStatusIPC,
+    updateEpisodesWatchedIPC,
     updateShowProviderIPC,
     resetShowsTableIPC,
     addShowsToDbIPC,
@@ -62,6 +63,10 @@ export async function updateShowTitle(showId: string, newTitle: string): Promise
 
 export async function toggleShowPin(showId: string, currentPinStatus: boolean): Promise<boolean> {
     return await updateShowPinStatusIPC(showId, !currentPinStatus);
+}
+
+export async function updateEpisodesWatched(showId: string, episodesWatched: number): Promise<boolean> {
+    return await updateEpisodesWatchedIPC(showId, episodesWatched);
 }
 
 export async function updateShowIdForShow(

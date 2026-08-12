@@ -12,6 +12,7 @@ interface ShowMetaDataProps {
 }
 
 export const ShowMetaData: React.FC<ShowMetaDataProps> = ({ show, statusColor, totalEpisodes, rating }) => {
+    const displayTotal = (typeof totalEpisodes === 'number' && totalEpisodes > 0) || (typeof totalEpisodes === 'string' && totalEpisodes !== '0' && totalEpisodes !== '' && totalEpisodes !== '?') ? totalEpisodes : '?';
     return (
         <div className="show-grid-content">
             <div className="show-grid-title" title={show.title}>
@@ -22,7 +23,7 @@ export const ShowMetaData: React.FC<ShowMetaDataProps> = ({ show, statusColor, t
             <div className="show-grid-meta">
                 <div className="show-grid-status">
                     <ShowStatusIcon status={show.status} statusColor={statusColor} />
-                    EP {show.episodes?.length || 0} / {totalEpisodes}
+                    EP {show.episodes_watched || 0} / {displayTotal}
                 </div>
                 {rating > 0 && (
                     <div className="show-grid-rating">

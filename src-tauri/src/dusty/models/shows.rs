@@ -51,6 +51,8 @@ pub struct ShowResult {
     pub airing: bool,
     #[serde(default)]
     pub show_type: ShowType,
+    #[serde(default)]
+    pub episodes_watched: usize,
     pub created_at: Option<String>,
     pub updated_at: Option<String>,
 }
@@ -65,6 +67,7 @@ pub struct ShowInfo {
     pub provider_id: Option<String>,
     pub airing: bool,
     pub show_type: ShowType,
+    pub episodes_watched: usize,
 }
 
 #[derive(Serialize, Debug)]

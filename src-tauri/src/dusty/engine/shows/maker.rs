@@ -109,6 +109,7 @@ pub fn make_show_results_from_clusters(clusters: &Vec<Vec<PathBuf>>, shows: &mut
                 .into_iter()
                 .filter_map(|p| FileInfo::from_pathbuf(&p).ok())
                 .collect(),
+            episodes_watched: 0,
             created_at: None,
             updated_at: None,
         };
@@ -166,6 +167,7 @@ pub fn make_shows_with_available_titles(
                 provider_id: Some(title_info.provider_id.clone()),
                 airing: title_info.airing,
                 show_type: title_info.show_type.clone(),
+                episodes_watched: 0,
                 created_at: None,
                 updated_at: None,
             });

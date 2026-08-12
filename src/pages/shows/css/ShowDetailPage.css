@@ -198,10 +198,69 @@
     min-width: 90px;
 }
 
-.show-detail-progress-episodes {
+.show-detail-episodes-control {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
     font-size: 1rem;
     font-weight: 600;
     color: #ffffff;
+}
+
+.show-detail-ep-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+}
+
+.show-detail-ep-btn:hover:not(:disabled) {
+    background: var(--accent-color, #6366f1);
+    border-color: var(--accent-color, #6366f1);
+    transform: scale(1.1);
+}
+
+.show-detail-ep-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.show-detail-ep-number {
+    cursor: pointer;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.show-detail-ep-number:hover {
+    background: rgba(255, 255, 255, 0.15);
+    text-decoration: underline;
+}
+
+.show-detail-ep-input {
+    width: 52px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--accent-color, #6366f1);
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 0.1rem 0.2rem;
+    outline: none;
+}
+
+.show-detail-ep-total {
+    color: var(--text-secondary, #a0a0ab);
+    font-weight: 500;
 }
 
 .show-detail-progress-percentage {

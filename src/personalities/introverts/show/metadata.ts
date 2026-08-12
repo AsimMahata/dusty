@@ -15,7 +15,7 @@ export const calculateProgressPercentage = (episodesWatched: number, totalEpisod
 };
 
 export const getNextEpisode = (show: ShowResult) => {
-    return show.episodes.length + 1;
+    return (show.episodes_watched || 0) + 1;
 };
 
 async function computeShowCacheKey(title: string): Promise<string> {
@@ -83,7 +83,7 @@ export async function getShowMetaData(show: ShowResult): Promise<ShowMetaData> {
         totalEpisodes: show.num_episodes || 0,
         nextEpisode: getNextEpisode(show),
         seasonYear: '',
-        progress: calculateProgressPercentage(show.episodes?.length || 0, show.num_episodes || 0),
+        progress: calculateProgressPercentage(show.episodes_watched || 0, show.num_episodes || 0),
         statusColor: getStatusColor(show.status)
     };
 
@@ -119,7 +119,7 @@ export async function getShowMetaData(show: ShowResult): Promise<ShowMetaData> {
                 totalEpisodes: episodes,
                 nextEpisode: getNextEpisode(show),
                 seasonYear: result?.season?.year || result?.year || '',
-                progress: calculateProgressPercentage(show.episodes?.length || 0, episodes || show.num_episodes || 0),
+                progress: calculateProgressPercentage(show.episodes_watched || 0, episodes || show.num_episodes || 0),
                 statusColor: getStatusColor(show.status)
             };
         } else if (normProvider === 'tmdb' || normProvider === 'imdb') {
@@ -136,7 +136,7 @@ export async function getShowMetaData(show: ShowResult): Promise<ShowMetaData> {
                 totalEpisodes: totalEps,
                 nextEpisode: getNextEpisode(show),
                 seasonYear,
-                progress: calculateProgressPercentage(show.episodes?.length || 0, totalEps || show.num_episodes || 0),
+                progress: calculateProgressPercentage(show.episodes_watched || 0, totalEps || show.num_episodes || 0),
                 statusColor: getStatusColor(show.status)
             };
         }

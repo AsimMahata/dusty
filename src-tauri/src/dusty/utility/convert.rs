@@ -29,6 +29,7 @@ pub fn show_to_show_result(s: &Show) -> ShowResult {
         provider_id: None,
         airing: false,
         show_type: ShowType::Unknown,
+        episodes_watched: 0,
         created_at: None,
         updated_at: None,
     }

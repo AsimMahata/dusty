@@ -20,6 +20,7 @@ export interface ShowResult {
     created_at?: string;
     updated_at?: string;
     raw_payload?: string;
+    episodes_watched?: number;
 }
 
 export interface ShowInfo {

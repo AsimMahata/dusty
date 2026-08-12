@@ -24,6 +24,7 @@ const CMD_RENAME_SHOW = "rename_show";
 const CMD_UPDATE_SHOW_STATUS = "update_show_status";
 const CMD_UPDATE_BAN_STATUS = "update_ban_status";
 const CMD_UPDATE_PIN_STATUS = "update_pin_status";
+const CMD_UPDATE_EPISODES_WATCHED = "update_episodes_watched";
 const CMD_UPDATE_SHOW_ID = "update_show_id";
 const CMD_RESET_SHOWS_TABLE = "reset_shows_table";
 const CMD_GET_SHOW_CACHE = "get_show_cache";
@@ -87,6 +88,16 @@ export async function updateShowPinStatusIPC(showId: string, newPinStatus: boole
         return result;
     } catch (error) {
         logger.error(`updateShowPinStatusIPC error: ${error}`);
+        return false;
+    }
+}
+
+export async function updateEpisodesWatchedIPC(showId: string, episodesWatched: number): Promise<boolean> {
+    try {
+        let result = await invoke<boolean>(CMD_UPDATE_EPISODES_WATCHED, { showId, episodesWatched });
+        return result;
+    } catch (error) {
+        logger.error(`updateEpisodesWatchedIPC error: ${error}`);
         return false;
     }
 }

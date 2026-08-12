@@ -46,7 +46,7 @@ fn add_in_show_table(db: &Connection, show: &ShowResult) -> Result<()> {
 pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo> {
     db.query_row(
         "
-        SELECT title, status, banned, pinned, provider, provider_id, airing, show_type
+        SELECT title, status, banned, pinned, provider, provider_id, airing, show_type, episodes_watched
         FROM shows
         WHERE id = ?1
         ",
@@ -55,6 +55,7 @@ pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo> {
             let provider: Option<String> = row.get(4)?;
             let provider_id: Option<String> = row.get(5)?;
             let show_type_str: String = row.get(7)?;
+            let episodes_watched: usize = row.get(8).unwrap_or(0);
             Ok(ShowInfo {
                 title: row.get(0)?,
                 status: row.get(1)?,
@@ -64,6 +65,7 @@ pub fn get_show_info(db: &Connection, id: &String) -> Result<ShowInfo> {
                 provider_id,
                 airing: row.get(6)?,
                 show_type: ShowType::from_str(&show_type_str),
+                episodes_watched,
             })
         },
     )
@@ -147,7 +149,12 @@ pub fn create_shows_table(conn: &Connection) -> Result<()> {
         "show_type",
         "TEXT NOT NULL DEFAULT 'unknown'",
     )?;
-    ensure_column_exists(conn, "shows", "season", "INTEGER DEFAULT NULL")?;
+    ensure_column_exists(
+        conn,
+        "shows",
+        "episodes_watched",
+        "INTEGER NOT NULL DEFAULT 0",
+    )?;
     ensure_column_exists(
         conn,
         "shows",
@@ -161,6 +168,19 @@ pub fn create_shows_table(conn: &Connection) -> Result<()> {
         "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))",
     )?;
 
+    Ok(())
+}
+
+pub fn update_episodes_watched_in_db(
+    db: &Connection,
+    id: String,
+    episodes_watched: usize,
+) -> Result<()> {
+    db.execute(
+        "UPDATE shows SET episodes_watched = ?1, updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE id = ?2",
+        params![episodes_watched, id],
+    )
+    .map_err(|err| DustyError::db("update_episodes_watched", Some("shows".to_string()), err))?;
     Ok(())
 }
 
