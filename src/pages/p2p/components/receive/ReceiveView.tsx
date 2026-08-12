@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, Radio } from "lucide-react";
 import { ReceiveIdleState } from "./ReceiveIdleState";
 import { ReceiveSearchingState } from "./ReceiveSearchingState";
 import { ReceiveDeviceList } from "./ReceiveDeviceList";
+import { ManualReceiveSection } from "./ManualReceiveSection";
 import {
     searchForSenders,
+    getPendingTransfers,
     acceptTransfer,
     rejectTransfer,
 } from "../../../../personalities/introverts/p2p/p2p";
@@ -15,12 +17,35 @@ export const ReceiveView: React.FC = () => {
     const [status, setStatus] = useState<"idle" | "searching" | "results">("idle");
     const [pendingTransfers, setPendingTransfers] = useState<PendingTransfer[]>([]);
 
+    const pollPending = async () => {
+        const transfers = await getPendingTransfers();
+        if (transfers.length > 0) {
+            setPendingTransfers(transfers);
+            setStatus("results");
+        } else if (status === "results" && pendingTransfers.length === 0) {
+            setPendingTransfers([]);
+        }
+    };
+
+    useEffect(() => {
+        pollPending();
+        const interval = setInterval(pollPending, 1000);
+        return () => clearInterval(interval);
+    }, []);
+
     const handleSearch = async () => {
         setStatus("searching");
         try {
             await new Promise((resolve) => setTimeout(resolve, 1200));
             const results = await searchForSenders();
-            setPendingTransfers(results);
+            const combined = [...results];
+            const currentPending = await getPendingTransfers();
+            for (const p of currentPending) {
+                if (!combined.some((c) => c.id === p.id)) {
+                    combined.push(p);
+                }
+            }
+            setPendingTransfers(combined);
             setStatus("results");
         } catch {
             setStatus("idle");
@@ -84,6 +109,10 @@ export const ReceiveView: React.FC = () => {
                     />
                 </>
             )}
+
+            <div style={{ marginTop: "24px" }}>
+                <ManualReceiveSection />
+            </div>
         </div>
     );
 };

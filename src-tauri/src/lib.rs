@@ -122,6 +122,10 @@ pub fn run() {
             dusty::api::p2p::reject_transfer,
             dusty::api::p2p::cancel_transfer,
             dusty::api::p2p::get_p2p_history,
+            dusty::api::p2p::start_manual_receive,
+            dusty::api::p2p::stop_manual_receive,
+            dusty::api::p2p::get_manual_receive_status,
+            dusty::api::p2p::start_manual_send,
         ])
         .setup(|app| {
             initialize_dusty(app)?;

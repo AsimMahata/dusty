@@ -276,9 +276,13 @@ pub fn listen_for_confirmation_with_listener(
     drop(state);
 
     if let Err(e) = execute_file_transfer(&mut control_stream, transfer_key, files, items, start_time) {
-        log::error!("[P2P Sender] Transfer failed or timed out: {}", e);
+        log::error!("[P2P Sender] Transfer failed or cancelled: {}", e);
         if let Some(mut req) = load_outgoing_request_from_stash() {
-            req.status = "FAILED".to_string();
+            if e.to_lowercase().contains("cancel") || e.contains("Receiver") {
+                req.status = "CANCELLED_BY_RECEIVER".to_string();
+            } else {
+                req.status = "FAILED".to_string();
+            }
             let _ = save_outgoing_request_to_stash(&req);
         }
         if let Ok(mut state) = P2P_STATE.lock() {

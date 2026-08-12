@@ -68,6 +68,12 @@ export interface P2PTransferHistoryRecord {
     duration_secs?: number | null;
 }
 
+export interface ManualReceiveStatus {
+    is_listening: boolean;
+    ip_address: string | null;
+    port: number | null;
+}
+
 const CMD_GET_P2P_STATE = "get_p2p_state";
 const CMD_SELECT_SEND_FILES = "select_send_files";
 const CMD_START_SEND = "start_send";
@@ -79,6 +85,10 @@ const CMD_ACCEPT_TRANSFER = "accept_transfer";
 const CMD_REJECT_TRANSFER = "reject_transfer";
 const CMD_CANCEL_TRANSFER = "cancel_transfer";
 const CMD_GET_P2P_HISTORY = "get_p2p_history";
+const CMD_START_MANUAL_RECEIVE = "start_manual_receive";
+const CMD_STOP_MANUAL_RECEIVE = "stop_manual_receive";
+const CMD_GET_MANUAL_RECEIVE_STATUS = "get_manual_receive_status";
+const CMD_START_MANUAL_SEND = "start_manual_send";
 
 export async function getP2PStateIPC(): Promise<P2PBackendState> {
     try {
@@ -182,6 +192,45 @@ export async function getP2PHistoryIPC(): Promise<P2PTransferHistoryRecord[]> {
     } catch (error) {
         logger.error(`getP2PHistoryIPC error: ${error}`);
         return [];
+    }
+}
+
+export async function startManualReceiveIPC(): Promise<ManualReceiveStatus> {
+    try {
+        return await invoke<ManualReceiveStatus>(CMD_START_MANUAL_RECEIVE);
+    } catch (error) {
+        logger.error(`startManualReceiveIPC error: ${error}`);
+        throw error;
+    }
+}
+
+export async function stopManualReceiveIPC(): Promise<void> {
+    try {
+        await invoke<void>(CMD_STOP_MANUAL_RECEIVE);
+    } catch (error) {
+        logger.error(`stopManualReceiveIPC error: ${error}`);
+        throw error;
+    }
+}
+
+export async function getManualReceiveStatusIPC(): Promise<ManualReceiveStatus> {
+    try {
+        return await invoke<ManualReceiveStatus>(CMD_GET_MANUAL_RECEIVE_STATUS);
+    } catch (error) {
+        logger.error(`getManualReceiveStatusIPC error: ${error}`);
+        throw error;
+    }
+}
+
+export async function startManualSendIPC(receiverIp: string, files?: string[]): Promise<void> {
+    try {
+        await invoke<void>(CMD_START_MANUAL_SEND, {
+            receiverIp,
+            files: files || [],
+        });
+    } catch (error) {
+        logger.error(`startManualSendIPC error: ${error}`);
+        throw error;
     }
 }
 

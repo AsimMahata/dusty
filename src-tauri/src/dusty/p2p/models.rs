@@ -222,6 +222,13 @@ impl OutgoingRequestState {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ManualReceiveStatus {
+    pub is_listening: bool,
+    pub ip_address: Option<String>,
+    pub port: Option<u16>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct P2PCurrentState {
     pub mode: String, // "send", "receive", or "transfer"
     pub active_transfer: Option<ActiveTransfer>,

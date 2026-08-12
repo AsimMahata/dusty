@@ -5,6 +5,7 @@ import { startSend, selectSendFiles, cancelTransfer } from "../../../../personal
 import { P2P_STRINGS } from "../../constants/constants";
 import type { OutgoingRequestState } from "../../../../personalities/ambiverts/p2p";
 import { SendFileList } from "./SendFileList";
+import { ManualSendSection } from "./ManualSendSection";
 
 interface SendViewProps {
     outgoingRequest?: OutgoingRequestState | null;
@@ -70,6 +71,7 @@ export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshSt
         const isWaiting = outgoingRequest.status === "WAITING_FOR_ACCEPTANCE" || outgoingRequest.status === "REQUEST_SENT";
         const isTimedOut = outgoingRequest.status === "TIMED_OUT" || (isWaiting && remainingSecs <= 0);
         const isAccepted = outgoingRequest.status === "ACCEPTED" || outgoingRequest.status === "INITIALIZING_TRANSFER";
+        const isCancelledByReceiver = outgoingRequest.status === "CANCELLED_BY_RECEIVER";
         const isFailed = outgoingRequest.status === "FAILED";
 
         const handleSendStash = async () => {
@@ -115,6 +117,10 @@ export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshSt
                             Clear Stash
                         </button>
                     </div>
+
+                    <div style={{ marginTop: "24px" }}>
+                        <ManualSendSection files={outgoingRequest.files} />
+                    </div>
                 </div>
             );
         }
@@ -155,6 +161,26 @@ export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshSt
                             <div style={{ fontWeight: 600 }}>Request timed out</div>
                             <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
                                 No receiver connected within the 60-second deadline.
+                            </div>
+                        </div>
+                    </div>
+                ) : isCancelledByReceiver ? (
+                    <div style={{
+                        padding: "16px",
+                        marginBottom: "16px",
+                        borderRadius: "8px",
+                        backgroundColor: "rgba(239, 68, 68, 0.1)",
+                        border: "1px solid rgba(239, 68, 68, 0.3)",
+                        color: "#ef4444",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px"
+                    }}>
+                        <XCircle size={24} />
+                        <div>
+                            <div style={{ fontWeight: 600 }}>Transfer cancelled by receiver</div>
+                            <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                                The receiver cancelled the file transfer mid-stream.
                             </div>
                         </div>
                     </div>
@@ -225,7 +251,7 @@ export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshSt
                 <SendFileList items={outgoingRequest.items} files={outgoingRequest.files} />
 
                 <div className="p2p-action-group" style={{ marginTop: "16px", display: "flex", gap: "12px" }}>
-                    {isTimedOut || isFailed ? (
+                    {isTimedOut || isFailed || isCancelledByReceiver ? (
                         <>
                             <button
                                 className="p2p-btn p2p-btn-primary p2p-btn-lg"
@@ -250,6 +276,10 @@ export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshSt
                             Cancel Request
                         </button>
                     )}
+                </div>
+
+                <div style={{ marginTop: "24px" }}>
+                    <ManualSendSection files={outgoingRequest.files} />
                 </div>
             </div>
         );
@@ -292,6 +322,10 @@ export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshSt
                     </div>
                 </>
             )}
+
+            <div style={{ marginTop: "24px" }}>
+                <ManualSendSection files={selectedFiles} />
+            </div>
         </div>
     );
 };

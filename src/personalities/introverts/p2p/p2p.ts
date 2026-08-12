@@ -11,8 +11,12 @@ import {
     rejectTransferIPC,
     cancelTransferIPC,
     getP2PHistoryIPC,
+    startManualReceiveIPC,
+    stopManualReceiveIPC,
+    getManualReceiveStatusIPC,
+    startManualSendIPC,
 } from "../../ambiverts/p2p";
-import type { P2PBackendState, PendingTransfer } from "../../ambiverts/p2p";
+import type { P2PBackendState, PendingTransfer, ManualReceiveStatus } from "../../ambiverts/p2p";
 import type { ShowResult } from "../../../pages/shows/types/types";
 import { logger } from "../../../utility/logger";
 
@@ -138,6 +142,51 @@ export async function getP2PHistory() {
     } catch (err) {
         logger.error("Failed to fetch P2P history", err);
         return [];
+    }
+}
+
+export async function startManualReceive(): Promise<ManualReceiveStatus | null> {
+    try {
+        const res = await startManualReceiveIPC();
+        toast.success("Manual listener started");
+        return res;
+    } catch (err) {
+        logger.error("Failed to start manual receive", err);
+        toast.error("Failed to start manual receive");
+        return null;
+    }
+}
+
+export async function stopManualReceive(): Promise<boolean> {
+    try {
+        await stopManualReceiveIPC();
+        toast("Manual listener stopped", { icon: "ℹ️" });
+        return true;
+    } catch (err) {
+        logger.error("Failed to stop manual receive", err);
+        toast.error("Failed to stop manual receive");
+        return false;
+    }
+}
+
+export async function getManualReceiveStatus(): Promise<ManualReceiveStatus> {
+    try {
+        return await getManualReceiveStatusIPC();
+    } catch (err) {
+        logger.error("Failed to get manual receive status", err);
+        return { is_listening: false, ip_address: null, port: null };
+    }
+}
+
+export async function startManualSend(receiverIp: string, files?: string[]): Promise<boolean> {
+    try {
+        await startManualSendIPC(receiverIp, files);
+        toast.success("Initiating direct IP connection...");
+        return true;
+    } catch (err) {
+        logger.error(`Failed to connect to direct IP ${receiverIp}`, err);
+        toast.error(typeof err === "string" ? err : "Failed to connect to receiver IP");
+        return false;
     }
 }
 
