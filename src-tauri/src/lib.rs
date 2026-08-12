@@ -74,6 +74,8 @@ pub fn run() {
             dusty::api::empty_dir::sync_scan_empty_dir,
             dusty::api::lab::tokenize,
             dusty::api::lab::get_all_table_data,
+            dusty::api::lab::get_experiment_log_path,
+            dusty::api::lab::get_experiment_log,
             dusty::api::settings::reset_database,
             dusty::api::show::get_show_cache,
             dusty::api::show::upsert_show_cache,

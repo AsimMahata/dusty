@@ -1,5 +1,5 @@
 import React from 'react';
-import { Terminal, Database, Cpu, FileCode, Key, Palette } from 'lucide-react';
+import { Terminal, Database, Cpu, FileCode, Key, Palette, FlaskConical } from 'lucide-react';
 import type { LabTab } from '../../constants/constants';
 
 interface LabTabsProps {
@@ -10,6 +10,8 @@ interface LabTabsProps {
 
 const getTabIcon = (id: string) => {
     switch (id) {
+        case 'experiment':
+            return <FlaskConical size={16} />;
         case 'api':
             return <Terminal size={16} />;
         case 'database':

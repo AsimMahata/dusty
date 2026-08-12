@@ -4,10 +4,13 @@ export interface LabTab {
     id: string;
     label: string;
     description: string;
-    category: 'core' | 'database' | 'system' | 'utils';
+    category: 'core' | 'database' | 'system' | 'utils' | 'experiment';
 }
 
+export type ExperimentSubTab = 'overview' | 'results' | 'log';
+
 export const LAB_TABS: LabTab[] = [
+    { id: 'experiment', label: 'Experiment Lab', description: 'Run active experiments, view metrics, and stream fresh live logs', category: 'experiment' },
     { id: 'api', label: 'IPC Console', description: 'Interactive IPC API command runner & JSON inspector', category: 'core' },
     { id: 'database', label: 'Database Browser', description: 'Inspect SQLite tables, row data, and schema stats', category: 'database' },
     { id: 'system', label: 'System Monitor', description: 'Live CPU, Memory, Disk usage, and process details', category: 'system' },
