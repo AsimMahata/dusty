@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { ArrowDownCircle, ArrowUpCircle, XCircle, HardDrive, CheckCircle2, Folder, Clock, Check } from "lucide-react";
+import toast from "react-hot-toast";
 import { TransferFileProgressItem } from "./TransferFileProgress";
 import { TransferOverallProgress } from "./TransferOverallProgress";
 import { cancelTransfer, finishTransfer } from "../../../../personalities/introverts/p2p/p2p";
@@ -12,6 +13,8 @@ interface TransferViewProps {
 }
 
 export const TransferView: React.FC<TransferViewProps> = ({ transfer, onCancelComplete }) => {
+    const notifiedTransferIdRef = useRef<string | null>(null);
+
     const handleExit = async () => {
         await finishTransfer();
         if (onCancelComplete) {
@@ -32,7 +35,7 @@ export const TransferView: React.FC<TransferViewProps> = ({ transfer, onCancelCo
     const receiverName = transfer?.receiver_name || "Device";
     const files = transfer?.files || [];
     const overallProgress = transfer?.overall_progress ?? 0;
-    const timeTaken = transfer?.total_time_secs != null ? `${transfer.total_time_secs} seconds` : "N/A";
+    const timeTaken = transfer?.total_time_secs != null ? `${transfer.total_time_secs}s` : "N/A";
     const destPath = transfer?.destination_path || "";
     const totalBytes = transfer?.total_bytes ?? 0;
 
@@ -46,6 +49,16 @@ export const TransferView: React.FC<TransferViewProps> = ({ transfer, onCancelCo
     };
 
     const formattedTotalSize = formatBytes(totalBytes);
+    const summaryMsg = role === "sender"
+        ? `Successfully sent ${files.length} file${files.length === 1 ? "" : "s"}${formattedTotalSize ? ` (${formattedTotalSize})` : ""} in ${timeTaken}`
+        : `Successfully received ${files.length} file${files.length === 1 ? "" : "s"}${formattedTotalSize ? ` (${formattedTotalSize})` : ""} in ${timeTaken}`;
+
+    useEffect(() => {
+        if (isCompleted && transfer?.id && notifiedTransferIdRef.current !== transfer.id) {
+            notifiedTransferIdRef.current = transfer.id;
+            toast.success(summaryMsg);
+        }
+    }, [isCompleted, summaryMsg, transfer?.id]);
 
     if (isCompleted) {
         return (

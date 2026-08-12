@@ -288,13 +288,15 @@ fn handle_incoming_manual_connection(
                 duration_secs,
             );
 
-            if let Ok(mut state) = P2P_STATE.lock() {
-                if MANUAL_LISTENER_ACTIVE.load(Ordering::SeqCst) {
-                    state.mode = "receive".to_string();
-                } else {
-                    state.mode = "send".to_string();
+            if res.is_err() {
+                if let Ok(mut state) = P2P_STATE.lock() {
+                    if MANUAL_LISTENER_ACTIVE.load(Ordering::SeqCst) {
+                        state.mode = "receive".to_string();
+                    } else {
+                        state.mode = "send".to_string();
+                    }
+                    state.active_transfer = None;
                 }
-                state.active_transfer = None;
             }
 
             res
@@ -343,6 +345,7 @@ pub fn start_manual_send(receiver_ip: String, files: Vec<String>) -> Result<(), 
                 .unwrap_or(0);
             stashed.status = "WAITING_FOR_ACCEPTANCE".to_string();
             stashed.created_at = now;
+            stashed.receiver_name = Some(trimmed_ip.clone());
             save_outgoing_request_to_stash(&stashed)?;
             stashed
         } else {
@@ -365,7 +368,7 @@ pub fn start_manual_send(receiver_ip: String, files: Vec<String>) -> Result<(), 
             status: "WAITING_FOR_ACCEPTANCE".to_string(),
             created_at: now,
             timeout_secs: 60,
-            receiver_name: None,
+            receiver_name: Some(trimmed_ip.clone()),
         };
         save_outgoing_request_to_stash(&req)?;
         req
@@ -497,9 +500,11 @@ pub fn start_manual_send(receiver_ip: String, files: Vec<String>) -> Result<(), 
             }
         }
 
-        if let Ok(mut state) = P2P_STATE.lock() {
-            state.mode = "send".to_string();
-            state.active_transfer = None;
+        if result.is_err() {
+            if let Ok(mut state) = P2P_STATE.lock() {
+                state.mode = "send".to_string();
+                state.active_transfer = None;
+            }
         }
 
         result

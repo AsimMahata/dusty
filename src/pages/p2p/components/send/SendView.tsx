@@ -240,9 +240,15 @@ export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshSt
                     }}>
                         <Clock size={24} />
                         <div>
-                            <div style={{ fontWeight: 600 }}>Request sent - Waiting for acceptance...</div>
+                            <div style={{ fontWeight: 600 }}>
+                                {outgoingRequest.receiver_name
+                                    ? `Request sent to ${outgoingRequest.receiver_name}`
+                                    : "Request sent - Waiting for acceptance..."}
+                            </div>
                             <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
-                                Waiting for a receiver to accept your files on the local network.
+                                {outgoingRequest.receiver_name
+                                    ? `Sent transfer request to ${outgoingRequest.receiver_name}. Waiting for acceptance...`
+                                    : "Waiting for a receiver to accept your files on the local network."}
                             </div>
                         </div>
                     </div>
