@@ -1,3 +1,4 @@
+use crate::dusty::p2p::models::{ManifestFile, ManifestPayload, TransferItem};
 use crate::dusty::p2p::send_cancel_signal_and_reset_state;
 use crate::dusty::p2p::CANCEL_FLAG;
 use crate::dusty::p2p::P2P_STATE;
@@ -13,6 +14,7 @@ pub fn is_transfer_cancelled() -> bool {
 pub fn set_transfer_cancelled(val: bool) {
     CANCEL_FLAG.store(val, std::sync::atomic::Ordering::Relaxed);
 }
+
 pub fn check_for_already_transfering() -> Result<(), String> {
     let mut state = P2P_STATE.lock().map_err(|e| e.to_string())?;
 
@@ -31,6 +33,7 @@ pub fn check_for_already_transfering() -> Result<(), String> {
 
     Ok(())
 }
+
 pub fn send_single_file(
     stream: &mut TcpStream,
     file_idx: usize,
@@ -79,14 +82,19 @@ pub fn send_single_file(
     let ack_str = String::from_utf8_lossy(&ack_buf[..n]);
 
     if ack_str.trim().starts_with("CANCEL") {
-        log::warn!("[P2P Engine] Receiver cancelled transfer. Sending OK confirmation...");
+        let reason = if ack_str.trim().starts_with("CANCEL:") {
+            ack_str.trim()["CANCEL:".len()..].to_string()
+        } else {
+            "Transfer cancelled by receiver".to_string()
+        };
+        log::warn!("[P2P Engine] Receiver cancelled transfer ({}). Sending OK confirmation...", reason);
         stream.write_all(b"OK\n").ok();
         stream.flush().ok();
         if let Ok(mut state) = P2P_STATE.lock() {
             state.mode = "send".to_string();
             state.active_transfer = None;
         }
-        return Err("Transfer cancelled by receiver".to_string());
+        return Err(format!("Receiver error: {}", reason));
     }
 
     let mut file = std::fs::File::open(file_path)
@@ -177,56 +185,90 @@ pub fn execute_file_transfer(
     stream: &mut TcpStream,
     transfer_key: &str,
     files: &Vec<String>,
+    items: &Vec<TransferItem>,
     start_time: Instant,
 ) -> Result<(), String> {
     log::info!(
-        "[P2P Engine]: Starting chunked file transfer over TCP stream (peer: {:?}) for session key: {}, files count: {}",
-        stream.peer_addr().ok(),
+        "[P2P Engine]: Starting chunked transfer over TCP stream for session key: {}, items count: {}",
         transfer_key,
-        files.len()
+        items.len()
     );
 
+    struct TransferFileTask {
+        file_path: String,
+        file_size: u64,
+        relative_path: Option<String>,
+        item_index: usize,
+    }
+
+    let mut tasks: Vec<TransferFileTask> = Vec::new();
     let mut total_bytes_all_files: u64 = 0;
-    let mut file_sizes: Vec<u64> = Vec::new();
+    let mut manifest_items = items.clone();
 
-    for file_path in files {
-        let meta = std::fs::metadata(file_path)
-            .map_err(|e| format!("Failed to read metadata for file '{}': {}", file_path, e))?;
-        file_sizes.push(meta.len());
-        total_bytes_all_files += meta.len();
+    if manifest_items.is_empty() {
+        manifest_items = files
+            .iter()
+            .map(|f| TransferItem::File { path: f.clone() })
+            .collect();
     }
 
-    #[derive(serde::Serialize)]
-    struct ManifestItem {
-        idx: usize,
-        name: String,
-        size: u64,
-    }
-    #[derive(serde::Serialize)]
-    struct ManifestPayload {
-        files: Vec<ManifestItem>,
-        total_bytes: u64,
+    for (item_index, item) in manifest_items.iter().enumerate() {
+        match item {
+            TransferItem::File { path } => {
+                let meta = std::fs::metadata(path).map_err(|e| {
+                    format!("Failed to read metadata for file '{}': {}", path, e)
+                })?;
+                let size = meta.len();
+                total_bytes_all_files += size;
+                tasks.push(TransferFileTask {
+                    file_path: path.clone(),
+                    file_size: size,
+                    relative_path: None,
+                    item_index,
+                });
+            }
+            TransferItem::Show { show } => {
+                for ep in &show.episodes {
+                    let path_str = ep.path.to_string_lossy().to_string();
+                    let meta = std::fs::metadata(&path_str).map_err(|e| {
+                        format!("Failed to read metadata for show file '{}': {}", path_str, e)
+                    })?;
+                    let size = meta.len();
+                    total_bytes_all_files += size;
+                    let rel_path = format!("{}/{}", show.title, ep.get_name());
+                    tasks.push(TransferFileTask {
+                        file_path: path_str,
+                        file_size: size,
+                        relative_path: Some(rel_path),
+                        item_index,
+                    });
+                }
+            }
+        }
     }
 
-    let manifest_items: Vec<ManifestItem> = files
+    let manifest_files: Vec<ManifestFile> = tasks
         .iter()
         .enumerate()
-        .map(|(idx, file_path)| {
-            let name = std::path::Path::new(file_path)
+        .map(|(idx, task)| {
+            let name = std::path::Path::new(&task.file_path)
                 .file_name()
                 .and_then(|n| n.to_str())
-                .unwrap_or(file_path)
+                .unwrap_or(&task.file_path)
                 .to_string();
-            ManifestItem {
+            ManifestFile {
                 idx,
                 name,
-                size: file_sizes[idx],
+                size: task.file_size,
+                relative_path: task.relative_path.clone(),
+                item_index: task.item_index,
             }
         })
         .collect();
 
     let manifest = ManifestPayload {
-        files: manifest_items,
+        items: manifest_items,
+        files: manifest_files,
         total_bytes: total_bytes_all_files,
     };
 
@@ -252,19 +294,20 @@ pub fn execute_file_transfer(
         }
     }
 
+
     let mut total_bytes_sent_cumulative: u64 = 0;
     let mut last_speed_check = std::time::Instant::now();
     let mut bytes_at_last_check: u64 = 0;
     const CHUNK_SIZE: usize = 64 * 1024;
     let mut buffer = vec![0u8; CHUNK_SIZE];
 
-    for (file_idx, file_path) in files.iter().enumerate() {
+    for (file_idx, task) in tasks.iter().enumerate() {
         send_single_file(
             stream,
             file_idx,
-            files.len(),
-            file_path,
-            file_sizes[file_idx],
+            tasks.len(),
+            &task.file_path,
+            task.file_size,
             total_bytes_all_files,
             &mut total_bytes_sent_cumulative,
             &mut buffer,
@@ -295,3 +338,4 @@ pub fn execute_file_transfer(
     );
     Ok(())
 }
+

@@ -1,7 +1,12 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
+import type { ShowResult } from "../../pages/shows/types/types";
 
 export type P2PStateMode = "send" | "receive" | "transfer";
+
+export type TransferItem =
+    | { type: "file"; path: string }
+    | { type: "show"; show: ShowResult };
 
 export interface TransferFileProgress {
     name: string;
@@ -25,6 +30,7 @@ export interface ActiveTransfer {
 export interface OutgoingRequestState {
     id: string;
     files: string[];
+    items?: TransferItem[];
     status: string;
     created_at: number;
     timeout_secs: number;
@@ -41,18 +47,38 @@ export interface PendingTransfer {
     id: string;
     sender_name: string;
     files: string[];
+    items?: TransferItem[];
     created_at: number;
     timeout_secs: number;
+}
+
+export interface P2PTransferHistoryRecord {
+    id: string;
+    direction: "outgoing" | "incoming" | string;
+    role: "sender" | "receiver" | string;
+    items?: TransferItem[];
+    files: string[];
+    peer_name: string;
+    peer_ip?: string | null;
+    started_at: number;
+    completed_at: number;
+    status: "COMPLETED" | "CANCELLED" | "FAILED" | "TIMED_OUT" | string;
+    failure_reason?: string | null;
+    total_bytes?: number | null;
+    duration_secs?: number | null;
 }
 
 const CMD_GET_P2P_STATE = "get_p2p_state";
 const CMD_SELECT_SEND_FILES = "select_send_files";
 const CMD_START_SEND = "start_send";
+const CMD_ADD_FILE_TO_STASH = "add_file_to_stash";
+const CMD_ADD_SHOW_TO_STASH = "add_show_to_stash";
 const CMD_SEARCH_FOR_SENDERS = "search_for_senders";
 const CMD_GET_PENDING_TRANSFERS = "get_pending_transfers";
 const CMD_ACCEPT_TRANSFER = "accept_transfer";
 const CMD_REJECT_TRANSFER = "reject_transfer";
 const CMD_CANCEL_TRANSFER = "cancel_transfer";
+const CMD_GET_P2P_HISTORY = "get_p2p_history";
 
 export async function getP2PStateIPC(): Promise<P2PBackendState> {
     try {
@@ -74,11 +100,31 @@ export async function selectSendFilesIPC(): Promise<string[]> {
     }
 }
 
-export async function startSendIPC(files: string[]): Promise<void> {
+export async function startSendIPC(files?: string[]): Promise<void> {
     try {
-        await invoke<void>(CMD_START_SEND, { files });
+        await invoke<void>(CMD_START_SEND, { files: files || [] });
     } catch (error) {
         logger.error(`startSendIPC error: ${error}`);
+        throw error;
+    }
+}
+
+export async function addFileToStashIPC(path: string): Promise<OutgoingRequestState> {
+    try {
+        const result = await invoke<OutgoingRequestState>(CMD_ADD_FILE_TO_STASH, { path });
+        return result;
+    } catch (error) {
+        logger.error(`addFileToStashIPC error: ${error}`);
+        throw error;
+    }
+}
+
+export async function addShowToStashIPC(show: ShowResult): Promise<OutgoingRequestState> {
+    try {
+        const result = await invoke<OutgoingRequestState>(CMD_ADD_SHOW_TO_STASH, { show });
+        return result;
+    } catch (error) {
+        logger.error(`addShowToStashIPC error: ${error}`);
         throw error;
     }
 }
@@ -129,3 +175,14 @@ export async function cancelTransferIPC(): Promise<void> {
         throw error;
     }
 }
+
+export async function getP2PHistoryIPC(): Promise<P2PTransferHistoryRecord[]> {
+    try {
+        return await invoke<P2PTransferHistoryRecord[]>(CMD_GET_P2P_HISTORY);
+    } catch (error) {
+        logger.error(`getP2PHistoryIPC error: ${error}`);
+        return [];
+    }
+}
+
+

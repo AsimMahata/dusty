@@ -4,6 +4,7 @@ use std::net::TcpStream;
 use std::sync::mpsc;
 use tokio::sync::oneshot;
 
+use crate::dusty::db::show::add_shows_in_db;
 use crate::dusty::p2p::is_transfer_cancelled;
 use crate::dusty::p2p::read_header_line;
 use crate::dusty::p2p::send_cancel_signal_and_wait_ack;
@@ -15,8 +16,34 @@ use crate::dusty::p2p::PendingTransfer;
 use crate::dusty::p2p::ReceiverHandshake;
 use crate::dusty::p2p::SenderInfo;
 use crate::dusty::p2p::TransferFileProgress;
+use crate::dusty::p2p::TransferItem;
 use crate::dusty::p2p::P2P_STATE;
 use crate::dusty::p2p::RECEIVER_DISCOVERY_PORT;
+
+fn get_db_connection() -> Result<rusqlite::Connection, String> {
+    let local_data = dirs::data_local_dir()
+        .or_else(dirs::home_dir)
+        .ok_or_else(|| "Failed to get local data dir".to_string())?;
+
+    let possible_paths = [
+        local_data.join("com.dusty.dev").join("database").join("dusty.db"),
+        local_data.join("dusty").join("database").join("dusty.db"),
+        dirs::home_dir()
+            .map(|h| h.join(".dusty").join("database").join("dusty.db"))
+            .unwrap_or_default(),
+    ];
+
+    for path in &possible_paths {
+        if path.exists() {
+            return rusqlite::Connection::open(path).map_err(|e| e.to_string());
+        }
+    }
+
+    if let Some(parent) = possible_paths[0].parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    rusqlite::Connection::open(&possible_paths[0]).map_err(|e| e.to_string())
+}
 
 pub fn seach_for_available_senders(tx: oneshot::Sender<Vec<PendingTransfer>>) {
     log::info!("[P2P Receiver] Starting mDNS scan for available senders (30s)...");
@@ -64,6 +91,7 @@ pub fn seach_for_available_senders(tx: oneshot::Sender<Vec<PendingTransfer>>) {
             sender_ips: info.peer().addresses().clone(),
             sender_port: info.peer().tcp_port(),
             files: info.files().clone(),
+            items: info.items().clone(),
             created_at,
             timeout_secs,
         });
@@ -192,8 +220,15 @@ fn receive_single_file(
     stream.flush().ok();
 
     let target_file_path = download_dir.join(file_name);
-    let mut file = std::fs::File::create(&target_file_path)
-        .map_err(|e| format!("Failed to create file '{:?}': {}", target_file_path, e))?;
+    let mut file = match std::fs::File::create(&target_file_path) {
+        Ok(f) => f,
+        Err(e) => {
+            let err_msg = format!("Failed to create file '{:?}': {}", target_file_path, e);
+            log::error!("[P2P Receiver] {}", err_msg);
+            crate::dusty::p2p::send_cancel_signal_with_reason(stream, &err_msg);
+            return Err(err_msg);
+        }
+    };
 
     let mut file_bytes_received: u64 = 0;
     let mut transfer_aborted = false;
@@ -220,11 +255,21 @@ fn receive_single_file(
                 }
                 continue;
             }
-            Err(e) => return Err(format!("Error reading file chunk from stream: {}", e)),
+            Err(e) => {
+                let err_msg = format!("Error reading file chunk from stream: {}", e);
+                crate::dusty::p2p::send_cancel_signal_with_reason(stream, &err_msg);
+                return Err(err_msg);
+            }
         };
 
-        file.write_all(&buffer[..bytes_read])
-            .map_err(|e| format!("Error writing chunk to disk file: {}", e))?;
+        if let Err(e) = file.write_all(&buffer[..bytes_read]) {
+            let err_msg = format!("Error writing chunk to disk file: {}", e);
+            log::error!("[P2P Receiver] {}", err_msg);
+            crate::dusty::p2p::send_cancel_signal_with_reason(stream, &err_msg);
+            drop(file);
+            let _ = std::fs::remove_file(&target_file_path);
+            return Err(err_msg);
+        }
 
         file_bytes_received += bytes_read as u64;
         *total_bytes_received_cumulative += bytes_read as u64;
@@ -279,10 +324,12 @@ fn receive_single_file(
             send_cancel_signal_and_wait_ack(stream);
             return Err("Transfer cancelled by receiver".to_string());
         } else {
-            return Err(format!(
+            let err_msg = format!(
                 "Transfer incomplete: received {} of {} bytes for file '{}'",
                 file_bytes_received, file_size, file_name
-            ));
+            );
+            crate::dusty::p2p::send_cancel_signal_with_reason(stream, &err_msg);
+            return Err(err_msg);
         }
     } else {
         log::info!("[P2P Receiver] Saved file: {:?}", target_file_path);
@@ -299,7 +346,7 @@ pub fn receive_file_transfer(
     start_time: std::time::Instant,
 ) -> Result<(), String> {
     log::info!(
-        "[P2P Receiver] Starting file payload reception for session: {}",
+        "[P2P Receiver] Starting payload reception for session: {}",
         transfer_key
     );
 
@@ -327,6 +374,7 @@ pub fn receive_file_transfer(
     let mut total_bytes_received_cumulative: u64 = 0;
     let mut last_speed_check = std::time::Instant::now();
     let mut bytes_at_last_check: u64 = 0;
+    let mut current_manifest: Option<ManifestPayload> = None;
 
     loop {
         if is_transfer_cancelled() {
@@ -346,12 +394,18 @@ pub fn receive_file_transfer(
         }
 
         if header_str.starts_with("CANCEL") {
+            let reason = if header_str.starts_with("CANCEL:") {
+                header_str["CANCEL:".len()..].to_string()
+            } else {
+                "Transfer cancelled by sender".to_string()
+            };
             log::warn!(
-                "[P2P Receiver] Received CANCEL signal from sender. Acknowledging with OK..."
+                "[P2P Receiver] Received CANCEL signal from sender ({}). Acknowledging with OK...",
+                reason
             );
             stream.write_all(b"OK\n").ok();
             stream.flush().ok();
-            return Err("Transfer cancelled by sender".to_string());
+            return Err(format!("Sender error: {}", reason));
         }
 
         if header_str.starts_with("MANIFEST:") {
@@ -362,6 +416,7 @@ pub fn receive_file_transfer(
                     manifest.files.len(),
                     manifest.total_bytes
                 );
+                current_manifest = Some(manifest.clone());
                 if let Ok(mut state) = P2P_STATE.lock() {
                     if let Some(ref mut active) = state.active_transfer {
                         active.files = manifest
@@ -392,12 +447,33 @@ pub fn receive_file_transfer(
             let file_name = parts[2];
             let file_size: u64 = parts[3].parse().unwrap_or(0);
 
+            let file_download_dir = if let Some(ref manifest) = current_manifest {
+                if let Some(manifest_item) = manifest.files.get(file_idx) {
+                    if let Some(ref rel_path) = manifest_item.relative_path {
+                        let path_obj = std::path::Path::new(rel_path);
+                        if let Some(parent) = path_obj.parent() {
+                            download_dir.join(parent)
+                        } else {
+                            download_dir.clone()
+                        }
+                    } else {
+                        download_dir.clone()
+                    }
+                } else {
+                    download_dir.clone()
+                }
+            } else {
+                download_dir.clone()
+            };
+
+            std::fs::create_dir_all(&file_download_dir).ok();
+
             receive_single_file(
                 stream,
                 file_idx,
                 file_name,
                 file_size,
-                &download_dir,
+                &file_download_dir,
                 &mut buffer,
                 &mut total_bytes_received_cumulative,
                 &mut last_speed_check,
@@ -405,6 +481,42 @@ pub fn receive_file_transfer(
             )?;
         }
     }
+
+    if let Some(manifest) = current_manifest {
+        for item in manifest.items {
+            match item {
+                TransferItem::File { path } => {
+                    log::info!("[P2P Receiver] Successfully received file item: {}", path);
+                }
+                TransferItem::Show { mut show } => {
+                    let show_dir = download_dir.join(&show.title);
+                    let show_dir_str = show_dir.to_string_lossy().to_string();
+                    show.dir = Some(show_dir_str);
+
+                    for ep in &mut show.episodes {
+                        let new_ep_path = show_dir.join(ep.get_name());
+                        ep.path = new_ep_path;
+                    }
+
+                    if let Ok(conn) = get_db_connection() {
+                        if let Err(e) = add_shows_in_db(&conn, &vec![show.clone()]) {
+                            log::error!(
+                                "[P2P Receiver] Failed to register incoming show '{}' into DB: {}",
+                                show.title,
+                                e
+                            );
+                        } else {
+                            log::info!(
+                                "[P2P Receiver] Successfully registered incoming show '{}' into DB!",
+                                show.title
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     let elapsed = start_time.elapsed().as_secs_f64();
     let elapsed_rounded = (elapsed * 10.0).round() / 10.0;
@@ -459,20 +571,16 @@ pub fn start_p2p_receiver(pending: PendingTransfer, me: Peer) -> Result<(), Stri
         .sender_ips
         .first()
         .map(|s| s.as_str())
-        .unwrap_or("127.0.0.1");
+        .unwrap_or("127.0.0.1")
+        .to_string();
     let sender_port: u16 = pending.sender_port;
 
-    match connect_to_sender(sender_ip, sender_port) {
+    let res = match connect_to_sender(&sender_ip, sender_port) {
         Ok(mut stream) => {
             if let Err(e) = send_receiver_handshake(&mut stream, &pending.id, &me) {
                 log::error!("[P2P Receiver] Handshake failed: {}", e);
-                let mut state = P2P_STATE.lock().map_err(|e| e.to_string())?;
-                state.mode = "receive".to_string();
-                state.active_transfer = None;
-                return Err(e);
-            }
-
-            if let Err(e) = receive_file_transfer(
+                Err(e)
+            } else if let Err(e) = receive_file_transfer(
                 &mut stream,
                 &pending.sender_name,
                 &pending.id,
@@ -480,20 +588,63 @@ pub fn start_p2p_receiver(pending: PendingTransfer, me: Peer) -> Result<(), Stri
                 start_time,
             ) {
                 log::error!("[P2P Receiver] File receiving failed: {}", e);
-                let mut state = P2P_STATE.lock().map_err(|e| e.to_string())?;
-                state.mode = "receive".to_string();
-                state.active_transfer = None;
-                return Err(e);
+                Err(e)
+            } else {
+                Ok(())
             }
-
-            Ok(())
         }
         Err(e) => {
             log::error!("[P2P Receiver] Connection failed: {}", e);
-            let mut state = P2P_STATE.lock().map_err(|e| e.to_string())?;
-            state.mode = "receive".to_string();
-            state.active_transfer = None;
             Err(e)
         }
+    };
+
+    let (total_bytes, duration_secs) = if let Ok(state) = P2P_STATE.lock() {
+        if let Some(ref active) = state.active_transfer {
+            (active.total_bytes, active.total_time_secs)
+        } else {
+            (None, None)
+        }
+    } else {
+        (None, None)
+    };
+
+    let status_str = match &res {
+        Ok(_) => "COMPLETED".to_string(),
+        Err(e) => {
+            if e.contains("cancelled") {
+                "CANCELLED".to_string()
+            } else {
+                "FAILED".to_string()
+            }
+        }
+    };
+
+    let failure_reason = match &res {
+        Ok(_) => None,
+        Err(e) => Some(e.clone()),
+    };
+
+    crate::dusty::p2p::history::create_and_record_history(
+        pending.id.clone(),
+        "incoming".to_string(),
+        "receiver".to_string(),
+        pending.items.clone(),
+        pending.files.clone(),
+        pending.sender_name.clone(),
+        Some(sender_ip),
+        pending.created_at,
+        status_str,
+        failure_reason,
+        total_bytes,
+        duration_secs,
+    );
+
+    if res.is_err() {
+        if let Ok(mut state) = P2P_STATE.lock() {
+            state.mode = "receive".to_string();
+            state.active_transfer = None;
+        }
     }
+    res
 }

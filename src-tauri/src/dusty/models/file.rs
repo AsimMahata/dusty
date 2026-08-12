@@ -10,12 +10,12 @@ use crate::dusty::utility::sha256_hash::get_sha256_id;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct FileInfo {
-    pub(crate) id: String,
-    name: String,
-    path: PathBuf,
-    size: u64,
-    ext: Option<String>,
-    is_dir: bool,
+    pub id: String,
+    pub name: String,
+    pub path: PathBuf,
+    pub size: u64,
+    pub ext: Option<String>,
+    pub is_dir: bool,
 }
 
 impl FileInfo {
@@ -70,5 +70,9 @@ impl FileInfo {
 
     pub fn get_name(&self) -> String {
         self.name.clone()
+    }
+
+    pub fn get_path(&self) -> &PathBuf {
+        &self.path
     }
 }

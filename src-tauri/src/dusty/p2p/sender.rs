@@ -23,6 +23,7 @@ use crate::dusty::p2p::Peer;
 use crate::dusty::p2p::ReceiverHandshake;
 use crate::dusty::p2p::SenderInfo;
 use crate::dusty::p2p::TransferFileProgress;
+use crate::dusty::p2p::TransferItem;
 use crate::dusty::p2p::P2P_STATE;
 use crate::dusty::p2p::SENDER_DISCOVERY_PORT;
 use crate::dusty::p2p::SENDER_TRANSFER_PORT;
@@ -34,13 +35,14 @@ pub fn check_for_existing_outgoing_stash_and_request_status() -> Result<(), Stri
             .map(|d| d.as_secs())
             .unwrap_or(0);
 
-        let is_expired = now >= existing.created_at + existing.timeout_secs;
+        let is_waiting = existing.status == "WAITING_FOR_ACCEPTANCE"
+            || existing.status == "REQUEST_SENT";
 
-        if (existing.status == "WAITING_FOR_ACCEPTANCE"
-            || existing.status == "REQUEST_SENT"
-            || existing.status == "ACCEPTED"
-            || existing.status == "INITIALIZING_TRANSFER")
-            && !is_expired
+        let is_expired = is_waiting && (now >= existing.created_at + existing.timeout_secs);
+
+        if existing.status == "ACCEPTED"
+            || existing.status == "INITIALIZING_TRANSFER"
+            || (is_waiting && !is_expired)
         {
             return Err(
                 "An active outgoing request already exists. Please cancel or wait for timeout before creating a new request."
@@ -62,9 +64,15 @@ pub fn make_new_outgoing_send_request(files: Vec<String>) -> Result<OutgoingRequ
         .map(|d| d.as_secs())
         .unwrap_or(0);
 
+    let items = files
+        .iter()
+        .map(|p| TransferItem::File { path: p.clone() })
+        .collect();
+
     Ok(OutgoingRequestState {
         id: transfer_key,
         files,
+        items,
         status: "WAITING_FOR_ACCEPTANCE".to_string(),
         created_at: now,
         timeout_secs: 60,
@@ -75,6 +83,7 @@ pub fn make_new_outgoing_send_request(files: Vec<String>) -> Result<OutgoingRequ
 pub fn broadcast_sender_presence(
     transfer_key: &str,
     files: &Vec<String>,
+    items: &Vec<TransferItem>,
     me: Peer,
     discovery_port: u16,
     created_at: u64,
@@ -85,10 +94,11 @@ pub fn broadcast_sender_presence(
     let discovery_channel = Discovery::new(service_type, duration, discovery_port);
 
     log::info!(
-        "[P2P Sender]: Broadcasting presence with transfer_key: {}, discovery_port: {}, files: {:?}, peer: {:?}, created_at: {}, timeout_secs: {}",
+        "[P2P Sender]: Broadcasting presence with transfer_key: {}, discovery_port: {}, files count: {}, items count: {}, peer: {:?}, created_at: {}, timeout_secs: {}",
         transfer_key,
         discovery_port,
-        files,
+        files.len(),
+        items.len(),
         me,
         created_at,
         timeout_secs
@@ -97,6 +107,7 @@ pub fn broadcast_sender_presence(
         me,
         transfer_key.to_string(),
         files.clone(),
+        items.clone(),
         created_at,
         timeout_secs,
     );
@@ -109,6 +120,7 @@ pub fn listen_for_confirmation_with_listener(
     tcp_port: u16,
     transfer_key: &str,
     files: &Vec<String>,
+    items: &Vec<TransferItem>,
     sender_name: &str,
 ) -> Result<(), String> {
     log::info!(
@@ -206,6 +218,10 @@ pub fn listen_for_confirmation_with_listener(
         );
         log::error!("[P2P Sender] {}", err_msg);
         let _ = control_stream.write_all(b"REJECTED\n");
+        if let Some(mut req) = load_outgoing_request_from_stash() {
+            req.status = "FAILED".to_string();
+            let _ = save_outgoing_request_to_stash(&req);
+        }
         let mut state = P2P_STATE.lock().map_err(|e| e.to_string())?;
         state.mode = "send".to_string();
         state.active_transfer = None;
@@ -259,8 +275,12 @@ pub fn listen_for_confirmation_with_listener(
     });
     drop(state);
 
-    if let Err(e) = execute_file_transfer(&mut control_stream, transfer_key, files, start_time) {
+    if let Err(e) = execute_file_transfer(&mut control_stream, transfer_key, files, items, start_time) {
         log::error!("[P2P Sender] Transfer failed or timed out: {}", e);
+        if let Some(mut req) = load_outgoing_request_from_stash() {
+            req.status = "FAILED".to_string();
+            let _ = save_outgoing_request_to_stash(&req);
+        }
         if let Ok(mut state) = P2P_STATE.lock() {
             state.mode = "send".to_string();
             state.active_transfer = None;
@@ -275,15 +295,17 @@ pub fn listen_for_confirmation(
     tcp_port: u16,
     transfer_key: &str,
     files: &Vec<String>,
+    items: &Vec<TransferItem>,
     sender_name: &str,
 ) -> Result<(), String> {
     let (listener, bound_port) = open_tcp_listener(tcp_port)?;
-    listen_for_confirmation_with_listener(listener, bound_port, transfer_key, files, sender_name)
+    listen_for_confirmation_with_listener(listener, bound_port, transfer_key, files, items, sender_name)
 }
 
 pub fn start_p2p_sender(req: OutgoingRequestState, my_info: User) -> Result<(), String> {
     let transfer_key = req.id.clone();
-    let files = req.files.clone();
+    let items = req.get_items();
+    let files = req.all_file_paths();
     let (listener, bound_port) = open_tcp_listener(SENDER_TRANSFER_PORT)?;
 
     let my_uuid = Uuid::parse_str(&my_info.id).unwrap_or_else(|_| Uuid::new_v4());
@@ -296,6 +318,7 @@ pub fn start_p2p_sender(req: OutgoingRequestState, my_info: User) -> Result<(), 
     let (discovery, service_name) = broadcast_sender_presence(
         &transfer_key,
         &files,
+        &items,
         my_peer,
         SENDER_DISCOVERY_PORT,
         req.created_at,
@@ -307,12 +330,61 @@ pub fn start_p2p_sender(req: OutgoingRequestState, my_info: User) -> Result<(), 
         bound_port,
         &transfer_key,
         &files,
+        &items,
         &my_info.display_name,
     );
 
-    log::info!("[P2P Sender] Transfer completed or timed out. Unregistering mDNS broadcast...");
+    log::info!("[P2P Sender] Transfer completed or finished. Unregistering mDNS broadcast...");
     discovery.unregister(&service_name);
     discovery.shutdown();
+
+    let (peer_name, peer_ip, total_bytes, duration_secs) = if let Ok(state) = P2P_STATE.lock() {
+        if let Some(ref active) = state.active_transfer {
+            (
+                active.receiver_name.clone(),
+                None,
+                active.total_bytes,
+                active.total_time_secs,
+            )
+        } else {
+            ("Unknown Receiver".to_string(), None, None, None)
+        }
+    } else {
+        ("Unknown Receiver".to_string(), None, None, None)
+    };
+
+    let status_str = match &result {
+        Ok(_) => "COMPLETED".to_string(),
+        Err(e) => {
+            if e.contains("cancelled") {
+                "CANCELLED".to_string()
+            } else if e.contains("timeout") {
+                "TIMED_OUT".to_string()
+            } else {
+                "FAILED".to_string()
+            }
+        }
+    };
+
+    let failure_reason = match &result {
+        Ok(_) => None,
+        Err(e) => Some(e.clone()),
+    };
+
+    crate::dusty::p2p::history::create_and_record_history(
+        transfer_key,
+        "outgoing".to_string(),
+        "sender".to_string(),
+        items,
+        files,
+        peer_name,
+        peer_ip,
+        req.created_at,
+        status_str,
+        failure_reason,
+        total_bytes,
+        duration_secs,
+    );
 
     if result.is_ok() {
         clear_outgoing_request_stash();
@@ -320,3 +392,5 @@ pub fn start_p2p_sender(req: OutgoingRequestState, my_info: User) -> Result<(), 
 
     result
 }
+
+

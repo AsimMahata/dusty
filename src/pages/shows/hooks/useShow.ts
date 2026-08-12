@@ -4,7 +4,7 @@ import { fetchShows, updateBanStatus as updateBanStatusIntrovert, updateShowStat
 import { openFile } from '../../../personalities/introverts/filesystem/filesystem';
 import { LOCAL_STORAGE_LAST_WATCHED, STATUS_PRIORITY } from '../constants/constants';
 import { logger } from '../../../utility/logger';
-import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE_CIRCLE_ICON_16, X_CIRCLE_ICON_16, ROTATE_CCW_ICON_16, BAN_ICON_16, SHIELD_CHECK_ICON_16, SEARCH_ICON_16 } from '../../../constants/icon';
+import { PIN_ICON_16, EYE_ICON_16, CHECK_CIRCLE_ICON_16, CALENDAR_ICON_16, PAUSE_CIRCLE_ICON_16, X_CIRCLE_ICON_16, ROTATE_CCW_ICON_16, BAN_ICON_16, SHIELD_CHECK_ICON_16, SEARCH_ICON_16, STASH_ICON_16 } from '../../../constants/icon';
 import { COLORS, ACTIONS_SEPARATOR } from '../../../constants/color';
 import { hashString } from '../actions/hashString';
 import { putEpisodeInRecent } from '../../../personalities/introverts/home/recentEp';
@@ -15,6 +15,7 @@ import { getActiveTabShowPage, getDefaultTab, setActiveTabShowPage } from '../co
 import { getSortMethodShowPage, getDefaultSortMethod, setSortMethodShowPage, getSortAscendingShowPage, getDefaultSortAscending, setSortAscendingShowPage } from '../config/sort';
 import { getIsGridLayoutShowPage, getDefaultIsGridLayout, setIsGridLayoutShowPage } from '../config/layout';
 import { useCommon } from '../../../hooks/useCommon';
+import { addShowToStash } from '../../../personalities/introverts/p2p/p2p';
 
 export const useShow = () => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
@@ -230,6 +231,14 @@ export const useShow = () => {
             color: COLORS.PIN,
             onClick: () => handleTogglePin(show.id)
         });
+
+        actions.push({
+            label: 'Add to P2P Stash',
+            icon: STASH_ICON_16,
+            color: COLORS.BASE.PURPLE,
+            onClick: () => { void addShowToStash(show); }
+        });
+
 
         const isAnime = show.show_type === 'anime' || (show.provider === 'mal');
         const isTvOrMovie = show.show_type === 'movie_tv' || (show.provider === 'tmdb');

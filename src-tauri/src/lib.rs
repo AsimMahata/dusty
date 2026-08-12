@@ -114,11 +114,14 @@ pub fn run() {
             dusty::api::p2p::get_p2p_state,
             dusty::api::p2p::select_send_files,
             dusty::api::p2p::start_send,
+            dusty::api::p2p::add_file_to_stash,
+            dusty::api::p2p::add_show_to_stash,
             dusty::api::p2p::search_for_senders,
             dusty::api::p2p::get_pending_transfers,
             dusty::api::p2p::accept_transfer,
             dusty::api::p2p::reject_transfer,
             dusty::api::p2p::cancel_transfer,
+            dusty::api::p2p::get_p2p_history,
         ])
         .setup(|app| {
             initialize_dusty(app)?;

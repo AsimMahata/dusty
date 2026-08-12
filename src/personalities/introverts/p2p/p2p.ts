@@ -3,13 +3,17 @@ import {
     getP2PStateIPC,
     selectSendFilesIPC,
     startSendIPC,
+    addFileToStashIPC,
+    addShowToStashIPC,
     searchForSendersIPC,
     getPendingTransfersIPC,
     acceptTransferIPC,
     rejectTransferIPC,
     cancelTransferIPC,
+    getP2PHistoryIPC,
 } from "../../ambiverts/p2p";
 import type { P2PBackendState, PendingTransfer } from "../../ambiverts/p2p";
+import type { ShowResult } from "../../../pages/shows/types/types";
 import { logger } from "../../../utility/logger";
 
 export async function getP2PState(): Promise<P2PBackendState> {
@@ -31,11 +35,7 @@ export async function selectSendFiles(): Promise<string[]> {
     }
 }
 
-export async function startSend(files: string[]): Promise<boolean> {
-    if (files.length === 0) {
-        toast.error("Please select at least one file to send");
-        return false;
-    }
+export async function startSend(files?: string[]): Promise<boolean> {
     try {
         await startSendIPC(files);
         toast.success("Starting transfer...");
@@ -43,6 +43,30 @@ export async function startSend(files: string[]): Promise<boolean> {
     } catch (err) {
         logger.error("Failed to start send", err);
         toast.error("Failed to start transfer");
+        return false;
+    }
+}
+
+export async function addFileToStash(path: string): Promise<boolean> {
+    try {
+        await addFileToStashIPC(path);
+        toast.success("Added to sending stash");
+        return true;
+    } catch (err) {
+        logger.error("Failed to add file to stash", err);
+        toast.error("Failed to add file to stash");
+        return false;
+    }
+}
+
+export async function addShowToStash(show: ShowResult): Promise<boolean> {
+    try {
+        await addShowToStashIPC(show);
+        toast.success(`Added "${show.title}" to stash`);
+        return true;
+    } catch (err) {
+        logger.error("Failed to add show to stash", err);
+        toast.error("Failed to add show to stash");
         return false;
     }
 }
@@ -107,3 +131,14 @@ export async function cancelTransfer(silent = false): Promise<boolean> {
 export async function finishTransfer(): Promise<boolean> {
     return cancelTransfer(true);
 }
+
+export async function getP2PHistory() {
+    try {
+        return await getP2PHistoryIPC();
+    } catch (err) {
+        logger.error("Failed to fetch P2P history", err);
+        return [];
+    }
+}
+
+

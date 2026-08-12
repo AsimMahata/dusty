@@ -64,10 +64,60 @@ export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshSt
 
     // If there is an active/persisted outgoing request in stash
     if (outgoingRequest) {
+        const isStashed = outgoingRequest.status === "STASHED";
         const deadline = outgoingRequest.created_at + outgoingRequest.timeout_secs;
         const remainingSecs = Math.max(0, deadline - nowSecs);
-        const isTimedOut = outgoingRequest.status === "TIMED_OUT" || remainingSecs <= 0;
+        const isWaiting = outgoingRequest.status === "WAITING_FOR_ACCEPTANCE" || outgoingRequest.status === "REQUEST_SENT";
+        const isTimedOut = outgoingRequest.status === "TIMED_OUT" || (isWaiting && remainingSecs <= 0);
         const isAccepted = outgoingRequest.status === "ACCEPTED" || outgoingRequest.status === "INITIALIZING_TRANSFER";
+        const isFailed = outgoingRequest.status === "FAILED";
+
+        const handleSendStash = async () => {
+            setIsSending(true);
+            try {
+                const success = await startSend();
+                if (success) {
+                    onRefreshState?.();
+                }
+            } finally {
+                setIsSending(false);
+            }
+        };
+
+        if (isStashed) {
+            return (
+                <div className="p2p-card">
+                    <div className="p2p-card-header">
+                        <div>
+                            <h3 className="p2p-card-title">
+                                <UploadCloud size={20} style={{ color: "var(--accent)" }} />
+                                Outgoing Stash Available
+                            </h3>
+                            <p className="p2p-subtitle">Items added to stash from action menus</p>
+                        </div>
+                    </div>
+
+                    <SendFileList items={outgoingRequest.items} files={outgoingRequest.files} />
+
+                    <div className="p2p-action-group" style={{ marginTop: "16px", display: "flex", gap: "12px" }}>
+                        <button
+                            className="p2p-btn p2p-btn-primary p2p-btn-lg"
+                            onClick={handleSendStash}
+                            disabled={isSending}
+                        >
+                            <Send size={16} />
+                            {isSending ? P2P_STRINGS.SENDING_BTN : "Send Stash to Nearby Devices"}
+                        </button>
+                        <button
+                            className="p2p-btn p2p-btn-secondary p2p-btn-lg"
+                            onClick={handleCancelRequest}
+                        >
+                            Clear Stash
+                        </button>
+                    </div>
+                </div>
+            );
+        }
 
         return (
             <div className="p2p-card">
@@ -80,7 +130,7 @@ export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshSt
                         <p className="p2p-subtitle">Request state persisted from backend</p>
                     </div>
 
-                    {!isTimedOut && !isAccepted && (
+                    {isWaiting && !isTimedOut && (
                         <div className="p2p-status-badge warning" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                             <Clock size={14} />
                             Timeout: {remainingSecs}s
@@ -105,6 +155,26 @@ export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshSt
                             <div style={{ fontWeight: 600 }}>Request timed out</div>
                             <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
                                 No receiver connected within the 60-second deadline.
+                            </div>
+                        </div>
+                    </div>
+                ) : isFailed ? (
+                    <div style={{
+                        padding: "16px",
+                        marginBottom: "16px",
+                        borderRadius: "8px",
+                        backgroundColor: "rgba(239, 68, 68, 0.1)",
+                        border: "1px solid rgba(239, 68, 68, 0.3)",
+                        color: "#ef4444",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px"
+                    }}>
+                        <XCircle size={24} />
+                        <div>
+                            <div style={{ fontWeight: 600 }}>Transfer failed</div>
+                            <div style={{ fontSize: "0.85rem", opacity: 0.9 }}>
+                                Connection or transfer encountered an error.
                             </div>
                         </div>
                     </div>
@@ -152,10 +222,10 @@ export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshSt
                     </div>
                 )}
 
-                <SendFileList files={outgoingRequest.files} />
+                <SendFileList items={outgoingRequest.items} files={outgoingRequest.files} />
 
                 <div className="p2p-action-group" style={{ marginTop: "16px", display: "flex", gap: "12px" }}>
-                    {isTimedOut ? (
+                    {isTimedOut || isFailed ? (
                         <>
                             <button
                                 className="p2p-btn p2p-btn-primary p2p-btn-lg"
@@ -171,7 +241,7 @@ export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshSt
                                 Cancel
                             </button>
                         </>
-                    ) : !isAccepted ? (
+                    ) : (
                         <button
                             className="p2p-btn p2p-btn-secondary p2p-btn-lg"
                             onClick={handleCancelRequest}
@@ -179,11 +249,12 @@ export const SendView: React.FC<SendViewProps> = ({ outgoingRequest, onRefreshSt
                             <XCircle size={16} />
                             Cancel Request
                         </button>
-                    ) : null}
+                    )}
                 </div>
             </div>
         );
     }
+
 
     // Default Normal Send UI (when no active request exists)
     return (

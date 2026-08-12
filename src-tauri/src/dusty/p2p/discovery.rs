@@ -201,6 +201,7 @@ impl Discovery {
                                     peer,
                                     transfer_key,
                                     files,
+                                    Vec::new(),
                                     created_at,
                                     timeout_secs,
                                 );

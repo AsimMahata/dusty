@@ -144,6 +144,7 @@ export const ROTATE_CCW_ICON_16 = <RotateCcw size={16} />
 export const BAN_ICON_16 = <Ban size={16} />
 export const SHIELD_CHECK_ICON_16 = <ShieldCheck size={16} />
 export const SEARCH_ICON_16 = <Search size={16} />
+export const STASH_ICON_16 = <PackageOpen size={16} />
 
 
 // UI Components

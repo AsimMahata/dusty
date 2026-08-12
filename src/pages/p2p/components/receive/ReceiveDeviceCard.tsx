@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Check, X, Laptop, File, Clock } from "lucide-react";
+import { Check, X, Laptop, File, Tv, Clock } from "lucide-react";
 import { P2P_STRINGS } from "../../constants/constants";
 import type { PendingTransfer } from "../../../../personalities/ambiverts/p2p";
 
@@ -60,15 +60,33 @@ export const ReceiveDeviceCard: React.FC<ReceiveDeviceCardProps> = ({
                     </div>
                     <div className="device-files-title">{P2P_STRINGS.TRYING_TO_SEND}</div>
                     <ul className="device-files-list">
-                        {item.files.map((file, i) => (
-                            <li key={i}>
-                                <File size={14} color="var(--text-secondary)" />
-                                <span>{file}</span>
-                            </li>
-                        ))}
+                        {item.items && item.items.length > 0
+                            ? item.items.map((transferItem, i) => {
+                                  const isShow = transferItem.type === "show";
+                                  const name = isShow
+                                      ? `Show: ${transferItem.show.title} (${transferItem.show.episodes?.length || 0} episodes)`
+                                      : transferItem.path;
+                                  return (
+                                      <li key={i}>
+                                          {isShow ? (
+                                              <Tv size={14} color="var(--accent)" />
+                                          ) : (
+                                              <File size={14} color="var(--text-secondary)" />
+                                          )}
+                                          <span>{name}</span>
+                                      </li>
+                                  );
+                              })
+                            : item.files.map((file, i) => (
+                                  <li key={i}>
+                                      <File size={14} color="var(--text-secondary)" />
+                                      <span>{file}</span>
+                                  </li>
+                              ))}
                     </ul>
                 </div>
             </div>
+
             <div className="device-actions">
                 <button
                     type="button"

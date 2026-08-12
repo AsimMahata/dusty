@@ -7,7 +7,6 @@ use crate::dusty::config::get_user_info;
 use crate::dusty::models::state::AppState;
 use crate::dusty::multithreading::temp_workers;
 
-
 use crate::dusty::p2p::check_for_already_transfering;
 use crate::dusty::p2p::check_for_existing_outgoing_stash_and_request_status;
 use crate::dusty::p2p::clear_outgoing_request_stash;
@@ -21,9 +20,11 @@ use crate::dusty::p2p::select_files_using_window;
 use crate::dusty::p2p::set_transfer_cancelled;
 use crate::dusty::p2p::start_p2p_receiver;
 use crate::dusty::p2p::start_p2p_sender;
+use crate::dusty::p2p::OutgoingRequestState;
 use crate::dusty::p2p::P2PCurrentState;
 use crate::dusty::p2p::PendingTransfer;
 use crate::dusty::p2p::P2P_STATE;
+
 
 #[tauri::command]
 pub fn get_p2p_state() -> Result<P2PCurrentState, String> {
@@ -170,6 +171,28 @@ pub async fn reject_transfer(id: String) -> Result<(), String> {
 pub async fn cancel_transfer() -> Result<(), String> {
     log::info!("[P2P API] cancel_transfer called");
     set_transfer_cancelled(true);
+    if let Some(req) = load_outgoing_request_from_stash() {
+        if req.status == "WAITING_FOR_ACCEPTANCE"
+            || req.status == "REQUEST_SENT"
+            || req.status == "ACCEPTED"
+            || req.status == "INITIALIZING_TRANSFER"
+        {
+            crate::dusty::p2p::history::create_and_record_history(
+                req.id.clone(),
+                "outgoing".to_string(),
+                "sender".to_string(),
+                req.get_items(),
+                req.all_file_paths(),
+                req.receiver_name.unwrap_or_else(|| "Unknown Receiver".to_string()),
+                None,
+                req.created_at,
+                "CANCELLED".to_string(),
+                Some("Request cancelled by sender".to_string()),
+                None,
+                None,
+            );
+        }
+    }
     clear_outgoing_request_stash();
 
     tokio::task::spawn_blocking(move || {
@@ -200,9 +223,27 @@ pub async fn cancel_transfer() -> Result<(), String> {
 #[tauri::command]
 pub fn start_send(app_handle: tauri::AppHandle, files: Vec<String>) -> Result<(), String> {
     set_transfer_cancelled(false);
-    check_for_existing_outgoing_stash_and_request_status()?;
-    let outgoing_req = make_new_outgoing_send_request(files)?;
-    save_outgoing_request_to_stash(&outgoing_req)?;
+
+    let outgoing_req = if files.is_empty() {
+        if let Some(mut stashed) = load_outgoing_request_from_stash() {
+            let now = SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .map(|d| d.as_secs())
+                .unwrap_or(0);
+            stashed.status = "WAITING_FOR_ACCEPTANCE".to_string();
+            stashed.created_at = now;
+            save_outgoing_request_to_stash(&stashed)?;
+            stashed
+        } else {
+            return Err("No files or stashed items available to send".to_string());
+        }
+    } else {
+        check_for_existing_outgoing_stash_and_request_status()?;
+        let req = make_new_outgoing_send_request(files)?;
+        save_outgoing_request_to_stash(&req)?;
+        req
+    };
+
     let me = get_user_info().map_err(|e| e.to_user_message())?;
 
     let req_to_dispatch = outgoing_req.clone();
@@ -218,8 +259,26 @@ pub fn start_send(app_handle: tauri::AppHandle, files: Vec<String>) -> Result<()
 }
 
 #[tauri::command]
+pub fn add_file_to_stash(path: String) -> Result<OutgoingRequestState, String> {
+    log::info!("[P2P API] add_file_to_stash called for path: {}", path);
+    crate::dusty::p2p::stash::add_file_to_stash(path)
+}
+
+#[tauri::command]
+pub fn add_show_to_stash(show: crate::dusty::models::shows::ShowResult) -> Result<OutgoingRequestState, String> {
+    log::info!("[P2P API] add_show_to_stash called for show: {}", show.title);
+    crate::dusty::p2p::stash::add_show_to_stash(show)
+}
+
+#[tauri::command]
 pub fn select_send_files() -> Result<Vec<String>, String> {
     log::info!("[P2P API] select_send_files called");
     let files = select_files_using_window();
     get_valid_files(files)
+}
+
+#[tauri::command]
+pub fn get_p2p_history() -> Result<Vec<crate::dusty::p2p::P2PTransferHistoryRecord>, String> {
+    log::info!("[P2P API] get_p2p_history called");
+    Ok(crate::dusty::p2p::load_p2p_history())
 }

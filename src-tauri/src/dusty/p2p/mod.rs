@@ -1,5 +1,6 @@
 pub mod discovery;
 pub mod global;
+pub mod history;
 pub mod models;
 pub mod receiver;
 pub mod sender;
@@ -10,6 +11,7 @@ pub mod utils;
 
 pub use discovery::*;
 pub use global::*;
+pub use history::*;
 pub use models::*;
 pub use receiver::*;
 pub use sender::*;

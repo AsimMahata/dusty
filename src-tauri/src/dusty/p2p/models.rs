@@ -2,6 +2,39 @@ use serde::Deserialize;
 use serde::Serialize;
 use uuid::Uuid;
 
+use crate::dusty::models::shows::ShowResult;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type", rename_all = "snake_case")]
+pub enum TransferItem {
+    File { path: String },
+    Show { show: ShowResult },
+}
+
+impl TransferItem {
+    pub fn all_file_paths(&self) -> Vec<String> {
+        match self {
+            TransferItem::File { path } => vec![path.clone()],
+            TransferItem::Show { show } => show
+                .episodes
+                .iter()
+                .map(|e| e.path.to_string_lossy().to_string())
+                .collect(),
+        }
+    }
+
+    pub fn display_name(&self) -> String {
+        match self {
+            TransferItem::File { path } => std::path::Path::new(path)
+                .file_name()
+                .and_then(|n| n.to_str())
+                .unwrap_or(path)
+                .to_string(),
+            TransferItem::Show { show } => format!("Show: {}", show.title),
+        }
+    }
+}
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ReceiverHandshake {
     pub transfer_key: String,
@@ -81,7 +114,10 @@ impl Peer {
 pub struct SenderInfo {
     peer: Peer,
     transfer_key: String,
+    #[serde(default)]
     files: Vec<String>,
+    #[serde(default)]
+    items: Vec<TransferItem>,
     created_at: u64,
     timeout_secs: u64,
 }
@@ -91,6 +127,7 @@ impl SenderInfo {
         peer: Peer,
         transfer_key: String,
         files: Vec<String>,
+        items: Vec<TransferItem>,
         created_at: u64,
         timeout_secs: u64,
     ) -> Self {
@@ -98,6 +135,7 @@ impl SenderInfo {
             peer,
             transfer_key,
             files,
+            items,
             created_at,
             timeout_secs,
         }
@@ -113,6 +151,10 @@ impl SenderInfo {
 
     pub fn files(&self) -> &Vec<String> {
         &self.files
+    }
+
+    pub fn items(&self) -> &Vec<TransferItem> {
+        &self.items
     }
 
     pub fn created_at(&self) -> u64 {
@@ -148,11 +190,35 @@ pub struct ActiveTransfer {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OutgoingRequestState {
     pub id: String,
+    #[serde(default)]
     pub files: Vec<String>,
+    #[serde(default)]
+    pub items: Vec<TransferItem>,
     pub status: String,
     pub created_at: u64,
     pub timeout_secs: u64,
     pub receiver_name: Option<String>,
+}
+
+impl OutgoingRequestState {
+    pub fn get_items(&self) -> Vec<TransferItem> {
+        if !self.items.is_empty() {
+            self.items.clone()
+        } else {
+            self.files
+                .iter()
+                .map(|p| TransferItem::File { path: p.clone() })
+                .collect()
+        }
+    }
+
+    pub fn all_file_paths(&self) -> Vec<String> {
+        let mut result = Vec::new();
+        for item in self.get_items() {
+            result.extend(item.all_file_paths());
+        }
+        result
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -168,7 +234,10 @@ pub struct PendingTransfer {
     pub sender_name: String,
     pub sender_ips: Vec<String>,
     pub sender_port: u16,
+    #[serde(default)]
     pub files: Vec<String>,
+    #[serde(default)]
+    pub items: Vec<TransferItem>,
     pub created_at: u64,
     pub timeout_secs: u64,
 }
@@ -182,14 +251,18 @@ pub(crate) struct InternalP2PState {
 pub(crate) static CANCEL_FLAG: std::sync::atomic::AtomicBool =
     std::sync::atomic::AtomicBool::new(false);
 
-#[derive(serde::Deserialize)]
-pub struct ManifestItem {
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ManifestFile {
     pub idx: usize,
     pub name: String,
     pub size: u64,
+    pub relative_path: Option<String>,
+    pub item_index: usize,
 }
-#[derive(serde::Deserialize)]
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ManifestPayload {
-    pub files: Vec<ManifestItem>,
+    pub items: Vec<TransferItem>,
+    pub files: Vec<ManifestFile>,
     pub total_bytes: u64,
 }

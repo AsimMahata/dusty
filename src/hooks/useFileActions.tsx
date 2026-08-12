@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { openFile, openFileInExplorer, renameFile, deleteFile } from '../personalities/introverts/filesystem/filesystem';
+import { addFileToStash } from '../personalities/introverts/p2p/p2p';
 import { ConfirmationModal } from '../components/ui/ConfirmationModal';
 import { FilePropertiesModal } from '../components/ui/FilePropertiesModal';
 import type { ActionItem } from '../types/core';
@@ -62,6 +63,10 @@ export function useFileActions(onRefresh?: () => void) {
                 onClick: () => { void openFileInExplorer(file.path); },
             },
             {
+                label: 'Add to P2P Stash',
+                onClick: () => { void addFileToStash(file.path); },
+            },
+            {
                 label: 'Rename',
                 onClick: () => { void handleRename(file); },
             },
@@ -82,6 +87,7 @@ export function useFileActions(onRefresh?: () => void) {
         ];
         return actions;
     }, [handleRename]);
+
 
     const renderFileModals = useCallback(() => (
         <>

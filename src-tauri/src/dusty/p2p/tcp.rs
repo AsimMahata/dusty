@@ -53,17 +53,23 @@ pub fn verify_handshake_key(received_key: &str, expected_key: &str) -> bool {
     valid
 }
 
-pub fn send_cancel_signal_and_reset_state(stream: &mut TcpStream, msg: &str) -> String {
-    stream.write_all(b"CANCEL\n").ok();
+pub fn send_cancel_signal_with_reason(stream: &mut TcpStream, reason: &str) {
+    let msg = format!("CANCEL:{}\n", reason);
+    stream.write_all(msg.as_bytes()).ok();
     stream.flush().ok();
     let mut ack_buf = [0u8; 64];
     let _ = stream.read(&mut ack_buf);
+}
+
+pub fn send_cancel_signal_and_reset_state(stream: &mut TcpStream, msg: &str) -> String {
+    send_cancel_signal_with_reason(stream, msg);
     if let Ok(mut state) = P2P_STATE.lock() {
         state.mode = "send".to_string();
         state.active_transfer = None;
     }
     msg.to_string()
 }
+
 pub fn read_header_line(stream: &mut TcpStream) -> Result<String, String> {
     let mut header_buf = Vec::new();
     let mut byte = [0u8; 1];
@@ -88,8 +94,5 @@ pub fn read_header_line(stream: &mut TcpStream) -> Result<String, String> {
 }
 
 pub fn send_cancel_signal_and_wait_ack(stream: &mut TcpStream) {
-    stream.write_all(b"CANCEL\n").ok();
-    stream.flush().ok();
-    let mut ack_buf = [0u8; 64];
-    let _ = stream.read(&mut ack_buf);
+    send_cancel_signal_with_reason(stream, "Transfer cancelled");
 }
