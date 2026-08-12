@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { logger } from "../../utility/logger";
-import type { Project, ProjectStatus } from '../../pages/projects/types/types';
+import type { GitInfo, Project, ProjectStatus } from '../../pages/projects/types/types';
 
 /*
 dusty::api::project::scan_projects,
@@ -9,6 +9,7 @@ dusty::api::project::update_project_pin_status,
 dusty::api::project::update_project_status,
 dusty::api::project::update_project_tags,
 dusty::api::project::scan_project_tags,
+dusty::api::project::fetch_projects_git_status,
 */
 
 const CMD_UPDATE_PROJECT_PIN_STATUS = 'update_project_pin_status';
@@ -18,6 +19,7 @@ const CMD_SCAN_PROJECT_TAGS = 'scan_project_tags';
 
 const CMD_SCAN_PROJECTS = 'scan_projects';
 const CMD_SYNC_SCAN_PROJECTS = 'sync_scan_projects';
+const CMD_FETCH_PROJECTS_GIT_STATUS = 'fetch_projects_git_status';
 
 export async function getProjectsIPC(sync: boolean = false): Promise<Project[]> {
     try {
@@ -29,6 +31,17 @@ export async function getProjectsIPC(sync: boolean = false): Promise<Project[]> 
         return [];
     }
 }
+
+export async function fetchProjectsGitStatusIPC(): Promise<Record<string, GitInfo>> {
+    try {
+        let result = await invoke<Record<string, GitInfo>>(CMD_FETCH_PROJECTS_GIT_STATUS);
+        return result;
+    } catch (error) {
+        logger.error(`fetchProjectsGitStatusIPC error: ${error}`);
+        return {};
+    }
+}
+
 
 export async function updateProjectPinStatusIPC(id: string, pinned: boolean): Promise<boolean> {
     try {

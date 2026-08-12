@@ -7,9 +7,9 @@ interface ProjectCardHeaderProps {
 }
 
 export const ProjectCardHeader: React.FC<ProjectCardHeaderProps> = ({ project }) => {
-    //BUG:: fix this thing 
-    const gitStatus = GIT_STATUS.getDefinition('none');
+    const gitStatus = GIT_STATUS.getDefinition(project.git_info?.git_status);
     const projectStatus = PROJECT_STATUS.getDefinition(project.status);
+
 
     return (
         <div className="project-card-header">

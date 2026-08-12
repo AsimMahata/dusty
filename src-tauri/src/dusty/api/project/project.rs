@@ -7,12 +7,17 @@ use crate::dusty::db::project::update_project_pin_status_in_db;
 use crate::dusty::db::project::update_project_status_in_db;
 use crate::dusty::db::project::update_project_tags_in_db;
 use crate::dusty::engine::project::scanner::scan_all_projects;
+
 use crate::dusty::engine::project::tag_scanner::scan_tags;
 use crate::dusty::logger::logger;
 use crate::dusty::models::project::Project;
 use crate::dusty::models::project::Tag;
 use crate::dusty::models::state::AppState;
+use crate::dusty::multithreading::temp_workers;
+use crate::dusty::system::git::get_git_info_sys;
+use crate::dusty::system::git::GitInfo;
 use rusqlite::Connection;
+
 
 pub fn sanitize_projects(db: &Connection, projects: Vec<Project>) -> Vec<Project> {
     projects
@@ -25,7 +30,9 @@ pub fn sanitize_projects(db: &Connection, projects: Vec<Project>) -> Vec<Project
                 p.tags = info.tags;
                 p.project_type = Some(p.get_framework());
             }
+            p.git_info = None;
             p
+
         })
         .collect()
 }
@@ -174,4 +181,55 @@ pub async fn reset_project_table(state: tauri::State<'_, AppState>) -> Result<()
 pub fn scan_project_tags(project: Project) -> Result<Vec<Tag>, String> {
     let tags = scan_tags(&project);
     Ok(tags)
+}
+
+#[tauri::command]
+pub async fn fetch_projects_git_status(
+    state: tauri::State<'_, AppState>,
+) -> Result<std::collections::HashMap<String, GitInfo>, String> {
+    let db_worker = state.db_worker.clone();
+
+    let projects = db_worker
+        .run_sync(|conn| get_project_cache_from_db(conn))
+        .map_err(|e| e)?
+        .map_err(|err| err.to_user_message())?;
+
+    if projects.is_empty() {
+        return Ok(std::collections::HashMap::new());
+    }
+
+    const BATCH_SIZE: usize = 10;
+    let chunks: Vec<Vec<(String, String)>> = projects
+        .chunks(BATCH_SIZE)
+        .map(|chunk| {
+            chunk
+                .iter()
+                .map(|p| (p.id.clone(), p.path.clone()))
+                .collect()
+        })
+        .collect();
+
+    let jobs: Vec<_> = chunks
+        .into_iter()
+        .map(|batch| {
+            move || {
+                let mut batch_results = Vec::with_capacity(batch.len());
+                for (id, path) in batch {
+                    let git_info = get_git_info_sys(&path);
+                    batch_results.push((id, git_info));
+                }
+                batch_results
+            }
+        })
+        .collect();
+
+    let batch_results: Vec<Vec<(String, GitInfo)>> =
+        tokio::task::spawn_blocking(move || temp_workers(jobs))
+            .await
+            .map_err(|e| e.to_string())?;
+
+    let git_status_map: std::collections::HashMap<String, GitInfo> =
+        batch_results.into_iter().flatten().collect();
+
+    Ok(git_status_map)
 }

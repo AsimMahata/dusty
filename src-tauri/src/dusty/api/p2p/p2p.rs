@@ -5,6 +5,8 @@ use tauri::Manager;
 
 use crate::dusty::config::get_user_info;
 use crate::dusty::models::state::AppState;
+use crate::dusty::multithreading::temp_workers;
+
 
 use crate::dusty::p2p::check_for_already_transfering;
 use crate::dusty::p2p::check_for_existing_outgoing_stash_and_request_status;
@@ -74,12 +76,9 @@ pub async fn search_for_senders(
 }
 
 #[tauri::command]
-pub async fn get_pending_transfers(
-    state: tauri::State<'_, AppState>,
-) -> Result<Vec<PendingTransfer>, String> {
-    state
-        .thread_pool
-        .execute_with_result("GET_PENDING_TRANSFERS", || {
+pub async fn get_pending_transfers() -> Result<Vec<PendingTransfer>, String> {
+    tokio::task::spawn_blocking(move || {
+        let results = temp_workers(vec![move || {
             let state = P2P_STATE.lock().map_err(|e| e.to_string())?;
 
             let now = SystemTime::now()
@@ -95,9 +94,14 @@ pub async fn get_pending_transfers(
                 .collect();
 
             Ok(valid_transfers)
-        })
-        .await
-        .map_err(|e| e.to_string())?
+        }]);
+        results
+            .into_iter()
+            .next()
+            .unwrap_or_else(|| Err("Temp worker execution failed".to_string()))
+    })
+    .await
+    .map_err(|e| e.to_string())?
 }
 
 #[tauri::command]
@@ -145,27 +149,31 @@ pub async fn accept_transfer(app_handle: tauri::AppHandle, id: String) -> Result
 }
 
 #[tauri::command]
-pub async fn reject_transfer(state: tauri::State<'_, AppState>, id: String) -> Result<(), String> {
+pub async fn reject_transfer(id: String) -> Result<(), String> {
     log::info!("[P2P API] reject_transfer called for id: {}", id);
-    state
-        .thread_pool
-        .execute_with_result("REJECT_TRANSFER", move || {
+    tokio::task::spawn_blocking(move || {
+        let results = temp_workers(vec![move || {
             let mut state = P2P_STATE.lock().map_err(|e| e.to_string())?;
             state.pending_transfers.retain(|t| t.id != id);
             Ok::<(), String>(())
-        })
-        .await?
+        }]);
+        results
+            .into_iter()
+            .next()
+            .unwrap_or_else(|| Err("Temp worker execution failed".to_string()))
+    })
+    .await
+    .map_err(|e| e.to_string())?
 }
 
 #[tauri::command]
-pub async fn cancel_transfer(state: tauri::State<'_, AppState>) -> Result<(), String> {
+pub async fn cancel_transfer() -> Result<(), String> {
     log::info!("[P2P API] cancel_transfer called");
     set_transfer_cancelled(true);
     clear_outgoing_request_stash();
 
-    state
-        .thread_pool
-        .execute_with_result("CANCLE_TRANSFER", || {
+    tokio::task::spawn_blocking(move || {
+        let results = temp_workers(vec![move || {
             let mut state = P2P_STATE.lock().map_err(|e| e.to_string())?;
             let previous_role = state.active_transfer.as_ref().map(|a| a.role.clone());
             state.active_transfer = None;
@@ -179,9 +187,16 @@ pub async fn cancel_transfer(state: tauri::State<'_, AppState>) -> Result<(), St
                 state.mode = "send".to_string();
             }
             Ok::<(), String>(())
-        })
-        .await?
+        }]);
+        results
+            .into_iter()
+            .next()
+            .unwrap_or_else(|| Err("Temp worker execution failed".to_string()))
+    })
+    .await
+    .map_err(|e| e.to_string())?
 }
+
 #[tauri::command]
 pub fn start_send(app_handle: tauri::AppHandle, files: Vec<String>) -> Result<(), String> {
     set_transfer_cancelled(false);

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, type ReactNode } from 'react';
 import { useCommon } from '../../../hooks/useCommon';
-import { getProjects, updateProjectPinStatus, updateProjectStatus, updateProjectTags, getGitInfo } from '../../../personalities/introverts/projects/projects';
+import { getProjects, updateProjectPinStatus, updateProjectStatus, updateProjectTags, getGitInfo, fetchProjectsGitStatus } from '../../../personalities/introverts/projects/projects';
 import { openFileInExplorer } from '../../../personalities/introverts/filesystem/filesystem';
 import { logger } from '../../../utility/logger';
 import { filterAndSortProjects } from '../actions/filter';
@@ -13,6 +13,7 @@ export const useProject = () => {
     const { searchQuery, setSearchQuery, isRefreshing, setIsRefreshing, isLoading, setIsLoading } = useCommon();
     const [selectedItem, setSelectedItem] = useState<Project | null>(null);
     const [allProjects, setAllProjects] = useState<Project[]>([]);
+    const [isGitStatusLoading, setIsGitStatusLoading] = useState<boolean>(false);
     const [sortOption, setSortOptionState] = useState<SortOption>(getDefaultSortOption());
     const [sortAscending, setSortAscendingState] = useState<boolean>(getDefaultSortAscending());
 
@@ -28,9 +29,6 @@ export const useProject = () => {
     }
 
     const setSortOption = (option: SortOption) => {
-        if (option === 'git_status') {
-            logger.todo('Git status sorting is not implemented yet');
-        }
         setSortOptionState(option);
         void setSortOptionProjectsPage(option);
     };
@@ -87,6 +85,27 @@ export const useProject = () => {
         return filterAndSortProjects(allProjects, searchQuery || "", sortOption, sortAscending);
     }, [allProjects, searchQuery, sortOption, sortAscending]);
 
+    const fetchGitStatusBackground = async () => {
+        setIsGitStatusLoading(true);
+        try {
+            const gitStatusMap = await fetchProjectsGitStatus();
+            if (gitStatusMap && Object.keys(gitStatusMap).length > 0) {
+                setAllProjects(prevProjects =>
+                    prevProjects.map(project => {
+                        const info = gitStatusMap[project.id];
+                        return info ? { ...project, git_info: info } : project;
+                    })
+                );
+                logger.info('git statuses fetched and updated for projects', Object.keys(gitStatusMap).length);
+            }
+        } catch (error) {
+            logger.error(`Failed to fetch git status in background: ${String(error)}`);
+        } finally {
+            setIsGitStatusLoading(false);
+        }
+    };
+
+
     const fetchData = async (sync: boolean = false) => {
         setIsRefreshing(true);
         if (allProjects.length === 0) setIsLoading(true);
@@ -94,6 +113,7 @@ export const useProject = () => {
             const projects = await getProjects(sync);
             setAllProjects(projects);
             logger.info('all projects fetched', projects.length);
+            void fetchGitStatusBackground();
         } catch (error) {
             logger.error(`Failed to fetch projects: ${String(error)}`);
         } finally {
@@ -101,6 +121,7 @@ export const useProject = () => {
             setIsLoading(false);
         }
     };
+
 
     useEffect(() => {
         fetchConfigData();
@@ -181,7 +202,9 @@ export const useProject = () => {
         allProjects,
         isRefreshing,
         isLoading,
+        isGitStatusLoading,
         fetchData,
+
         handleTogglePin,
         getCommonRenderedActions,
         updateProjectProgressStatus,

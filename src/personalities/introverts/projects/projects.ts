@@ -1,13 +1,19 @@
 import toast from 'react-hot-toast';
 import type { GitInfo, Project, ProjectStatus } from '../../../pages/projects/types/types';
 import { logger } from '../../../utility/logger';
-import { scanProjectTagsIPC, getProjectsIPC, updateProjectPinStatusIPC, updateProjectStatusIPC, updateProjectTagsIPC } from '../../ambiverts/projects';
+import { scanProjectTagsIPC, getProjectsIPC, updateProjectPinStatusIPC, updateProjectStatusIPC, updateProjectTagsIPC, fetchProjectsGitStatusIPC } from '../../ambiverts/projects';
 import { getGitInfoIPC } from '../../ambiverts/git';
 import { openUrl } from '../filesystem/filesystem';
 
 export async function getProjects(sync: boolean = false): Promise<Project[]> {
     return await getProjectsIPC(sync);
 }
+
+export async function fetchProjectsGitStatus(): Promise<Record<string, GitInfo>> {
+    return await fetchProjectsGitStatusIPC();
+}
+
+
 
 export async function updateProjectPinStatus(id: string, pinned: boolean): Promise<boolean> {
     return await updateProjectPinStatusIPC(id, pinned);
