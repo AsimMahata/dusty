@@ -1,15 +1,24 @@
 use std::path::PathBuf;
 
-use crate::dusty::models::{shows::ShowResult, state::AppState};
-use crate::dusty::db::show::{
-    add_scan_to_cache, add_shows_in_db, get_from_show_cache_in_db,
-    get_scan_from_cache, get_show_info, rename_show_in_db, reset_show_cache_table_in_db,
-    reset_show_table_in_db, update_ban_status_in_db, update_pin_status_in_db,
-    update_show_provider_in_db, update_show_status_in_db, upsert_show_cache_in_db,
-};
+use crate::dusty::db::show::add_scan_to_cache;
+use crate::dusty::db::show::add_shows_in_db;
+use crate::dusty::db::show::get_from_show_cache_in_db;
+use crate::dusty::db::show::get_scan_from_cache;
+use crate::dusty::db::show::get_show_info;
+use crate::dusty::db::show::rename_show_in_db;
+use crate::dusty::db::show::reset_show_cache_table_in_db;
+use crate::dusty::db::show::reset_show_table_in_db;
+use crate::dusty::db::show::update_ban_status_in_db;
+use crate::dusty::db::show::update_pin_status_in_db;
+use crate::dusty::db::show::update_show_provider_in_db;
+use crate::dusty::db::show::update_show_status_in_db;
+use crate::dusty::db::show::upsert_show_cache_in_db;
 use crate::dusty::error::DustyError;
 use crate::dusty::logger::logger;
-use crate::dusty::scanners::show_scanner::{get_all_linked_shows, scan_for_shows_using_available_show_titles};
+use crate::dusty::models::shows::ShowResult;
+use crate::dusty::models::state::AppState;
+use crate::dusty::scanners::show_scanner::get_all_linked_shows;
+use crate::dusty::scanners::show_scanner::scan_for_shows_using_available_show_titles;
 use crate::dusty::utility::info::get_all_valid_source_path;
 use crate::dusty::utility::sha256_hash::get_sha256_id;
 

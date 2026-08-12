@@ -1,7 +1,9 @@
+use serde::Deserialize;
+use serde::Serialize;
 use std::path::PathBuf;
-use serde::{Deserialize, Serialize};
 
-use crate::dusty::{models::file::FileInfo, utility::sha256_hash::get_sha256_id};
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::utility::sha256_hash::get_sha256_id;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ZipDir {

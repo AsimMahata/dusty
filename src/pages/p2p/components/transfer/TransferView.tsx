@@ -248,7 +248,10 @@ export const TransferView: React.FC<TransferViewProps> = ({ transfer, onCancelCo
                     ))}
                 </div>
 
-                <TransferOverallProgress progress={overallProgress} />
+                <TransferOverallProgress
+                    progress={overallProgress}
+                    speedBytesPerSec={transfer?.speed_bytes_per_sec}
+                />
             </div>
         </div>
     );

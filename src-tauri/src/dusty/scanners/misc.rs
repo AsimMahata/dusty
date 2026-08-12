@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 
-use crate::dusty::{
-    models::{file::FileInfo, misc_dir::MiscDir},
-    engine::dusty::misc::is_misc_file,
-    filesystem::scan::{list_children, ScanOptions},
-};
+use crate::dusty::engine::dusty::misc::is_misc_file;
+use crate::dusty::filesystem::scan::list_children;
+use crate::dusty::filesystem::scan::ScanOptions;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::misc_dir::MiscDir;
 
 pub fn dfs_misc_dir_scanner(
     path: &PathBuf,

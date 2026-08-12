@@ -2,11 +2,12 @@ use std::path::PathBuf;
 
 use mime_guess::mime;
 
-use crate::dusty::{
-    models::file::FileInfo,
-    filesystem::scan::{list_children, ScanOptions},
-    utility::info::{get_all_valid_source_path, get_file_type, is_root},
-};
+use crate::dusty::filesystem::scan::list_children;
+use crate::dusty::filesystem::scan::ScanOptions;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::utility::info::get_all_valid_source_path;
+use crate::dusty::utility::info::get_file_type;
+use crate::dusty::utility::info::is_root;
 
 pub fn list_executables() -> Vec<FileInfo> {
     let mut list: Vec<FileInfo> = Vec::new();
@@ -22,7 +23,11 @@ pub fn list_executables_in_path(path: PathBuf) -> Vec<FileInfo> {
     executables
 }
 
-pub fn dfs_executables_scanner(path: &PathBuf, executables: &mut Vec<FileInfo>, is_root_path: bool) {
+pub fn dfs_executables_scanner(
+    path: &PathBuf,
+    executables: &mut Vec<FileInfo>,
+    is_root_path: bool,
+) {
     let opts = ScanOptions {
         is_root: is_root_path,
         ..ScanOptions::default()

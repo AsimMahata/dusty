@@ -1,13 +1,13 @@
-use crate::dusty::{
-    models::{media::MediaDir, state::AppState},
-    db::media::{
-        get_media_from_db, reset_media_cache_table_in_db, save_media_to_db, sync_media_to_db,
-    },
-    error::DustyError,
-    logger::logger,
-    scanners::media::dfs_media_dir_scanner,
-    utility::info::is_root,
-};
+use crate::dusty::db::media::get_media_from_db;
+use crate::dusty::db::media::reset_media_cache_table_in_db;
+use crate::dusty::db::media::save_media_to_db;
+use crate::dusty::db::media::sync_media_to_db;
+use crate::dusty::error::DustyError;
+use crate::dusty::logger::logger;
+use crate::dusty::models::media::MediaDir;
+use crate::dusty::models::state::AppState;
+use crate::dusty::scanners::media::dfs_media_dir_scanner;
+use crate::dusty::utility::info::is_root;
 use mime_guess::mime;
 use std::path::PathBuf;
 
@@ -53,7 +53,9 @@ pub async fn get_media_of_type(
     let _ = state
         .db_worker
         .run(move |conn| {
-            if let Err(err) = save_media_to_db(conn, &path_clone, &media_type_clone, &media_dirs_clone) {
+            if let Err(err) =
+                save_media_to_db(conn, &path_clone, &media_type_clone, &media_dirs_clone)
+            {
                 logger::error!("SAVE_MEDIA_TO_DB_FAILED", err.log_details());
             }
         })
@@ -89,7 +91,9 @@ pub async fn sync_media_database(
     let _ = state
         .db_worker
         .run(move |conn| {
-            if let Err(err) = sync_media_to_db(conn, &path_clone, &media_type_clone, &media_dirs_clone) {
+            if let Err(err) =
+                sync_media_to_db(conn, &path_clone, &media_type_clone, &media_dirs_clone)
+            {
                 logger::error!("SYNC_MEDIA_TO_DB_FAILED", err.log_details());
             }
         })

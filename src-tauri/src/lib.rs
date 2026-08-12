@@ -24,8 +24,6 @@ pub fn run() {
                 ))
                 .build(),
         )
-
-
         .invoke_handler(tauri::generate_handler![
             dusty::api::git::get_git_info,
             dusty::api::filesystem::read_dir,

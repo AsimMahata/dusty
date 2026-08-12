@@ -1,6 +1,7 @@
-use crate::dusty::models::state::AppState;
 use crate::dusty::engine::utility::tokenizer::tokenize_string;
-use serde_json::{Map, Value};
+use crate::dusty::models::state::AppState;
+use serde_json::Map;
+use serde_json::Value;
 use std::collections::HashMap;
 use tauri::State;
 
@@ -23,7 +24,8 @@ pub async fn get_all_table_data(
                 let mut stmt = conn
                     .prepare(&format!("SELECT * FROM {}", table))
                     .map_err(|e| e.to_string())?;
-                let column_names: Vec<String> = stmt.column_names().into_iter().map(String::from).collect();
+                let column_names: Vec<String> =
+                    stmt.column_names().into_iter().map(String::from).collect();
 
                 let rows = stmt
                     .query_map([], |row| {

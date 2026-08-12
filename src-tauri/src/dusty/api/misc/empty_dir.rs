@@ -1,10 +1,10 @@
-use crate::dusty::models::file::FileInfo;
-use crate::dusty::models::state::AppState;
-use crate::dusty::db::misc::{add_or_update_empty_dir_cache, get_empty_dir_cache, reset_empty_dir_cache};
+use crate::dusty::db::misc::add_or_update_empty_dir_cache;
+use crate::dusty::db::misc::get_empty_dir_cache;
+use crate::dusty::db::misc::reset_empty_dir_cache;
 use crate::dusty::engine::dusty::empty_dir::list_empty_dirs;
 use crate::dusty::logger::logger;
-use rusqlite::Connection;
-use std::sync::{Arc, Mutex};
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::state::AppState;
 
 use crate::dusty::multithreading::DbWorker;
 
@@ -19,27 +19,25 @@ pub fn scan_empty_dir_using_cache(db_worker: &DbWorker, use_cache: bool) -> Vec<
     }
 
     let files = list_empty_dirs();
-    
+
     let files_clone = files.clone();
     let _ = db_worker.run_sync(move |conn| {
         if let Err(err) = reset_empty_dir_cache(conn) {
             logger::error!("RESET_EMPTY_DIR_CACHE_FAILED", err.log_details());
         }
-        
+
         for file in &files_clone {
             if let Err(err) = add_or_update_empty_dir_cache(conn, file) {
                 logger::error!("ADD_EMPTY_DIR_CACHE_FAILED", err.log_details());
             }
         }
     });
-    
+
     files
 }
 
 #[tauri::command]
-pub async fn scan_empty_dir(
-    state: tauri::State<'_, AppState>,
-) -> Result<Vec<FileInfo>, String> {
+pub async fn scan_empty_dir(state: tauri::State<'_, AppState>) -> Result<Vec<FileInfo>, String> {
     let db_worker = state.db_worker.clone();
     state
         .thread_pool

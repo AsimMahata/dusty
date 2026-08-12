@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 
-use crate::dusty::{
-    models::{file::FileInfo, zip::ZipDir},
-    engine::dusty::zip::is_zip_file,
-    filesystem::scan::{list_children, ScanOptions},
-};
+use crate::dusty::engine::dusty::zip::is_zip_file;
+use crate::dusty::filesystem::scan::list_children;
+use crate::dusty::filesystem::scan::ScanOptions;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::zip::ZipDir;
 
 pub fn dfs_zip_dir_scanner(
     path: &PathBuf,

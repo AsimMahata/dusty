@@ -1,11 +1,12 @@
-use std::{collections::HashMap, path::PathBuf};
+use std::collections::HashMap;
+use std::path::PathBuf;
 
-use crate::dusty::{
-    models::media::MediaDir,
-    error::{DustyError, Result},
-    utility::sha256_hash::get_sha256_id,
-};
-use rusqlite::{params, Connection};
+use crate::dusty::error::DustyError;
+use crate::dusty::error::Result;
+use crate::dusty::models::media::MediaDir;
+use crate::dusty::utility::sha256_hash::get_sha256_id;
+use rusqlite::params;
+use rusqlite::Connection;
 
 pub fn create_media_table(conn: &Connection) -> Result<()> {
     conn.execute(
@@ -24,8 +25,18 @@ pub fn create_media_table(conn: &Connection) -> Result<()> {
     .map_err(|err| DustyError::db("create_media_table", Some("media_cache".to_string()), err))?;
 
     use crate::dusty::db::core::init::ensure_column_exists;
-    ensure_column_exists(conn, "media_cache", "created_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")?;
-    ensure_column_exists(conn, "media_cache", "updated_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")?;
+    ensure_column_exists(
+        conn,
+        "media_cache",
+        "created_at",
+        "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))",
+    )?;
+    ensure_column_exists(
+        conn,
+        "media_cache",
+        "updated_at",
+        "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))",
+    )?;
 
     Ok(())
 }
@@ -37,8 +48,8 @@ pub fn save_media_to_db(
     data: &Vec<MediaDir>,
 ) -> Result<()> {
     let id = get_sha256_id(source.to_string(), media_type.to_string());
-    let json_data = serde_json::to_string(data)
-        .map_err(|e| DustyError::serde("serialize_media_cache", e))?;
+    let json_data =
+        serde_json::to_string(data).map_err(|e| DustyError::serde("serialize_media_cache", e))?;
 
     db.execute(
         "
@@ -75,7 +86,11 @@ pub fn get_media_from_db(
             Ok(Some(media_dirs))
         }
         Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
-        Err(err) => Err(DustyError::db("get_media_from_db", Some("media_cache".to_string()), err)),
+        Err(err) => Err(DustyError::db(
+            "get_media_from_db",
+            Some("media_cache".to_string()),
+            err,
+        )),
     }
 }
 
@@ -110,7 +125,13 @@ pub fn sync_media_to_db(
 
 pub fn reset_media_cache_table_in_db(db: &Connection) -> Result<()> {
     db.execute("DROP TABLE IF EXISTS media_cache", [])
-        .map_err(|err| DustyError::db("reset_media_cache_drop", Some("media_cache".to_string()), err))?;
+        .map_err(|err| {
+            DustyError::db(
+                "reset_media_cache_drop",
+                Some("media_cache".to_string()),
+                err,
+            )
+        })?;
     create_media_table(db)?;
     Ok(())
 }

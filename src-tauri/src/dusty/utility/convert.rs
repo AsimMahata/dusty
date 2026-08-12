@@ -1,13 +1,15 @@
-use crate::dusty::{
-    models::{
-        file::FileInfo,
-        shows::{Show, ShowResult, ShowType},
-    },
-    utility::sha256_hash::get_sha256_id,
-};
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::shows::Show;
+use crate::dusty::models::shows::ShowResult;
+use crate::dusty::models::shows::ShowType;
+use crate::dusty::utility::sha256_hash::get_sha256_id;
 
 pub fn show_to_show_result(s: &Show) -> ShowResult {
-    let dir_str = s.get_dir().to_str().unwrap_or("FAILED_TO_PARSE").to_string();
+    let dir_str = s
+        .get_dir()
+        .to_str()
+        .unwrap_or("FAILED_TO_PARSE")
+        .to_string();
     ShowResult {
         id: get_sha256_id(dir_str.clone(), s.get_title()),
         title: s.get_title(),

@@ -77,7 +77,9 @@ impl DustyError {
                 format!(
                     "operation={} path={} error=\"{}\" source={:?}",
                     op,
-                    path.as_ref().map(|p| p.display().to_string()).unwrap_or_else(|| "none".to_string()),
+                    path.as_ref()
+                        .map(|p| p.display().to_string())
+                        .unwrap_or_else(|| "none".to_string()),
                     source,
                     source
                 )
@@ -94,9 +96,15 @@ impl DustyError {
             DustyError::Serde { op, source } => {
                 format!("operation={} error=\"{}\" source={:?}", op, source, source)
             }
-            DustyError::LockFailed { op } => format!("operation={} error=\"mutex_lock_failed\"", op),
+            DustyError::LockFailed { op } => {
+                format!("operation={} error=\"mutex_lock_failed\"", op)
+            }
             DustyError::InvalidPath { path, reason } => {
-                format!("operation=path_validation path={} reason=\"{}\"", path.display(), reason)
+                format!(
+                    "operation=path_validation path={} reason=\"{}\"",
+                    path.display(),
+                    reason
+                )
             }
             DustyError::Custom(msg) => format!("error=\"{}\"", msg),
         }
@@ -130,13 +138,21 @@ impl fmt::Display for DustyError {
             }
             DustyError::Db { op, table, source } => {
                 if let Some(t) = table {
-                    write!(f, "Database operation '{}' failed on table '{}': {}", op, t, source)
+                    write!(
+                        f,
+                        "Database operation '{}' failed on table '{}': {}",
+                        op, t, source
+                    )
                 } else {
                     write!(f, "Database operation '{}' failed: {}", op, source)
                 }
             }
             DustyError::Serde { op, source } => {
-                write!(f, "Serialization/deserialization failed during '{}': {}", op, source)
+                write!(
+                    f,
+                    "Serialization/deserialization failed during '{}': {}",
+                    op, source
+                )
             }
             DustyError::LockFailed { op } => {
                 write!(f, "Failed to acquire database lock during '{}'", op)

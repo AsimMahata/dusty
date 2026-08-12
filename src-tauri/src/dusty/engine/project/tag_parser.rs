@@ -1,4 +1,5 @@
-use crate::dusty::models::project::{Project, Tag};
+use crate::dusty::models::project::Project;
+use crate::dusty::models::project::Tag;
 
 pub fn get_readme_if_available(path: String) -> Option<String> {
     let readme_path = format!("{}/README.md", path);

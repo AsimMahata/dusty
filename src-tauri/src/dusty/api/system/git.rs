@@ -1,4 +1,5 @@
-use crate::dusty::system::git::{get_git_info_sys, GitInfo};
+use crate::dusty::system::git::get_git_info_sys;
+use crate::dusty::system::git::GitInfo;
 
 #[tauri::command]
 pub fn get_git_info(path: String) -> GitInfo {

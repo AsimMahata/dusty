@@ -1,7 +1,8 @@
+use crate::dusty::db::recent::add_recent_episode_in_db;
+use crate::dusty::db::recent::get_recent_episodes_from_db;
+use crate::dusty::db::recent::reset_recent_episodes_table_in_db;
+use crate::dusty::db::recent::VideoItem;
 use crate::dusty::models::state::AppState;
-use crate::dusty::db::recent::{
-    VideoItem, add_recent_episode_in_db, get_recent_episodes_from_db, reset_recent_episodes_table_in_db,
-};
 
 use crate::dusty::logger::logger;
 
@@ -39,9 +40,7 @@ pub async fn get_recent_episodes(
 }
 
 #[tauri::command]
-pub async fn reset_recent_episodes_table(
-    state: tauri::State<'_, AppState>,
-) -> Result<(), String> {
+pub async fn reset_recent_episodes_table(state: tauri::State<'_, AppState>) -> Result<(), String> {
     state
         .db_worker
         .run(|conn| {

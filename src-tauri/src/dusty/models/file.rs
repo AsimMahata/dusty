@@ -1,11 +1,12 @@
-use std::{
-    io::{Error, ErrorKind},
-    path::PathBuf,
-};
+use std::io::Error;
+use std::io::ErrorKind;
+use std::path::PathBuf;
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
+use serde::Serialize;
 
-use crate::dusty::{filesystem::metadata as fs_meta, utility::sha256_hash::get_sha256_id};
+use crate::dusty::filesystem::metadata as fs_meta;
+use crate::dusty::utility::sha256_hash::get_sha256_id;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct FileInfo {

@@ -36,6 +36,16 @@ export const ReceiveView: React.FC = () => {
         setPendingTransfers((prev) => prev.filter((t) => t.id !== id));
     };
 
+    const handleExpired = (id: string) => {
+        setPendingTransfers((prev) => prev.filter((t) => t.id !== id));
+    };
+
+    const activeValidTransfers = pendingTransfers.filter((t) => {
+        if (!t.created_at || !t.timeout_secs) return true;
+        const now = Math.floor(Date.now() / 1000);
+        return now < t.created_at + t.timeout_secs;
+    });
+
     return (
         <div className="p2p-card">
             <div className="p2p-card-header">
@@ -64,12 +74,13 @@ export const ReceiveView: React.FC = () => {
                         <h4 className="results-header-title">
                             {P2P_STRINGS.DEVICES_SENDERS_TITLE}
                         </h4>
-                        <span className="results-count-badge">{pendingTransfers.length} Found</span>
+                        <span className="results-count-badge">{activeValidTransfers.length} Found</span>
                     </div>
                     <ReceiveDeviceList
-                        transfers={pendingTransfers}
+                        transfers={activeValidTransfers}
                         onAccept={handleAccept}
                         onReject={handleReject}
+                        onExpired={handleExpired}
                     />
                 </>
             )}

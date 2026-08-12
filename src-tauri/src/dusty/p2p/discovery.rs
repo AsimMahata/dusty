@@ -1,109 +1,15 @@
-use std::{
-    collections::HashMap,
-    fmt::Error,
-    sync::{mpsc, Arc},
-    thread,
-    time::{Duration, Instant},
-};
+use std::collections::HashMap;
+use std::sync::mpsc;
+use std::time::Duration;
+use std::time::Instant;
 
-use mdns_sd::{ServiceDaemon, ServiceEvent, ServiceInfo};
-use tokio::time::sleep;
+use mdns_sd::ServiceDaemon;
+use mdns_sd::ServiceEvent;
+use mdns_sd::ServiceInfo;
 use uuid::Uuid;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct Peer {
-    id: Uuid,
-    name: String,
-    hostname: String,
-    addresses: Vec<String>,
-    tcp_port: u16,
-}
-
-impl Peer {
-    pub fn new(
-        id: Uuid,
-        name: String,
-        hostname: String,
-        addresses: Vec<String>,
-        tcp_port: u16,
-    ) -> Self {
-        Self {
-            id,
-            name,
-            hostname,
-            addresses,
-            tcp_port,
-        }
-    }
-
-    pub fn peer_automatic_ip_address(
-        id: Uuid,
-        name: String,
-        hostname: String,
-        tcp_port: u16,
-    ) -> Self {
-        Self {
-            id,
-            name,
-            hostname,
-            addresses: Vec::new(),
-            tcp_port,
-        }
-    }
-
-    pub fn id(&self) -> Uuid {
-        self.id
-    }
-
-    pub fn name(&self) -> &str {
-        &self.name
-    }
-
-    pub fn hostname(&self) -> &str {
-        &self.hostname
-    }
-
-    pub fn addresses(&self) -> &Vec<String> {
-        &self.addresses
-    }
-
-    pub fn tcp_port(&self) -> u16 {
-        self.tcp_port
-    }
-
-    pub fn add_address(&mut self, address: String) {
-        self.addresses.push(address);
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct SenderInfo {
-    peer: Peer,
-    transfer_key: String,
-    files: Vec<String>,
-}
-
-impl SenderInfo {
-    pub fn new(peer: Peer, transfer_key: String, files: Vec<String>) -> Self {
-        Self {
-            peer,
-            transfer_key,
-            files,
-        }
-    }
-
-    pub fn peer(&self) -> &Peer {
-        &self.peer
-    }
-
-    pub fn transfer_key(&self) -> &str {
-        &self.transfer_key
-    }
-
-    pub fn files(&self) -> &Vec<String> {
-        &self.files
-    }
-}
+use crate::dusty::p2p::models::Peer;
+use crate::dusty::p2p::models::SenderInfo;
 
 pub struct Discovery {
     _daemon: ServiceDaemon,
@@ -111,6 +17,7 @@ pub struct Discovery {
     duration: Duration,
     service_port: u16,
 }
+
 impl Discovery {
     pub fn new(service_type: String, duration: u64, service_port: u16) -> Self {
         Self {
@@ -136,6 +43,14 @@ impl Discovery {
         properties.insert(
             "transfer_key".to_string(),
             sender_info.transfer_key().to_string(),
+        );
+        properties.insert(
+            "created_at".to_string(),
+            sender_info.created_at().to_string(),
+        );
+        properties.insert(
+            "timeout_secs".to_string(),
+            sender_info.timeout_secs().to_string(),
         );
 
         let file_basenames: Vec<String> = sender_info
@@ -208,7 +123,10 @@ impl Discovery {
         self._daemon
             .register(service)
             .map_err(|e| format!("Failed to register mDNS service: {}", e))?;
-        log::info!("[SENDER] mDNS broadcast registered successfully on daemon (service_name: {})", service_name);
+        log::info!(
+            "[SENDER] mDNS broadcast registered successfully on daemon (service_name: {})",
+            service_name
+        );
         Ok(service_name)
     }
 
@@ -269,9 +187,23 @@ impl Discovery {
                                             .collect()
                                     })
                                     .unwrap_or_default();
+                                let created_at: u64 = info
+                                    .get_property_val_str("created_at")
+                                    .and_then(|s| s.parse().ok())
+                                    .unwrap_or(0);
+                                let timeout_secs: u64 = info
+                                    .get_property_val_str("timeout_secs")
+                                    .and_then(|s| s.parse().ok())
+                                    .unwrap_or(60);
 
                                 let peer = Peer::new(id, name, hostname, addresses, tcp_port);
-                                let sender_info = SenderInfo::new(peer, transfer_key, files);
+                                let sender_info = SenderInfo::new(
+                                    peer,
+                                    transfer_key,
+                                    files,
+                                    created_at,
+                                    timeout_secs,
+                                );
                                 let _ = tx.send(sender_info);
                             }
                         }

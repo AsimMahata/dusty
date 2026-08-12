@@ -7,12 +7,14 @@ interface ReceiveDeviceListProps {
     transfers: PendingTransfer[];
     onAccept: (id: string) => void;
     onReject: (id: string) => void;
+    onExpired?: (id: string) => void;
 }
 
 export const ReceiveDeviceList: React.FC<ReceiveDeviceListProps> = ({
     transfers,
     onAccept,
     onReject,
+    onExpired,
 }) => {
     if (transfers.length === 0) {
         return (
@@ -30,6 +32,7 @@ export const ReceiveDeviceList: React.FC<ReceiveDeviceListProps> = ({
                     item={item}
                     onAccept={onAccept}
                     onReject={onReject}
+                    onExpired={onExpired}
                 />
             ))}
         </div>

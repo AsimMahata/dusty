@@ -1,11 +1,11 @@
+pub mod copy;
+pub mod delete;
 pub mod error;
 pub mod hash;
 pub mod metadata;
 pub mod normalize;
 pub mod read;
-pub mod scan;
-pub mod write;
-pub mod delete;
-pub mod copy;
 pub mod rename;
 pub mod reveal;
+pub mod scan;
+pub mod write;

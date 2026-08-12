@@ -1,9 +1,9 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
+use std::collections::HashSet;
 
-use crate::dusty::engine::{
-    cluster::helper::generate_token_id,
-    utility::calculations::{get_prime_power, PrimePower},
-};
+use crate::dusty::engine::cluster::helper::generate_token_id;
+use crate::dusty::engine::utility::calculations::get_prime_power;
+use crate::dusty::engine::utility::calculations::PrimePower;
 pub fn get_hash_indices(
     tokenized_file_names: &Vec<Vec<String>>,
     hash_indices: &mut HashMap<i64, HashSet<usize>>,

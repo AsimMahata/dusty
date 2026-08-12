@@ -1,11 +1,11 @@
+use crate::dusty::error::DustyError;
+use crate::dusty::error::Result;
 use std::fs;
 use std::io::Write;
 use std::path::PathBuf;
-use crate::dusty::error::{DustyError, Result};
 
 pub fn write_file(path: &PathBuf, content: &str) -> Result<()> {
-    fs::write(path, content)
-        .map_err(|e| DustyError::io("write_file", path, e))
+    fs::write(path, content).map_err(|e| DustyError::io("write_file", path, e))
 }
 
 pub fn append_file(path: &PathBuf, content: &str) -> Result<()> {
@@ -19,6 +19,5 @@ pub fn append_file(path: &PathBuf, content: &str) -> Result<()> {
 }
 
 pub fn create_directory(path: &PathBuf) -> Result<()> {
-    fs::create_dir_all(path)
-        .map_err(|e| DustyError::io("create_directory", path, e))
+    fs::create_dir_all(path).map_err(|e| DustyError::io("create_directory", path, e))
 }

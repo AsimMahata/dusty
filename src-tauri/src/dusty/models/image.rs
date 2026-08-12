@@ -1,4 +1,4 @@
-use std::path::{self, PathBuf};
+use std::path::PathBuf;
 
 use crate::dusty::models::file::FileInfo;
 

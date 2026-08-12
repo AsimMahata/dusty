@@ -1,6 +1,7 @@
 use serde::Serialize;
 use std::env;
-use sysinfo::{Disks, System};
+use sysinfo::Disks;
+use sysinfo::System;
 
 #[derive(Serialize)]
 pub struct DiskInfo {

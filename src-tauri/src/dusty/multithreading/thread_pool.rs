@@ -1,11 +1,10 @@
 use crate::dusty::logger::logger;
-use std::{
-    sync::{
-        atomic::{AtomicU64, Ordering},
-        mpsc, Arc, Mutex,
-    },
-    thread,
-};
+use std::sync::atomic::AtomicU64;
+use std::sync::atomic::Ordering;
+use std::sync::mpsc;
+use std::sync::Arc;
+use std::sync::Mutex;
+use std::thread;
 
 type JobFn = Box<dyn FnOnce() + Send + 'static>;
 
@@ -112,7 +111,11 @@ impl ThreadPool {
         let task_reciever = Arc::new(Mutex::new(receiver));
         let mut workers: Vec<Worker> = Vec::with_capacity(size);
         for id in 0..size {
-            workers.push(Worker::new(id, Arc::clone(&task_reciever), view_epoch.clone()));
+            workers.push(Worker::new(
+                id,
+                Arc::clone(&task_reciever),
+                view_epoch.clone(),
+            ));
         }
         ThreadPool {
             size,
@@ -155,7 +158,11 @@ impl ThreadPool {
         }
     }
 
-    pub async fn execute_with_result<F, R>(&self, name: impl Into<String>, f: F) -> Result<R, String>
+    pub async fn execute_with_result<F, R>(
+        &self,
+        name: impl Into<String>,
+        f: F,
+    ) -> Result<R, String>
     where
         F: FnOnce() -> R + Send + 'static,
         R: Send + 'static,
@@ -163,7 +170,11 @@ impl ThreadPool {
         self.execute_with_result_and_urgency(name, false, f).await
     }
 
-    pub async fn execute_with_result_urgent<F, R>(&self, name: impl Into<String>, f: F) -> Result<R, String>
+    pub async fn execute_with_result_urgent<F, R>(
+        &self,
+        name: impl Into<String>,
+        f: F,
+    ) -> Result<R, String>
     where
         F: FnOnce() -> R + Send + 'static,
         R: Send + 'static,

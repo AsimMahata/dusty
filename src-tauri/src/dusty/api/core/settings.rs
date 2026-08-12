@@ -1,8 +1,10 @@
-use crate::dusty::models::state::AppState;
-use crate::dusty::db::core::{delete_all_tables, initialize_tables};
+use crate::dusty::db::core::delete_all_tables;
+use crate::dusty::db::core::initialize_tables;
 use crate::dusty::error::DustyError;
 use crate::dusty::logger::logger;
-use tauri::{Manager, State};
+use crate::dusty::models::state::AppState;
+use tauri::Manager;
+use tauri::State;
 
 #[tauri::command]
 pub async fn reset_database(
@@ -39,6 +41,9 @@ pub async fn reset_database(
         }
     }
 
-    logger::info!("Database and ~/.dusty directory have been reset successfully.", "");
+    logger::info!(
+        "Database and ~/.dusty directory have been reset successfully.",
+        ""
+    );
     Ok(())
 }

@@ -1,9 +1,11 @@
-use crate::dusty::{
-    models::shows::{ShowInfo, ShowResult, ShowType},
-    error::{DustyError, Result},
-    utility::sha256_hash::get_sha256_id,
-};
-use rusqlite::{params, Connection};
+use crate::dusty::error::DustyError;
+use crate::dusty::error::Result;
+use crate::dusty::models::shows::ShowInfo;
+use crate::dusty::models::shows::ShowResult;
+use crate::dusty::models::shows::ShowType;
+use crate::dusty::utility::sha256_hash::get_sha256_id;
+use rusqlite::params;
+use rusqlite::Connection;
 
 pub fn add_shows_in_db(db: &Connection, shows: &Vec<ShowResult>) -> Result<()> {
     for show in shows {
@@ -92,8 +94,10 @@ pub fn print_all_shows_in_db(db: &Connection) -> Result<()> {
 
     println!("=== Shows ===");
     for row in rows {
-        let (id, title, dir, status, banned, pinned, provider, provider_id, airing, show_type) = row
-            .map_err(|err| DustyError::db("read_print_shows_row", Some("shows".to_string()), err))?;
+        let (id, title, dir, status, banned, pinned, provider, provider_id, airing, show_type) =
+            row.map_err(|err| {
+                DustyError::db("read_print_shows_row", Some("shows".to_string()), err)
+            })?;
 
         println!("ID          : {}", id);
         println!("Title       : {}", title);
@@ -137,10 +141,25 @@ pub fn create_shows_table(conn: &Connection) -> Result<()> {
     ensure_column_exists(conn, "shows", "provider", "TEXT DEFAULT NULL")?;
     ensure_column_exists(conn, "shows", "provider_id", "TEXT DEFAULT NULL")?;
     ensure_column_exists(conn, "shows", "airing", "INTEGER NOT NULL DEFAULT 0")?;
-    ensure_column_exists(conn, "shows", "show_type", "TEXT NOT NULL DEFAULT 'unknown'")?;
+    ensure_column_exists(
+        conn,
+        "shows",
+        "show_type",
+        "TEXT NOT NULL DEFAULT 'unknown'",
+    )?;
     ensure_column_exists(conn, "shows", "season", "INTEGER DEFAULT NULL")?;
-    ensure_column_exists(conn, "shows", "created_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")?;
-    ensure_column_exists(conn, "shows", "updated_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")?;
+    ensure_column_exists(
+        conn,
+        "shows",
+        "created_at",
+        "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))",
+    )?;
+    ensure_column_exists(
+        conn,
+        "shows",
+        "updated_at",
+        "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))",
+    )?;
 
     Ok(())
 }
@@ -176,11 +195,7 @@ pub fn rename_show_in_db(db: &Connection, id: String, new_name: String) -> Resul
     Ok(())
 }
 
-pub fn update_show_status_in_db(
-    db: &Connection,
-    id: String,
-    new_status: String,
-) -> Result<()> {
+pub fn update_show_status_in_db(db: &Connection, id: String, new_status: String) -> Result<()> {
     db.execute(
         "UPDATE shows SET status = ?1, updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE id = ?2",
         params![new_status, id],
@@ -189,11 +204,7 @@ pub fn update_show_status_in_db(
     Ok(())
 }
 
-pub fn update_ban_status_in_db(
-    db: &Connection,
-    id: String,
-    new_ban_status: bool,
-) -> Result<()> {
+pub fn update_ban_status_in_db(db: &Connection, id: String, new_ban_status: bool) -> Result<()> {
     db.execute(
         "UPDATE shows SET banned = ?1, updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE id = ?2",
         params![new_ban_status, id],
@@ -202,11 +213,7 @@ pub fn update_ban_status_in_db(
     Ok(())
 }
 
-pub fn update_pin_status_in_db(
-    db: &Connection,
-    id: String,
-    new_pin_status: bool,
-) -> Result<()> {
+pub fn update_pin_status_in_db(db: &Connection, id: String, new_pin_status: bool) -> Result<()> {
     db.execute(
         "UPDATE shows SET pinned = ?1, updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE id = ?2",
         params![new_pin_status, id],

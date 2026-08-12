@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 
-use crate::dusty::{
-    models::{exe::ExecutableDir, file::FileInfo},
-    engine::dusty::exe::is_exe_file,
-    filesystem::scan::{list_children, ScanOptions},
-};
+use crate::dusty::engine::dusty::exe::is_exe_file;
+use crate::dusty::filesystem::scan::list_children;
+use crate::dusty::filesystem::scan::ScanOptions;
+use crate::dusty::models::exe::ExecutableDir;
+use crate::dusty::models::file::FileInfo;
 
 pub fn dfs_exe_dir_scanner(
     path: &PathBuf,

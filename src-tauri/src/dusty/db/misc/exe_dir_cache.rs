@@ -1,5 +1,7 @@
-use crate::dusty::{models::exe::ExecutableDir, logger::logger};
-use rusqlite::{params, Connection};
+use crate::dusty::logger::logger;
+use crate::dusty::models::exe::ExecutableDir;
+use rusqlite::params;
+use rusqlite::Connection;
 
 pub fn create_exe_dir_cache_table(db: &Connection) -> Result<(), String> {
     db.execute(
@@ -35,12 +37,10 @@ pub fn get_exe_dir_cache(db: &Connection) -> Result<Vec<ExecutableDir>, String> 
         .prepare("SELECT data FROM exe_dir_cache WHERE id = ?1")
         .map_err(|err| err.to_string())?;
 
-    let mut rows = stmt
-        .query(params!["root_exe_tree"])
-        .map_err(|err| {
-            logger::error!("GET_EXE_DIR_CACHE_FAILED", err);
-            err.to_string()
-        })?;
+    let mut rows = stmt.query(params!["root_exe_tree"]).map_err(|err| {
+        logger::error!("GET_EXE_DIR_CACHE_FAILED", err);
+        err.to_string()
+    })?;
 
     if let Ok(Some(row)) = rows.next() {
         let json_data: String = row.get(0).map_err(|err| err.to_string())?;

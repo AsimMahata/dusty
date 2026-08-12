@@ -1,9 +1,7 @@
 use std::path::PathBuf;
 
-use crate::dusty::{
-    models::file::FileInfo,
-    filesystem::read::list_raw,
-};
+use crate::dusty::filesystem::read::list_raw;
+use crate::dusty::models::file::FileInfo;
 
 pub fn scan_dir(dir: &PathBuf) -> Vec<FileInfo> {
     match list_raw(dir) {

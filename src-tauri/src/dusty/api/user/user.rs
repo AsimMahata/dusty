@@ -1,56 +1,50 @@
-use crate::dusty::{
-    config::user_profile::{
-        get_user_info, reset_user_info, save_user_info, update_avatar_in_file,
-        update_display_name_in_file,
-    },
-    error::DustyError,
-    logger::logger,
-    models::user::{DeviceInfo, User},
-};
+use crate::dusty::config::user_profile::get_user_info;
+use crate::dusty::config::user_profile::reset_user_info;
+use crate::dusty::config::user_profile::save_user_info;
+use crate::dusty::config::user_profile::update_avatar_in_file;
+use crate::dusty::config::user_profile::update_display_name_in_file;
+use crate::dusty::error::DustyError;
+use crate::dusty::logger::logger;
+use crate::dusty::models::user::DeviceInfo;
+use crate::dusty::models::user::User;
 use sysinfo::System;
 use tauri::AppHandle;
 
 #[tauri::command]
-pub fn get_user(app_handle: AppHandle) -> Result<User, String> {
-    get_user_info(&app_handle).map_err(|e| {
+pub fn get_user() -> Result<User, String> {
+    get_user_info().map_err(|e| {
         logger::error!("GET_USER_FAILED", e.log_details());
         e.to_user_message()
     })
 }
 
 #[tauri::command]
-pub fn save_user(app_handle: AppHandle, user: User) -> Result<(), String> {
-    save_user_info(&app_handle, &user).map_err(|e| {
+pub fn save_user(user: User) -> Result<(), String> {
+    save_user_info(&user).map_err(|e| {
         logger::error!("SAVE_USER_FAILED", e.log_details());
         e.to_user_message()
     })
 }
 
 #[tauri::command]
-pub fn update_display_name(
-    app_handle: AppHandle,
-    display_name: String,
-) -> Result<User, String> {
-    update_display_name_in_file(&app_handle, display_name).map_err(|e| {
+pub fn update_display_name(display_name: String) -> Result<User, String> {
+    update_display_name_in_file(display_name).map_err(|e| {
         logger::error!("UPDATE_DISPLAY_NAME_FAILED", e.log_details());
         e.to_user_message()
     })
 }
 
 #[tauri::command]
-pub fn update_avatar(
-    app_handle: AppHandle,
-    avatar: Option<String>,
-) -> Result<User, String> {
-    update_avatar_in_file(&app_handle, avatar).map_err(|e| {
+pub fn update_avatar(avatar: Option<String>) -> Result<User, String> {
+    update_avatar_in_file(avatar).map_err(|e| {
         logger::error!("UPDATE_AVATAR_FAILED", e.log_details());
         e.to_user_message()
     })
 }
 
 #[tauri::command]
-pub fn reset_user(app_handle: AppHandle) -> Result<User, String> {
-    reset_user_info(&app_handle).map_err(|e| {
+pub fn reset_user() -> Result<User, String> {
+    reset_user_info().map_err(|e| {
         logger::error!("RESET_USER_FAILED", e.log_details());
         e.to_user_message()
     })
@@ -95,10 +89,7 @@ pub fn select_avatar_file() -> Result<Option<String>, String> {
 }
 
 #[tauri::command]
-pub fn upload_avatar_from_path(
-    app_handle: AppHandle,
-    file_path: String,
-) -> Result<User, String> {
+pub fn upload_avatar_from_path(app_handle: AppHandle, file_path: String) -> Result<User, String> {
     use tauri::Manager;
     let path = std::path::Path::new(&file_path);
     if !path.exists() {
@@ -151,15 +142,15 @@ pub fn upload_avatar_from_path(
     let target_path_str = target_path
         .to_str()
         .ok_or_else(|| {
-            let err = DustyError::invalid_path(&target_path, "Target avatar path is not valid UTF-8");
+            let err =
+                DustyError::invalid_path(&target_path, "Target avatar path is not valid UTF-8");
             logger::error!("COPY_AVATAR_FAILED", err.log_details());
             err.to_user_message()
         })?
         .to_string();
 
-    update_avatar_in_file(&app_handle, Some(target_path_str)).map_err(|e| {
+    update_avatar_in_file(Some(target_path_str)).map_err(|e| {
         logger::error!("UPDATE_AVATAR_FAILED", e.log_details());
         e.to_user_message()
     })
 }
-

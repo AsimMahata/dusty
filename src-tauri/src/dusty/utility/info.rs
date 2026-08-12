@@ -1,9 +1,11 @@
-use std::{env::home_dir, path::PathBuf};
+use std::env::home_dir;
+use std::path::PathBuf;
 
 use crate::dusty::filesystem::metadata;
 use sysinfo::Disks;
 
-use mime_guess::mime::{self, Name};
+use mime_guess::mime::Name;
+use mime_guess::mime::{self};
 
 const BAD_SIBLINGS: &[&str] = &[".git", "node_modules", ".venv", "venv", ".cph", "dist"];
 

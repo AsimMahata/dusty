@@ -1,14 +1,18 @@
-use rusqlite::Connection;
-use crate::dusty::models::project::{Project, Tag};
-use crate::dusty::models::state::AppState;
-use crate::dusty::db::project::{
-    add_projects_in_db, clear_project_cache, get_project_cache_from_db, get_project_info_from_db,
-    reset_project_table_in_db, update_project_pin_status_in_db, update_project_status_in_db,
-    update_project_tags_in_db,
-};
+use crate::dusty::db::project::add_projects_in_db;
+use crate::dusty::db::project::clear_project_cache;
+use crate::dusty::db::project::get_project_cache_from_db;
+use crate::dusty::db::project::get_project_info_from_db;
+use crate::dusty::db::project::reset_project_table_in_db;
+use crate::dusty::db::project::update_project_pin_status_in_db;
+use crate::dusty::db::project::update_project_status_in_db;
+use crate::dusty::db::project::update_project_tags_in_db;
 use crate::dusty::engine::project::scanner::scan_all_projects;
 use crate::dusty::engine::project::tag_scanner::scan_tags;
 use crate::dusty::logger::logger;
+use crate::dusty::models::project::Project;
+use crate::dusty::models::project::Tag;
+use crate::dusty::models::state::AppState;
+use rusqlite::Connection;
 
 pub fn sanitize_projects(db: &Connection, projects: Vec<Project>) -> Vec<Project> {
     projects
@@ -30,18 +34,21 @@ use crate::dusty::multithreading::DbWorker;
 
 pub fn scan_projects_using_cache(db_worker: &DbWorker, cache: bool) -> Vec<Project> {
     if cache {
-        if let Ok(Ok(cached_projects)) = db_worker.run_sync(|conn| get_project_cache_from_db(conn)) {
+        if let Ok(Ok(cached_projects)) = db_worker.run_sync(|conn| get_project_cache_from_db(conn))
+        {
             logger::info!("PROJECT_CACHE_LOADED", cached_projects.len());
             if !cached_projects.is_empty() {
                 logger::info!("PROJECT_CACHE_NOT_EMPTY", cached_projects.len());
-                if let Ok(sanitized) = db_worker.run_sync(|conn| sanitize_projects(conn, cached_projects)) {
+                if let Ok(sanitized) =
+                    db_worker.run_sync(|conn| sanitize_projects(conn, cached_projects))
+                {
                     return sanitized;
                 }
             }
             logger::info!("PROJECT_CACHE_IS_EMPTY", 0);
         }
     }
-    
+
     let _ = db_worker.run_sync(|conn| {
         if let Err(err) = clear_project_cache(conn) {
             logger::error!("CLEAR_PROJECT_CACHE_FAILED", err.log_details());
@@ -66,9 +73,7 @@ pub fn scan_projects_using_cache(db_worker: &DbWorker, cache: bool) -> Vec<Proje
 }
 
 #[tauri::command]
-pub async fn sync_scan_projects(
-    state: tauri::State<'_, AppState>,
-) -> Result<Vec<Project>, String> {
+pub async fn sync_scan_projects(state: tauri::State<'_, AppState>) -> Result<Vec<Project>, String> {
     let db_worker = state.db_worker.clone();
     state
         .thread_pool
@@ -79,9 +84,7 @@ pub async fn sync_scan_projects(
 }
 
 #[tauri::command]
-pub async fn scan_projects(
-    state: tauri::State<'_, AppState>,
-) -> Result<Vec<Project>, String> {
+pub async fn scan_projects(state: tauri::State<'_, AppState>) -> Result<Vec<Project>, String> {
     let db_worker = state.db_worker.clone();
     state
         .thread_pool

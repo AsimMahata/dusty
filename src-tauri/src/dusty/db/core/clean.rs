@@ -1,5 +1,6 @@
+use crate::dusty::error::DustyError;
+use crate::dusty::error::Result;
 use rusqlite::Connection;
-use crate::dusty::error::{DustyError, Result};
 
 pub fn delete_all_tables(conn: &Connection, tables: &Vec<String>) -> Result<()> {
     for table in tables {

@@ -1,10 +1,10 @@
+use crate::dusty::error::DustyError;
+use crate::dusty::error::Result;
+use crate::dusty::models::shows::ShowResult;
+use crate::dusty::utility::sha256_hash::get_sha256_id;
+use rusqlite::params;
+use rusqlite::Connection;
 use std::path::Path;
-use crate::dusty::{
-    models::shows::ShowResult,
-    error::{DustyError, Result},
-    utility::sha256_hash::get_sha256_id,
-};
-use rusqlite::{params, Connection};
 
 pub fn create_show_scan_cache_table(db: &Connection) -> Result<()> {
     db.execute(
@@ -17,19 +17,35 @@ pub fn create_show_scan_cache_table(db: &Connection) -> Result<()> {
         )",
         [],
     )
-    .map_err(|err| DustyError::db("create_show_scan_cache_table", Some("show_scan_cache".to_string()), err))?;
+    .map_err(|err| {
+        DustyError::db(
+            "create_show_scan_cache_table",
+            Some("show_scan_cache".to_string()),
+            err,
+        )
+    })?;
 
     use crate::dusty::db::core::init::ensure_column_exists;
-    ensure_column_exists(db, "show_scan_cache", "created_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")?;
-    ensure_column_exists(db, "show_scan_cache", "updated_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")?;
+    ensure_column_exists(
+        db,
+        "show_scan_cache",
+        "created_at",
+        "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))",
+    )?;
+    ensure_column_exists(
+        db,
+        "show_scan_cache",
+        "updated_at",
+        "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))",
+    )?;
 
     Ok(())
 }
 
 pub fn add_scan_to_cache(db: &Connection, scan_root: &Path, shows: &Vec<ShowResult>) -> Result<()> {
-    let scan_root_str = scan_root.to_str().ok_or_else(|| {
-        DustyError::invalid_path(scan_root, "Scan root path is not valid UTF-8")
-    })?;
+    let scan_root_str = scan_root
+        .to_str()
+        .ok_or_else(|| DustyError::invalid_path(scan_root, "Scan root path is not valid UTF-8"))?;
     let cache_key = get_sha256_id("scan_root".to_string(), scan_root_str.to_string());
     let payload = serde_json::to_string(shows)
         .map_err(|e| DustyError::serde("serialize_show_scan_cache", e))?;
@@ -42,13 +58,19 @@ pub fn add_scan_to_cache(db: &Connection, scan_root: &Path, shows: &Vec<ShowResu
 }
 
 pub fn get_scan_from_cache(db: &Connection, scan_root: &Path) -> Result<Option<Vec<ShowResult>>> {
-    let scan_root_str = scan_root.to_str().ok_or_else(|| {
-        DustyError::invalid_path(scan_root, "Scan root path is not valid UTF-8")
-    })?;
+    let scan_root_str = scan_root
+        .to_str()
+        .ok_or_else(|| DustyError::invalid_path(scan_root, "Scan root path is not valid UTF-8"))?;
     let cache_key = get_sha256_id("scan_root".to_string(), scan_root_str.to_string());
     let mut stmt = db
         .prepare("SELECT payload FROM show_scan_cache WHERE cache_key = ?1")
-        .map_err(|err| DustyError::db("prepare_get_scan_cache", Some("show_scan_cache".to_string()), err))?;
+        .map_err(|err| {
+            DustyError::db(
+                "prepare_get_scan_cache",
+                Some("show_scan_cache".to_string()),
+                err,
+            )
+        })?;
     let result = stmt.query_row(params![cache_key], |row| {
         let payload: String = row.get(0)?;
         Ok(payload)
@@ -60,22 +82,41 @@ pub fn get_scan_from_cache(db: &Connection, scan_root: &Path) -> Result<Option<V
             Ok(Some(shows))
         }
         Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
-        Err(err) => Err(DustyError::db("query_get_scan_cache", Some("show_scan_cache".to_string()), err)),
+        Err(err) => Err(DustyError::db(
+            "query_get_scan_cache",
+            Some("show_scan_cache".to_string()),
+            err,
+        )),
     }
 }
 
 pub fn delete_scan_cache_for_root(db: &Connection, scan_root: &Path) -> Result<()> {
-    let scan_root_str = scan_root.to_str().ok_or_else(|| {
-        DustyError::invalid_path(scan_root, "Scan root path is not valid UTF-8")
-    })?;
+    let scan_root_str = scan_root
+        .to_str()
+        .ok_or_else(|| DustyError::invalid_path(scan_root, "Scan root path is not valid UTF-8"))?;
     let cache_key = get_sha256_id("scan_root".to_string(), scan_root_str.to_string());
-    db.execute("DELETE FROM show_scan_cache WHERE cache_key = ?1", params![cache_key])
-        .map_err(|err| DustyError::db("delete_scan_cache", Some("show_scan_cache".to_string()), err))?;
+    db.execute(
+        "DELETE FROM show_scan_cache WHERE cache_key = ?1",
+        params![cache_key],
+    )
+    .map_err(|err| {
+        DustyError::db(
+            "delete_scan_cache",
+            Some("show_scan_cache".to_string()),
+            err,
+        )
+    })?;
     Ok(())
 }
 
 pub fn reset_show_scan_cache_table(db: &Connection) -> Result<()> {
     db.execute("DROP TABLE IF EXISTS show_scan_cache", [])
-        .map_err(|err| DustyError::db("reset_show_scan_cache_drop", Some("show_scan_cache".to_string()), err))?;
+        .map_err(|err| {
+            DustyError::db(
+                "reset_show_scan_cache_drop",
+                Some("show_scan_cache".to_string()),
+                err,
+            )
+        })?;
     create_show_scan_cache_table(db)
 }

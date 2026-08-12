@@ -2,11 +2,11 @@ use mime_guess::mime::Name;
 
 use std::path::PathBuf;
 
-use crate::dusty::{
-    models::{file::FileInfo, media::MediaDir},
-    filesystem::scan::{list_children, ScanOptions},
-    utility::info::get_file_type,
-};
+use crate::dusty::filesystem::scan::list_children;
+use crate::dusty::filesystem::scan::ScanOptions;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::media::MediaDir;
+use crate::dusty::utility::info::get_file_type;
 
 pub fn dfs_media_dir_scanner(
     path: &PathBuf,
@@ -46,10 +46,7 @@ pub fn dfs_media_dir_scanner(
     }
 
     if has_media || valid_child.len() > 2 {
-        let mut dir = MediaDir::new(
-            path.clone(),
-            Some(media_type_name.as_str().to_string()),
-        );
+        let mut dir = MediaDir::new(path.clone(), Some(media_type_name.as_str().to_string()));
         for child_dir in &valid_child {
             dir.childs.push(child_dir.clone());
         }

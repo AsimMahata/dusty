@@ -1,12 +1,10 @@
-use std::{
-    path::PathBuf,
-    time::{Duration, SystemTime},
-};
+use std::path::PathBuf;
+use std::time::Duration;
+use std::time::SystemTime;
 
-use crate::dusty::{
-    filesystem::scan::{list_children, ScanOptions},
-    utility::info::get_all_valid_source_path,
-};
+use crate::dusty::filesystem::scan::list_children;
+use crate::dusty::filesystem::scan::ScanOptions;
+use crate::dusty::utility::info::get_all_valid_source_path;
 
 pub fn list_all_dusty_files() {
     let _dusty_files: Vec<PathBuf> = scan_all_dusty_files();
@@ -41,7 +39,9 @@ fn dfs_dusty_files(list: &mut Vec<PathBuf>, path: &PathBuf, is_root_path: bool) 
 }
 
 fn is_dusty_file(child: &PathBuf) -> bool {
-    let Ok(meta) = child.metadata() else { return false };
+    let Ok(meta) = child.metadata() else {
+        return false;
+    };
     let six_months_ago = SystemTime::now() - Duration::from_secs(30 * 24 * 60 * 60);
     meta.len() > 5 * 1024 && meta.created().map_or(false, |c| c < six_months_ago)
 }

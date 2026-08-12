@@ -1,14 +1,15 @@
+use crate::dusty::error::DustyError;
+use crate::dusty::error::Result as DustyResult;
+use crate::dusty::logger::logger;
 use crate::dusty::models::file::FileInfo;
 use crate::dusty::models::state::AppState;
-use crate::dusty::error::{DustyError, Result as DustyResult};
-use crate::dusty::logger::logger;
 use crate::dusty::scanners::dfs::dfs_file_of_type;
 use crate::dusty::utility::info::is_root;
 use crate::dusty::utility::sha256_hash::get_sha256_id;
 use mime_guess::mime;
-use rusqlite::{params, Connection};
+use rusqlite::params;
+use rusqlite::Connection;
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex};
 
 use crate::dusty::multithreading::DbWorker;
 
@@ -40,17 +41,13 @@ pub async fn sync_scan_video(
         .await
 }
 
-pub fn scan_video_using_cache(
-    db_worker: &DbWorker,
-    path: &String,
-    cache: bool,
-) -> Vec<FileInfo> {
+pub fn scan_video_using_cache(db_worker: &DbWorker, path: &String, cache: bool) -> Vec<FileInfo> {
     let root = PathBuf::from(&path);
     if cache {
         let path_clone = path.clone();
-        if let Ok(Ok(Some(cached_videos))) = db_worker.run_sync(move |conn| {
-            get_cached_videos_from_media_cache_db(conn, &path_clone)
-        }) {
+        if let Ok(Ok(Some(cached_videos))) =
+            db_worker.run_sync(move |conn| get_cached_videos_from_media_cache_db(conn, &path_clone))
+        {
             logger::info!("VIDEO_CACHE_LOADED", cached_videos.len());
             if !cached_videos.is_empty() {
                 logger::info!("VIDEO_CACHE_NOT_EMPTY", cached_videos.len());
@@ -80,7 +77,10 @@ pub fn scan_video_using_cache(
     file_info_list
 }
 
-fn get_cached_videos_from_media_cache_db(db: &Connection, path: &String) -> DustyResult<Option<Vec<FileInfo>>> {
+fn get_cached_videos_from_media_cache_db(
+    db: &Connection,
+    path: &String,
+) -> DustyResult<Option<Vec<FileInfo>>> {
     let id = get_sha256_id(path.clone(), "flat_video".to_string());
     let res = db.query_row(
         "SELECT data FROM media_cache WHERE id=?1",
@@ -95,7 +95,11 @@ fn get_cached_videos_from_media_cache_db(db: &Connection, path: &String) -> Dust
             Ok(Some(videos))
         }
         Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
-        Err(err) => Err(DustyError::db("get_cached_videos", Some("media_cache".to_string()), err)),
+        Err(err) => Err(DustyError::db(
+            "get_cached_videos",
+            Some("media_cache".to_string()),
+            err,
+        )),
     }
 }
 

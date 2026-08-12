@@ -1,12 +1,9 @@
 use std::collections::HashMap;
 
-use crate::dusty::engine::{
-    algo::rolling_hash::{
-        get_common_token_order_using_rolling_hash, get_coupling_vec_using_rolling_hash,
-    },
-    cluster::helper::generate_token_id,
-    utility::tokenizer::tokenize_string,
-};
+use crate::dusty::engine::algo::rolling_hash::get_common_token_order_using_rolling_hash;
+use crate::dusty::engine::algo::rolling_hash::get_coupling_vec_using_rolling_hash;
+use crate::dusty::engine::cluster::helper::generate_token_id;
+use crate::dusty::engine::utility::tokenizer::tokenize_string;
 
 pub fn get_coupling_values(parsed_files: &Vec<Vec<String>>) -> Vec<Vec<f32>> {
     let n = parsed_files.len();

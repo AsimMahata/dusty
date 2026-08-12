@@ -3,22 +3,20 @@ use std::path::PathBuf;
 use mime_guess::mime;
 use rusqlite::Connection;
 
-use crate::dusty::{
-    models::shows::{ShowResult, ShowType, Shows},
-    engine::{
-        cluster::cluster::cluster_files,
-        shows::maker::{
-            make_show_results_from_clusters, make_shows_from_clusters,
-            make_shows_with_available_titles, TitleInfo,
-        },
-    },
-    error::{DustyError, Result as DustyResult},
-    scanners::{
-        dfs::{dfs_file_of_type, dfs_show_scanner},
-        videos::list_all_videos,
-    },
-    utility::info::is_root,
-};
+use crate::dusty::engine::cluster::cluster::cluster_files;
+use crate::dusty::engine::shows::maker::make_show_results_from_clusters;
+use crate::dusty::engine::shows::maker::make_shows_from_clusters;
+use crate::dusty::engine::shows::maker::make_shows_with_available_titles;
+use crate::dusty::engine::shows::maker::TitleInfo;
+use crate::dusty::error::DustyError;
+use crate::dusty::error::Result as DustyResult;
+use crate::dusty::models::shows::ShowResult;
+use crate::dusty::models::shows::ShowType;
+use crate::dusty::models::shows::Shows;
+use crate::dusty::scanners::dfs::dfs_file_of_type;
+use crate::dusty::scanners::dfs::dfs_show_scanner;
+use crate::dusty::scanners::videos::list_all_videos;
+use crate::dusty::utility::info::is_root;
 
 pub fn scan_shows_in_dir(path: &PathBuf, shows: &mut Shows) {
     let videos = list_all_videos(path);
@@ -57,7 +55,9 @@ pub fn get_all_linked_shows(db: &Connection) -> DustyResult<Vec<TitleInfo>> {
                 show_type: ShowType::from_str(&show_type_str),
             })
         })
-        .map_err(|err| DustyError::db("query_get_all_linked_shows", Some("shows".to_string()), err))?;
+        .map_err(|err| {
+            DustyError::db("query_get_all_linked_shows", Some("shows".to_string()), err)
+        })?;
 
     let mut titles = Vec::new();
     for t in show_iter {

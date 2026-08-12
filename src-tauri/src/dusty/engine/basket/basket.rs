@@ -1,13 +1,11 @@
-use std::{
-    fs,
-    io::{self, Write},
-    path::PathBuf,
-};
+use std::fs;
+use std::io::Write;
+use std::io::{self};
+use std::path::PathBuf;
 
-use crate::dusty::{
-    models::shows::{Show, Shows},
-    scanners::show_scanner::scan_for_shows_rec,
-};
+use crate::dusty::models::shows::Show;
+use crate::dusty::models::shows::Shows;
+use crate::dusty::scanners::show_scanner::scan_for_shows_rec;
 
 fn check_for_other_sibling_show(show: &Show, shows: &Shows) -> bool {
     for other in shows.get_list_of_shows() {
@@ -74,7 +72,7 @@ pub fn interface_put_in_basket() {
         println!("---------------------------------------------------------------------");
         println!("{:#?}", show);
         print!("Do you want to process this show? (y / [Enter] for no / q to exit): ");
-        let _ = io::stdout().flush(); 
+        let _ = io::stdout().flush();
 
         let mut input = String::new();
         if io::stdin().read_line(&mut input).is_err() {

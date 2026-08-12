@@ -1,4 +1,5 @@
-use std::{path::Path, process::Command};
+use std::path::Path;
+use std::process::Command;
 
 use which::which;
 
@@ -37,19 +38,29 @@ pub fn available_terminals() -> Vec<String> {
 
 pub fn open_terminal_at(path: &Path, terminal: &String) -> std::io::Result<()> {
     logger::debug!("TERMINAL_REQUEST", path, terminal);
-    
+
     let mut cmd = Command::new(terminal);
-    
+
     if terminal == "wt" {
         let path_str = path.to_str().ok_or_else(|| {
-            std::io::Error::new(std::io::ErrorKind::InvalidData, "Terminal path is not valid UTF-8")
+            std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Terminal path is not valid UTF-8",
+            )
         })?;
         cmd.args(["-d", path_str]);
     } else if terminal == "powershell" || terminal == "pwsh" {
         let path_str = path.to_str().ok_or_else(|| {
-            std::io::Error::new(std::io::ErrorKind::InvalidData, "Terminal path is not valid UTF-8")
+            std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Terminal path is not valid UTF-8",
+            )
         })?;
-        cmd.args(["-NoExit", "-Command", &format!("Set-Location '{}'", path_str)]);
+        cmd.args([
+            "-NoExit",
+            "-Command",
+            &format!("Set-Location '{}'", path_str),
+        ]);
     } else {
         cmd.current_dir(path);
     }

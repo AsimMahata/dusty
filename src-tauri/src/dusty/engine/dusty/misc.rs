@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 
-use crate::dusty::{
-    models::file::FileInfo,
-    filesystem::scan::{list_children, ScanOptions},
-    utility::info::{get_all_valid_source_path, is_root},
-};
+use crate::dusty::filesystem::scan::list_children;
+use crate::dusty::filesystem::scan::ScanOptions;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::utility::info::get_all_valid_source_path;
+use crate::dusty::utility::info::is_root;
 
 pub fn list_misc_files(misc_type: &str) -> Vec<FileInfo> {
     let mut list: Vec<FileInfo> = Vec::new();
@@ -20,7 +20,12 @@ pub fn list_misc_files_in_path(path: PathBuf, misc_type: &str) -> Vec<FileInfo> 
     files
 }
 
-fn dfs_misc_scanner(path: &PathBuf, files: &mut Vec<FileInfo>, is_root_path: bool, misc_type: &str) {
+fn dfs_misc_scanner(
+    path: &PathBuf,
+    files: &mut Vec<FileInfo>,
+    is_root_path: bool,
+    misc_type: &str,
+) {
     let opts = ScanOptions {
         is_root: is_root_path,
         ..ScanOptions::default()
@@ -50,7 +55,10 @@ pub fn is_misc_file(path: &PathBuf, misc_type: &str) -> bool {
             "zip" => ext_lower == "zip" || ext_lower == "rar",
             "json" => ext_lower == "json",
             "text" => ext_lower == "txt" || ext_lower == "text",
-            "office" => matches!(ext_lower.as_str(), "doc" | "docx" | "xls" | "xlsx" | "ppt" | "pptx"),
+            "office" => matches!(
+                ext_lower.as_str(),
+                "doc" | "docx" | "xls" | "xlsx" | "ppt" | "pptx"
+            ),
             _ => false,
         };
     }

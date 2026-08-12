@@ -1,6 +1,9 @@
-use serde::{Deserialize, Serialize};
-use git2::{Repository, StatusOptions};
-use chrono::{FixedOffset, TimeZone};
+use chrono::FixedOffset;
+use chrono::TimeZone;
+use git2::Repository;
+use git2::StatusOptions;
+use serde::Deserialize;
+use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct GitInfo {
@@ -47,11 +50,11 @@ pub fn get_git_info_sys(path: &String) -> GitInfo {
                 info.git_branch = Some(name.to_string());
             }
         }
-        
+
         if let Ok(commit) = head.peel_to_commit() {
             info.git_head_commit = Some(commit.id().to_string());
             info.git_head_message = commit.message().ok().map(|m| m.trim().to_string());
-            
+
             let time = commit.time();
             if let Some(offset) = FixedOffset::east_opt(time.offset_minutes() * 60) {
                 if let Some(dt) = offset.timestamp_opt(time.seconds(), 0).single() {
@@ -75,10 +78,21 @@ pub fn get_git_info_sys(path: &String) -> GitInfo {
             if status.contains(git2::Status::CONFLICTED) {
                 conflicted += 1;
             } else {
-                if status.intersects(git2::Status::WT_MODIFIED | git2::Status::WT_DELETED | git2::Status::WT_TYPECHANGE | git2::Status::WT_RENAMED) {
+                if status.intersects(
+                    git2::Status::WT_MODIFIED
+                        | git2::Status::WT_DELETED
+                        | git2::Status::WT_TYPECHANGE
+                        | git2::Status::WT_RENAMED,
+                ) {
                     modified += 1;
                 }
-                if status.intersects(git2::Status::INDEX_NEW | git2::Status::INDEX_MODIFIED | git2::Status::INDEX_DELETED | git2::Status::INDEX_RENAMED | git2::Status::INDEX_TYPECHANGE) {
+                if status.intersects(
+                    git2::Status::INDEX_NEW
+                        | git2::Status::INDEX_MODIFIED
+                        | git2::Status::INDEX_DELETED
+                        | git2::Status::INDEX_RENAMED
+                        | git2::Status::INDEX_TYPECHANGE,
+                ) {
                     staged += 1;
                 }
                 if status.contains(git2::Status::WT_NEW) {
@@ -95,12 +109,14 @@ pub fn get_git_info_sys(path: &String) -> GitInfo {
 
     let mut ahead = 0;
     let mut behind = 0;
-    
+
     if let Ok(head) = repo.head() {
         if head.is_branch() {
             let branch = git2::Branch::wrap(head);
             if let Ok(upstream) = branch.upstream() {
-                if let (Some(local_oid), Some(upstream_oid)) = (branch.get().target(), upstream.get().target()) {
+                if let (Some(local_oid), Some(upstream_oid)) =
+                    (branch.get().target(), upstream.get().target())
+                {
                     if let Ok((a, b)) = repo.graph_ahead_behind(local_oid, upstream_oid) {
                         ahead = a as u32;
                         behind = b as u32;
@@ -109,7 +125,7 @@ pub fn get_git_info_sys(path: &String) -> GitInfo {
             }
         }
     }
-    
+
     info.git_ahead = Some(ahead);
     info.git_behind = Some(behind);
 

@@ -1,13 +1,17 @@
+use crate::dusty::db::misc::add_or_update_exe_cache;
+use crate::dusty::db::misc::get_exe_cache;
+use crate::dusty::db::misc::get_exe_dir_cache;
+use crate::dusty::db::misc::reset_exe_cache;
+use crate::dusty::db::misc::reset_exe_dir_cache;
+use crate::dusty::db::misc::save_exe_dir_cache;
+use crate::dusty::engine::dusty::exe::list_executables;
+use crate::dusty::logger::logger;
 use crate::dusty::models::exe::ExecutableDir;
 use crate::dusty::models::file::FileInfo;
 use crate::dusty::models::state::AppState;
-use crate::dusty::db::misc::{add_or_update_exe_cache, get_exe_cache, reset_exe_cache};
-use crate::dusty::db::misc::{get_exe_dir_cache, reset_exe_dir_cache, save_exe_dir_cache};
-use crate::dusty::engine::dusty::exe::list_executables;
-use crate::dusty::logger::logger;
 use crate::dusty::scanners::exe::dfs_exe_dir_scanner;
-use crate::dusty::utility::info::{get_all_valid_source_path, is_root};
-use rusqlite::Connection;
+use crate::dusty::utility::info::get_all_valid_source_path;
+use crate::dusty::utility::info::is_root;
 
 use crate::dusty::multithreading::DbWorker;
 
@@ -68,9 +72,7 @@ pub async fn scan_exe(state: tauri::State<'_, AppState>) -> Result<Vec<FileInfo>
     let db_worker = state.db_worker.clone();
     state
         .thread_pool
-        .execute_with_result("scan_exe", move || {
-            scan_exe_using_cache(&db_worker, true)
-        })
+        .execute_with_result("scan_exe", move || scan_exe_using_cache(&db_worker, true))
         .await
 }
 
@@ -86,7 +88,9 @@ pub async fn sync_scan_exe(state: tauri::State<'_, AppState>) -> Result<Vec<File
 }
 
 #[tauri::command]
-pub async fn scan_exe_tree(state: tauri::State<'_, AppState>) -> Result<Vec<ExecutableDir>, String> {
+pub async fn scan_exe_tree(
+    state: tauri::State<'_, AppState>,
+) -> Result<Vec<ExecutableDir>, String> {
     let db_worker = state.db_worker.clone();
     state
         .thread_pool
@@ -97,7 +101,9 @@ pub async fn scan_exe_tree(state: tauri::State<'_, AppState>) -> Result<Vec<Exec
 }
 
 #[tauri::command]
-pub async fn sync_scan_exe_tree(state: tauri::State<'_, AppState>) -> Result<Vec<ExecutableDir>, String> {
+pub async fn sync_scan_exe_tree(
+    state: tauri::State<'_, AppState>,
+) -> Result<Vec<ExecutableDir>, String> {
     let db_worker = state.db_worker.clone();
     state
         .thread_pool

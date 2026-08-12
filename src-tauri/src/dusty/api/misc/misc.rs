@@ -1,24 +1,35 @@
-use crate::dusty::models::misc_dir::MiscDir;
-use crate::dusty::models::file::FileInfo;
-use crate::dusty::models::state::AppState;
-use crate::dusty::db::misc::{add_or_update_misc_cache, get_misc_cache, reset_misc_cache};
-use crate::dusty::db::misc::{get_misc_dir_cache, reset_misc_dir_cache, save_misc_dir_cache};
+use crate::dusty::db::misc::add_or_update_misc_cache;
+use crate::dusty::db::misc::get_misc_cache;
+use crate::dusty::db::misc::get_misc_dir_cache;
+use crate::dusty::db::misc::reset_misc_cache;
+use crate::dusty::db::misc::reset_misc_dir_cache;
+use crate::dusty::db::misc::save_misc_dir_cache;
 use crate::dusty::engine::dusty::misc::list_misc_files;
-use crate::dusty::error::DustyError;
 use crate::dusty::logger::logger;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::misc_dir::MiscDir;
+use crate::dusty::models::state::AppState;
 use crate::dusty::scanners::misc::dfs_misc_dir_scanner;
-use crate::dusty::utility::info::{get_all_valid_source_path, is_root};
-use rusqlite::Connection;
-use std::sync::{Arc, Mutex};
+use crate::dusty::utility::info::get_all_valid_source_path;
+use crate::dusty::utility::info::is_root;
 
 use crate::dusty::multithreading::DbWorker;
 
-pub fn scan_misc_using_cache(db_worker: &DbWorker, misc_type: String, use_cache: bool) -> Vec<FileInfo> {
+pub fn scan_misc_using_cache(
+    db_worker: &DbWorker,
+    misc_type: String,
+    use_cache: bool,
+) -> Vec<FileInfo> {
     if use_cache {
         let type_clone = misc_type.clone();
-        if let Ok(Ok(cached_files)) = db_worker.run_sync(move |conn| get_misc_cache(conn, &type_clone)) {
+        if let Ok(Ok(cached_files)) =
+            db_worker.run_sync(move |conn| get_misc_cache(conn, &type_clone))
+        {
             if !cached_files.is_empty() {
-                logger::debug!(format!("scanned {} files from cache:", misc_type).as_str(), cached_files.len());
+                logger::debug!(
+                    format!("scanned {} files from cache:", misc_type).as_str(),
+                    cached_files.len()
+                );
                 return cached_files;
             }
         }
@@ -43,12 +54,21 @@ pub fn scan_misc_using_cache(db_worker: &DbWorker, misc_type: String, use_cache:
     files
 }
 
-pub fn scan_misc_tree_using_cache(db_worker: &DbWorker, misc_type: String, use_cache: bool) -> Vec<MiscDir> {
+pub fn scan_misc_tree_using_cache(
+    db_worker: &DbWorker,
+    misc_type: String,
+    use_cache: bool,
+) -> Vec<MiscDir> {
     if use_cache {
         let type_clone = misc_type.clone();
-        if let Ok(Ok(cached_dirs)) = db_worker.run_sync(move |conn| get_misc_dir_cache(conn, &type_clone)) {
+        if let Ok(Ok(cached_dirs)) =
+            db_worker.run_sync(move |conn| get_misc_dir_cache(conn, &type_clone))
+        {
             if !cached_dirs.is_empty() {
-                logger::debug!(format!("scanned {} tree from cache:", misc_type).as_str(), cached_dirs.len());
+                logger::debug!(
+                    format!("scanned {} tree from cache:", misc_type).as_str(),
+                    cached_dirs.len()
+                );
                 return cached_dirs;
             }
         }

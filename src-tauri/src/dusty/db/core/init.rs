@@ -2,20 +2,24 @@ use rusqlite::Connection;
 use std::path::PathBuf;
 use tauri::Manager;
 
-use crate::dusty::models::state::AppState;
 use crate::dusty::db::media::create_media_table;
-use crate::dusty::db::misc::{
-    create_empty_dir_cache_table, create_misc_cache_table, create_misc_dir_cache_table,
-};
+use crate::dusty::db::misc::create_empty_dir_cache_table;
+use crate::dusty::db::misc::create_misc_cache_table;
+use crate::dusty::db::misc::create_misc_dir_cache_table;
 use crate::dusty::db::project::create_projects_table;
 use crate::dusty::db::recent::create_recent_ep_table;
 use crate::dusty::db::show::create_show_cache_table;
 use crate::dusty::db::show::create_show_scan_cache_table;
 use crate::dusty::db::show::create_shows_table;
-use crate::dusty::error::{DustyError, Result as DustyResult};
+use crate::dusty::error::DustyError;
+use crate::dusty::error::Result as DustyResult;
 use crate::dusty::logger::logger;
-use crate::dusty::multithreading::{DbWorker, P2PWorker, ThreadPool};
-use std::sync::{atomic::AtomicU64, Arc};
+use crate::dusty::models::state::AppState;
+use crate::dusty::multithreading::DbWorker;
+use crate::dusty::multithreading::P2PWorker;
+use crate::dusty::multithreading::ThreadPool;
+use std::sync::atomic::AtomicU64;
+use std::sync::Arc;
 
 fn init_fs_related_task(app: &mut tauri::App) -> DustyResult<PathBuf> {
     let app_data_dir = app.path().app_local_data_dir().map_err(|e| {

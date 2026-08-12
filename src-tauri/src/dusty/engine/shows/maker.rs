@@ -1,21 +1,14 @@
-use crate::dusty::{
-    models::{
-        file::FileInfo,
-        shows::{Show, ShowResult, ShowType, Shows},
-    },
-    engine::{
-        algo::rolling_hash::get_common_token_order_using_rolling_hash,
-        shows::coupling::get_coupling_value_between_anime_title_and_file_name,
-        utility::tokenizer::get_tokenized_file_names_for_title_making,
-    },
-    utility::sha256_hash::get_sha256_id,
-};
-use rand::rng;
-use rand::seq::SliceRandom;
-use std::{
-    cmp::{max, min},
-    path::PathBuf,
-};
+use crate::dusty::engine::algo::rolling_hash::get_common_token_order_using_rolling_hash;
+use crate::dusty::engine::shows::coupling::get_coupling_value_between_anime_title_and_file_name;
+use crate::dusty::engine::utility::tokenizer::get_tokenized_file_names_for_title_making;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::shows::Show;
+use crate::dusty::models::shows::ShowResult;
+use crate::dusty::models::shows::ShowType;
+use crate::dusty::models::shows::Shows;
+use crate::dusty::utility::sha256_hash::get_sha256_id;
+use std::cmp::min;
+use std::path::PathBuf;
 
 #[allow(unused_macros)]
 macro_rules! print_grid {

@@ -1,4 +1,6 @@
-use serde::{Deserialize, Deserializer, Serialize};
+use serde::Deserialize;
+use serde::Deserializer;
+use serde::Serialize;
 
 use crate::dusty::system::git::GitInfo;
 
@@ -355,9 +357,9 @@ impl Project {
                 FRAMEWORK_PRIORITY
                     .iter()
                     .find(|&framework| {
-                        self.tags.iter().any(|tag| {
-                            &Framework::from_value(tag.as_str()) == framework
-                        })
+                        self.tags
+                            .iter()
+                            .any(|tag| &Framework::from_value(tag.as_str()) == framework)
                     })
                     .cloned()
             })

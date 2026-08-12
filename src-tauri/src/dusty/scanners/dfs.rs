@@ -1,14 +1,12 @@
-use std::{collections::HashSet, path::PathBuf};
+use std::path::PathBuf;
 
 use mime_guess::mime::Name;
 
-use crate::dusty::{
-    models::{project::Project, shows::Shows},
-    engine::project::maker::make_project,
-    filesystem::scan::{list_children, ScanOptions},
-    scanners::show_scanner::scan_shows_in_dir,
-    utility::info::{get_file_type, is_git_repo},
-};
+use crate::dusty::filesystem::scan::list_children;
+use crate::dusty::filesystem::scan::ScanOptions;
+use crate::dusty::models::shows::Shows;
+use crate::dusty::scanners::show_scanner::scan_shows_in_dir;
+use crate::dusty::utility::info::get_file_type;
 
 pub fn dfs_file_of_type(
     path: &PathBuf,

@@ -1,11 +1,10 @@
 pub mod dfs;
+pub mod exe;
 pub mod files;
 pub mod media;
+pub mod misc;
+pub mod pdf;
 pub mod recursive_scanner;
 pub mod show_scanner;
 pub mod videos;
-pub mod misc;
-pub mod exe;
-pub mod pdf;
 pub mod zip;
-

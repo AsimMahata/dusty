@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 
-use crate::dusty::{
-    models::file::FileInfo,
-    filesystem::scan::{list_children, ScanOptions},
-    utility::info::{get_all_valid_source_path, is_root},
-};
+use crate::dusty::filesystem::scan::list_children;
+use crate::dusty::filesystem::scan::ScanOptions;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::utility::info::get_all_valid_source_path;
+use crate::dusty::utility::info::is_root;
 
 pub fn list_large_zip_files() -> Vec<FileInfo> {
     let mut list: Vec<FileInfo> = Vec::new();

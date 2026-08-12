@@ -1,5 +1,5 @@
 use regex::Regex;
-use std::path::{self, PathBuf};
+use std::path::PathBuf;
 use std::sync::OnceLock;
 
 static EPISODE_REGEX: OnceLock<Regex> = OnceLock::new();

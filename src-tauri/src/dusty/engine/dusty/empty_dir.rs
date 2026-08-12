@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 
-use crate::dusty::{
-    models::file::FileInfo,
-    filesystem::scan::{list_children, ScanOptions},
-    utility::info::{get_all_valid_source_path, is_root},
-};
+use crate::dusty::filesystem::scan::list_children;
+use crate::dusty::filesystem::scan::ScanOptions;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::utility::info::get_all_valid_source_path;
+use crate::dusty::utility::info::is_root;
 
 pub fn list_empty_dirs() -> Vec<FileInfo> {
     let mut list: Vec<FileInfo> = Vec::new();
@@ -33,6 +33,8 @@ pub fn dfs_empty_dir_scanner(path: &PathBuf, empty_dirs: &mut Vec<FileInfo>, is_
         dfs_empty_dir_scanner(&child, empty_dirs, false);
     }
     if children.total_count == 0 {
-        FileInfo::from_pathbuf(path).ok().map(|info| empty_dirs.push(info));
+        FileInfo::from_pathbuf(path)
+            .ok()
+            .map(|info| empty_dirs.push(info));
     }
 }

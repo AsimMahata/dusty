@@ -1,13 +1,17 @@
+use crate::dusty::db::misc::add_or_update_pdf_cache;
+use crate::dusty::db::misc::get_pdf_cache;
+use crate::dusty::db::misc::get_pdf_dir_cache;
+use crate::dusty::db::misc::reset_pdf_cache;
+use crate::dusty::db::misc::reset_pdf_dir_cache;
+use crate::dusty::db::misc::save_pdf_dir_cache;
+use crate::dusty::engine::dusty::pdf::list_pdfs;
+use crate::dusty::logger::logger;
 use crate::dusty::models::file::FileInfo;
 use crate::dusty::models::pdf::PdfDir;
 use crate::dusty::models::state::AppState;
-use crate::dusty::db::misc::{add_or_update_pdf_cache, get_pdf_cache, reset_pdf_cache};
-use crate::dusty::db::misc::{get_pdf_dir_cache, reset_pdf_dir_cache, save_pdf_dir_cache};
-use crate::dusty::engine::dusty::pdf::list_pdfs;
-use crate::dusty::logger::logger;
 use crate::dusty::scanners::pdf::dfs_pdf_dir_scanner;
-use crate::dusty::utility::info::{get_all_valid_source_path, is_root};
-
+use crate::dusty::utility::info::get_all_valid_source_path;
+use crate::dusty::utility::info::is_root;
 
 use crate::dusty::multithreading::DbWorker;
 
@@ -22,20 +26,20 @@ pub fn scan_pdf_using_cache(db_worker: &DbWorker, use_cache: bool) -> Vec<FileIn
     }
 
     let files = list_pdfs();
-    
+
     let files_clone = files.clone();
     let _ = db_worker.run_sync(move |conn| {
         if let Err(err) = reset_pdf_cache(conn) {
             logger::error!("RESET_PDF_CACHE_FAILED", err.to_string());
         }
-        
+
         for file in &files_clone {
             if let Err(err) = add_or_update_pdf_cache(conn, file) {
                 logger::error!("ADD_PDF_CACHE_FAILED", err.to_string());
             }
         }
     });
-    
+
     files
 }
 
@@ -68,9 +72,7 @@ pub async fn scan_pdf(state: tauri::State<'_, AppState>) -> Result<Vec<FileInfo>
     let db_worker = state.db_worker.clone();
     state
         .thread_pool
-        .execute_with_result("scan_pdf", move || {
-            scan_pdf_using_cache(&db_worker, true)
-        })
+        .execute_with_result("scan_pdf", move || scan_pdf_using_cache(&db_worker, true))
         .await
 }
 

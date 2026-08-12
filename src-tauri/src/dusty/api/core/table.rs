@@ -1,7 +1,7 @@
-use crate::dusty::models::state::AppState;
 use crate::dusty::db::core::initialize_tables;
 use crate::dusty::error::DustyError;
 use crate::dusty::logger::logger;
+use crate::dusty::models::state::AppState;
 
 #[tauri::command]
 pub fn get_all_tables(state: tauri::State<AppState>) -> Result<Vec<String>, String> {

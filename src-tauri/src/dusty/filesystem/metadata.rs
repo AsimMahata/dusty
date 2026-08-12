@@ -1,8 +1,11 @@
+use crate::dusty::error::DustyError;
+use crate::dusty::error::Result;
+use serde::Deserialize;
+use serde::Serialize;
+use std::fs;
 #[cfg(target_os = "windows")]
 use std::os::windows::prelude::*;
-use std::{fs, path::PathBuf};
-use serde::{Deserialize, Serialize};
-use crate::dusty::error::{DustyError, Result};
+use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize)]
 pub struct FileMetadata {
@@ -41,8 +44,7 @@ pub fn is_hidden(path: &PathBuf) -> bool {
 }
 
 pub fn get_metadata(path: &PathBuf) -> Result<FileMetadata> {
-    let meta = fs::metadata(path)
-        .map_err(|e| DustyError::io("get_metadata", path, e))?;
+    let meta = fs::metadata(path).map_err(|e| DustyError::io("get_metadata", path, e))?;
     let created = meta
         .created()
         .ok()

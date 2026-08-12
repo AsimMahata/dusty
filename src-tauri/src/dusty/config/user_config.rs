@@ -1,4 +1,5 @@
-use crate::dusty::error::{DustyError, Result};
+use crate::dusty::error::DustyError;
+use crate::dusty::error::Result;
 use serde_json::Value;
 use std::fs;
 use std::path::PathBuf;
@@ -52,12 +53,15 @@ fn resolve_key_path(id: &str) -> (&'static str, &str) {
     if id == "active_show_page_tab" {
         ("show_page", "active_tab")
     } else if let Some(rest) = id.strip_prefix("show_page_") {
-        ("show_page", match rest {
-            "sort_method" => "sort_method",
-            "sort_ascending" => "sort_ascending",
-            "is_grid_layout" => "is_grid_layout",
-            _ => rest,
-        })
+        (
+            "show_page",
+            match rest {
+                "sort_method" => "sort_method",
+                "sort_ascending" => "sort_ascending",
+                "is_grid_layout" => "is_grid_layout",
+                _ => rest,
+            },
+        )
     } else if let Some(rest) = id.strip_prefix("todo_page_") {
         ("todo_page", rest)
     } else if let Some(rest) = id.strip_prefix("projects_page_") {
@@ -69,16 +73,22 @@ fn resolve_key_path(id: &str) -> (&'static str, &str) {
     } else if let Some(rest) = id.strip_prefix("misc_page_") {
         ("misc_page", rest)
     } else if let Some(rest) = id.strip_prefix("media_sources_page_") {
-        ("media_page", match rest {
-            "sort_method" => "sources_sort_method",
-            "sort_ascending" => "sources_sort_ascending",
-            _ => rest,
-        })
+        (
+            "media_page",
+            match rest {
+                "sort_method" => "sources_sort_method",
+                "sort_ascending" => "sources_sort_ascending",
+                _ => rest,
+            },
+        )
     } else if let Some(rest) = id.strip_prefix("media_list_page_") {
-        ("media_page", match rest {
-            "sort_mode" => "list_sort_mode",
-            _ => rest,
-        })
+        (
+            "media_page",
+            match rest {
+                "sort_mode" => "list_sort_mode",
+                _ => rest,
+            },
+        )
     } else if id == "default_terminal" {
         ("terminal", "default")
     } else {
@@ -86,14 +96,16 @@ fn resolve_key_path(id: &str) -> (&'static str, &str) {
     }
 }
 
-pub fn get_config_value_from_file(app_handle: &tauri::AppHandle, id: String) -> Result<Option<String>> {
+pub fn get_config_value_from_file(
+    app_handle: &tauri::AppHandle,
+    id: String,
+) -> Result<Option<String>> {
     let config_path = get_config_file_path(app_handle)?;
     let root = read_config_json(&config_path)?;
 
-
     if let Some(val) = root.get(&id) {
-        let string_val = serde_json::to_string(val)
-            .map_err(|e| DustyError::serde("serialize_config_val", e))?;
+        let string_val =
+            serde_json::to_string(val).map_err(|e| DustyError::serde("serialize_config_val", e))?;
         return Ok(Some(string_val));
     }
 
@@ -108,7 +120,6 @@ pub fn get_config_value_from_file(app_handle: &tauri::AppHandle, id: String) -> 
         }
     }
 
-  
     if let Some((sec, prop)) = id.split_once('.') {
         if let Some(sec_val) = root.get(sec) {
             if let Some(val) = sec_val.get(prop) {
@@ -122,12 +133,16 @@ pub fn get_config_value_from_file(app_handle: &tauri::AppHandle, id: String) -> 
     Ok(None)
 }
 
-pub fn set_config_value_in_file(app_handle: &tauri::AppHandle, id: String, raw_value: String) -> Result<()> {
+pub fn set_config_value_in_file(
+    app_handle: &tauri::AppHandle,
+    id: String,
+    raw_value: String,
+) -> Result<()> {
     let config_path = get_config_file_path(app_handle)?;
     let mut root = read_config_json(&config_path)?;
 
-    let val_to_insert: Value = serde_json::from_str(&raw_value)
-        .unwrap_or_else(|_| Value::String(raw_value));
+    let val_to_insert: Value =
+        serde_json::from_str(&raw_value).unwrap_or_else(|_| Value::String(raw_value));
 
     let (section, prop) = resolve_key_path(&id);
     if !section.is_empty() && !prop.is_empty() {

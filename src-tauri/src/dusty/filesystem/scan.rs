@@ -1,11 +1,12 @@
-use std::{fs, path::PathBuf};
 use crate::dusty::models::file::FileInfo;
+use std::fs;
+use std::path::PathBuf;
 
-use crate::dusty::{
-    error::Result,
-    filesystem::{metadata, normalize},
-    utility::info::{check_for_bad_sibling, is_forbidden_folder},
-};
+use crate::dusty::error::Result;
+use crate::dusty::filesystem::metadata;
+use crate::dusty::filesystem::normalize;
+use crate::dusty::utility::info::check_for_bad_sibling;
+use crate::dusty::utility::info::is_forbidden_folder;
 
 #[derive(Clone, Copy)]
 pub struct ScanOptions {

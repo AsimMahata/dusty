@@ -60,6 +60,7 @@ macro_rules! error {
     }};
 }
 
+#[allow(unused_macros)]
 macro_rules! success {
     ($tag:expr) => {{
         $crate::dusty::logger::logger::Logger::log("SUCCESS", $tag, file!(), line!(), &[]);
@@ -70,6 +71,7 @@ macro_rules! success {
     }};
 }
 
+#[allow(unused_macros)]
 macro_rules! todo {
     ($tag:expr) => {{
         $crate::dusty::logger::logger::Logger::log("TODO", $tag, file!(), line!(), &[]);
@@ -83,8 +85,8 @@ macro_rules! todo {
 pub(crate) use debug;
 pub(crate) use error;
 pub(crate) use info;
-pub(crate) use warning;
 #[allow(unused_imports)]
 pub(crate) use success;
 #[allow(unused_imports)]
 pub(crate) use todo;
+pub(crate) use warning;

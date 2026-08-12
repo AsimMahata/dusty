@@ -1,15 +1,12 @@
-use std::{
-    fs,
-    path::{self, PathBuf},
-};
-
-use crate::dusty::{
-    models::project::Project,
-    engine::project::maker::make_project,
-    utility::info::{
-        get_all_valid_source_path, is_forbidden_folder, is_git_repo, is_hidden, is_root,
-    },
-};
+use crate::dusty::engine::project::maker::make_project;
+use crate::dusty::models::project::Project;
+use crate::dusty::utility::info::get_all_valid_source_path;
+use crate::dusty::utility::info::is_forbidden_folder;
+use crate::dusty::utility::info::is_git_repo;
+use crate::dusty::utility::info::is_hidden;
+use crate::dusty::utility::info::is_root;
+use std::fs;
+use std::path::PathBuf;
 
 pub fn scan_projects_in_path(source: &PathBuf) -> Vec<Project> {
     let mut projects: Vec<Project> = Vec::new();

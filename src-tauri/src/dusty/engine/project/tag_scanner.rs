@@ -1,10 +1,9 @@
 use std::path::PathBuf;
 
-use crate::dusty::{
-    models::project::{Project, Tag},
-    engine::project::tag_parser::scan_tags_from_readme,
-    filesystem::read::list_raw,
-};
+use crate::dusty::engine::project::tag_parser::scan_tags_from_readme;
+use crate::dusty::filesystem::read::list_raw;
+use crate::dusty::models::project::Project;
+use crate::dusty::models::project::Tag;
 
 pub fn scan_tags(project: &Project) -> Vec<Tag> {
     let mut tags: Vec<Tag> = Vec::new();
@@ -29,7 +28,11 @@ pub fn get_git_ignores(path: &PathBuf) -> Vec<String> {
     }
 }
 
-pub fn scan_tags_from_directory_structure(path: &PathBuf, tags: &mut Vec<Tag>, git_ignores: &mut Vec<String>) {
+pub fn scan_tags_from_directory_structure(
+    path: &PathBuf,
+    tags: &mut Vec<Tag>,
+    git_ignores: &mut Vec<String>,
+) {
     git_ignores.extend(get_git_ignores(path));
     let mut file_names: Vec<String> = Vec::new();
     let mut child_directories: Vec<PathBuf> = Vec::new();
@@ -62,7 +65,9 @@ pub fn scan_tags_from_directory_structure(path: &PathBuf, tags: &mut Vec<Tag>, g
             "package.json" => tags.push(Tag::NodeJs),
             "go.mod" => tags.push(Tag::Go),
             "pom.xml" | "build.gradle" | "build.gradle.kts" => tags.push(Tag::Java),
-            "requirements.txt" | "setup.py" | "pyproject.toml" | "Pipfile" => tags.push(Tag::Python),
+            "requirements.txt" | "setup.py" | "pyproject.toml" | "Pipfile" => {
+                tags.push(Tag::Python)
+            }
             "composer.json" => tags.push(Tag::Php),
             "Gemfile" => tags.push(Tag::Ruby),
             "pubspec.yaml" => tags.push(Tag::Dart),
@@ -72,7 +77,7 @@ pub fn scan_tags_from_directory_structure(path: &PathBuf, tags: &mut Vec<Tag>, g
             "vite.config.js" | "vite.config.ts" => {
                 tags.push(Tag::Vite);
                 tags.push(Tag::React);
-            },
+            }
             "next.config.js" | "next.config.mjs" | "next.config.ts" => tags.push(Tag::NextJs),
             "nuxt.config.ts" | "nuxt.config.js" => tags.push(Tag::Vue),
             "angular.json" => tags.push(Tag::Angular),
@@ -90,7 +95,10 @@ pub fn scan_tags_from_directory_structure(path: &PathBuf, tags: &mut Vec<Tag>, g
     }
 
     // TypeScript detection
-    if file_names.iter().any(|n| n == "tsconfig.json" || n == "tsconfig.app.json") {
+    if file_names
+        .iter()
+        .any(|n| n == "tsconfig.json" || n == "tsconfig.app.json")
+    {
         tags.push(Tag::TypeScript);
     }
 
@@ -100,7 +108,10 @@ pub fn scan_tags_from_directory_structure(path: &PathBuf, tags: &mut Vec<Tag>, g
     }
 
     // .NET detection
-    if file_names.iter().any(|n| n.ends_with(".csproj") || n.ends_with(".sln")) {
+    if file_names
+        .iter()
+        .any(|n| n.ends_with(".csproj") || n.ends_with(".sln"))
+    {
         tags.push(Tag::DotNet);
     }
 
@@ -117,6 +128,10 @@ pub fn scan_tags_from_directory_structure(path: &PathBuf, tags: &mut Vec<Tag>, g
 pub fn scan_tags_from_structure(project: &Project) -> Vec<Tag> {
     let mut tags: Vec<Tag> = Vec::new();
     let mut git_ignores = Vec::new();
-    scan_tags_from_directory_structure(&PathBuf::from(project.path.clone()), &mut tags, &mut git_ignores);
+    scan_tags_from_directory_structure(
+        &PathBuf::from(project.path.clone()),
+        &mut tags,
+        &mut git_ignores,
+    );
     tags
 }

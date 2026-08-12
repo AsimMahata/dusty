@@ -1,7 +1,7 @@
-use crate::dusty::{
-    config::{get_config_value_from_file, set_config_value_in_file, reset_config_file},
-    logger::logger,
-};
+use crate::dusty::config::get_config_value_from_file;
+use crate::dusty::config::reset_config_file;
+use crate::dusty::config::set_config_value_in_file;
+use crate::dusty::logger::logger;
 
 #[tauri::command]
 pub async fn get_config_value(

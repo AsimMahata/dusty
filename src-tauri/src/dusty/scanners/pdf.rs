@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 
-use crate::dusty::{
-    models::{file::FileInfo, pdf::PdfDir},
-    engine::dusty::pdf::is_pdf_file,
-    filesystem::scan::{list_children, ScanOptions},
-};
+use crate::dusty::engine::dusty::pdf::is_pdf_file;
+use crate::dusty::filesystem::scan::list_children;
+use crate::dusty::filesystem::scan::ScanOptions;
+use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::pdf::PdfDir;
 
 pub fn dfs_pdf_dir_scanner(
     path: &PathBuf,

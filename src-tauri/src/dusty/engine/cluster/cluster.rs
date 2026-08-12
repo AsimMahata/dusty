@@ -1,13 +1,10 @@
 use std::path::PathBuf;
 
+use crate::dusty::engine::algo::levenshtein::edit_dist_string_clusters;
+use crate::dusty::engine::cluster::helper::cluster_indices_using_dsu;
+use crate::dusty::engine::shows::coupling::get_coupling_values;
 use crate::dusty::engine::utility::tokenizer::get_tokenized_file_names;
-use crate::dusty::{
-    engine::{
-        algo::levenshtein::edit_dist_string_clusters, cluster::helper::cluster_indices_using_dsu,
-        shows::coupling::get_coupling_values,
-    },
-    utility::utility::strip_folder_name_in_batch,
-};
+use crate::dusty::utility::utility::strip_folder_name_in_batch;
 
 pub fn word_based_file_clusters(files: &Vec<PathBuf>) -> Vec<Vec<i32>> {
     let parsed_files = get_tokenized_file_names(files);

@@ -1,5 +1,6 @@
+use crate::dusty::error::DustyError;
+use crate::dusty::error::Result;
 use std::path::PathBuf;
-use crate::dusty::error::{DustyError, Result};
 
 pub fn to_string(path: &PathBuf) -> Result<String> {
     path.to_str()

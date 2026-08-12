@@ -1,6 +1,7 @@
-use rusqlite::{params, Connection};
+use rusqlite::params;
+use rusqlite::Connection;
 
-use crate::dusty::{models::state::AppState, error::DustyError, logger::logger};
+use crate::dusty::models::state::AppState;
 
 #[derive(serde::Serialize)]
 pub struct Stats {
@@ -41,7 +42,8 @@ pub fn get_show_stats(db: &Connection) -> Option<usize> {
 }
 
 pub fn get_project_stats(db: &Connection) -> Option<usize> {
-    db.query_row("SELECT COUNT(*) FROM projects", [], |row| row.get(0)).ok()
+    db.query_row("SELECT COUNT(*) FROM projects", [], |row| row.get(0))
+        .ok()
 }
 
 fn get_flat_media_stats(db: &Connection, media_type: &str) -> Option<usize> {
@@ -76,13 +78,24 @@ pub fn get_image_stats(db: &Connection) -> Option<usize> {
 }
 
 pub fn get_zip_stats(db: &Connection) -> Option<usize> {
-    db.query_row("SELECT COUNT(*) FROM misc_cache WHERE misc_type = 'zip'", [], |row| row.get(0)).ok()
+    db.query_row(
+        "SELECT COUNT(*) FROM misc_cache WHERE misc_type = 'zip'",
+        [],
+        |row| row.get(0),
+    )
+    .ok()
 }
 
 pub fn get_pdf_stats(db: &Connection) -> Option<usize> {
-    db.query_row("SELECT COUNT(*) FROM misc_cache WHERE misc_type = 'pdf'", [], |row| row.get(0)).ok()
+    db.query_row(
+        "SELECT COUNT(*) FROM misc_cache WHERE misc_type = 'pdf'",
+        [],
+        |row| row.get(0),
+    )
+    .ok()
 }
 
 pub fn get_empty_dir_stats(db: &Connection) -> Option<usize> {
-    db.query_row("SELECT COUNT(*) FROM empty_dir_cache", [], |row| row.get(0)).ok()
+    db.query_row("SELECT COUNT(*) FROM empty_dir_cache", [], |row| row.get(0))
+        .ok()
 }

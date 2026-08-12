@@ -1,9 +1,12 @@
-use rusqlite::{params, Connection};
+use rusqlite::params;
+use rusqlite::Connection;
 
-use crate::dusty::{
-    models::project::{Framework, Project, ProjectInfo, Tag},
-    error::{DustyError, Result},
-};
+use crate::dusty::error::DustyError;
+use crate::dusty::error::Result;
+use crate::dusty::models::project::Framework;
+use crate::dusty::models::project::Project;
+use crate::dusty::models::project::ProjectInfo;
+use crate::dusty::models::project::Tag;
 
 pub fn get_project_info_from_db(db: &Connection, id: &String) -> Result<ProjectInfo> {
     db.query_row(
@@ -68,28 +71,51 @@ fn add_in_project_cache_table(db: &Connection, project: &Project) -> Result<()> 
         ",
         params![project.id, data],
     )
-    .map_err(|err| DustyError::db("add_in_project_cache_table", Some("project_cache".to_string()), err))?;
+    .map_err(|err| {
+        DustyError::db(
+            "add_in_project_cache_table",
+            Some("project_cache".to_string()),
+            err,
+        )
+    })?;
 
     Ok(())
 }
 
 pub fn clear_project_cache(db: &Connection) -> Result<()> {
-    db.execute("DELETE FROM project_cache", [])
-        .map_err(|err| DustyError::db("clear_project_cache", Some("project_cache".to_string()), err))?;
+    db.execute("DELETE FROM project_cache", []).map_err(|err| {
+        DustyError::db(
+            "clear_project_cache",
+            Some("project_cache".to_string()),
+            err,
+        )
+    })?;
     Ok(())
 }
 
 pub fn get_project_cache_from_db(db: &Connection) -> Result<Vec<Project>> {
     let mut stmt = db
         .prepare("SELECT data FROM project_cache")
-        .map_err(|err| DustyError::db("prepare_get_project_cache", Some("project_cache".to_string()), err))?;
+        .map_err(|err| {
+            DustyError::db(
+                "prepare_get_project_cache",
+                Some("project_cache".to_string()),
+                err,
+            )
+        })?;
 
     let iter = stmt
         .query_map([], |row| {
             let data: String = row.get(0)?;
             Ok(data)
         })
-        .map_err(|err| DustyError::db("query_get_project_cache", Some("project_cache".to_string()), err))?;
+        .map_err(|err| {
+            DustyError::db(
+                "query_get_project_cache",
+                Some("project_cache".to_string()),
+                err,
+            )
+        })?;
 
     let mut projects = Vec::new();
     for row in iter {
@@ -139,14 +165,40 @@ pub fn create_projects_table(db: &Connection) -> Result<()> {
         ",
         [],
     )
-    .map_err(|err| DustyError::db("create_project_cache_table", Some("project_cache".to_string()), err))?;
+    .map_err(|err| {
+        DustyError::db(
+            "create_project_cache_table",
+            Some("project_cache".to_string()),
+            err,
+        )
+    })?;
 
     use crate::dusty::db::core::init::ensure_column_exists;
     ensure_column_exists(db, "projects", "tags", "TEXT NOT NULL DEFAULT '[]'")?;
-    ensure_column_exists(db, "projects", "created_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")?;
-    ensure_column_exists(db, "projects", "updated_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")?;
-    ensure_column_exists(db, "project_cache", "created_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")?;
-    ensure_column_exists(db, "project_cache", "updated_at", "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")?;
+    ensure_column_exists(
+        db,
+        "projects",
+        "created_at",
+        "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))",
+    )?;
+    ensure_column_exists(
+        db,
+        "projects",
+        "updated_at",
+        "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))",
+    )?;
+    ensure_column_exists(
+        db,
+        "project_cache",
+        "created_at",
+        "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))",
+    )?;
+    ensure_column_exists(
+        db,
+        "project_cache",
+        "updated_at",
+        "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))",
+    )?;
 
     Ok(())
 }
@@ -154,7 +206,9 @@ pub fn create_projects_table(db: &Connection) -> Result<()> {
 pub fn print_all_projects_in_db(db: &Connection) -> Result<()> {
     let mut stmt = db
         .prepare("SELECT id, title, path, project_type, pinned, status FROM projects")
-        .map_err(|err| DustyError::db("prepare_print_projects", Some("projects".to_string()), err))?;
+        .map_err(|err| {
+            DustyError::db("prepare_print_projects", Some("projects".to_string()), err)
+        })?;
 
     let rows = stmt
         .query_map([], |row| {
@@ -172,8 +226,9 @@ pub fn print_all_projects_in_db(db: &Connection) -> Result<()> {
     println!("=== Projects ===");
 
     for row in rows {
-        let (id, title, path, project_type, pinned, status) = row
-            .map_err(|err| DustyError::db("read_print_projects_row", Some("projects".to_string()), err))?;
+        let (id, title, path, project_type, pinned, status) = row.map_err(|err| {
+            DustyError::db("read_print_projects_row", Some("projects".to_string()), err)
+        })?;
 
         println!("ID        : {}", id);
         println!("Title     : {}", title);
@@ -187,24 +242,22 @@ pub fn print_all_projects_in_db(db: &Connection) -> Result<()> {
     Ok(())
 }
 
-pub fn update_project_pin_status_in_db(
-    db: &Connection,
-    id: &String,
-    pinned: bool,
-) -> Result<()> {
+pub fn update_project_pin_status_in_db(db: &Connection, id: &String, pinned: bool) -> Result<()> {
     db.execute(
         "UPDATE projects SET pinned = ?1 WHERE id = ?2",
         params![pinned, id],
     )
-    .map_err(|err| DustyError::db("update_project_pin_status", Some("projects".to_string()), err))?;
+    .map_err(|err| {
+        DustyError::db(
+            "update_project_pin_status",
+            Some("projects".to_string()),
+            err,
+        )
+    })?;
     Ok(())
 }
 
-pub fn update_project_status_in_db(
-    db: &Connection,
-    id: &String,
-    status: &String,
-) -> Result<()> {
+pub fn update_project_status_in_db(db: &Connection, id: &String, status: &String) -> Result<()> {
     db.execute(
         "UPDATE projects SET status = ?1 WHERE id = ?2",
         params![status, id],
@@ -214,13 +267,9 @@ pub fn update_project_status_in_db(
     Ok(())
 }
 
-pub fn update_project_tags_in_db(
-    db: &Connection,
-    id: &String,
-    tags: &Vec<Tag>,
-) -> Result<()> {
-    let tags_json = serde_json::to_string(tags)
-        .map_err(|e| DustyError::serde("serialize_project_tags", e))?;
+pub fn update_project_tags_in_db(db: &Connection, id: &String, tags: &Vec<Tag>) -> Result<()> {
+    let tags_json =
+        serde_json::to_string(tags).map_err(|e| DustyError::serde("serialize_project_tags", e))?;
     db.execute(
         "UPDATE projects SET tags = ?1 WHERE id = ?2",
         params![tags_json, id],
@@ -232,9 +281,21 @@ pub fn update_project_tags_in_db(
 
 pub fn reset_project_table_in_db(db: &Connection) -> Result<()> {
     db.execute("DROP TABLE IF EXISTS projects", [])
-        .map_err(|err| DustyError::db("reset_projects_table_drop", Some("projects".to_string()), err))?;
+        .map_err(|err| {
+            DustyError::db(
+                "reset_projects_table_drop",
+                Some("projects".to_string()),
+                err,
+            )
+        })?;
     db.execute("DROP TABLE IF EXISTS project_cache", [])
-        .map_err(|err| DustyError::db("reset_project_cache_drop", Some("project_cache".to_string()), err))?;
+        .map_err(|err| {
+            DustyError::db(
+                "reset_project_cache_drop",
+                Some("project_cache".to_string()),
+                err,
+            )
+        })?;
 
     create_projects_table(db)
 }

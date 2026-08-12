@@ -1,5 +1,7 @@
-use crate::dusty::{models::file::FileInfo, logger::logger};
-use rusqlite::{params, Connection};
+use crate::dusty::logger::logger;
+use crate::dusty::models::file::FileInfo;
+use rusqlite::params;
+use rusqlite::Connection;
 
 pub fn create_pdf_cache_table(db: &Connection) -> Result<(), String> {
     db.execute(

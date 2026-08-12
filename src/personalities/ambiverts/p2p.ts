@@ -19,6 +19,7 @@ export interface ActiveTransfer {
     total_time_secs?: number | null;
     destination_path?: string | null;
     total_bytes?: number | null;
+    speed_bytes_per_sec?: number;
 }
 
 export interface OutgoingRequestState {
@@ -40,6 +41,8 @@ export interface PendingTransfer {
     id: string;
     sender_name: string;
     files: string[];
+    created_at: number;
+    timeout_secs: number;
 }
 
 const CMD_GET_P2P_STATE = "get_p2p_state";

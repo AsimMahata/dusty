@@ -1,9 +1,9 @@
 use crate::dusty::logger::logger;
 use rusqlite::Connection;
-use std::sync::{
-    atomic::{AtomicU64, Ordering},
-    mpsc, Arc,
-};
+use std::sync::atomic::AtomicU64;
+use std::sync::atomic::Ordering;
+use std::sync::mpsc;
+use std::sync::Arc;
 use std::thread;
 use tokio::sync::oneshot;
 
@@ -27,10 +27,7 @@ impl DbWorker {
             logger::info!("DB_WORKER_STOPPED", "Dedicated DB worker thread stopped");
         });
 
-        Self {
-            sender,
-            view_epoch,
-        }
+        Self { sender, view_epoch }
     }
 
     /// Asynchronously runs a DB operation on the dedicated DB thread. Checks if the task is stale before executing unless marked urgent.
@@ -63,7 +60,10 @@ impl DbWorker {
         let task = Box::new(move |conn: &mut Connection| {
             let is_stale = !urgent && view_epoch.load(Ordering::Relaxed) > task_epoch;
             if tx.is_closed() || is_stale {
-                logger::info!("DB_TASK_SKIPPED", "Skipping stale DB task on page navigation");
+                logger::info!(
+                    "DB_TASK_SKIPPED",
+                    "Skipping stale DB task on page navigation"
+                );
                 return;
             }
             let res = f(conn);
@@ -107,7 +107,10 @@ impl DbWorker {
 
         let task = Box::new(move |conn: &mut Connection| {
             if !urgent && view_epoch.load(Ordering::Relaxed) > task_epoch {
-                logger::info!("DB_SYNC_TASK_SKIPPED", "Skipping stale sync DB task on page navigation");
+                logger::info!(
+                    "DB_SYNC_TASK_SKIPPED",
+                    "Skipping stale sync DB task on page navigation"
+                );
                 return;
             }
             let res = f(conn);
@@ -122,4 +125,3 @@ impl DbWorker {
             .map_err(|_| "Stale sync DB task skipped or disconnected".to_string())
     }
 }
-

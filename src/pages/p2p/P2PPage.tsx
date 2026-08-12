@@ -31,7 +31,7 @@ export const P2PPage: React.FC = () => {
 
     if (backendState.mode === "transfer") {
         return (
-            <PageLayout title="P2P Transfer" >
+            <PageLayout title="P2P Transfer" hideSearch>
                 <TransferView
                     transfer={backendState.active_transfer}
                     onCancelComplete={fetchState}

@@ -1,29 +1,38 @@
-use chrono::DateTime;
-use std::io::{Read, Write};
+use std::io::Read;
+use std::io::Write;
 use std::net::TcpStream;
 use std::sync::mpsc;
 use tokio::sync::oneshot;
 
-use crate::dusty::api::p2p::p2p::{
-    ActiveTransfer, PendingTransfer, TransferFileProgress, P2P_STATE,
-};
-use crate::dusty::api::{Discovery, Peer, ReceiverHandshake, SenderInfo};
-use crate::dusty::models::user::User;
+use crate::dusty::p2p::is_transfer_cancelled;
+use crate::dusty::p2p::read_header_line;
+use crate::dusty::p2p::send_cancel_signal_and_wait_ack;
+use crate::dusty::p2p::ActiveTransfer;
+use crate::dusty::p2p::Discovery;
+use crate::dusty::p2p::ManifestPayload;
+use crate::dusty::p2p::Peer;
+use crate::dusty::p2p::PendingTransfer;
+use crate::dusty::p2p::ReceiverHandshake;
+use crate::dusty::p2p::SenderInfo;
+use crate::dusty::p2p::TransferFileProgress;
+use crate::dusty::p2p::P2P_STATE;
+use crate::dusty::p2p::RECEIVER_DISCOVERY_PORT;
 
 pub fn seach_for_available_senders(tx: oneshot::Sender<Vec<PendingTransfer>>) {
     log::info!("[P2P Receiver] Starting mDNS scan for available senders (30s)...");
 
     let service_type = "_dusty._tcp.local.".to_string();
     let duration = 3;
-    let discovery = Discovery::new(
-        service_type,
-        duration,
-        crate::dusty::api::p2p::RECEIVER_DISCOVERY_PORT,
-    );
+    let discovery = Discovery::new(service_type, duration, RECEIVER_DISCOVERY_PORT);
 
     let (mpsc_tx, mpsc_rx) = mpsc::channel::<SenderInfo>();
 
     let _ = discovery.discover(mpsc_tx);
+
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0);
 
     let mut pending_list = Vec::new();
     while let Ok(info) = mpsc_rx.try_recv() {
@@ -35,12 +44,28 @@ pub fn seach_for_available_senders(tx: oneshot::Sender<Vec<PendingTransfer>>) {
             continue;
         }
 
+        let created_at = info.created_at();
+        let timeout_secs = info.timeout_secs();
+
+        if created_at > 0 && timeout_secs > 0 && now >= created_at + timeout_secs {
+            log::info!(
+                "[P2P Receiver] Discovered request '{}' from '{}' is expired (created_at: {}, timeout: {}s), ignoring...",
+                info.transfer_key(),
+                info.peer().name(),
+                created_at,
+                timeout_secs
+            );
+            continue;
+        }
+
         pending_list.push(PendingTransfer {
             id: info.transfer_key().to_string(),
             sender_name: info.peer().name().to_string(),
             sender_ips: info.peer().addresses().clone(),
             sender_port: info.peer().tcp_port(),
             files: info.files().clone(),
+            created_at,
+            timeout_secs,
         });
     }
 
@@ -62,15 +87,15 @@ pub fn connect_to_sender(sender_ip: &str, sender_port: u16) -> Result<TcpStream,
         Ok(stream) => {
             stream.set_nonblocking(false).ok();
             stream
-                .set_read_timeout(Some(std::time::Duration::from_secs(30)))
+                .set_read_timeout(Some(std::time::Duration::from_secs(10)))
                 .ok();
             stream
-                .set_write_timeout(Some(std::time::Duration::from_secs(30)))
+                .set_write_timeout(Some(std::time::Duration::from_secs(10)))
                 .ok();
             Ok(stream)
         }
         Err(e_primary) => {
-            let next_port = sender_port.saturating_add(1);
+            let next_port = sender_port.saturating_add(5);
             let addr_fallback = format!("{}:{}", sender_ip, next_port);
             log::warn!(
                 "[P2P Receiver] Primary TCP port {} unavailable ({}); trying fallback port {}...",
@@ -83,10 +108,10 @@ pub fn connect_to_sender(sender_ip: &str, sender_port: u16) -> Result<TcpStream,
                 Ok(stream) => {
                     stream.set_nonblocking(false).ok();
                     stream
-                        .set_read_timeout(Some(std::time::Duration::from_secs(30)))
+                        .set_read_timeout(Some(std::time::Duration::from_secs(10)))
                         .ok();
                     stream
-                        .set_write_timeout(Some(std::time::Duration::from_secs(30)))
+                        .set_write_timeout(Some(std::time::Duration::from_secs(10)))
                         .ok();
                     Ok(stream)
                 }
@@ -139,36 +164,6 @@ pub fn send_receiver_handshake(
     Ok(())
 }
 
-fn read_header_line(stream: &mut TcpStream) -> Result<String, String> {
-    let mut header_buf = Vec::new();
-    let mut byte = [0u8; 1];
-
-    loop {
-        match stream.read(&mut byte) {
-            Ok(1) => {
-                if byte[0] == b'\n' {
-                    break;
-                }
-                header_buf.push(byte[0]);
-            }
-            _ => break,
-        }
-    }
-
-    if header_buf.is_empty() {
-        return Ok(String::new());
-    }
-
-    Ok(String::from_utf8_lossy(&header_buf).trim().to_string())
-}
-
-fn send_cancel_signal_and_wait_ack(stream: &mut TcpStream) {
-    stream.write_all(b"CANCEL\n").ok();
-    stream.flush().ok();
-    let mut ack_buf = [0u8; 64];
-    let _ = stream.read(&mut ack_buf);
-}
-
 fn receive_single_file(
     stream: &mut TcpStream,
     file_idx: usize,
@@ -176,6 +171,9 @@ fn receive_single_file(
     file_size: u64,
     download_dir: &std::path::Path,
     buffer: &mut [u8],
+    total_bytes_received_cumulative: &mut u64,
+    last_speed_check: &mut std::time::Instant,
+    bytes_at_last_check: &mut u64,
 ) -> Result<(), String> {
     log::info!(
         "[P2P Receiver] Receiving file #{} '{}' ({} bytes)...",
@@ -184,7 +182,7 @@ fn receive_single_file(
         file_size
     );
 
-    if crate::dusty::api::p2p::p2p::is_transfer_cancelled() {
+    if is_transfer_cancelled() {
         log::warn!("[P2P Receiver] Cancelled before sending READY. Sending CANCEL...");
         send_cancel_signal_and_wait_ack(stream);
         return Err("Transfer cancelled by receiver".to_string());
@@ -201,7 +199,7 @@ fn receive_single_file(
     let mut transfer_aborted = false;
 
     while file_bytes_received < file_size {
-        if crate::dusty::api::p2p::p2p::is_transfer_cancelled() {
+        if is_transfer_cancelled() {
             log::warn!("[P2P Receiver] Cancellation detected mid-transfer!");
             transfer_aborted = true;
             break;
@@ -216,7 +214,7 @@ fn receive_single_file(
                 if e.kind() == std::io::ErrorKind::WouldBlock
                     || e.kind() == std::io::ErrorKind::TimedOut =>
             {
-                if crate::dusty::api::p2p::p2p::is_transfer_cancelled() {
+                if is_transfer_cancelled() {
                     transfer_aborted = true;
                     break;
                 }
@@ -229,6 +227,23 @@ fn receive_single_file(
             .map_err(|e| format!("Error writing chunk to disk file: {}", e))?;
 
         file_bytes_received += bytes_read as u64;
+        *total_bytes_received_cumulative += bytes_read as u64;
+
+        let elapsed = last_speed_check.elapsed();
+        let mut speed_to_update: Option<f64> = None;
+        if elapsed >= std::time::Duration::from_millis(500) {
+            let bytes_in_interval =
+                total_bytes_received_cumulative.saturating_sub(*bytes_at_last_check);
+            let elapsed_secs = elapsed.as_secs_f64();
+            let current_speed = if elapsed_secs > 0.0 {
+                (bytes_in_interval as f64) / elapsed_secs
+            } else {
+                0.0
+            };
+            speed_to_update = Some(current_speed);
+            *last_speed_check = std::time::Instant::now();
+            *bytes_at_last_check = *total_bytes_received_cumulative;
+        }
 
         let progress = if file_size > 0 {
             ((file_bytes_received as f64) / (file_size as f64)) * 100.0
@@ -245,6 +260,9 @@ fn receive_single_file(
                 if total_files > 0 {
                     let sum_progress: f64 = active.files.iter().map(|f| f.progress).sum();
                     active.overall_progress = sum_progress / (total_files as f64);
+                }
+                if let Some(spd) = speed_to_update {
+                    active.speed_bytes_per_sec = spd;
                 }
             }
         }
@@ -306,9 +324,12 @@ pub fn receive_file_transfer(
 
     const CHUNK_SIZE: usize = 64 * 1024;
     let mut buffer = vec![0u8; CHUNK_SIZE];
+    let mut total_bytes_received_cumulative: u64 = 0;
+    let mut last_speed_check = std::time::Instant::now();
+    let mut bytes_at_last_check: u64 = 0;
 
     loop {
-        if crate::dusty::api::p2p::p2p::is_transfer_cancelled() {
+        if is_transfer_cancelled() {
             log::warn!(
                 "[P2P Receiver] Transfer cancelled locally. Sending CANCEL signal to sender..."
             );
@@ -335,18 +356,6 @@ pub fn receive_file_transfer(
 
         if header_str.starts_with("MANIFEST:") {
             let json_payload = &header_str["MANIFEST:".len()..];
-            #[derive(serde::Deserialize)]
-            struct ManifestItem {
-                idx: usize,
-                name: String,
-                size: u64,
-            }
-            #[derive(serde::Deserialize)]
-            struct ManifestPayload {
-                files: Vec<ManifestItem>,
-                total_bytes: u64,
-            }
-
             if let Ok(manifest) = serde_json::from_str::<ManifestPayload>(json_payload) {
                 log::info!(
                     "[P2P Receiver] Received TCP MANIFEST header ({} files, {} total bytes)",
@@ -390,6 +399,9 @@ pub fn receive_file_transfer(
                 file_size,
                 &download_dir,
                 &mut buffer,
+                &mut total_bytes_received_cumulative,
+                &mut last_speed_check,
+                &mut bytes_at_last_check,
             )?;
         }
     }
@@ -403,6 +415,7 @@ pub fn receive_file_transfer(
             active.status = "completed".to_string();
             active.total_time_secs = Some(elapsed_rounded);
             active.destination_path = Some(download_dir.to_string_lossy().to_string());
+            active.speed_bytes_per_sec = 0.0;
         }
     }
 
@@ -438,6 +451,7 @@ pub fn start_p2p_receiver(pending: PendingTransfer, me: Peer) -> Result<(), Stri
         total_time_secs: None,
         destination_path: None,
         total_bytes: None,
+        speed_bytes_per_sec: 0.0,
     });
     drop(state);
 

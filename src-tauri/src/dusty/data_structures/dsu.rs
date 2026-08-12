@@ -1,8 +1,5 @@
-use std::{
-    collections::{HashMap, HashSet},
-    mem::swap,
-    result,
-};
+use std::collections::HashMap;
+use std::mem::swap;
 
 #[derive(Debug)]
 pub struct Dsu {
