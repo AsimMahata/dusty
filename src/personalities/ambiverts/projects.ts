@@ -20,6 +20,7 @@ const CMD_SCAN_PROJECT_TAGS = 'scan_project_tags';
 const CMD_SCAN_PROJECTS = 'scan_projects';
 const CMD_SYNC_SCAN_PROJECTS = 'sync_scan_projects';
 const CMD_FETCH_PROJECTS_GIT_STATUS = 'fetch_projects_git_status';
+const CMD_FETCH_ALL_PROJECT_TAGS = 'fetch_all_project_tags';
 
 export async function getProjectsIPC(sync: boolean = false): Promise<Project[]> {
     try {
@@ -41,6 +42,17 @@ export async function fetchProjectsGitStatusIPC(): Promise<Record<string, GitInf
         return {};
     }
 }
+
+export async function fetchAllProjectTagsIPC(): Promise<Project[]> {
+    try {
+        let result = await invoke<Project[]>(CMD_FETCH_ALL_PROJECT_TAGS);
+        return result;
+    } catch (error) {
+        logger.error(`fetchAllProjectTagsIPC error: ${error}`);
+        return [];
+    }
+}
+
 
 
 export async function updateProjectPinStatusIPC(id: string, pinned: boolean): Promise<boolean> {

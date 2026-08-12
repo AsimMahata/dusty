@@ -233,3 +233,73 @@ pub async fn fetch_projects_git_status(
 
     Ok(git_status_map)
 }
+
+#[tauri::command]
+pub async fn fetch_all_project_tags(
+    state: tauri::State<'_, AppState>,
+) -> Result<Vec<Project>, String> {
+    let db_worker = state.db_worker.clone();
+
+    let projects = db_worker
+        .run_sync(|conn| get_project_cache_from_db(conn))
+        .map_err(|e| e)?
+        .map_err(|err| err.to_user_message())?;
+
+    if projects.is_empty() {
+        return Ok(Vec::new());
+    }
+
+    const BATCH_SIZE: usize = 10;
+    let chunks: Vec<Vec<Project>> = projects
+        .chunks(BATCH_SIZE)
+        .map(|chunk| chunk.to_vec())
+        .collect();
+
+    let jobs: Vec<_> = chunks
+        .into_iter()
+        .map(|batch| {
+            move || {
+                let mut batch_results = Vec::with_capacity(batch.len());
+                for project in batch {
+                    let tags = scan_tags(&project);
+                    batch_results.push((project.id.clone(), tags));
+                }
+                batch_results
+            }
+        })
+        .collect();
+
+    let batch_results: Vec<Vec<(String, Vec<Tag>)>> =
+        tokio::task::spawn_blocking(move || temp_workers(jobs))
+            .await
+            .map_err(|e| e.to_string())?;
+
+    let all_tags_results: Vec<(String, Vec<Tag>)> =
+        batch_results.into_iter().flatten().collect();
+
+    let tags_to_save = all_tags_results.clone();
+    let updated_projects = db_worker
+        .run(move |conn| {
+            let tx = conn.unchecked_transaction().map_err(|err| {
+                crate::dusty::error::DustyError::db("tx_begin", Some("projects".to_string()), err)
+            })?;
+
+            for (id, tags) in &tags_to_save {
+                if let Err(err) = update_project_tags_in_db(conn, id, tags) {
+                    logger::error!("UPDATE_PROJECT_TAGS_IN_DB_FAILED", err.log_details());
+                }
+            }
+
+            tx.commit().map_err(|err| {
+                crate::dusty::error::DustyError::db("tx_commit", Some("projects".to_string()), err)
+            })?;
+
+            let cached = get_project_cache_from_db(conn).unwrap_or_default();
+            Ok::<Vec<Project>, crate::dusty::error::DustyError>(sanitize_projects(conn, cached))
+        })
+        .await
+        .map_err(|e| e)?
+        .map_err(|err| err.to_user_message())?;
+
+    Ok(updated_projects)
+}

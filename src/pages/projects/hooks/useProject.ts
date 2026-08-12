@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, type ReactNode } from 'react';
 import { useCommon } from '../../../hooks/useCommon';
-import { getProjects, updateProjectPinStatus, updateProjectStatus, updateProjectTags, getGitInfo, fetchProjectsGitStatus } from '../../../personalities/introverts/projects/projects';
+import { getProjects, updateProjectPinStatus, updateProjectStatus, updateProjectTags, getGitInfo, fetchProjectsGitStatus, fetchAllProjectTags } from '../../../personalities/introverts/projects/projects';
 import { openFileInExplorer } from '../../../personalities/introverts/filesystem/filesystem';
 import { logger } from '../../../utility/logger';
 import { filterAndSortProjects } from '../actions/filter';
@@ -14,8 +14,10 @@ export const useProject = () => {
     const [selectedItem, setSelectedItem] = useState<Project | null>(null);
     const [allProjects, setAllProjects] = useState<Project[]>([]);
     const [isGitStatusLoading, setIsGitStatusLoading] = useState<boolean>(false);
+    const [isFetchingAllTags, setIsFetchingAllTags] = useState<boolean>(false);
     const [sortOption, setSortOptionState] = useState<SortOption>(getDefaultSortOption());
     const [sortAscending, setSortAscendingState] = useState<boolean>(getDefaultSortAscending());
+
 
     async function fetchConfigData() {
         try {
@@ -54,7 +56,7 @@ export const useProject = () => {
         const fetchGitInfo = async () => {
             const git_info = await getGitInfo(selectedItem.path);
 
-            logger.info('RECIEVED GIT INFO', git_info);
+            // logger.info('RECIEVED GIT INFO', git_info);
             setGitInfo(git_info);
         };
 
@@ -186,6 +188,22 @@ export const useProject = () => {
         }
     };
 
+    const handleFetchAllTags = async () => {
+        if (isFetchingAllTags) return;
+        setIsFetchingAllTags(true);
+        try {
+            const updatedProjects = await fetchAllProjectTags();
+            if (updatedProjects && updatedProjects.length > 0) {
+                setAllProjects(updatedProjects);
+                logger.info('all project tags fetched and updated', updatedProjects.length);
+            }
+        } catch (error) {
+            logger.error(`Failed to fetch all tags: ${String(error)}`);
+        } finally {
+            setIsFetchingAllTags(false);
+        }
+    };
+
     const handleRename = (project: Project) => {
         logger.todo(`Implement Rename for project: ${project.title}`);
     };
@@ -203,7 +221,9 @@ export const useProject = () => {
         isRefreshing,
         isLoading,
         isGitStatusLoading,
+        isFetchingAllTags,
         fetchData,
+        handleFetchAllTags,
 
         handleTogglePin,
         getCommonRenderedActions,
@@ -221,3 +241,4 @@ export const useProject = () => {
         handleExploreItemClick, handleExploreBack, closeExplorer, startExploring
     };
 };
+
