@@ -5,11 +5,11 @@ import App from './App.tsx'
 import './index.css'
 import { scan } from 'react-scan'
 
-// if (import.meta.env.DEV) {
-//     scan({
-//         enabled: true,
-//     })
-// }
+if (import.meta.env.DEV) {
+    scan({
+        enabled: true,
+    })
+}
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
