@@ -10,6 +10,7 @@ import type { useMisc } from '../../hooks/useMisc';
 import type { Chunk, BazarAction } from '../../../../components/bazar/types/types';
 import type { MiscDir, MiscSortMode } from '../../types/types';
 import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../config/sort';
+import { useFileActions } from '../../../../hooks/useFileActions';
 
 interface TextFilesTabProps {
     misc: ReturnType<typeof useMisc>;
@@ -33,6 +34,7 @@ const getTextDirTags = (dir: MiscDir): string[] => {
 
 export const TextFilesTab: React.FC<TextFilesTabProps> = ({ misc }) => {
     const tab = useTextTab(misc);
+    const fileActions = useFileActions(() => { void misc.fetchData(true); });
     const [sortMode, setSortModeState] = useState<MiscSortMode>(getDefaultSortMode());
 
     async function fetchConfigData() {
@@ -77,7 +79,7 @@ export const TextFilesTab: React.FC<TextFilesTabProps> = ({ misc }) => {
                     id: file.id,
                     name: file.name,
                     path: file.path,
-                    ext: file.ext || 'text',
+                    ext: file.ext || 'txt',
                     size: file.size,
                     is_pinned: false,
                 });
@@ -105,7 +107,7 @@ export const TextFilesTab: React.FC<TextFilesTabProps> = ({ misc }) => {
                     rawDir: dir,
                 });
             }
-            // Add root Text files
+            // Add root text files
             for (const chunk of tab.chunks) {
                 fileChunks.push(chunk);
             }
@@ -151,7 +153,7 @@ export const TextFilesTab: React.FC<TextFilesTabProps> = ({ misc }) => {
                 }
             ];
         }
-        return tab.getChunkActions(chunk);
+        return fileActions.getFileActions({ path: chunk.path, name: chunk.name });
     };
 
     if (tab.isLoading) {
@@ -181,6 +183,8 @@ export const TextFilesTab: React.FC<TextFilesTabProps> = ({ misc }) => {
                 emptyTitle={TEXT_FILES_TITLE}
                 emptyDesc={TEXT_FILES_DESC}
             />
+
+            {fileActions.renderFileModals()}
         </div>
     );
 };

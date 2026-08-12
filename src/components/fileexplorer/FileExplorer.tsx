@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { ICONS } from '../../constants/icon';
 import { COLORS } from '../../constants/color';
 import './css/fileExplorer.css';
@@ -8,6 +8,8 @@ import { sortFiles } from './utility/sortFiles';
 import { getExplorerTitle } from './utility/getExplorerTitle';
 import { formatBytes } from '../../utility/util';
 import type { FileInfo } from "../../types/core";
+import { ActionMenu } from '../ui/ActionMenu';
+import { useFileActions } from '../../hooks/useFileActions';
 
 interface FileExplorerProps {
     initialPath?: string;
@@ -43,12 +45,29 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
     const files = isControlled ? controlledFiles : internalFiles;
     const loading = controlledLoading !== undefined ? controlledLoading : internalLoading;
 
+    const loadDir = useCallback(async () => {
+        if (isControlled || !currentPath) return;
+        setInternalLoading(true);
+        setSelectedFile(null);
+        try {
+            const dirFiles: FileInfo[] = await readDir(currentPath);
+            const sorted = sortFiles(dirFiles);
+            setInternalFiles(sorted);
+        } catch (err) {
+            console.error(`Error reading directory ${currentPath}:`, err);
+            setInternalFiles([]);
+        } finally {
+            setInternalLoading(false);
+        }
+    }, [currentPath, isControlled]);
+
+    const fileActions = useFileActions(() => { void loadDir(); });
+
     useEffect(() => {
         if (isControlled || !currentPath) return;
-
         let cancelled = false;
 
-        const loadDir = async () => {
+        const run = async () => {
             setInternalLoading(true);
             setSelectedFile(null);
             try {
@@ -65,7 +84,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
             }
         };
 
-        loadDir();
+        run();
 
         return () => {
             cancelled = true;
@@ -162,10 +181,23 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
                             <div className="list-item-meta">
                                 {!file.is_dir && formatBytes(file.size)}
                             </div>
+
+                            {!file.is_dir && (
+                                <div
+                                    className="list-item-actions"
+                                    style={{ marginLeft: '1rem', display: 'flex', alignItems: 'center', opacity: selectedFile === file.path ? 1 : 0.6 }}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <ActionMenu actions={fileActions.getFileActions({ path: file.path, name: file.name })} />
+                                </div>
+                            )}
                         </div>
                     ))
                 )}
             </div>
+
+            {fileActions.renderFileModals()}
         </div>
     );
 };
+

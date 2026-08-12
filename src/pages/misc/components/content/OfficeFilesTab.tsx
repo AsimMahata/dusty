@@ -10,6 +10,7 @@ import type { Chunk, BazarAction } from '../../../../components/bazar/types/type
 import type { MiscDir, MiscSortMode } from '../../types/types';
 import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../config/sort';
 import { useOfficeTab } from '../../hooks/useOfficeTab';
+import { useFileActions } from '../../../../hooks/useFileActions';
 
 interface OfficeFilesTabProps {
     misc: ReturnType<typeof useMisc>;
@@ -33,7 +34,9 @@ const getOfficeDirTags = (dir: MiscDir): string[] => {
 
 export const OfficeFilesTab: React.FC<OfficeFilesTabProps> = ({ misc }) => {
     const tab = useOfficeTab(misc);
+    const fileActions = useFileActions(() => { void misc.fetchData(true); });
     const [sortMode, setSortModeState] = useState<MiscSortMode>(getDefaultSortMode());
+
 
     async function fetchConfigData() {
         try {
@@ -151,7 +154,7 @@ export const OfficeFilesTab: React.FC<OfficeFilesTabProps> = ({ misc }) => {
                 }
             ];
         }
-        return tab.getChunkActions(chunk);
+        return fileActions.getFileActions({ path: chunk.path, name: chunk.name });
     };
 
     if (tab.isLoading) {
@@ -181,6 +184,9 @@ export const OfficeFilesTab: React.FC<OfficeFilesTabProps> = ({ misc }) => {
                 emptyTitle={OFFICE_FILES_TITLE}
                 emptyDesc={OFFICE_FILES_DESC}
             />
+
+            {fileActions.renderFileModals()}
         </div>
     );
 };
+

@@ -1,5 +1,6 @@
 use crate::dusty::filesystem::copy;
 use crate::dusty::filesystem::delete;
+use crate::dusty::filesystem::history;
 use crate::dusty::filesystem::metadata::FileMetadata;
 use crate::dusty::filesystem::metadata::{self};
 use crate::dusty::filesystem::read;
@@ -9,7 +10,9 @@ use crate::dusty::filesystem::scan;
 use crate::dusty::filesystem::write;
 use crate::dusty::logger::logger;
 use crate::dusty::models::file::FileInfo;
+use crate::dusty::models::state::AppState;
 use std::path::PathBuf;
+use tauri::Manager;
 
 #[tauri::command]
 pub fn read_dir(path: String) -> Result<Vec<FileInfo>, String> {
@@ -91,8 +94,11 @@ pub fn rename_file(src: String, dst: String) -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn delete_file(path: String) -> Result<bool, String> {
+pub fn delete_file(app: tauri::AppHandle, state: tauri::State<'_, AppState>, path: String) -> Result<bool, String> {
     let path = PathBuf::from(path);
+    if let Ok(app_dir) = app.path().app_local_data_dir() {
+        history::record_deletion_async(app_dir, &path, &state.background_worker);
+    }
     delete::delete_file(&path).map(|_| true).map_err(|e| {
         logger::error!("DELETE_FILE_FAILED", e.log_details());
         e.to_user_message()
@@ -109,8 +115,11 @@ pub fn create_directory(path: String) -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn delete_directory(path: String, recursive: bool) -> Result<bool, String> {
+pub fn delete_directory(app: tauri::AppHandle, state: tauri::State<'_, AppState>, path: String, recursive: bool) -> Result<bool, String> {
     let path = PathBuf::from(path);
+    if let Ok(app_dir) = app.path().app_local_data_dir() {
+        history::record_deletion_async(app_dir, &path, &state.background_worker);
+    }
     delete::delete_directory(&path, recursive)
         .map(|_| true)
         .map_err(|e| {
@@ -118,6 +127,10 @@ pub fn delete_directory(path: String, recursive: bool) -> Result<bool, String> {
             e.to_user_message()
         })
 }
+
+
+
+
 
 #[tauri::command]
 pub fn exists(path: String) -> bool {

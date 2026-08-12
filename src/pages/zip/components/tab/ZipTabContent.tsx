@@ -8,6 +8,7 @@ import { ZIP_TAB_EMPTY_TITLE, ZIP_TAB_EMPTY_DESC } from '../../constants/constan
 import type { MiscSortMode, MiscDir } from "../../../misc/types/types";
 import type { Chunk, BazarAction } from '../../../../components/bazar/types/types';
 import { useBazarTab } from '../../../../components/bazar/hooks/useBazarTab';
+import { useFileActions } from '../../../../hooks/useFileActions';
 
 interface ZipTabContentProps {
     zip: ReturnType<typeof useZip>;
@@ -32,6 +33,7 @@ const getZipDirTags = (dir: MiscDir): string[] => {
 
 export const ZipTabContent: React.FC<ZipTabContentProps> = ({ zip, sortMode }) => {
     const tab = useBazarTab(zip);
+    const fileActions = useFileActions(() => { void zip.fetchData(true); });
 
     // Build folder chunks and file chunks for current directory level
     const currentChunks: Chunk[] = useMemo(() => {
@@ -119,7 +121,7 @@ export const ZipTabContent: React.FC<ZipTabContentProps> = ({ zip, sortMode }) =
         if (rawDir) {
             zip.handleFolderClick(rawDir);
         } else {
-            tab.getChunkActions(chunk)[0]?.onClick();
+            zip.openChunk(chunk);
         }
     };
 
@@ -133,7 +135,7 @@ export const ZipTabContent: React.FC<ZipTabContentProps> = ({ zip, sortMode }) =
                 }
             ];
         }
-        return tab.getChunkActions(chunk);
+        return fileActions.getFileActions({ path: chunk.path, name: chunk.name });
     };
 
     return (
@@ -154,6 +156,9 @@ export const ZipTabContent: React.FC<ZipTabContentProps> = ({ zip, sortMode }) =
                 emptyTitle={ZIP_TAB_EMPTY_TITLE}
                 emptyDesc={ZIP_TAB_EMPTY_DESC}
             />
+
+            {fileActions.renderFileModals()}
         </div>
     );
 };
+

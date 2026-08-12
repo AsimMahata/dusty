@@ -4,7 +4,6 @@ use std::sync::Arc;
 use std::sync::Mutex;
 use std::thread;
 
-
 pub fn temp_workers<F, R>(jobs: Vec<F>) -> Vec<R>
 where
     F: FnOnce() -> R + Send + 'static,
@@ -22,7 +21,6 @@ where
         .min(4)
         .max(1);
 
-
     logger::info!("TEMP_WORKERS_START", total_jobs, num_threads);
 
     let (job_tx, job_rx) = mpsc::channel::<F>();
@@ -35,7 +33,7 @@ where
             logger::error!("Failed to enqueue job for temp worker", e.to_string());
         }
     }
-    drop(job_tx); 
+    drop(job_tx);
 
     let mut handles = Vec::with_capacity(num_threads);
     for worker_id in 0..num_threads {
@@ -59,7 +57,7 @@ where
         });
         handles.push(handle);
     }
-    drop(res_tx); 
+    drop(res_tx);
     let mut results = Vec::with_capacity(total_jobs);
     while let Ok(res) = res_rx.recv() {
         results.push(res);

@@ -10,6 +10,7 @@ import type { useMisc } from '../../hooks/useMisc';
 import type { Chunk, BazarAction } from '../../../../components/bazar/types/types';
 import type { MiscDir, MiscSortMode } from '../../types/types';
 import { getSortModeMiscPage, getDefaultSortMode, setSortModeMiscPage } from '../../config/sort';
+import { useFileActions } from '../../../../hooks/useFileActions';
 
 interface ExeFilesTabProps {
     misc: ReturnType<typeof useMisc>;
@@ -33,6 +34,7 @@ const getExeDirTags = (dir: MiscDir): string[] => {
 
 export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ misc }) => {
     const tab = useExeTab(misc);
+    const fileActions = useFileActions(() => { void misc.fetchData(true); });
     const [sortMode, setSortModeState] = useState<MiscSortMode>(getDefaultSortMode());
 
     async function fetchConfigData() {
@@ -151,7 +153,7 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ misc }) => {
                 }
             ];
         }
-        return tab.getChunkActions(chunk);
+        return fileActions.getFileActions({ path: chunk.path, name: chunk.name });
     };
 
     if (tab.isLoading) {
@@ -181,6 +183,9 @@ export const ExeFilesTab: React.FC<ExeFilesTabProps> = ({ misc }) => {
                 emptyTitle={EXE_FILES_TITLE}
                 emptyDesc={EXE_FILES_DESC}
             />
+
+            {fileActions.renderFileModals()}
         </div>
     );
 };
+

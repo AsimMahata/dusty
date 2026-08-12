@@ -15,6 +15,7 @@ use crate::dusty::error::DustyError;
 use crate::dusty::error::Result as DustyResult;
 use crate::dusty::logger::logger;
 use crate::dusty::models::state::AppState;
+use crate::dusty::multithreading::BackgroundWorker;
 use crate::dusty::multithreading::DbWorker;
 use crate::dusty::multithreading::P2PWorker;
 use crate::dusty::multithreading::ThreadPool;
@@ -60,6 +61,7 @@ pub fn initialize_dusty(app: &mut tauri::App) -> Result<(), DustyError> {
     let db_worker = DbWorker::new(conn, Arc::clone(&view_epoch));
     let thread_pool = ThreadPool::new(2, Arc::clone(&view_epoch));
     let p2p_worker = P2PWorker::new();
+    let background_worker = BackgroundWorker::new();
 
     logger::info!("Tables initialized: {:?}", tables);
     app.manage(AppState {
@@ -69,10 +71,13 @@ pub fn initialize_dusty(app: &mut tauri::App) -> Result<(), DustyError> {
         thread_pool,
         view_epoch,
         p2p_worker,
+        background_worker,
     });
 
     Ok(())
 }
+
+
 
 pub fn initialize_tables(conn: &Connection) -> DustyResult<Vec<String>> {
     let mut tables: Vec<String> = Vec::new();

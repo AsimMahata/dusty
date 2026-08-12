@@ -8,6 +8,7 @@ import { PDF_TAB_EMPTY_TITLE, PDF_TAB_EMPTY_DESC } from '../../constants/constan
 import type { MiscSortMode, MiscDir } from "../../../misc/types/types";
 import type { Chunk, BazarAction } from '../../../../components/bazar/types/types';
 import { useBazarTab } from '../../../../components/bazar/hooks/useBazarTab';
+import { useFileActions } from '../../../../hooks/useFileActions';
 
 interface PdfTabContentProps {
     pdf: ReturnType<typeof usePdf>;
@@ -32,6 +33,7 @@ const getPdfDirTags = (dir: MiscDir): string[] => {
 
 export const PdfTabContent: React.FC<PdfTabContentProps> = ({ pdf, sortMode }) => {
     const tab = useBazarTab(pdf);
+    const fileActions = useFileActions(() => { void pdf.fetchData(true); });
 
     const currentChunks: Chunk[] = useMemo(() => {
         const folderChunks: (Chunk & { rawDir?: MiscDir })[] = [];
@@ -113,7 +115,7 @@ export const PdfTabContent: React.FC<PdfTabContentProps> = ({ pdf, sortMode }) =
         if (rawDir) {
             pdf.handleFolderClick(rawDir);
         } else {
-            tab.getChunkActions(chunk)[0]?.onClick();
+            pdf.openChunk(chunk);
         }
     };
 
@@ -127,7 +129,7 @@ export const PdfTabContent: React.FC<PdfTabContentProps> = ({ pdf, sortMode }) =
                 }
             ];
         }
-        return tab.getChunkActions(chunk);
+        return fileActions.getFileActions({ path: chunk.path, name: chunk.name });
     };
 
     return (
@@ -148,6 +150,9 @@ export const PdfTabContent: React.FC<PdfTabContentProps> = ({ pdf, sortMode }) =
                 emptyTitle={PDF_TAB_EMPTY_TITLE}
                 emptyDesc={PDF_TAB_EMPTY_DESC}
             />
+
+            {fileActions.renderFileModals()}
         </div>
     );
 };
+
