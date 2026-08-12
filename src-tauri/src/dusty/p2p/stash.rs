@@ -1,5 +1,6 @@
 use std::path::PathBuf;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::SystemTime;
+use std::time::UNIX_EPOCH;
 
 use crate::dusty::models::shows::ShowResult;
 use crate::dusty::p2p::OutgoingRequestState;
@@ -61,7 +62,10 @@ pub fn load_outgoing_request_from_stash() -> Option<OutgoingRequestState> {
         return match serde_json::from_str::<OutgoingRequestState>(&data) {
             Ok(req) => Some(req),
             Err(e) => {
-                log::warn!("[P2P Stash] Failed to parse stash file JSON: {}. Clearing corrupted stash...", e);
+                log::warn!(
+                    "[P2P Stash] Failed to parse stash file JSON: {}. Clearing corrupted stash...",
+                    e
+                );
                 clear_outgoing_request_stash();
                 None
             }
@@ -158,4 +162,3 @@ pub fn add_show_to_stash(show: ShowResult) -> Result<OutgoingRequestState, Strin
     save_outgoing_request_to_stash(&req)?;
     Ok(req)
 }
-

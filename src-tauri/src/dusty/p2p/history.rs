@@ -1,7 +1,9 @@
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
+use serde::Serialize;
 use std::fs;
 use std::path::PathBuf;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::SystemTime;
+use std::time::UNIX_EPOCH;
 
 use crate::dusty::p2p::TransferItem;
 
@@ -35,7 +37,11 @@ pub fn record_p2p_history_async(record: P2PTransferHistoryRecord) {
     std::thread::spawn(move || {
         if let Ok(dir) = get_history_dir() {
             if let Err(e) = fs::create_dir_all(&dir) {
-                log::error!("[P2P History] Failed to create history directory '{:?}': {}", dir, e);
+                log::error!(
+                    "[P2P History] Failed to create history directory '{:?}': {}",
+                    dir,
+                    e
+                );
                 return;
             }
             if let Ok(file_path) = get_history_file_path() {
@@ -52,7 +58,11 @@ pub fn record_p2p_history_async(record: P2PTransferHistoryRecord) {
 
                 if let Ok(json_str) = serde_json::to_string_pretty(&entries) {
                     if let Err(e) = fs::write(&file_path, json_str) {
-                        log::error!("[P2P History] Failed to write history file '{:?}': {}", file_path, e);
+                        log::error!(
+                            "[P2P History] Failed to write history file '{:?}': {}",
+                            file_path,
+                            e
+                        );
                     } else {
                         log::info!(
                             "[P2P History] Recorded transfer history entry: id={}, role={}, status={}",

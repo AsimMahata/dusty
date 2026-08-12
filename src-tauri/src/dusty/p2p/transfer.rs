@@ -1,4 +1,6 @@
-use crate::dusty::p2p::models::{ManifestFile, ManifestPayload, TransferItem};
+use crate::dusty::p2p::models::ManifestFile;
+use crate::dusty::p2p::models::ManifestPayload;
+use crate::dusty::p2p::models::TransferItem;
 use crate::dusty::p2p::send_cancel_signal_and_reset_state;
 use crate::dusty::p2p::CANCEL_FLAG;
 use crate::dusty::p2p::P2P_STATE;
@@ -87,7 +89,10 @@ pub fn send_single_file(
         } else {
             "Transfer cancelled by receiver".to_string()
         };
-        log::warn!("[P2P Engine] Receiver cancelled transfer ({}). Sending OK confirmation...", reason);
+        log::warn!(
+            "[P2P Engine] Receiver cancelled transfer ({}). Sending OK confirmation...",
+            reason
+        );
         stream.write_all(b"OK\n").ok();
         stream.flush().ok();
         if let Ok(mut state) = P2P_STATE.lock() {
@@ -215,9 +220,8 @@ pub fn execute_file_transfer(
     for (item_index, item) in manifest_items.iter().enumerate() {
         match item {
             TransferItem::File { path } => {
-                let meta = std::fs::metadata(path).map_err(|e| {
-                    format!("Failed to read metadata for file '{}': {}", path, e)
-                })?;
+                let meta = std::fs::metadata(path)
+                    .map_err(|e| format!("Failed to read metadata for file '{}': {}", path, e))?;
                 let size = meta.len();
                 total_bytes_all_files += size;
                 tasks.push(TransferFileTask {
@@ -231,7 +235,10 @@ pub fn execute_file_transfer(
                 for ep in &show.episodes {
                     let path_str = ep.path.to_string_lossy().to_string();
                     let meta = std::fs::metadata(&path_str).map_err(|e| {
-                        format!("Failed to read metadata for show file '{}': {}", path_str, e)
+                        format!(
+                            "Failed to read metadata for show file '{}': {}",
+                            path_str, e
+                        )
                     })?;
                     let size = meta.len();
                     total_bytes_all_files += size;
@@ -294,7 +301,6 @@ pub fn execute_file_transfer(
         }
     }
 
-
     let mut total_bytes_sent_cumulative: u64 = 0;
     let mut last_speed_check = std::time::Instant::now();
     let mut bytes_at_last_check: u64 = 0;
@@ -338,4 +344,3 @@ pub fn execute_file_transfer(
     );
     Ok(())
 }
-

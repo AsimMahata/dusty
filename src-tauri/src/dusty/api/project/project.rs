@@ -18,7 +18,6 @@ use crate::dusty::system::git::get_git_info_sys;
 use crate::dusty::system::git::GitInfo;
 use rusqlite::Connection;
 
-
 pub fn sanitize_projects(db: &Connection, projects: Vec<Project>) -> Vec<Project> {
     projects
         .into_iter()
@@ -32,7 +31,6 @@ pub fn sanitize_projects(db: &Connection, projects: Vec<Project>) -> Vec<Project
             }
             p.git_info = None;
             p
-
         })
         .collect()
 }
@@ -274,8 +272,7 @@ pub async fn fetch_all_project_tags(
             .await
             .map_err(|e| e.to_string())?;
 
-    let all_tags_results: Vec<(String, Vec<Tag>)> =
-        batch_results.into_iter().flatten().collect();
+    let all_tags_results: Vec<(String, Vec<Tag>)> = batch_results.into_iter().flatten().collect();
 
     let tags_to_save = all_tags_results.clone();
     let updated_projects = db_worker

@@ -25,7 +25,6 @@ use crate::dusty::p2p::P2PCurrentState;
 use crate::dusty::p2p::PendingTransfer;
 use crate::dusty::p2p::P2P_STATE;
 
-
 #[tauri::command]
 pub async fn get_p2p_state() -> Result<P2PCurrentState, String> {
     tokio::task::spawn_blocking(move || {
@@ -218,7 +217,8 @@ pub async fn cancel_transfer() -> Result<(), String> {
                 "sender".to_string(),
                 req.get_items(),
                 req.all_file_paths(),
-                req.receiver_name.unwrap_or_else(|| "Unknown Receiver".to_string()),
+                req.receiver_name
+                    .unwrap_or_else(|| "Unknown Receiver".to_string()),
                 None,
                 req.created_at,
                 "CANCELLED".to_string(),
@@ -306,8 +306,13 @@ pub async fn add_file_to_stash(path: String) -> Result<OutgoingRequestState, Str
 }
 
 #[tauri::command]
-pub async fn add_show_to_stash(show: crate::dusty::models::shows::ShowResult) -> Result<OutgoingRequestState, String> {
-    log::info!("[P2P API] add_show_to_stash called for show: {}", show.title);
+pub async fn add_show_to_stash(
+    show: crate::dusty::models::shows::ShowResult,
+) -> Result<OutgoingRequestState, String> {
+    log::info!(
+        "[P2P API] add_show_to_stash called for show: {}",
+        show.title
+    );
     tokio::task::spawn_blocking(move || crate::dusty::p2p::stash::add_show_to_stash(show))
         .await
         .map_err(|e| e.to_string())?

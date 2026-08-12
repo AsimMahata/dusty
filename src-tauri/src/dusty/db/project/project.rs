@@ -299,5 +299,3 @@ pub fn reset_project_table_in_db(db: &Connection) -> Result<()> {
 
     create_projects_table(db)
 }
-
-

@@ -1,26 +1,36 @@
-use std::io::{Read, Write};
+use std::io::Read;
+use std::io::Write;
 use std::net::TcpStream;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::Ordering;
 use std::sync::Mutex;
 use std::thread;
-use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
+use std::time::Duration;
+use std::time::Instant;
+use std::time::SystemTime;
+use std::time::UNIX_EPOCH;
 
 use local_ip_address::local_ip;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
+use serde::Serialize;
 
 use crate::dusty::config::get_user_info;
 use crate::dusty::p2p::history::create_and_record_history;
-use crate::dusty::p2p::models::{
-    ActiveTransfer, ManualReceiveStatus, OutgoingRequestState, PendingTransfer, TransferFileProgress,
-    TransferItem,
-};
+use crate::dusty::p2p::models::ActiveTransfer;
+use crate::dusty::p2p::models::ManualReceiveStatus;
+use crate::dusty::p2p::models::OutgoingRequestState;
+use crate::dusty::p2p::models::PendingTransfer;
+use crate::dusty::p2p::models::TransferFileProgress;
+use crate::dusty::p2p::models::TransferItem;
 use crate::dusty::p2p::receiver::receive_file_transfer;
-use crate::dusty::p2p::stash::{
-    clear_outgoing_request_stash, load_outgoing_request_from_stash, save_outgoing_request_to_stash,
-};
-use crate::dusty::p2p::tcp::{open_tcp_listener, read_header_line};
+use crate::dusty::p2p::stash::clear_outgoing_request_stash;
+use crate::dusty::p2p::stash::load_outgoing_request_from_stash;
+use crate::dusty::p2p::stash::save_outgoing_request_to_stash;
+use crate::dusty::p2p::tcp::open_tcp_listener;
+use crate::dusty::p2p::tcp::read_header_line;
 use crate::dusty::p2p::transfer::execute_file_transfer;
-use crate::dusty::p2p::{P2P_STATE, RECEIVER_TRANSFER_PORT};
+use crate::dusty::p2p::P2P_STATE;
+use crate::dusty::p2p::RECEIVER_TRANSFER_PORT;
 
 pub static MANUAL_LISTENER_ACTIVE: AtomicBool = AtomicBool::new(false);
 
@@ -121,7 +131,10 @@ pub fn start_manual_receive() -> Result<ManualReceiveStatus, String> {
         while MANUAL_LISTENER_ACTIVE.load(Ordering::SeqCst) {
             match listener.accept() {
                 Ok((stream, addr)) => {
-                    log::info!("[P2P Manual] Accepted incoming direct-IP TCP connection from {}", addr);
+                    log::info!(
+                        "[P2P Manual] Accepted incoming direct-IP TCP connection from {}",
+                        addr
+                    );
                     stream.set_nonblocking(false).ok();
 
                     let _ = handle_incoming_manual_connection(stream, addr.ip().to_string());
@@ -142,7 +155,10 @@ pub fn start_manual_receive() -> Result<ManualReceiveStatus, String> {
     Ok(status)
 }
 
-fn handle_incoming_manual_connection(mut stream: TcpStream, sender_ip: String) -> Result<(), String> {
+fn handle_incoming_manual_connection(
+    mut stream: TcpStream,
+    sender_ip: String,
+) -> Result<(), String> {
     stream.set_read_timeout(Some(Duration::from_secs(10))).ok();
     stream.set_write_timeout(Some(Duration::from_secs(10))).ok();
 
@@ -157,7 +173,11 @@ fn handle_incoming_manual_connection(mut stream: TcpStream, sender_ip: String) -
     let req: ManualRequestPayload = match serde_json::from_str(&payload_str) {
         Ok(p) => p,
         Err(e) => {
-            log::error!("[P2P Manual] Invalid request payload from sender {}: {}", sender_ip, e);
+            log::error!(
+                "[P2P Manual] Invalid request payload from sender {}: {}",
+                sender_ip,
+                e
+            );
             let _ = stream.write_all(b"REJECTED:Invalid request payload\n");
             return Err("Invalid request payload".to_string());
         }
@@ -193,9 +213,15 @@ fn handle_incoming_manual_connection(mut stream: TcpStream, sender_ip: String) -
 
     while start_wait.elapsed() < wait_timeout {
         let is_accepted = if let Ok(state) = P2P_STATE.lock() {
-            if state.active_transfer.as_ref().map(|a| a.id.clone()) == Some(req.transfer_key.clone()) {
+            if state.active_transfer.as_ref().map(|a| a.id.clone())
+                == Some(req.transfer_key.clone())
+            {
                 Some(true)
-            } else if !state.pending_transfers.iter().any(|t| t.id == req.transfer_key) {
+            } else if !state
+                .pending_transfers
+                .iter()
+                .any(|t| t.id == req.transfer_key)
+            {
                 Some(false)
             } else {
                 None
@@ -214,7 +240,10 @@ fn handle_incoming_manual_connection(mut stream: TcpStream, sender_ip: String) -
 
     match decision {
         Some(true) => {
-            log::info!("[P2P Manual] Receiver ACCEPTED transfer request '{}'", req.transfer_key);
+            log::info!(
+                "[P2P Manual] Receiver ACCEPTED transfer request '{}'",
+                req.transfer_key
+            );
             let _ = stream.write_all(b"ACCEPT\n");
             stream.flush().ok();
 
@@ -271,13 +300,19 @@ fn handle_incoming_manual_connection(mut stream: TcpStream, sender_ip: String) -
             res
         }
         Some(false) => {
-            log::info!("[P2P Manual] Receiver REJECTED transfer request '{}'", req.transfer_key);
+            log::info!(
+                "[P2P Manual] Receiver REJECTED transfer request '{}'",
+                req.transfer_key
+            );
             let _ = stream.write_all(b"REJECTED\n");
             stream.flush().ok();
             Err("Transfer rejected by receiver".to_string())
         }
         None => {
-            log::warn!("[P2P Manual] Request '{}' timed out after 60s waiting for acceptance", req.transfer_key);
+            log::warn!(
+                "[P2P Manual] Request '{}' timed out after 60s waiting for acceptance",
+                req.transfer_key
+            );
             let _ = stream.write_all(b"TIMED_OUT\n");
             stream.flush().ok();
 
@@ -290,7 +325,10 @@ fn handle_incoming_manual_connection(mut stream: TcpStream, sender_ip: String) -
 }
 
 pub fn start_manual_send(receiver_ip: String, files: Vec<String>) -> Result<(), String> {
-    log::info!("[P2P Manual] Initiating manual send to receiver IP: {}", receiver_ip);
+    log::info!(
+        "[P2P Manual] Initiating manual send to receiver IP: {}",
+        receiver_ip
+    );
 
     let trimmed_ip = receiver_ip.trim().to_string();
     if trimmed_ip.parse::<std::net::IpAddr>().is_err() {
@@ -412,7 +450,8 @@ pub fn start_manual_send(receiver_ip: String, files: Vec<String>) -> Result<(), 
             });
         }
 
-        let result = execute_file_transfer(&mut stream, &outgoing_req.id, &files, &items, start_time);
+        let result =
+            execute_file_transfer(&mut stream, &outgoing_req.id, &files, &items, start_time);
 
         let (total_bytes, duration_secs) = if let Ok(state) = P2P_STATE.lock() {
             if let Some(ref active) = state.active_transfer {
@@ -489,6 +528,9 @@ pub fn start_manual_send(receiver_ip: String, files: Vec<String>) -> Result<(), 
             state.mode = "send".to_string();
             state.active_transfer = None;
         }
-        Err(format!("Unexpected response from receiver: {}", response_str))
+        Err(format!(
+            "Unexpected response from receiver: {}",
+            response_str
+        ))
     }
 }

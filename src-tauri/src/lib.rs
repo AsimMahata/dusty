@@ -60,8 +60,6 @@ pub fn run() {
             dusty::api::project::scan_project_tags,
             dusty::api::project::fetch_projects_git_status,
             dusty::api::project::fetch_all_project_tags,
-
-
             dusty::api::media::get_media_of_type,
             dusty::api::media::sync_media_database,
             dusty::api::media::reset_media_cache_table,

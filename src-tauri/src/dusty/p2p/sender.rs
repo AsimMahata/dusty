@@ -35,8 +35,8 @@ pub fn check_for_existing_outgoing_stash_and_request_status() -> Result<(), Stri
             .map(|d| d.as_secs())
             .unwrap_or(0);
 
-        let is_waiting = existing.status == "WAITING_FOR_ACCEPTANCE"
-            || existing.status == "REQUEST_SENT";
+        let is_waiting =
+            existing.status == "WAITING_FOR_ACCEPTANCE" || existing.status == "REQUEST_SENT";
 
         let is_expired = is_waiting && (now >= existing.created_at + existing.timeout_secs);
 
@@ -275,7 +275,9 @@ pub fn listen_for_confirmation_with_listener(
     });
     drop(state);
 
-    if let Err(e) = execute_file_transfer(&mut control_stream, transfer_key, files, items, start_time) {
+    if let Err(e) =
+        execute_file_transfer(&mut control_stream, transfer_key, files, items, start_time)
+    {
         log::error!("[P2P Sender] Transfer failed or cancelled: {}", e);
         if let Some(mut req) = load_outgoing_request_from_stash() {
             if e.to_lowercase().contains("cancel") || e.contains("Receiver") {
@@ -303,7 +305,14 @@ pub fn listen_for_confirmation(
     sender_name: &str,
 ) -> Result<(), String> {
     let (listener, bound_port) = open_tcp_listener(tcp_port)?;
-    listen_for_confirmation_with_listener(listener, bound_port, transfer_key, files, items, sender_name)
+    listen_for_confirmation_with_listener(
+        listener,
+        bound_port,
+        transfer_key,
+        files,
+        items,
+        sender_name,
+    )
 }
 
 pub fn start_p2p_sender(req: OutgoingRequestState, my_info: User) -> Result<(), String> {
@@ -396,5 +405,3 @@ pub fn start_p2p_sender(req: OutgoingRequestState, my_info: User) -> Result<(), 
 
     result
 }
-
-

@@ -94,7 +94,11 @@ pub fn rename_file(src: String, dst: String) -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn delete_file(app: tauri::AppHandle, state: tauri::State<'_, AppState>, path: String) -> Result<bool, String> {
+pub fn delete_file(
+    app: tauri::AppHandle,
+    state: tauri::State<'_, AppState>,
+    path: String,
+) -> Result<bool, String> {
     let path = PathBuf::from(path);
     if let Ok(app_dir) = app.path().app_local_data_dir() {
         history::record_deletion_async(app_dir, &path, &state.background_worker);
@@ -115,7 +119,12 @@ pub fn create_directory(path: String) -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn delete_directory(app: tauri::AppHandle, state: tauri::State<'_, AppState>, path: String, recursive: bool) -> Result<bool, String> {
+pub fn delete_directory(
+    app: tauri::AppHandle,
+    state: tauri::State<'_, AppState>,
+    path: String,
+    recursive: bool,
+) -> Result<bool, String> {
     let path = PathBuf::from(path);
     if let Ok(app_dir) = app.path().app_local_data_dir() {
         history::record_deletion_async(app_dir, &path, &state.background_worker);
@@ -127,10 +136,6 @@ pub fn delete_directory(app: tauri::AppHandle, state: tauri::State<'_, AppState>
             e.to_user_message()
         })
 }
-
-
-
-
 
 #[tauri::command]
 pub fn exists(path: String) -> bool {

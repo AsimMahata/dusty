@@ -77,8 +77,6 @@ pub fn initialize_dusty(app: &mut tauri::App) -> Result<(), DustyError> {
     Ok(())
 }
 
-
-
 pub fn initialize_tables(conn: &Connection) -> DustyResult<Vec<String>> {
     let mut tables: Vec<String> = Vec::new();
 

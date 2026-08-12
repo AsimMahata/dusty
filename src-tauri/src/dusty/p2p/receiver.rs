@@ -26,7 +26,10 @@ fn get_db_connection() -> Result<rusqlite::Connection, String> {
         .ok_or_else(|| "Failed to get local data dir".to_string())?;
 
     let possible_paths = [
-        local_data.join("com.dusty.dev").join("database").join("dusty.db"),
+        local_data
+            .join("com.dusty.dev")
+            .join("database")
+            .join("dusty.db"),
         local_data.join("dusty").join("database").join("dusty.db"),
         dirs::home_dir()
             .map(|h| h.join(".dusty").join("database").join("dusty.db"))
@@ -516,7 +519,6 @@ pub fn receive_file_transfer(
             }
         }
     }
-
 
     let elapsed = start_time.elapsed().as_secs_f64();
     let elapsed_rounded = (elapsed * 10.0).round() / 10.0;

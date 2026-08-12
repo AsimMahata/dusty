@@ -5,9 +5,12 @@ use serde_json::Map;
 use serde_json::Value;
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::{Read, Seek, SeekFrom};
+use std::io::Read;
+use std::io::Seek;
+use std::io::SeekFrom;
 use std::path::PathBuf;
-use tauri::{Manager, State};
+use tauri::Manager;
+use tauri::State;
 
 #[derive(Serialize)]
 pub struct LogReadResult {
@@ -163,4 +166,3 @@ pub async fn get_all_table_data(
         .await
         .map_err(|e| e)?
 }
-
